@@ -1,0 +1,7 @@
+/* Estilos generales para el contenedor */
+.header {
+  width: 100%; /* Asegúrate de que el header ocupe todo el ancho */
+  position: sticky; /* Para que el header se mantenga en la parte superior */
+  top: 0; /* Asegúrate de que esté en la parte superior */
+  z-index: 1000; /* Para que esté por encima de otros elementos */
+}

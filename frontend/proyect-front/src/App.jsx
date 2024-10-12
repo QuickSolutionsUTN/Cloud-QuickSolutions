@@ -1,34 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Importar router
+import Header from './components/Header'; // Importar el Header
+import SidebarMenu from './components/SidebarMenu'; // Importar el Sidebar
+import Home from './pages/Home'; // Importar la página principal
+import './styles/app.css'; // Estilo global para toda la aplicación
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+    <div className="container-fluid">
+      <header>
+        <Header /> {/* Renderizar el Header solo una vez */}
+      </header>
+      <div className="row">
+        <aside className="col-md-3">
+          <SidebarMenu /> {/* Renderizar el Sidebar solo una vez */}
+        </aside>
+        <main className="col-md-9">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* <Route path="/about" element={<About />} /> */}
+            {/* Otras rutas se pueden agregar aquí */}
+          </Routes>
+        </main>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
+  </Router>
   )
 }
 

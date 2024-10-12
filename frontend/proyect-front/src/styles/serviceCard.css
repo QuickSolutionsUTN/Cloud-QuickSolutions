@@ -1,0 +1,23 @@
+.card {
+  border: none; /* Sin borde */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra */
+  transition: transform 0.2s; /* Transición suave */
+}
+
+.card:hover {
+  transform: scale(1.05); /* Efecto de aumentar al pasar el mouse */
+}
+
+.card-img-top {
+  border-radius: 10px 10px 0 0; /* Bordes redondeados en la parte superior */
+}
+
+.card-title {
+  font-size: 1.25rem; /* Tamaño del título */
+  font-weight: bold; /* Negrita */
+}
+
+.card-text {
+  color: #555; /* Color del texto de descripción */
+}

@@ -1,0 +1,21 @@
+.row {
+  margin: 0; /* Eliminar márgenes no deseados */
+}
+
+.service-card {
+  margin-bottom: 20px; /* Espacio entre las tarjetas de servicio */
+}
+
+/* Ajustar el ancho de las tarjetas en pantallas pequeñas */
+@media (max-width: 767px) {
+  .service-card {
+      width: 100%; /* Las tarjetas ocuparán el 100% del ancho en dispositivos pequeños */
+  }
+}
+
+/* Para pantallas medianas y grandes, puedes usar un grid de 3 columnas */
+@media (min-width: 768px) {
+  .service-card {
+      width: 30%; /* Ajustar al 30% del ancho en pantallas medianas */
+  }
+}
