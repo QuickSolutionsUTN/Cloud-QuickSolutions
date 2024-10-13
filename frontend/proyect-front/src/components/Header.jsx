@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/header.css'; // Importa el archivo de estilos
+import {Dropdown} from 'react-bootstrap';
+import {DropdownButton} from 'react-bootstrap';
 
 const Header = () => {
   return (
-    <header className="header">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid">
           <Link className="navbar-brand" to="/">Mi Aplicación</Link>
@@ -28,8 +29,11 @@ const Header = () => {
             </ul>
           </div>
         </div>
+        <DropdownButton id="dropdown-basic-button" title="Iniciar sesion">
+          <Dropdown.Item href="#/action-1">Cuenta</Dropdown.Item>
+          <Dropdown.Item href="#/action-2">Cerrar sesion</Dropdown.Item>
+        </DropdownButton>
       </nav>
-    </header>
   );
 };
 

@@ -1,15 +1,3 @@
-/* Estilos generales para el contenedor */
-.container-fluid {
-  padding: 0; /* Eliminar el padding del contenedor para usar el grid de Bootstrap */
-}
-
-/* Estilos del Header */
-header {
-  background-color: #f8f9fa; /* Color de fondo del Header */
-  padding: 10px 20px; /* Espaciado en el Header */
-}
-
-/* Estilos del Sidebar */
 aside {
   background-color: #343a40; /* Color oscuro para el Sidebar */
   color: white; /* Color del texto en el Sidebar */
@@ -17,7 +5,11 @@ aside {
   min-height: 100vh; /* Asegura que el Sidebar ocupe toda la altura */
 }
 
-/* Estilos para el Main */
+
 main {
   padding: 20px; /* Espaciado interno del Main */
+}
+
+.container-fluid {
+  padding: 0;
 }

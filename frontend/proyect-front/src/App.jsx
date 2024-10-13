@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Im
 import Header from './components/Header'; // Importar el Header
 import SidebarMenu from './components/SidebarMenu'; // Importar el Sidebar
 import Home from './pages/Home'; // Importar la página principal
-import './styles/app.css'; // Estilo global para toda la aplicación
+
+import './styles/app.css';
 
 function App() {
   return (
