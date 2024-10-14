@@ -10,6 +10,8 @@
 }
 
 .card-img-top {
+  height: 250px; 
+  width: 100%; /* Imagen de la parte superior */
   border-radius: 10px 10px 0 0; /* Bordes redondeados en la parte superior */
 }
 

@@ -1,33 +1,42 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Importar router
-import Header from './components/Header'; // Importar el Header
-import SidebarMenu from './components/SidebarMenu'; // Importar el Sidebar
-import Home from './pages/Home'; // Importar la página principal
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Header from './components/Header';
+import SidebarMenu from './components/SidebarMenu'; 
+import Footer from './components/Footer'; 
+import Home from './pages/Home';
 
 import './styles/app.css';
 
 function App() {
   return (
     <Router>
-    <div className="container-fluid">
-      <header>
-        <Header /> {/* Renderizar el Header solo una vez */}
-      </header>
-      <div className="row">
-        <aside className="col-md-3">
-          <SidebarMenu /> {/* Renderizar el Sidebar solo una vez */}
-        </aside>
-        <main className="col-md-9">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            {/* <Route path="/about" element={<About />} /> */}
-            {/* Otras rutas se pueden agregar aquí */}
-          </Routes>
-        </main>
+      <div className="container-fluid d-flex flex-column min-vh-100">
+          <header className="p-header">
+            <Header />
+          </header>
+
+        <div className="row flex-grow-1">
+          <aside className="col-2 bg-secondary text-white p-3">
+            <SidebarMenu />
+          </aside>
+
+          <main className="col-10 p-3">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              {/* Otras rutas comentadas */}
+              {/* <Route path="/about" element={<About />} /> */}
+            </Routes>
+          </main>
+        </div>
+
+        <div className="row">
+          <footer className="col-12 bg-dark text-white text-center p-2 mt-auto">
+            <Footer />
+          </footer>
+        </div>
       </div>
-    </div>
-  </Router>
-  )
+    </Router>
+  );
 }
 
 export default App

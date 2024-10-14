@@ -1,15 +1,11 @@
-aside {
-  background-color: #343a40; /* Color oscuro para el Sidebar */
-  color: white; /* Color del texto en el Sidebar */
-  padding: 15px; /* Espaciado interno del Sidebar */
-  min-height: 100vh; /* Asegura que el Sidebar ocupe toda la altura */
-}
-
-
 main {
   padding: 20px; /* Espaciado interno del Main */
 }
 
 .container-fluid {
   padding: 0;
+}
+
+.sidebar {
+  background-color: #343a40; 
 }

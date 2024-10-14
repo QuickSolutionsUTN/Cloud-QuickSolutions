@@ -6,17 +6,17 @@ import '../styles/SidebarMenu.css';
 
 const CustomSidebarMenu = () => {
   return (
-    <div className="sidebar p-3">
-      <h4>Sidebar Menu</h4>
+    <div className="sidebar bg-dark text-white p-3">
+      <h4>Menu</h4>
       <Nav className="flex-column">
         <Nav.Item>
-          <Nav.Link as={Link} to="/">Home</Nav.Link>
+          <Nav.Link as={Link} to="/" className="text-white">Home</Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link as={Link} to="/about">About</Nav.Link>
+          <Nav.Link as={Link} to="/about" className="text-white">About</Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
+          <Nav.Link as={Link} to="/contact" className="text-white">Contact</Nav.Link>
         </Nav.Item>
       </Nav>
     </div>

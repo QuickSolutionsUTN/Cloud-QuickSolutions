@@ -3,7 +3,7 @@ import '../styles/serviceCard.css'; // Archivo de estilos para la tarjeta de ser
 
 const ServiceCard = ({ title, description, imgSrc }) => {
   return (
-    <article className="col-md-4 mb-4">
+    <article className="col-md-3 mb-4">
       <div className="card">
         <img src={imgSrc} className="card-img-top" alt={`Descripción de ${title}`} />
         <div className="card-body">

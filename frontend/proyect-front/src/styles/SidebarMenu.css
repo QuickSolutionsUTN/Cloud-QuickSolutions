@@ -1,14 +1,3 @@
-aside {
-  background-color: #f8f9fa; /* Fondo claro */
-  padding: 20px; /* Espaciado interno */
-  height: 100%; /* Altura completa */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra a la derecha */
-}
-
-.nav-link {
-  color: #333; /* Color del texto de los enlaces */
-}
-
-.nav-link:hover {
-  background-color: #e9ecef; /* Fondo claro al hacer hover */
+.sidebar{
+  height: 100%;
 }
