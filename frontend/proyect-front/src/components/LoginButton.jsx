@@ -1,13 +1,11 @@
 import Button from 'react-bootstrap/Button';
 
-function CustomLoginBttn() {
+function LoginButton({ onLoginClick }) {
   return (
-    <>
-      <div className='login-btn'>
-        <Button variant="outline-light" >Iniciar Sesión</Button>
-      </div>
-    </>
+    <div className='login-btn'>
+      <Button variant="outline-light" onClick={onLoginClick}>Iniciar Sesión</Button>
+    </div>
   );
 }
 
-export default CustomLoginBttn;
+export default LoginButton;
