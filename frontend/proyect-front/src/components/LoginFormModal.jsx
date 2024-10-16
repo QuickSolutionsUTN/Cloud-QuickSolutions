@@ -3,10 +3,11 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import '../styles/LoginFormModal.css';
 import { useForm } from 'react-hook-form';
 
-function LoginForm({ show, onClose }) {
+function LoginForm({ show, onClose, onSubmit }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data => {
+  const handleFormSubmit = data => {
     console.log(data);
+    onSubmit(data);
   };
   return (
     <Modal show={show} onHide={onClose} >
@@ -14,7 +15,7 @@ function LoginForm({ show, onClose }) {
         <Modal.Title>Iniciar Sesión</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(handleFormSubmit)}>
           <Form.Group controlId="formBasicEmail">
             <Form.Label className={errors.email ? 'error-label' : ''}>Correo electronico</Form.Label>
             <Form.Control 

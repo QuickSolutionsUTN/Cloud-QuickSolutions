@@ -9,14 +9,16 @@ import SolicitudesAlquiler from './pages/SolicitudesAlquiler.jsx';
 import SolicitudesRevision from './pages/SolicitudesRevision.jsx';
 import TopNavbar from './components/TopNavbar.jsx';
 import LoginButton from './components/LoginButton.jsx';
+import LogoutButton from './components/LogoutButton.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/app.css';
 import LoginForm from './components/LoginFormModal.jsx';
 
 function App() {
 
-  //Control del formulario de login
   const [showLoginForm, setShowLoginForm] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const handleLoginClick = () => {
     console.log("Login button clicked");
     setShowLoginForm(true);
@@ -28,13 +30,28 @@ function App() {
     setShowLoginForm(false);
     console.log("showLoginForm state:", showLoginForm);
   };
+
+  const handleLoginSubmit = (data) => {
+    console.log("Login data:", data);
+    setIsAuthenticated(true);
+    setShowLoginForm(false);
+  };
+
+  const handleLogoutClick = () => {
+    console.log("Logout button clicked");
+    setIsAuthenticated(false);
+  };
   
   return (
     <div className="d-flex flex-column min-vh-100">
       <Router>
         <header className="p-header bg-dark p-2 d-flex justify-content-between">
           <TopNavbar />
-          <LoginButton onLoginClick={handleLoginClick} />
+          {isAuthenticated ? (
+            <LogoutButton onLogoutClick={handleLogoutClick} />
+          ) : (
+            <LoginButton onLoginClick={handleLoginClick} />
+          )}
         </header>
 
         <div className="row flex-grow-1">
@@ -50,7 +67,11 @@ function App() {
               <Route path="/solicitudes_rev" element={<SolicitudesRevision />} /> {/* Página de solicitudes de revisión */}
             </Routes>
           </main>
-          {showLoginForm && <LoginForm show={showLoginForm} onClose={handleLoginClose} />}
+          {showLoginForm && <LoginForm 
+            show={showLoginForm} 
+            onClose={handleLoginClose}
+            onSubmit={handleLoginSubmit} />
+          }
         </div>
       </Router>
 
