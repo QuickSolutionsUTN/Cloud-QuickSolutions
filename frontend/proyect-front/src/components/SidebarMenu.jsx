@@ -10,13 +10,16 @@ const CustomSidebarMenu = () => {
       <h4>Menu</h4>
       <Nav className="flex-column">
         <Nav.Item>
-          <Nav.Link as={Link} to="/" className="text-white">Home</Nav.Link>
+          <Nav.Link as={Link} to="/" className="text-white">Inicio</Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link as={Link} to="/about" className="text-white">About</Nav.Link>
+          <Nav.Link as={Link} to="/equipos" className="text-white">Equipos</Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link as={Link} to="/contact" className="text-white">Contact</Nav.Link>
+          <Nav.Link as={Link} to="/solicitudes_alq" className="text-white">Solicitudes de alquiler</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link as={Link} to="/solicitudes_rev" className="text-white">Solicitudes de revision</Nav.Link>
         </Nav.Item>
       </Nav>
     </div>

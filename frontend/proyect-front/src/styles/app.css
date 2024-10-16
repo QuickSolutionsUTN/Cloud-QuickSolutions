@@ -1,3 +1,21 @@
+.p-header{
+  display: flex;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.p-sidebar{
+  border-bottom: 1px solid #dee2e6;
+}
+
+.login-btn {
+  font-size: 0.8rem;
+  padding-left: 0; 
+  padding-right: 0; 
+  padding-top: 0.5rem;  
+  padding-bottom: 0.5rem;
+  border-radius: 5px;
+}
+
 main {
   padding: 20px; /* Espaciado interno del Main */
 }

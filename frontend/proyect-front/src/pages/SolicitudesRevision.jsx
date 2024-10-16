@@ -1,15 +1,16 @@
 import React from 'react';
 import ServiceCard from '../components/ServiceCard';
 import '../styles/home.css'; 
+import SolicitudesRevisionTable from '../components/SolicitudesRevTable';
 //import Img1 from '../assets/images/equipos.png'; // Importa la imagen
 
-const Home = () => {
+const SolicitudesRevisionPage = () => {
   return (
     <section>
-      <h2>Bienvenido a la Página Principal</h2>
-      {/* <ServiceCard title="Equipos" description="Descripción del servicio 1" imgSrc={''}/> */}
+      <h2>Solicitudes de Revision</h2>
+      <SolicitudesRevisionTable />
     </section>
   );
 };
 
-export default Home;
+export default SolicitudesRevisionPage;

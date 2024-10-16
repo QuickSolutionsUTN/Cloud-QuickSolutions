@@ -4,7 +4,9 @@ import TopNavbar from './TopNavbar.jsx';
 
 const Header = () => {
   return (
-        <TopNavbar />
+    <header className="p-header">
+      <TopNavbar />
+    </header>
   );
 };
 
