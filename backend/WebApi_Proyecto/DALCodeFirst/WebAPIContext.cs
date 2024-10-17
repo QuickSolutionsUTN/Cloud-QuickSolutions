@@ -13,7 +13,7 @@ public partial class WebAPIContext : DbContext
     public WebAPIContext(DbContextOptions<WebAPIContext> options) : base(options) { } //constructor
 
     //dbset para la tabla de productos y categorias
-    //public DbSet<Producto> Productos { get; set; }
+    public DbSet<Usuario> Usuario { get; set; }
     //public DbSet<Categoria> Categorias { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
