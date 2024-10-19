@@ -1,25 +1,25 @@
 ﻿using DALCodeFirst.Modelos;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore; //DbContext
+using Microsoft.EntityFrameworkCore.SqlServer;
 
-//La BD creada se llama S31-Productos
 namespace DALCodeFirst;
 
 //contexto para la base de datos
-public partial class WebAPIContext : DbContext
-{
-    public WebAPIContext()
-    {
-    }
-    public WebAPIContext(DbContextOptions<WebAPIContext> options) : base(options) { } //constructor
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-    //dbset para la tabla de productos y categorias
-    public DbSet<Usuario> Usuario { get; set; }
-    //public DbSet<Categoria> Categorias { get; set; }
+public partial class WebAPIContext : IdentityDbContext<Usuario, Rol, string>
+{
+    public WebAPIContext(DbContextOptions<WebAPIContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        // Configuraciones adicionales del modelo
-    }
 
+        // Configuración para renombrar las tablas AsnNetUser y AspNetRoles
+        modelBuilder.Entity<Usuario>().ToTable("Usuarios");
+        modelBuilder.Entity<Rol>().ToTable("Roles");
+    }
 }

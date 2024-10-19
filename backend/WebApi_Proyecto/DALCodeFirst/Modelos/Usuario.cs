@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DALCodeFirst.Modelos
 {
-    [Table("Usuario")]
+    //[Table("Usuarios")]  // Especifica el nombre de la tabla
     public class Usuario : IdentityUser
     {
+
         //IdentityUser ya tiene Id, UserName, Email, PasswordHash
         [Required(ErrorMessage = "El nombre es obligatorio.")]
         [StringLength(100, ErrorMessage = "El nombre no puede exceder los 100 caracteres.")]
@@ -17,6 +18,6 @@ namespace DALCodeFirst.Modelos
         public string Apellido { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime? FechaDeNacimiento { get; set; } // Nullable si es opcional
+        public DateTime FechaDeNacimiento { get; set; }
     }
 }
