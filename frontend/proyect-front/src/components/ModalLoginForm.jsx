@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import '../styles/LoginFormModal.css';
+import '../styles/modalLoginForm.css';
 import { useForm } from 'react-hook-form';
 
 function LoginForm({ show, onClose, onSubmit }) {

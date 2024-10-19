@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
-import SidebarMenu from './components/SidebarMenu'; 
-import Footer from './components/Footer'; 
-import Home from './pages/Home';
-import EquiposPage from './pages/EquiposPage.jsx';
-import SolicitudesAlquiler from './pages/SolicitudesAlquiler.jsx';
-import SolicitudesRevision from './pages/SolicitudesRevision.jsx';
+import Catalog from './pages/Catalog.jsx';
 import TopNavbar from './components/TopNavbar.jsx';
 import LoginButton from './components/LoginButton.jsx';
 import LogoutButton from './components/LogoutButton.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/app.css';
-import LoginForm from './components/LoginFormModal.jsx';
+import LoginForm from './components/ModalLoginForm.jsx';
+import logo from './assets/images/logo.png';
+
 
 function App() {
 
@@ -21,8 +17,8 @@ function App() {
 
   const handleLoginClick = () => {
     console.log("Login button clicked");
+    setIsAuthenticated(true);
     setShowLoginForm(true);
-    console.log("showLoginForm state:", showLoginForm);
   };
   
   const handleLoginClose = () => {
@@ -43,39 +39,28 @@ function App() {
   };
   
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div>
       <Router>
-        <header className="p-header bg-dark p-2 d-flex justify-content-between">
-          <TopNavbar />
+        <header> 
           {isAuthenticated ? (
-            <LogoutButton onLogoutClick={handleLogoutClick} />
+            <LogoutButton onLogoutClick={handleLogoutClick} className="login-button" />
           ) : (
-            <LoginButton onLoginClick={handleLoginClick} />
+            <LoginButton onLoginClick={handleLoginClick} className="login-button" />
           )}
         </header>
-
-        <div className="row flex-grow-1">
-          <aside className="p-sidebar bg-dark col-1">
-            <SidebarMenu />
-          </aside>
-
-          <main className="col-11 p-3">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/equipos" element={<EquiposPage />} /> {/* Página de equipos */}
-              <Route path="/solicitudes_alq" element={<SolicitudesAlquiler />} /> {/* Página de solicitudes de alquiler */}
-              <Route path="/solicitudes_rev" element={<SolicitudesRevision />} /> {/* Página de solicitudes de revisión */}
-            </Routes>
-          </main>
-          {showLoginForm && <LoginForm 
-            show={showLoginForm} 
-            onClose={handleLoginClose}
-            onSubmit={handleLoginSubmit} />
-          }
+        <div className='logo'>
+          <img src={logo}></img>
         </div>
+        <TopNavbar/>
+        {showLoginForm && <LoginForm 
+          show={showLoginForm}  
+          onClose={handleLoginClose}
+          onSubmit={handleLoginSubmit} />
+        }
+        <Routes>
+          <Route path="/catalog" element={<Catalog />} />
+        </Routes>
       </Router>
-
-      <Footer />
     </div>
   );
 }
