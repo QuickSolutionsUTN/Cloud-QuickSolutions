@@ -6,16 +6,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 public class ExceptionMiddleware
-{
-
-
-    
+{   
     private readonly RequestDelegate _next;
-
     //logger, por ahora no se va a usar
     //private readonly ILogger<ExceptionMiddleware> _logger;
-
-
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;

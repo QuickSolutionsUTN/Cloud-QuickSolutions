@@ -37,7 +37,7 @@ namespace WebAPI.Controllers
             return CreatedAtAction(nameof(CrearUsuario), new { email = usuarioCreado.Email }, usuarioCreado);
         }
 
-        [Authorize(Policy ="AdminOnly")]
+        [Authorize(Roles ="admin")]
         [HttpGet("listar")]
         public async Task<IActionResult> ListarUsuarios()
         {
