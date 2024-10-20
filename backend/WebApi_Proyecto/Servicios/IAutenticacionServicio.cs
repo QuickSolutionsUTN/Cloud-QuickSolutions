@@ -7,6 +7,6 @@ namespace Servicios
     public interface IAutenticacionServicio
     {
         //task para que sea asincrono
-        Task<string> LoginAsync(string email, string password);
+        Task<string> ValidarUsuario(string email, string password);
     }
 }

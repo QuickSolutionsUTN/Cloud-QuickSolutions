@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Serilog;
 
 using Core.DTOs; //libreria que contiene los DTOs
-using Servicios; //libreria que contiene los servicios Categoria
+using Servicios;
+using Microsoft.AspNetCore.Authorization; //libreria que contiene los servicios Categoria
 
 namespace WebAPI.Controllers
 {
@@ -41,7 +42,7 @@ namespace WebAPI.Controllers
                 return BadRequest(new { mensaje = ex.Message }); // Manejo de excepciones
             }
         }
-
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("listar")]
         public async Task<IActionResult> ListarUsuarios()
         {

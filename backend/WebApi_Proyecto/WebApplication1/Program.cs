@@ -8,6 +8,9 @@ using DALCodeFirst.Modelos;
 using Microsoft.AspNetCore.Identity;
 using Servicios;
 using Serilog;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()  // Solo loguea mensajes de 'Information' en adelante
@@ -39,8 +42,41 @@ builder.Services.AddIdentity<Usuario, Rol>(options =>
     options.User.RequireUniqueEmail = true;
     // Agrega más opciones según sea necesario
 })
+
 .AddEntityFrameworkStores<WebAPIContext>()
 .AddDefaultTokenProviders();
+
+
+/*var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"]);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});*/
+
+
+
+
+//para que solo los admins puedan acceder a ciertas funciones
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
 
 builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
 builder.Services.AddScoped<IRolServicio, RolServicio>();
