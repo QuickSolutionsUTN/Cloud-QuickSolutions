@@ -33,6 +33,15 @@ namespace WebAPI.Controllers
             {
                 // Obtener el usuario
                 var usuarioDTO = await _usuarioServicio.ObtenerUsuarioPorEmailAsync(usuarioLoginDTO.Email);
+<<<<<<< HEAD
+=======
+                var jwtSettingsDTO = new JwtSettingsDTO
+                {
+                    SecretKey = "your_secret_key",
+                    Issuer = "your_issuer",
+                    Audience = "your_audience"
+                };
+>>>>>>> 32da64afcd8ea1c16c7f857affa2ae2ddc169154
                 //token JWT
                 var token = _tokenServicio.GenerarToken(usuarioDTO);
                 return Ok(new { token });
