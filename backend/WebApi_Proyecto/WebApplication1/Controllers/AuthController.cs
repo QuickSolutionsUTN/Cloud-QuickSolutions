@@ -29,9 +29,17 @@ namespace WebAPI.Controllers
 
             if (result.Succeeded)
             {
-                // Aquí puedes generar el token JWT si es necesario
-                // var token = GenerarToken(loginDto.Email);
-                return Ok(new { message = "Login exitoso." });
+                // Obtener el usuario
+                var usuarioDTO = await _usuarioServicio.ObtenerUsuarioPorEmailAsync(usuarioLoginDTO.Email);
+                var jwtSettingsDTO = new JwtSettingsDTO
+                {
+                    SecretKey = "your_secret_key",
+                    Issuer = "your_issuer",
+                    Audience = "your_audience"
+                };
+                //token JWT
+                var token = _tokenServicio.GenerarToken(usuarioDTO);
+                return Ok(new { token });
             }
 
             // Retornamos un mensaje de error en caso de que la autenticación falle
