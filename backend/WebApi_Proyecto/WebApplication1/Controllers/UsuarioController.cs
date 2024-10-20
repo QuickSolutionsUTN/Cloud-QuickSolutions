@@ -7,6 +7,9 @@ using Core.DTOs; //libreria que contiene los DTOs
 using Servicios;
 using Microsoft.AspNetCore.Authorization; //libreria que contiene los servicios Categoria
 
+
+//Uso del middleware para errores 500 y 404
+
 namespace WebAPI.Controllers
 {
     [ApiController] //atributo que indica que es un controlador de API
@@ -30,35 +33,21 @@ namespace WebAPI.Controllers
                 return BadRequest(ModelState); // Retorna errores de validación
             }
 
-            try
-            {
-
-                var usuarioCreado = await _usuarioServicio.CrearUsuarioAsync(usuarioRegistroDTO);
-                return CreatedAtAction(nameof(CrearUsuario), new { email = usuarioCreado.Email }, usuarioCreado);
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { mensaje = ex.Message }); // Manejo de excepciones
-            }
+            var usuarioCreado = await _usuarioServicio.CrearUsuarioAsync(usuarioRegistroDTO);
+            return CreatedAtAction(nameof(CrearUsuario), new { email = usuarioCreado.Email }, usuarioCreado);
         }
-        [Authorize(Policy = "AdminOnly")]
+
+        [Authorize(Policy ="AdminOnly")]
         [HttpGet("listar")]
         public async Task<IActionResult> ListarUsuarios()
         {
-            try
-            {
-                var usuarios = await _usuarioServicio.ObtenerUsuariosAsync();
-                return Ok(usuarios); // Retorna la lista de usuarios
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { mensaje = ex.Message }); // Manejo de excepciones
-            }
+            var usuarios = await _usuarioServicio.ObtenerUsuariosAsync();
+            return Ok(usuarios); // Retorna la lista de usuarios
         }
 
+
         [HttpGet("{email}")]
-        public async Task<IActionResult> GetUsuarioByEmail(string email)
+        public async Task<IActionResult> ObtenerUsuarioPorEmail(string email)
         {
             Log.Information("Buscando usuario con email: {Email}", email);
 

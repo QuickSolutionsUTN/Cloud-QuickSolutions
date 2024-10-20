@@ -13,6 +13,7 @@ public class UsuarioLoginDTO //DTO solo para crear usuario
     public string Email { get; set; }
 
     [Required]
+    [DataType(DataType.Password)]
     public string Password { get; set; }
 
 }
