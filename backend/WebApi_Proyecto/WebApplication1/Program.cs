@@ -1,13 +1,31 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using System.Text;
+using Servicios;
+using DALCodeFirst;
+using Core.DTOs;
+using DALCodeFirst.Modelos;
+
+Log.Logger = new LoggerConfiguration()
+   .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.Debug()
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+ServiceConfiguration.ConfigureServices(builder);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Registrar el middleware personalizado
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -16,10 +34,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+//app.UseStaticFiles();
+
+app.UseRouting();
+app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();
