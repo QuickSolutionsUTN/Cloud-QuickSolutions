@@ -3,25 +3,70 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import '../styles/modalLoginForm.css';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-
+import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../contexts/AuthContext';
 
 function LoginForm({ show, onClose, onSubmit }) {
+  
+  
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const handleFormSubmit = data => {
-    console.log(data);
-    const userRole = "admin"; // Aquí deberías obtener el rol del usuario desde los datos del formulario
-    onSubmit(data, userRole);
-    login(userRole);
+  const handleFormSubmit = async (data) => {
+    //console.log(data);
+    try{
+      const response=await fetch('https://localhost:7216/api/usuarios/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      });
 
-    // Redirigir al usuario la página correspondiente
-    if (userRole === 'admin') {
-      navigate('/admin');
-    } else if (userRole === 'maintenance') {
-      navigate('/maintenance');
+      // Verifica si la respuesta fue exitosa
+      if (!response.ok) {
+        const errorData = await response.json(); // Suponiendo que la respuesta de error también es JSON
+        throw new Error(errorData.message || 'Error en la autenticación');
+      }
+
+      const result = await response.json();
+      console.log('Respuesta del backend:', result);
+
+      if (result.status === "success") {
+        const token = result.data.token;// Guarda el token
+        console.log('Token:', token);
+
+        try{
+          const decodedToken = jwtDecode(token);
+          console.log('Token decodificado:', decodedToken);
+
+          const userRole = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+          console.log('Rol del usuario:', userRole);
+
+          onSubmit(data, userRole);
+
+          // Redirigir al usuario la página correspondiente
+          if (userRole === 'admin') {
+            navigate('/admin');
+          } else if (userRole === 'maintenance') {
+            navigate('/maintenance');
+          }
+
+        }catch (error) {
+          console.error('Error al decodificar el token:', error);
+      }
+        
+        //onClose();
+  
+        // Aquí puedes almacenar el token en localStorage o en el contexto de la aplicación
+      } else {
+          console.error('Error en el login:', result.message);
+      }
+      
+    } catch (error) {
+      console.error('Error al hacer login:', error);
+      alert(error.message);
     }
   };
 

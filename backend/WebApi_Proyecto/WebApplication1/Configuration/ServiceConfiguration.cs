@@ -114,6 +114,23 @@ public static class ServiceConfiguration
                 return Task.CompletedTask;
             };
         });
+
+        // Añadir CORS para probar los endpoints en modo local (testing)
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins",
+                builder =>
+                {
+                    builder
+                    .AllowAnyOrigin() // Permitir cualquier origen
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+
+
+
+                });
+        });
+
     }
 
 

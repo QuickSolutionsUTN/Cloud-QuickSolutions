@@ -41,15 +41,24 @@ namespace WebAPI.Controllers
             {
                 // Obtener el usuario
                 var usuarioDTO = await _usuarioServicio.ObtenerUsuarioPorEmailAsync(usuarioLoginDTO.Email);
-                var token = _tokenServicio.GenerarToken(usuarioDTO);
-                return Ok(new { token });
+                var _token = _tokenServicio.GenerarToken(usuarioDTO);
+                _logger.LogInformation("Respuesta de login Exitosa");
+                return Ok(new {
+                    status = "success",
+                    message = "Login exitoso",
+                    data = new
+                    {
+                        token = _token, // El token JWT
+                    }
+                });
             }
 
             // Retornamos un mensaje de error en caso de que la autenticación falle
             _logger.LogWarning($"Intento de inicio de sesión fallido para el usuario: {usuarioLoginDTO.Email}");
-            return Unauthorized(new {
-                status = (int)HttpStatusCode.NotFound,
-                message = "Intento de inicio de sesión inválido." 
+            return BadRequest(new
+            {
+                status = "error",
+                message = "Credenciales inválidas"
             });
         }
 
