@@ -1,17 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import '../styles/modalLoginForm.css';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
+import AuthContext from '../contexts/AuthContext';
+
 function LoginForm({ show, onClose, onSubmit }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleFormSubmit = data => {
     console.log(data);
     const userRole = "admin"; // Aquí deberías obtener el rol del usuario desde los datos del formulario
     onSubmit(data, userRole);
+    login(userRole);
 
     // Redirigir al usuario la página correspondiente
     if (userRole === 'admin') {
@@ -73,4 +77,4 @@ function LoginForm({ show, onClose, onSubmit }) {
   );
 }
 
-export default LoginForm;
+export default LoginForm; 
