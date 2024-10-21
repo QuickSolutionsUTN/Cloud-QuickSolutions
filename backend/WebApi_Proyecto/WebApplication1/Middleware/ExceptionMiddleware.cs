@@ -1,67 +1,106 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Net;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Net;
+
 
 public class ExceptionMiddleware
-{   
+{
     private readonly RequestDelegate _next;
-    //logger, por ahora no se va a usar
-    //private readonly ILogger<ExceptionMiddleware> _logger;
-    public ExceptionMiddleware(RequestDelegate next)
+    private readonly ILogger<ExceptionMiddleware> _logger;
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         _next = next;
-        //_logger = logger;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
     {
+
         try
         {
             //para intermediar la solicitud http
             await _next(httpContext);
-
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            //_logger.LogWarning(ex, "Unauthorized access.");
-            await HandleUnauthorizedExceptionAsync(httpContext, ex);
         }
         catch (Exception ex)
         {
-            //_logger.LogError($"Algo salió mal: {ex.Message}");
             await HandleExceptionAsync(httpContext, ex);
+        }
+
+        // Manejar errores de autenticación y autorización
+        if (!httpContext.Response.HasStarted)
+        {
+            if (httpContext.Response.StatusCode == StatusCodes.Status401Unauthorized)
+            {
+                // Si ya se ha devuelto un Unauthorized, no hacer nada
+                return;
+            }
+            else if (httpContext.Response.StatusCode == StatusCodes.Status403Forbidden)
+            {
+                await HandleForbiddenAsync(httpContext);
+            }
         }
     }
 
-    private static Task HandleUnauthorizedExceptionAsync(HttpContext context, UnauthorizedAccessException exception)
+    private Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        _logger.LogError(ex, "Ha ocurrido un error procesando la solicitud.");
 
-        var result = new
+        var response = new
         {
-            message = "No estás autorizado para acceder a este recurso."
+            status = (int)HttpStatusCode.InternalServerError,
+            message = "Ocurrió un error en el servidor.",
+            details = "Ha ocurrido un error en la solicitud."
         };
 
-        return context.Response.WriteAsJsonAsync(result);
+        // Personaliza el mensaje según el tipo de excepción
+        if (ex is ArgumentNullException)
+        {
+            response = new
+            {
+                status = (int)HttpStatusCode.BadRequest,
+                message = "Error de validación.",
+                details = "Falta un argumento obligatorio."
+            };
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        }
+        else if (ex is UnauthorizedAccessException)
+        {
+            response = new
+            {
+                status = (int)HttpStatusCode.Forbidden,
+                message = "Acceso denegado.",
+                details = "No tienes permisos para acceder a este recurso."
+            };
+            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+        }
+
+        context.Response.ContentType = "application/json";
+        return context.Response.WriteAsJsonAsync(response);
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception ex)
+    private Task HandleUnauthorizedAsync(HttpContext context)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-        // Personalizar el mensaje según el tipo de excepción.
-        var result = new
+        var response = new
         {
-            message = "Ocurrió un error en el servidor.",
-            details = ex.Message // Optional: Include exception details for debugging
+            status = (int)HttpStatusCode.Unauthorized,
+            message = "No estás autenticado.",
+            details = "El token de autenticación es inválido o ha expirado."
         };
 
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        return context.Response.WriteAsJsonAsync(response);
+    }
 
-        return context.Response.WriteAsJsonAsync(result);
+    private Task HandleForbiddenAsync(HttpContext context)
+    {
+        var response = new
+        {
+            status = (int)HttpStatusCode.Forbidden,
+            message = "Acceso denegado.",
+            details = "No tienes permiso para acceder a este recurso."
+        };
+
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+        return context.Response.WriteAsJsonAsync(response);
     }
 }

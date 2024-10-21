@@ -10,6 +10,7 @@ namespace Servicios
         Task<UsuarioDTO> CrearUsuarioAsync(UsuarioRegistroDTO UsuarioRegistro);
         Task<List<UsuarioDTO>> ObtenerUsuariosAsync();
         Task<UsuarioDTO> ObtenerUsuarioPorEmailAsync(string email);
+
         //List<UsuarioDTO> ObtenerUsers();
         //void CrearUsuario(UsuarioDTO usuario);
     }

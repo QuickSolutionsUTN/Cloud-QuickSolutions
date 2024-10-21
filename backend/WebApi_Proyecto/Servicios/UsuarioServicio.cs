@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DALCodeFirst;
 using System.Data;
 using Serilog;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Servicios
 
@@ -97,6 +98,7 @@ namespace Servicios
             }
             return usuarioDtos;// Devuelve la lista de DTOs
         }
+
         public async Task<UsuarioDTO> ObtenerUsuarioPorEmailAsync(string email)
         {
             var usuario = await _userManager.FindByEmailAsync(email);
@@ -110,7 +112,14 @@ namespace Servicios
 
             var usuarioDto = _mapper.Map<UsuarioDTO>(usuario);
 
+  
             var roles = await _userManager.GetRolesAsync(usuario);
+
+            if (roles==null || roles.Count==0)
+            {
+                return null;
+            }
+
             usuarioDto.Rol = roles.FirstOrDefault();
 
             return usuarioDto;
