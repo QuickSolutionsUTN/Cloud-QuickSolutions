@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import '../styles/modalLoginForm.css';
 import { useForm } from 'react-hook-form';
@@ -8,10 +8,10 @@ import AuthContext from '../contexts/AuthContext';
 
 function LoginForm({ show, onClose, onSubmit }) {
   
-  
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleFormSubmit = async (data) => {
     //console.log(data);
@@ -66,7 +66,7 @@ function LoginForm({ show, onClose, onSubmit }) {
       
     } catch (error) {
       console.error('Error al hacer login:', error);
-      alert(error.message);
+      setErrorMessage(error.message);
     }
   };
 
@@ -82,7 +82,7 @@ function LoginForm({ show, onClose, onSubmit }) {
             <Form.Control 
               type="email" 
               placeholder="Ingrese correo electronico"
-              className={errors.email ? 'error-input' : ''}
+              className={errors.email || errorMessage ? 'error-input' : ''}
               {...register('email', { 
                 required: '*Campo obligatorio', 
                 pattern: {
@@ -99,13 +99,13 @@ function LoginForm({ show, onClose, onSubmit }) {
             <Form.Control
               type="password" 
               placeholder="Ingrese contraseña"
-              className={errors.password ? 'error-input' : ''} 
+              className={errors.password || errorMessage ? 'error-input' : ''} 
               {...register('password', { required: '*Campo obligatorio' })} 
             />
             {errors.password && <p className="error-message">{errors.password.message}</p>}
           </Form.Group>
-
-          <Button className="full-width-button" variant="primary" type="submit">
+          {errorMessage && <p className="error-message" style={{ marginTop: '10px', marginBottom: '5px' }}>*{errorMessage}</p>}
+          <Button className={`full-width-button ${errorMessage ? 'button-error' : ''}`} variant="primary" type="submit">
             Iniciar sesión
           </Button>
           <div className="button-group">

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 
 import TopNavbar from './TopNavbar.jsx';
 import LoginButton from './LoginButton.jsx';
@@ -57,6 +57,7 @@ function MainLayout() {
         onClose={handleLoginClose}
         onSubmit={handleLoginSubmit} />
       }
+      <Outlet />
     </>
   );
 }

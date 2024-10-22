@@ -71,3 +71,7 @@
     margin-top: 0;
     padding: 0;
 }
+
+.button-error {
+    margin: 0; /* Ajusta el margen según sea necesario */
+  }

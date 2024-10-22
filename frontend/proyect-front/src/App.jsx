@@ -28,11 +28,12 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <MainLayout/>
         <Routes>
-          <Route path="/catalog" element={<Catalog />} />
-          <Route path="/admin" element={<ProtectedRoute roleRequired="admin"><AdminPage /></ProtectedRoute>} />
-          <Route path="/maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancePage /></ProtectedRoute>} />
+          <Route path="/" element={<MainLayout />}>
+            <Route path="catalog" element={<Catalog />} />
+            <Route path="admin" element={<ProtectedRoute roleRequired="admin"><AdminPage /></ProtectedRoute>} />
+            <Route path="maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancePage /></ProtectedRoute>} />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>
