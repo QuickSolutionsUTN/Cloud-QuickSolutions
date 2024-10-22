@@ -21,7 +21,7 @@ namespace DALCodeFirst.Modelos
         [Required]  // FK requerida
         public int IdMarca { get; set; }
 
-        [ForeignKey("Marca")]
+        [ForeignKey("IdMarca")]
         public Marca Marca { get; set; }
 
         [Required]  // FK requerida
@@ -30,6 +30,5 @@ namespace DALCodeFirst.Modelos
         [ForeignKey("IdEstadoEquipo")]
         public EstadoEquipo EstadoEquipo { get; set; }
     }
-
 }
 

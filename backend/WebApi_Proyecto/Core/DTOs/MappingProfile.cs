@@ -20,7 +20,12 @@ namespace Core.DTOs
 
             CreateMap<RolDTO, Rol>();
 
-            CreateMap<EquipoDTO, Equipo>();
+            CreateMap<EquipoInDTO, Equipo>();
+
+            CreateMap<Equipo, EquipoOutDTO>()
+                .ForMember(dest => dest.Marca, opt => opt.MapFrom(src => src.Marca.Descripcion)) // Obtiene el nombre de la marca
+                .ForMember(dest => dest.EstadoEquipo, opt => opt.MapFrom(src => src.EstadoEquipo.Descripcion)); // Obtiene el nombre del estado
+
         }
     }
 }

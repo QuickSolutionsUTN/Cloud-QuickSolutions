@@ -11,13 +11,13 @@ namespace DALCodeFirst.Modelos
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]//Autoincremental
         public int Id { get; set; }
 
-        [ForeignKey("Usuario")]
+        [ForeignKey("IdUsuario")]
         public Usuario Usuario { get; set; }
 
         [Required]  // FK
-        public int IdUsuario { get; set; }
+        public string IdUsuario { get; set; }
 
-        [ForeignKey("Equipo")]
+        [ForeignKey("IdEquipo")]
         public Equipo Equipo { get; set; }
 
         [Required]  // FK
@@ -31,9 +31,9 @@ namespace DALCodeFirst.Modelos
         public DateTime FechaInicio { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime FechaFIn { get; set; }
+        public DateTime FechaFin { get; set; }
 
-        [ForeignKey("SolicitudAlquilerEstado")]
+        [ForeignKey("IdSolicitudAlquilerEstado")]
         public SolicitudAlquilerEstado SolicitudAlquilerEstado { get; set; }
 
         [Required]  // FK

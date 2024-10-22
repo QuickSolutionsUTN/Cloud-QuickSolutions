@@ -18,6 +18,14 @@ public class ExceptionMiddleware
         {
             //para intermediar la solicitud http
             await _next(httpContext);
+
+            // Manejar errores de validación
+            if (httpContext.Response.StatusCode == StatusCodes.Status400BadRequest &&
+                httpContext.Items.ContainsKey("ValidationErrors"))
+            {
+                var validationErrors = httpContext.Items["ValidationErrors"] as IDictionary<string, string[]>;
+                await HandleValidationErrorsAsync(httpContext, validationErrors);
+            }
         }
         catch (Exception ex)
         {
@@ -39,6 +47,19 @@ public class ExceptionMiddleware
         }
     }
 
+    private Task HandleValidationErrorsAsync(HttpContext context, IDictionary<string, string[]> validationErrors)
+    {
+        var response = new
+        {
+            status = (int)HttpStatusCode.BadRequest,
+            message = "Errores de validación.",
+            errors = validationErrors
+        };
+
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        return context.Response.WriteAsJsonAsync(response);
+    }
     private Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
         _logger.LogError(ex, "Ha ocurrido un error procesando la solicitud.");

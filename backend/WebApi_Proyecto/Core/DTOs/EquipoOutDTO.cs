@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.DTOs;
-public class EquipoDTO
+public class EquipoOutDTO
 {
     public int Id { get; set; }
 
@@ -11,8 +11,8 @@ public class EquipoDTO
 
     public string Descripcion { get; set; }
 
-    public int IdMarca { get; set; }
+    public int Marca { get; set; }
 
-    public int IdEstadoEquipo { get; set; }
+    public int EstadoEquipo { get; set; }
 
 }
