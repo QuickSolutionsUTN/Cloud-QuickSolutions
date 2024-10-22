@@ -14,6 +14,8 @@ public partial class WebAPIContext : IdentityDbContext<Usuario, Rol, string>
 {
     public WebAPIContext(DbContextOptions<WebAPIContext> options) : base(options) { }
 
+    public DbSet<Equipo> Equipo { get; set; }
+    //public DbSet<Producto> Productos { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

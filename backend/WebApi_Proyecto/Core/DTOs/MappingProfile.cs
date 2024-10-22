@@ -19,6 +19,8 @@ namespace Core.DTOs
                 //.ForMember(dest => dest.Rol, opt => opt.MapFrom(src => _userManager.GetRolesAsync(src).Result.FirstOrDefault()));
 
             CreateMap<RolDTO, Rol>();
+
+            CreateMap<EquipoDTO, Equipo>();
         }
     }
 }
