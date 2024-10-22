@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 
-import TopNavbar from './TopNavbar.jsx';
-import LoginButton from './LoginButton.jsx';
-import LogoutButton from './LogoutButton.jsx';
+import TopNavbar from '../components/TopNavbar.jsx';
+import LoginButton from '../components/LoginButton.jsx';
+import LogoutButton from '../components/LogoutButton.jsx';
+import LoginForm from '../components/ModalLoginForm.jsx';
 import logo from '../assets/images/logo.png';
-import LoginForm from './ModalLoginForm.jsx';
 
 import AuthContext from '../contexts/AuthContext.jsx';
 
@@ -37,15 +37,15 @@ function MainLayout() {
 
   return (
     <>
-      {location.pathname !== '/admin' && location.pathname !== '/maintenance' && (
-        <>
-          <header>
+      <header>
             {isAuthenticated ? (
               <LogoutButton onLogoutClick={handleLogoutClick} className="login-button" />
             ) : (
               <LoginButton onLoginClick={handleLoginClick} className="login-button" />
             )}
           </header>
+      {location.pathname !== '/admin' && location.pathname !== '/maintenance' && (
+        <>
           <div className='logo'>
             <img src={logo} alt="Logo" />
           </div>

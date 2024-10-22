@@ -40,9 +40,10 @@
   top: 25%;
   left: 15%;
   border-radius: 15px;
-
 }
 .main-topnav a {
+  color: white;
+  text-decoration: nonexX;
   margin: 0 10px;
 }
 .main-topnav a:hover {

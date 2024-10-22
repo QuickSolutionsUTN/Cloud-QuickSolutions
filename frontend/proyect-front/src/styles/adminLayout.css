@@ -1,0 +1,14 @@
+header{
+    height: 70px;
+    width: 100%;
+    background-color: #D55403;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+};
+
+p{
+    color: white;
+    display: inline;
+
+}
