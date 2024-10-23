@@ -29,7 +29,11 @@ namespace Servicios
 
         public async Task<EquipoOutDTO> ObtenerEquipoPorIdAsync(int id)
         {
-            var equipo= await _context.Equipo.FirstOrDefaultAsync(e => e.Id == id);
+            var equipo= await _context.Equipo
+                .Include(e => e.Marca)
+                .Include(e => e.EstadoEquipo)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
             return _mapper.Map<EquipoOutDTO>(equipo);
         }
 
@@ -45,17 +49,18 @@ namespace Servicios
 
         public async Task<bool> ActualizarEquipoAsync(EquipoOutDTO equipoDTOOut)
         {
-            var equipo = await _context.Equipo.FindAsync(equipoDTOOut.Id);
-            if (equipo == null)
-            {
-                return false; 
-            }
-            // Actualiza los detalles del equipo
-            equipo.Nombre = equipoDTOOut.Nombre;
-            equipo.Descripcion = equipoDTOOut.Descripcion;
-            equipo.IdMarca = equipoDTOOut.Marca;
-            equipo.IdEstadoEquipo = equipoDTOOut.EstadoEquipo;
-            await _context.SaveChangesAsync();
+            //var equipo = await _context.Equipo.FindAsync(equipoDTOOut.Id);
+            //if (equipo == null)
+            //{
+            //    return false; 
+            //}
+            //// Actualiza los detalles del equipo
+            //equipo.Nombre = equipoDTOOut.Nombre;
+            //equipo.Descripcion = equipoDTOOut.Descripcion;
+            //equipo.IdMarca = equipoDTOOut.Marca;
+            //equipo.IdEstadoEquipo = equipoDTOOut.EstadoEquipo;
+
+            //await _context.SaveChangesAsync();
             return true;
         }
 

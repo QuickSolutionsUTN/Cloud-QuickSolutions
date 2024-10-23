@@ -14,15 +14,13 @@ namespace WebAPI.Controllers
     public class EquipoController : ControllerBase
     {
         private readonly IEquipoServicio _equipoServicio;
-        private readonly WebAPIContext _context;
         private readonly IValidator<EquipoInDTO> _validator;
         private readonly ILogger<EquipoController> _logger;
 
 
-        public EquipoController(IEquipoServicio equipoServicio, WebAPIContext context, ILogger<EquipoController> logger, IValidator<EquipoInDTO> validator)
+        public EquipoController(IEquipoServicio equipoServicio, ILogger<EquipoController> logger, IValidator<EquipoInDTO> validator)
         {
             _equipoServicio = equipoServicio;
-            _context = context;
             _logger = logger;
             _validator= validator;
         }

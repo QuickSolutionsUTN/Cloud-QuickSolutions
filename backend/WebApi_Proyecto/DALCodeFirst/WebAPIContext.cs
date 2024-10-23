@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 public partial class WebAPIContext : IdentityDbContext<Usuario, Rol, string>
 {
     public WebAPIContext(DbContextOptions<WebAPIContext> options) : base(options) { }
-
     public DbSet<Equipo> Equipo { get; set; }
     public DbSet<EstadoEquipo> EstadoEquipo { get; set; }
     public DbSet<Marca> Marca { get; set; }

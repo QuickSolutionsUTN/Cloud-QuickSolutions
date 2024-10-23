@@ -11,8 +11,8 @@ public class EquipoOutDTO
 
     public string Descripcion { get; set; }
 
-    public int Marca { get; set; }
+    public string Marca { get; set; }
 
-    public int EstadoEquipo { get; set; }
+    public string EstadoEquipo { get; set; }
 
 }

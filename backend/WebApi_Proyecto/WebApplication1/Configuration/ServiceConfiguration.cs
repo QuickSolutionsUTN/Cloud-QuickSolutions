@@ -94,6 +94,7 @@ public static class ServiceConfiguration
         builder.Services.AddScoped<IRolServicio, RolServicio>();
         builder.Services.AddScoped<IMarcaServicio, MarcaServicio>();
         builder.Services.AddScoped<IEquipoServicio, EquipoServicio>();
+        builder.Services.AddScoped<IEstadoEquipoServicio, EstadoEquipoServicio>();
 
         //Identity
         builder.Services.AddIdentity<Usuario, Rol>(options =>

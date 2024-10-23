@@ -14,11 +14,10 @@ namespace Servicios
     public class MarcaServicio : IMarcaServicio
 
     {
-        public readonly IMapper _mapper;
+
         private readonly WebAPIContext _context;
-        public MarcaServicio(IMapper mapper, WebAPIContext context)
+        public MarcaServicio(WebAPIContext context)
         {
-            _mapper = mapper;
             _context = context;
         }
 
