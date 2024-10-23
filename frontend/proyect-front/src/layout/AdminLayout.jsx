@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/adminLayout.css';
 import AuthContext from '../contexts/AuthContext.jsx';
 import AsideBar from '../components/AdminAsideBar.jsx';

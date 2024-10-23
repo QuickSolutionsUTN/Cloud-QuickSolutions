@@ -1,21 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Nav } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-const AdminAsideBar = () => {
+const Side = () => {
+    const navigate = useNavigate();
+
     return (
-        <aside className="admin-aside-bar">
-            <nav>
-                <ul>
-                    <li className='li-title'>Solicitudes</li>
-                    <li><Link to="/admin/rent">  de alquiler</Link></li>
-                    <li><Link to="/admin/maintenance"> de mantenimiento</Link></li>
-                    <li className='li-title'>Administracion</li>
-                    <li><Link to="/admin/catalog"> de catalogo</Link></li>
-                    <li><Link to="/admin/catalog"> de usuarios</Link></li>
-                </ul>
-            </nav>
-        </aside>
+        <>
+            <Nav
+                className="admin-aside col-md-12 d-none d-md-block bg-light h-100"
+                activeKey="/home"
+                onSelect={selectedKey => {
+                    alert(`selected ${selectedKey}`);
+                    navigate(selectedKey);
+                }}
+            >
+                <Nav.Item className="nav-item-section-title">
+                    <span className="title-section">Solicitudes</span>
+                </Nav.Item>
+                <Nav.Item className="nav-item">
+                    <Nav.Link href="/rental">de alquiler</Nav.Link>
+                </Nav.Item>
+                <Nav.Item className="nav-item">
+                    <Nav.Link eventKey="/maintenance">de mantenimiento</Nav.Link>
+                </Nav.Item>
+                <Nav.Item className="nav-item-section-title">
+                    <span className="title-section">Administración</span>
+                </Nav.Item>
+                <Nav.Item className="nav-item">
+                    <Nav.Link eventKey="/catalog">de catalogo</Nav.Link>
+                </Nav.Item>
+                <Nav.Item className="nav-item">
+                    <Nav.Link eventKey="/users">de usuarios</Nav.Link>
+                </Nav.Item>
+            </Nav>
+        </>
     );
 };
 
-export default AdminAsideBar;
+export default Side;

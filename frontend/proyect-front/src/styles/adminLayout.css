@@ -1,13 +1,11 @@
-adminLayout css
-
 html, body {
-    height: 100%;|
+    height: 100%;
     margin: 0;
     padding: 0;
 }
 
 #root {
-    height: 100%;
+    height: 100vh;
 }
 
 .admin-layout {
@@ -25,10 +23,43 @@ html, body {
     justify-content: flex-start;
 }
 
+.admin-aside{
+    width: 200px;
+    height: calc(100-70px);
+    padding-top: 20px;
+}
+
 .admin-p{
     color: white;
     display: inline;
     margin: 0;
     padding-left: 30px;
+}
+
+.admin-aside{
+    padding: 3% 0 0 0;
+}
+
+.nav-item {
+    width: 100%;
+    text-align: left;
+    padding: 3% 0 3% 10%;
+}
+
+.nav-item:hover {
+    background-color: rgb(212, 212, 212);
+}
+
+.nav-item a {
+    color: black;
+}
+
+.nav-item-section-title {
+    color: black;
+    font-weight: bold;
+    text-align: left;
+    padding: 3% 0 3% 10%;
+    pointer-events: none;
+    user-select: none;
 }
 

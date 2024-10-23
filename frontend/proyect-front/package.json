@@ -13,9 +13,11 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
     "jwt-decode": "^4.0.0",
+    "node-sass": "^9.0.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
     "react-bootstrap-icons": "^1.11.4",
+    "react-bootstrap-sidebar-menu": "^2.0.3",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
     "react-router-dom": "^6.27.0"
@@ -30,7 +32,7 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.12",
     "globals": "^15.9.0",
-    "sass": "^1.79.5",
+    "sass": "^1.80.3",
     "vite": "^5.4.9"
   }
 }
