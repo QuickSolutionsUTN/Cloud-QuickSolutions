@@ -1,21 +1,49 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import SidebarMenu from 'react-bootstrap-sidebar-menu';
 
-const AdminAsideBar = () => {
+function CustomSideBar() {
     return (
-        <aside className="admin-aside-bar">
-            <nav>
-                <ul>
-                    <li className='li-title'>Solicitudes</li>
-                    <li><Link to="/admin/rent">  de alquiler</Link></li>
-                    <li><Link to="/admin/maintenance"> de mantenimiento</Link></li>
-                    <li className='li-title'>Administracion</li>
-                    <li><Link to="/admin/catalog"> de catalogo</Link></li>
-                    <li><Link to="/admin/catalog"> de usuarios</Link></li>
-                </ul>
-            </nav>
-        </aside>
+      <SidebarMenu>
+        <SidebarMenu.Header>
+          <SidebarMenu.Brand>
+            {/* Your brand icon */}
+          </SidebarMenu.Brand>
+          <SidebarMenu.Toggle />
+        </SidebarMenu.Header>
+        <SidebarMenu.Body>
+          <SidebarMenu.Nav>
+            <SidebarMenu.Nav.Link>
+              <SidebarMenu.Nav.Icon>
+                {/* Menu item icon */}
+              </SidebarMenu.Nav.Icon>
+              <SidebarMenu.Nav.Title>
+                {/* Menu item title */}
+              </SidebarMenu.Nav.Title>
+            </SidebarMenu.Nav.Link>
+          </SidebarMenu.Nav>
+          <SidebarMenu.Sub>
+            <SidebarMenu.Sub.Toggle>
+              <SidebarMenu.Nav.Icon />
+              <SidebarMenu.Nav.Title>
+                {/* Submenu title */}
+              </SidebarMenu.Nav.Title>
+            </SidebarMenu.Sub.Toggle>
+            <SidebarMenu.Sub.Collapse>
+              <SidebarMenu.Nav>
+                <SidebarMenu.Nav.Link>
+                  <SidebarMenu.Nav.Icon>
+                    {/* Submenu item icon */}
+                  </SidebarMenu.Nav.Icon>
+                  <SidebarMenu.Nav.Title>
+                    {/* Submenu item title */}
+                  </SidebarMenu.Nav.Title>
+                </SidebarMenu.Nav.Link>
+              </SidebarMenu.Nav>
+            </SidebarMenu.Sub.Collapse>
+          </SidebarMenu.Sub>
+        </SidebarMenu.Body>
+      </SidebarMenu>
     );
-};
-
-export default AdminAsideBar;
+  }
+  
+  export default CustomSideBar;
