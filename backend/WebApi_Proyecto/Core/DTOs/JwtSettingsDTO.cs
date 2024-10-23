@@ -13,6 +13,7 @@ namespace Core.DTOs
 
         [Required]
         public string Audience { get; set; } = string.Empty;
+
         [Required]
         public int TokenExpiryInMinutes { get; set; }
     }

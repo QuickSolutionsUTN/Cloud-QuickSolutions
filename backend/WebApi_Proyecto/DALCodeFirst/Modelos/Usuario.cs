@@ -9,11 +9,11 @@ namespace DALCodeFirst.Modelos
     {
 
         //IdentityUser ya tiene Id, UserName, Email, PasswordHash
-        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        [Required]
         [StringLength(100, ErrorMessage = "El nombre no puede exceder los 100 caracteres.")]
         public string Nombre { get; set; }
 
-        [Required(ErrorMessage = "El apellido es obligatorio.")]
+        [Required]
         [StringLength(100, ErrorMessage = "El apellido no puede exceder los 100 caracteres.")]
         public string Apellido { get; set; }
 
