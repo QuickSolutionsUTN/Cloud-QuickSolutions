@@ -1,49 +1,24 @@
 import React from 'react';
-import SidebarMenu from 'react-bootstrap-sidebar-menu';
 
-function CustomSideBar() {
+import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+
+const SidebarComponent = () => {
+
   return (
-    <SidebarMenu>
-      <SidebarMenu.Header>
-        <SidebarMenu.Brand>
-          {/* Your brand icon */}
-        </SidebarMenu.Brand>
-        <SidebarMenu.Toggle />
-      </SidebarMenu.Header>
-      <SidebarMenu.Body>
-        <SidebarMenu.Nav>
-          <SidebarMenu.Nav.Link>
-            <SidebarMenu.Nav.Icon>
-              {/* Menu item icon */}
-            </SidebarMenu.Nav.Icon>
-            <SidebarMenu.Nav.Title>
-              {/* Menu item title */}
-            </SidebarMenu.Nav.Title>
-          </SidebarMenu.Nav.Link>
-        </SidebarMenu.Nav>
-        <SidebarMenu.Sub>
-          <SidebarMenu.Sub.Toggle>
-            <SidebarMenu.Nav.Icon />
-            <SidebarMenu.Nav.Title>
-              {/* Submenu title */}
-            </SidebarMenu.Nav.Title>
-          </SidebarMenu.Sub.Toggle>
-          <SidebarMenu.Sub.Collapse>
-            <SidebarMenu.Nav>
-              <SidebarMenu.Nav.Link>
-                <SidebarMenu.Nav.Icon>
-                  {/* Submenu item icon */}
-                </SidebarMenu.Nav.Icon>
-                <SidebarMenu.Nav.Title>
-                  {/* Submenu item title */}
-                </SidebarMenu.Nav.Title>
-              </SidebarMenu.Nav.Link>
-            </SidebarMenu.Nav>
-          </SidebarMenu.Sub.Collapse>
-        </SidebarMenu.Sub>
-      </SidebarMenu.Body>
-    </SidebarMenu>
-  );
-}
 
-export default CustomSideBar;
+    <Sidebar>
+      <Menu>
+        <SubMenu label="Charts">
+          <MenuItem> Pie charts </MenuItem>
+          <MenuItem> Line charts </MenuItem>
+        </SubMenu>
+        <MenuItem> Documentation </MenuItem>
+        <MenuItem> Calendar </MenuItem>
+      </Menu>
+    </Sidebar>
+
+  );
+
+};
+
+export default SidebarComponent;

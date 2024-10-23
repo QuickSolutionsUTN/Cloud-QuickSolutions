@@ -52,7 +52,7 @@ public static class ServiceConfiguration
 
         //dbContext
         builder.Services.AddDbContext<WebAPIContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         //controladores
         builder.Services.AddControllers(options =>
