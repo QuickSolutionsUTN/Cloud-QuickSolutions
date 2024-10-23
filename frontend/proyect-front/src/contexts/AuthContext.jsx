@@ -9,15 +9,15 @@ export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(() => {
     return localStorage.getItem('role');
   });
-  const [username, setUsername] = useState('');
+  //const [username, setUsername] = useState('');
 
   const login = (userRole) => {
     setIsAuthenticated(true);
     setRole(userRole);
-    setUsername(user.username);
+    //setUsername(user.username);
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('role', userRole);
-    localStorage.setItem('username', user.username);
+    //localStorage.setItem('username', user.username);
   };
 
 //prueba
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     setUsername('');
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('role');
-    localStorage.removeItem('username');
+    //localStorage.removeItem('username');
   };
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
   }, [isAuthenticated, role]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, role, username, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, /*username,*/ login, logout }}>
       {children}
     </AuthContext.Provider>
   );

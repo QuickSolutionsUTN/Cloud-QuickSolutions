@@ -1,14 +1,34 @@
-header{
+adminLayout css
+
+html, body {
+    height: 100%;|
+    margin: 0;
+    padding: 0;
+}
+
+#root {
+    height: 100%;
+}
+
+.admin-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.admin-header{
     height: 70px;
     width: 100%;
     background-color: #D55403;
     display: flex;
     align-items: center;
-    justify-content: center;
-};
+    justify-content: flex-start;
+}
 
-p{
+.admin-p{
     color: white;
     display: inline;
-
+    margin: 0;
+    padding-left: 30px;
 }
+
