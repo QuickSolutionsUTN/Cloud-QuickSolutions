@@ -9,6 +9,10 @@ using Servicios;
 using DALCodeFirst;
 using Core.DTOs;
 using DALCodeFirst.Modelos;
+using FluentAssertions.Common;
+using FluentValidation.AspNetCore;
+using WebAPI.Validators;
+using FluentValidation;
 
 public static class ServiceConfiguration
 {
@@ -88,6 +92,9 @@ public static class ServiceConfiguration
         builder.Services.AddScoped<ITokenServicio, TokenServicio>();
         builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
         builder.Services.AddScoped<IRolServicio, RolServicio>();
+        builder.Services.AddScoped<IMarcaServicio, MarcaServicio>();
+        builder.Services.AddScoped<IEquipoServicio, EquipoServicio>();
+        builder.Services.AddScoped<IEstadoEquipoServicio, EstadoEquipoServicio>();
 
         //Identity
         builder.Services.AddIdentity<Usuario, Rol>(options =>
@@ -114,6 +121,10 @@ public static class ServiceConfiguration
                 return Task.CompletedTask;
             };
         });
+
+
+        builder.Services.AddTransient<IValidator<EquipoInDTO>, CrearEquipoValidator>();
+       // builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CrearEquipoValidator>());
 
         // Añadir CORS para probar los endpoints en modo local (testing)
         builder.Services.AddCors(options =>

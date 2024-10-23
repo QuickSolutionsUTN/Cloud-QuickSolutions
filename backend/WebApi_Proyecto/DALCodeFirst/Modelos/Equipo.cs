@@ -1,12 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DALCodeFIrst.Modelos
+namespace DALCodeFirst.Modelos
 {
-    internal class Equipo
+    [Table("Equipo")]
+    public class Equipo
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]//Autoincremental
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string Nombre { get; set; }
+
+        [Required]
+        [MaxLength(200)]
+        public string Descripcion { get; set; }
+
+        [Required]  // FK requerida
+        public int IdMarca { get; set; }
+
+        [ForeignKey("IdMarca")]
+        public Marca Marca { get; set; }
+
+        [Required]  // FK requerida
+        public int IdEstadoEquipo { get; set; }
+
+        [ForeignKey("IdEstadoEquipo")]
+        public EstadoEquipo EstadoEquipo { get; set; }
     }
 }
+
