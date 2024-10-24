@@ -1,0 +1,18 @@
+.progress-bar, .custom-progress{
+  background-color: #D55403; /* Cambia a tu color preferido */
+}
+
+.steps-tittle-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.step.inactive{
+  color: grey; /* Cambia a tu color preferido */
+}
+
+.step.active {
+  background:transparent;
+  color: #D55403; 
+}

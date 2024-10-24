@@ -5,10 +5,12 @@ import './styles/app.css';
 
 import MainLayout from './layout/MainLayout.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';
-import MaintenancePage from './pages/MaintenancesPage.jsx';
 import SolicitudReparacion from './pages/SolicitudPage.jsx';
 
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
+import MaintenancesPage from './pages/MaintenancesPage.jsx';
+import RepairsPage from './pages/RepairsPage.jsx';
+import AboutUsPage from './pages/AboutUsPage.jsx';
 
 function App() {
   const ProtectedRoute = ({ children, roleRequired }) => {
@@ -30,10 +32,12 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<MainLayout />}>
-            <Route path="solicitud" element={<SolicitudReparacion />} />
-            <Route path="catalog" element={<Catalog />} />
-            <Route path="admin" element={<ProtectedRoute roleRequired="admin"><AdminLayout/></ProtectedRoute>} />
-            <Route path="maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancePage /></ProtectedRoute>} />
+            <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>} />
+            <Route path="maintenance" element={<ProtectedRoute roleRequired="maitenance"><MaintenancesPage /></ProtectedRoute>} />
+            <Route path="/repairs" element={<RepairsPage />} />
+            <Route path="/solicitudes" element={<SolicitudReparacion />} />
+            <Route path="/maintenances" element={<MaintenancesPage />} />
+            <Route path="/aboutUs" element={<AboutUsPage />} />
           </Route>
         </Routes>
       </Router>
