@@ -4,9 +4,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/app.css';
 
 import MainLayout from './layout/MainLayout.jsx';
-import Catalog from './pages/CatalogPage.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';
-import MaintenancePage from './pages/MaintenancePage.jsx';
+import RepairsPage from './pages/RepairsPage.jsx';
+import MaintenancesPage from './pages/MaintenancesPage.jsx';
+import AboutUsPage from './pages/AboutUsPage.jsx';
 
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
 
@@ -30,9 +31,11 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<MainLayout />}>
-            <Route path="catalog" element={<Catalog />} />
-            <Route path="admin" element={<ProtectedRoute roleRequired="admin"><AdminLayout/></ProtectedRoute>} />
-            <Route path="maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancePage /></ProtectedRoute>} />
+          <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout/></ProtectedRoute>} />
+            <Route path="maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancesPage /></ProtectedRoute>} />
+            <Route path="/repairs" element={<RepairsPage />} />
+            <Route path="/maintenances" element={<MaintenancesPage />} />
+            <Route path="/aboutUs" element={<AboutUsPage />} />
           </Route>
         </Routes>
       </Router>
