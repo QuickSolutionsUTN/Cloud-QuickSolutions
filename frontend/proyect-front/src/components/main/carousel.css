@@ -1,0 +1,9 @@
+/* Estilo para el texto h3 */
+.carousel .carousel-caption h3 {
+  color: white !important; /* Color blanco para el texto h3 */
+}
+
+/* Estilo para el texto p */
+.carousel .carousel-caption p {
+  color: gray !important; /* Color gris para el texto p */
+}

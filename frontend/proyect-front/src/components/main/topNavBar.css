@@ -1,0 +1,79 @@
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  color: black;
+  padding: 0 2%;
+}
+
+nav .logo {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+nav .logo img {
+  height: 70px;
+}
+
+nav .menu {
+  display: flex;
+  align-items: center;
+}
+
+nav .menu .dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+nav .menu .dropdown-content {
+  display: flex;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+nav .menu .dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+nav .menu .dropdown-content a:hover {
+  background-color: #ea7f32;
+  color: white;
+}
+
+nav .menu .dropdown:hover .dropdown-content {
+  display: flex;
+}
+
+nav .buttons {
+  display: flex;
+  align-items: center;
+}
+
+nav .buttons .auth-btn,
+nav .buttons .join-btn {
+  background-color: #D55403;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 15px;
+  color: white;
+}
+
+nav .menu .dropdown .dropbtn {
+  all: unset; /* Eliminar todos los estilos */
+  cursor: pointer; /* Añadir cursor de puntero */
+}

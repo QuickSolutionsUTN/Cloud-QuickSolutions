@@ -1,14 +1,13 @@
 import React, { useContext } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 import '../styles/MainLayout.css';
+import AuthContext from '../contexts/AuthContext.jsx';
 
 import TopNavbar from '../components/main/TopNavbar.jsx';
-import LoginButton from '../components/LoginButton.jsx';
-import LogoutButton from '../components/LogoutButton.jsx';
 import LoginForm from '../components/ModalLoginForm.jsx';
-import logo from '../assets/images/logo.png';
+import CustomCarousel from '../components/main/carousel.jsx';
 
-import AuthContext from '../contexts/AuthContext.jsx';
+
 
 function MainLayout() {
   const location = useLocation();
@@ -39,26 +38,22 @@ function MainLayout() {
   return (
     <>
       <header>
-            {isAuthenticated ? (
-              <LogoutButton onLogoutClick={handleLogoutClick} className="login-button" />
-            ) : (
-              <LoginButton onLoginClick={handleLoginClick} className="login-button" />
-            )}
-          </header>
-      {location.pathname !== '/admin' && location.pathname !== '/maintenance' && (
-        <>
-          <div className='logo'>
-            <img src={logo} alt="Logo" />
-          </div>
-          <TopNavbar />
-        </>
+        <TopNavbar
+          isAuthenticated={isAuthenticated}
+          onLoginClick={handleLoginClick}
+          onLogoutClick={handleLogoutClick}
+        />
+      </header>
+      {showLoginForm && (
+        <LoginForm
+          show={showLoginForm}
+          onClose={handleLoginClose}
+          onSubmit={handleLoginSubmit}
+        />
       )}
-      {showLoginForm && <LoginForm
-        show={showLoginForm}
-        onClose={handleLoginClose}
-        onSubmit={handleLoginSubmit} />
-      }
-      <Outlet />
+      <div className='carousel'>
+        <CustomCarousel/>
+      </div>
     </>
   );
 }
