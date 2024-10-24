@@ -11,7 +11,6 @@ const pasos = [
 
 export default function Formulario() {
     const [pasoActual, setPasoActual] = useState(0);
-
     const avanzarPaso = () => {
         setPasoActual((prevPaso) => Math.min(prevPaso + 1, pasos.length - 1));
     };
