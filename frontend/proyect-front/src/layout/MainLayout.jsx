@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
+import '../styles/MainLayout.css';
 
-import TopNavbar from '../components/MainTopNavbar.jsx';
+import TopNavbar from '../components/main/TopNavbar.jsx';
 import LoginButton from '../components/LoginButton.jsx';
 import LogoutButton from '../components/LogoutButton.jsx';
 import LoginForm from '../components/ModalLoginForm.jsx';

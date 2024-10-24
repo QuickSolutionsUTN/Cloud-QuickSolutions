@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/app.css';
 
 import MainLayout from './layout/MainLayout.jsx';
-import Catalog from './pages/CatalogPage.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';
 import MaintenancePage from './pages/MaintenancePage.jsx';
 import SolicitudReparacion from './pages/SolicitudPage.jsx';
