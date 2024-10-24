@@ -5,7 +5,7 @@ import './styles/app.css';
 
 import MainLayout from './layout/MainLayout.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';
-import MaintenancePage from './pages/MaintenancePage.jsx';
+import MaintenancePage from './pages/MaintenancesPage.jsx';
 import SolicitudReparacion from './pages/SolicitudPage.jsx';
 
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
