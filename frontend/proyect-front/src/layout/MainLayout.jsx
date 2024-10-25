@@ -2,6 +2,8 @@ import React, { useContext } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 import '../styles/MainLayout.css';
 import AuthContext from '../contexts/AuthContext.jsx';
+import { Player } from '@lottiefiles/react-lottie-player';
+import delivery from '../assets/images/Truck delivery service.json';
 
 import TopNavbar from '../components/main/TopNavbar.jsx';
 import LoginForm from '../components/ModalLoginForm.jsx';
@@ -54,6 +56,14 @@ function MainLayout() {
       <div className='carousel'>
         <CustomCarousel/>
       </div>
+      <main>
+        <Player
+          autoplay
+          loop
+          src={delivery}
+          style={{ height: '300px', width: '300px' }}
+        />
+      </main>
     </>
   );
 }

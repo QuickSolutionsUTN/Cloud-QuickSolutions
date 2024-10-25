@@ -77,3 +77,7 @@ nav .menu .dropdown .dropbtn {
   all: unset; /* Eliminar todos los estilos */
   cursor: pointer; /* Añadir cursor de puntero */
 }
+
+.logo{
+  cursor: pointer;
+}

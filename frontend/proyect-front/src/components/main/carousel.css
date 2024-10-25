@@ -1,9 +1,21 @@
-/* Estilo para el texto h3 */
+
 .carousel .carousel-caption h3 {
-  color: white !important; /* Color blanco para el texto h3 */
+  color: white !important;
 }
 
-/* Estilo para el texto p */
 .carousel .carousel-caption p {
-  color: gray !important; /* Color gris para el texto p */
+  color: gray !important;
+}
+
+.carousel {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  max-height: 200px;
 }

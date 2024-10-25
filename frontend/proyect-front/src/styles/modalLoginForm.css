@@ -28,6 +28,11 @@
     margin-top: 20px;
 }
 
+.full-width-button.btn-primary {
+    background-color: #D55403;
+    border: transparent;
+}
+
 .full-width-button.btn-secondary {
     background-color: transparent;
     color: grey;
@@ -41,6 +46,10 @@
     background-color: inherit;
     color: inherit;
     border: inherit;
+}
+
+.full-width-button.btn-secondary:hover {
+    color: #D55403; 
 }
 
 .error-message {
