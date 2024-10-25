@@ -1,0 +1,21 @@
+
+.carousel .carousel-caption h3 {
+  color: white !important;
+}
+
+.carousel .carousel-caption p {
+  color: gray !important;
+}
+
+.carousel {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  max-height: 200px;
+}

@@ -1,0 +1,36 @@
+.info-section {
+  margin-top: 20px;
+  transition: color 0.3s, background-color 0.3s; /* Añadir transición para suavizar el cambio de color */
+}
+
+.info-section h6 {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+  transition: color 0.3s; /* Añadir transición para suavizar el cambio de color */
+}
+
+.info-section hr {
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin-bottom: 10px;
+  transition: background-color 0.3s; /* Añadir transición para suavizar el cambio de color */
+}
+
+.info-section p {
+  font-size: 0.9em;
+  color: #666;
+  transition: color 0.3s; /* Añadir transición para suavizar el cambio de color */
+}
+
+.info-section:hover h6 {
+  color: white; /* Cambiar el color del título al pasar el mouse */
+}
+
+.info-section:hover hr {
+  background-color: white; /* Cambiar el color de la línea divisoria al pasar el mouse */
+}
+
+.info-section:hover p {
+  color: white; /* Cambiar el color del contenido al pasar el mouse */
+}
