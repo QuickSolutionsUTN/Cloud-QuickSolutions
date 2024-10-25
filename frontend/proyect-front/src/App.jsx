@@ -6,6 +6,7 @@ import './styles/app.css';
 import MainLayout from './layout/MainLayout.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';
 import SolicitudReparacion from './pages/SolicitudPage.jsx';
+import HomePage from './pages/HomePage.jsx';
 
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
 import MaintenancesPage from './pages/MaintenancesPage.jsx';
@@ -32,6 +33,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<MainLayout />}>
+            <Route index element={<HomePage />} />
             <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>} />
             <Route path="maintenance" element={<ProtectedRoute roleRequired="maitenance"><MaintenancesPage /></ProtectedRoute>} />
             <Route path="/repairs" element={<RepairsPage />} />

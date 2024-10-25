@@ -1,6 +1,6 @@
 import React, { useState , useEffect } from "react";
 import "./topNavBar.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink ,useNavigate} from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { refresh } from "../../utilities/refresh";
 import DropDownCard from "./DropDownCard.jsx"
@@ -9,13 +9,15 @@ export const TopNavbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuOpen2, setMenuOpen2] = useState(false);
 
-  useEffect(() => {
-    refresh('logo'); // Pasa la clase 'logo' para que se recargue la página al hacer clic
-  }, []);
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate('/'); // Redirige a la HomePage
+  };
 
   return (
     <nav>
-      <div className='logo'>
+      <div className='logo' onClick={handleLogoClick}>
         <img src={logo}/>
       </div>
       <div className="menu">
@@ -30,7 +32,7 @@ export const TopNavbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
               <NavLink to="/">
                 <DropDownCard title="Que ofrecemos?" content="Servicio de mantenimiento etc"/>
               </NavLink>
-              <NavLink to="/">
+              <NavLink to="/solicitudes">
                 <DropDownCard title="Solicitar" content="Crea una solicitud para el mantenimiento de tu equipo"/>
               </NavLink>
             </div>
@@ -49,7 +51,7 @@ export const TopNavbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
               <NavLink to="/">
                 <DropDownCard title="Que ofrecemos?" content="Servicio de reparacion etc"/>
               </NavLink>
-              <NavLink to="/">
+              <NavLink to="/solicitudes">
                 <DropDownCard title="Solicitar" content="Crea una solicitud para la reparacion de tu equipo"/>
               </NavLink>
             </div>
