@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.DTOs
 {
-    public class MarcaInDTO
+    public class TipoProductoCrearDTO
     {
-        [Required]
         public string Descripcion { get; set; }
+        public int IdCategoria { get; set; }
     }
 }

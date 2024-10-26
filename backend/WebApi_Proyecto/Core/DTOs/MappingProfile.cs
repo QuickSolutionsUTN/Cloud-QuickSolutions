@@ -6,25 +6,25 @@ namespace Core.DTOs
 {
     public class MappingProfile : Profile
     {
-       
-
         public MappingProfile()
         {
-
             CreateMap<UsuarioRegistroDTO, Usuario>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
 
             CreateMap<Usuario, UsuarioDTO>();
-                //.ForMember(dest => dest.Rol, opt => opt.MapFrom(src => _userManager.GetRolesAsync(src).Result.FirstOrDefault()));
 
             CreateMap<RolDTO, Rol>();
 
-            CreateMap<EquipoInDTO, Equipo>();
+            CreateMap<SolicitudServicio, SolicitudRespuestaDTO>()
+                .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => src.SolicitudServicioEstado.Descripcion))
+                .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => src.CategoriaProducto.Descripcion))
+                .ForMember(dest => dest.TipoDeProducto, opt => opt.MapFrom(src => src.TipoProducto.Descripcion))
+                .ForMember(dest => dest.EmailSolicitante, opt => opt.MapFrom(src => src.Solicitante.Email))
+                .ForMember(dest => dest.TipoServicio, opt => opt.MapFrom(src => src.TipoServicio.Descripcion));
 
-            CreateMap<Equipo, EquipoOutDTO>()
-                .ForMember(dest => dest.Marca, opt => opt.MapFrom(src => src.Marca.Descripcion)) // Obtiene el nombre de la marca
-                .ForMember(dest => dest.EstadoEquipo, opt => opt.MapFrom(src => src.EstadoEquipo.Descripcion)); // Obtiene el nombre del estado
+            CreateMap<TipoProducto, TipoProductoDTO>()
+                .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => src.CategoriaProducto.Descripcion));
 
         }
     }

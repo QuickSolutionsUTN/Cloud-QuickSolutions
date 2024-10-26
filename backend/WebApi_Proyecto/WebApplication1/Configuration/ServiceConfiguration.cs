@@ -92,9 +92,12 @@ public static class ServiceConfiguration
         builder.Services.AddScoped<ITokenServicio, TokenServicio>();
         builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
         builder.Services.AddScoped<IRolServicio, RolServicio>();
-        builder.Services.AddScoped<IMarcaServicio, MarcaServicio>();
-        builder.Services.AddScoped<IEquipoServicio, EquipoServicio>();
-        builder.Services.AddScoped<IEstadoEquipoServicio, EstadoEquipoServicio>();
+        builder.Services.AddScoped<ICategoriaServicio, CategoriaServicio>();
+        builder.Services.AddScoped<ISolicitudEstadoServicio, SolicitudEstadoServicio>();
+        builder.Services.AddScoped<ISolicitudServicio, SolicitudServicio_Servicio>();
+        builder.Services.AddScoped<ITipoProductoServicio, TipoProductoServicio>();
+        //builder.Services.AddScoped<IEquipoServicio, EquipoServicio>();
+        //builder.Services.AddScoped<IEstadoEquipoServicio, EstadoEquipoServicio>();
 
         //Identity
         builder.Services.AddIdentity<Usuario, Rol>(options =>
@@ -123,7 +126,7 @@ public static class ServiceConfiguration
         });
 
 
-        builder.Services.AddTransient<IValidator<EquipoInDTO>, CrearEquipoValidator>();
+        builder.Services.AddTransient<IValidator<SolicitudCreacionDTO>, CrearSolicitudValidator>();
        // builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CrearEquipoValidator>());
 
         // Añadir CORS para probar los endpoints en modo local (testing)

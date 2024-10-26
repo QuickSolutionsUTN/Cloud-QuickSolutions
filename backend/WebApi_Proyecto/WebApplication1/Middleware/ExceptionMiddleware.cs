@@ -38,9 +38,10 @@ public class ExceptionMiddleware
             if (httpContext.Response.StatusCode == StatusCodes.Status401Unauthorized)
             {
                 // Si ya se ha devuelto un Unauthorized, no hacer nada
-                return;
+                await HandleUnauthorizedAsync(httpContext);
             }
-            else if (httpContext.Response.StatusCode == StatusCodes.Status403Forbidden)
+            else
+            if (httpContext.Response.StatusCode == StatusCodes.Status403Forbidden)
             {
                 await HandleForbiddenAsync(httpContext);
             }

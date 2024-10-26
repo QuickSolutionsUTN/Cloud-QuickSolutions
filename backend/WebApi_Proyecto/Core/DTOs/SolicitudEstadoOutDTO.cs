@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Core.DTOs
 {
-    public class MarcaOutDTO
+    public class SolicitudEstadoOutDTO
     {
         public int Id { get; set; }
+
         public string Descripcion { get; set; }
     }
 }

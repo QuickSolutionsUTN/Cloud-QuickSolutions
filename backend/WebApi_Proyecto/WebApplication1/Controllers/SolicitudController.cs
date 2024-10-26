@@ -11,25 +11,24 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EquipoController : ControllerBase
+    public class SolicitudController : ControllerBase
     {
-        private readonly IEquipoServicio _equipoServicio;
-        private readonly IValidator<EquipoInDTO> _validator;
-        private readonly ILogger<EquipoController> _logger;
+        private readonly ISolicitudServicio _solicitudServicio;
+        private readonly IValidator<SolicitudCreacionDTO> _validator;
+        private readonly ILogger<SolicitudController> _logger;
 
 
-        public EquipoController(IEquipoServicio equipoServicio, ILogger<EquipoController> logger, IValidator<EquipoInDTO> validator)
+        public SolicitudController(ISolicitudServicio solicitudServicio, ILogger<SolicitudController> logger, IValidator<SolicitudCreacionDTO> validator)
         {
-            _equipoServicio = equipoServicio;
+            _solicitudServicio = solicitudServicio;
             _logger = logger;
             _validator= validator;
         }
 
         [HttpPost]//Crear un equipo
-        public async Task<IActionResult> CrearEquipo([FromBody] EquipoInDTO equipoDTOIn)
+        public async Task<IActionResult> CrearSolicitud([FromBody] SolicitudCreacionDTO solicitudCreacionDTO)
         {
-        
-            var validationResult = await _validator.ValidateAsync(equipoDTOIn);
+            var validationResult = await _validator.ValidateAsync(solicitudCreacionDTO);
 
             if (!validationResult.IsValid)
             {
@@ -37,11 +36,11 @@ namespace WebAPI.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var nuevoEquipo = await _equipoServicio.CrearEquipoAsync(equipoDTOIn);
-            return CreatedAtAction(nameof(CrearEquipo), nuevoEquipo);
+            var nuevaSolicitud = await _solicitudServicio.CrearSolicitudAsync(solicitudCreacionDTO);
+            return CreatedAtAction(nameof(CrearSolicitud), nuevaSolicitud);
         }
 
-        
+        /*
         [HttpGet("{id}")]
         public async Task<IActionResult> ObtenerEquipoPorId(int id)
         {
@@ -52,7 +51,7 @@ namespace WebAPI.Controllers
             }
             return Ok(equipoDTOOut);
 
-        }
+        }*/
 
     }
 

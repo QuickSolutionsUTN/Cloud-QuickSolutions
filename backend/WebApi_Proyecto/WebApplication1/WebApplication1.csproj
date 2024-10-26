@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\DALCodeFIrst\DALCodeFIrst.csproj" />
+    <ProjectReference Include="..\DALCodeFIrst\DALCodeFirst.csproj" />
     <ProjectReference Include="..\Servicios\Servicios.csproj" />
   </ItemGroup>
 

@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.DTOs
 {
-    public class EstadoEquipoOutDTO
+    public class CategoriaCreacionDTO
     {
-        public int Id { get; set; }
-
         public string Descripcion { get; set; }
     }
 }

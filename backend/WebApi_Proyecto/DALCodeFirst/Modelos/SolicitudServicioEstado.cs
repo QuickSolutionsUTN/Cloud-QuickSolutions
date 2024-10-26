@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DALCodeFirst.Modelos
 {
-    [Table("Marca")]
-    public class Marca
+    [Table("SolicitudServicioEstado")]
+    public class SolicitudServicioEstado
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]//Autoincremental

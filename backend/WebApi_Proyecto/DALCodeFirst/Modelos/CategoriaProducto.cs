@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace DALCodeFirst.Modelos
 {
-    [Table("SolicitudAlquilerEstado")]
-    public class SolicitudAlquilerEstado
+    [Table("CategoriaProducto")]
+    public class CategoriaProducto
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]//Autoincremental

@@ -13,11 +13,14 @@ using Microsoft.EntityFrameworkCore;
 public partial class WebAPIContext : IdentityDbContext<Usuario, Rol, string>
 {
     public WebAPIContext(DbContextOptions<WebAPIContext> options) : base(options) { }
-    public DbSet<Equipo> Equipo { get; set; }
-    public DbSet<EstadoEquipo> EstadoEquipo { get; set; }
-    public DbSet<Marca> Marca { get; set; }
-    public DbSet<SolicitudAlquiler> SolicitudAlquiler { get; set; }
-    public DbSet<SolicitudAlquilerEstado> SolicitudAlquilerEstado { get; set; }
+    public DbSet<CategoriaProducto> CategoriaProducto { get; set; }
+    public DbSet<EmpresaExterna> EmpresaExterna { get; set; }
+    public DbSet<EmpresaCategoria> EmpresaCategoria { get; set; }
+    public DbSet<ReparacionExterna> ReparacionExterna { get; set; }
+    public DbSet<TipoProducto> TipoProducto { get; set; }
+    public DbSet<TipoServicio> TipoServicio { get; set; }
+    public DbSet<SolicitudServicio> SolicitudServicio { get; set; }
+    public DbSet<SolicitudServicioEstado> SolicitudServicioEstado { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
