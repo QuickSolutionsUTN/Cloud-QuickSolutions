@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../contexts/AuthContext';
-import { useBackendURL } from '../BackendURLContext';
+import { useBackendURL } from '../contexts/BackendURLContext';
 import axios from 'axios';
 
 function LoginForm({ show, onClose, onSubmit }) {

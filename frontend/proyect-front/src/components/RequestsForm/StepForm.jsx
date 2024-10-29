@@ -2,87 +2,87 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios'; // Importa axios
-import { useBackendURL } from '../../BackendURLContext';
+import { useBackendURL } from '../../contexts/BackendURLContext';
 import AuthContext from '../../contexts/AuthContext.jsx';
 
-//datosProducto: {idcategoria:'', idtipoproducto:'', descripcionProblema:''},
+//productData: {categoryId:'', productTypeId:'', problemDescription:''},
 
-export default function PasoFormulario({ paso, formData, actualizarDatos }) {
+export default function StepForm({ step, formData, updateData }) {
   const backendURL = useBackendURL();
-  const [categorias, setCategorias] = useState([]);
-  const [tiposProducto, setTiposProducto] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [productTypes, setProductTypes] = useState([]);
   const { isAuthenticated, userEmail } = useContext(AuthContext);
   const[email, setEmail] = useState('');
 
   useEffect(() => {
     if (isAuthenticated) {
       console.log("Usuario autenticado:", userEmail);
-      setEmail(userEmail); // Cargar el email del usuario
+      setEmail(userEmail); // Load the user's email
     }
   }, [isAuthenticated, userEmail]);
-  //console.log("datos del producto", formData);
+  //console.log("product data", formData);
 
-  const manejarCambio = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'email') {
       setFormData((prevState) => ({
         ...prevState,
-        datosPersonales: {
-          ...prevState.datosPersonales,
-          email: value, // Actualiza solo el campo de email
+        personalData: {
+          ...prevState.personalData,
+          email: value, // Update only the email field
         },
       }));
     } else {
     console.log("name", name, "value", value);
-    actualizarDatos({ [name]: value });
+    updateData({ [name]: value });
     }
 
   };
 
 
-  // Obtener categorías y tipos de producto desde el backend
+  // Fetch categories and product types from the backend
   useEffect(() => {
     axios.get(`${backendURL}/categoria`)
       .then(response => {
         console.log(response.data);
-        setCategorias(response.data)
+        setCategories(response.data)
       })
       .catch(error => console.error("Error fetching categories:", error));
   }, []);
 
-  const handleCategoriaChange = (event) => {
-    const categoriaId = event.target.value;
+  const handleCategoryChange = (event) => {
+    const categoryId = event.target.value;
 
-    manejarCambio({ target: { name: 'idcategoria', value: categoriaId } });
+    handleChange({ target: { name: 'categoryId', value: categoryId } });
 
-    // Llamada a la API para obtener los tipos de producto en función de la categoría seleccionada
-    axios.get(`${backendURL}/tipoproducto/${categoriaId}`)
+    // API call to get product types based on the selected category
+    axios.get(`${backendURL}/tipoproducto/${categoryId}`)
       .then(response => {
         console.log(response.data);
-        setTiposProducto(response.data);
+        setProductTypes(response.data);
       })
-      .catch(error => console.error('Error al cargar tipos de producto:', error));
+      .catch(error => console.error('Error loading product types:', error));
   }
 
   return (
     <div className='formInputs'>
-      {paso.id === 1 && (
+      {step.id === 1 && (
         <>
           <div className='row mb-3'>
             <div className='col-4'>
               <p><b>Categoria</b></p>
               <Form.Select
                 aria-label="Seleccionar categoria"
-                name="idcategoria"
-                value={formData.idcategoria}
-                onChange={handleCategoriaChange}
+                name="categoryId"
+                value={formData.categoryId}
+                onChange={handleCategoryChange}
               >
                 <option value="">Seleccione una categoría</option>
-                {categorias.map(categoria => (
-                  <option key={categoria.id}
-                    name="categoria"
-                    value={categoria.id}
-                  >{categoria.descripcion}</option>
+                {categories.map(category => (
+                  <option key={category.id}
+                    name="category"
+                    value={category.id}
+                  >{category.descripcion}</option>
                 ))}
               </Form.Select>
             </div>
@@ -90,16 +90,16 @@ export default function PasoFormulario({ paso, formData, actualizarDatos }) {
               <p><b>Tipo de producto</b></p>
               <Form.Select
                 aria-label="Seleccionar tipo de producto"
-                name="idtipoproducto"
-                value={formData.idtipoproducto}
-                onChange={manejarCambio}
+                name="productTypeId"
+                value={formData.productTypeId}
+                onChange={handleChange}
               >
                 <option value="">Seleccione un tipo de producto</option>
-                {tiposProducto.length > 0 ? (
-                  tiposProducto.map(tipo => (
-                    <option key={tipo.id}
-                      value={tipo.id}
-                    >{tipo.descripcion}</option>
+                {productTypes.length > 0 ? (
+                  productTypes.map(type => (
+                    <option key={type.id}
+                      value={type.id}
+                    >{type.descripcion}</option>
                   ))
                 ) : (
                   <option value="">""</option>
@@ -113,15 +113,15 @@ export default function PasoFormulario({ paso, formData, actualizarDatos }) {
               <Form.Control
                 as="textarea"
                 aria-label="With textarea"
-                name="descripcionProblema"
-                value={formData.descripcionProblema}
-                onChange={manejarCambio}
+                name="problemDescription"
+                value={formData.problemDescription}
+                onChange={handleChange}
               />
             </InputGroup>
           </div>
         </>
       )}
-      {paso.id === 2 && (
+      {step.id === 2 && (
         <div>
           {isAuthenticated ? (
             <>
@@ -132,7 +132,7 @@ export default function PasoFormulario({ paso, formData, actualizarDatos }) {
                 aria-label='Email'
                 name='email'
                 value={email}
-                onChange={manejarCambio}
+                onChange={handleChange}
                 readOnly
               ></Form.Control>
               <br />
@@ -164,9 +164,9 @@ export default function PasoFormulario({ paso, formData, actualizarDatos }) {
           )}
         </div>
       )}
-      {paso.id === 3 && (
+      {step.id === 3 && (
         <div>
-          {/* Contenido del paso de pago */}
+          {/* Payment step content */}
           <p>Aquí va el formulario para la información de pago.</p>
         </div>
       )}

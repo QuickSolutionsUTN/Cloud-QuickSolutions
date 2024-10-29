@@ -32,7 +32,7 @@ export const TopNavbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
               <NavLink to="/">
                 <DropDownCard title="Que ofrecemos?" content="Servicio de mantenimiento etc"/>
               </NavLink>
-              <NavLink to="/solicitudes">
+              <NavLink to="/requests">
                 <DropDownCard title="Solicitar" content="Crea una solicitud para el mantenimiento de tu equipo"/>
               </NavLink>
             </div>
@@ -51,7 +51,7 @@ export const TopNavbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
               <NavLink to="/">
                 <DropDownCard title="Que ofrecemos?" content="Servicio de reparacion etc"/>
               </NavLink>
-              <NavLink to="/solicitudes">
+              <NavLink to="/requests">
                 <DropDownCard title="Solicitar" content="Crea una solicitud para la reparacion de tu equipo"/>
               </NavLink>
             </div>

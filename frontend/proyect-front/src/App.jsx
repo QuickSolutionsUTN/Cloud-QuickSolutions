@@ -5,7 +5,7 @@ import './styles/app.css';
 
 import MainLayout from './layout/MainLayout.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';
-import SolicitudReparacion from './pages/SolicitudPage.jsx';
+import RepairsRequest from './pages/RequestPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
@@ -37,7 +37,7 @@ function App() {
             <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>} />
             <Route path="maintenance" element={<ProtectedRoute roleRequired="maitenance"><MaintenancesPage /></ProtectedRoute>} />
             <Route path="/repairs" element={<RepairsPage />} />
-            <Route path="/solicitudes" element={<SolicitudReparacion />} />
+            <Route path="/requests" element={<RepairsRequest />} />
             <Route path="/maintenances" element={<MaintenancesPage />} />
             <Route path="/aboutUs" element={<AboutUsPage />} />
           </Route>
