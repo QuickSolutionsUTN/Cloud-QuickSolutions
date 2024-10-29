@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
 
             // Retornamos un mensaje de error en caso de que la autenticación falle
             _logger.LogWarning($"Intento de inicio de sesión fallido para el usuario: {usuarioLoginDTO.Email}");
-            return BadRequest(new
+            return Unauthorized(new
             {
                 status = "error",
                 message = "Credenciales inválidas"

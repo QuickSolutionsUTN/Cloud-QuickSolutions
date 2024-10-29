@@ -38,5 +38,13 @@ namespace WebAPI.Controllers
             var tiposProducto = await _tipoProductoServicio.ObtenerTiposProductoAsync();
             return Ok(tiposProducto);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObtenerTiposProductoPorCategoria(int id)
+        {
+            var tiposProducto = await _tipoProductoServicio.ObtenerTiposProductoPorCategoriaAsync(id);
+            return Ok(tiposProducto);
+        }
+
     }
 }

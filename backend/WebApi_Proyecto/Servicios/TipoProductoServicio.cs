@@ -53,5 +53,17 @@ namespace Servicios
 
             return tiposProductoDTO;
         }
-    }
+
+        public async Task<List<TipoProductoDTO>> ObtenerTiposProductoPorCategoriaAsync(int idCategoria)
+        {
+            var tiposProducto = await _context.TipoProducto
+                .Include(tp => tp.CategoriaProducto)
+                .Where(tp => tp.IdCategoriaProducto == idCategoria)
+                .ToListAsync();
+
+            var tiposProductoDTO = _mapper.Map<List<TipoProductoDTO>>(tiposProducto);
+
+            return tiposProductoDTO;
+        }
+}
 }

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 import '../styles/MainLayout.css';
 import AuthContext from '../contexts/AuthContext.jsx';
@@ -10,13 +10,14 @@ import LoginForm from '../components/ModalLoginForm.jsx';
 
 
 function MainLayout() {
-  const location = useLocation();
+  //const location = useLocation();
   const { isAuthenticated, logout, login } = useContext(AuthContext);
-  const [showLoginForm, setShowLoginForm] = React.useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
 
   const handleLoginClick = () => {
     setShowLoginForm(true);
     console.log("Clickeo iniciar sesion");
+
   };
 
   const handleLoginClose = () => {
@@ -24,11 +25,10 @@ function MainLayout() {
     console.log("Clickeo cerrar sesion");
   };
 
-  const handleLoginSubmit = (data, userRole) => {
+  /*const handleLoginSubmit = (data) => {
     console.log("Clickeo iniciar sesion en modal");
-    login(userRole);
     setShowLoginForm(false);
-  };
+  };*/
 
   const handleLogoutClick = () => {
     logout();
@@ -48,7 +48,6 @@ function MainLayout() {
         <LoginForm
           show={showLoginForm}
           onClose={handleLoginClose}
-          onSubmit={handleLoginSubmit}
         />
       )}
       <main>

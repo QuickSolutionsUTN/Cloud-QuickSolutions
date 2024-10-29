@@ -9,10 +9,22 @@
 }
 
 .step.inactive{
-  color: grey; /* Cambia a tu color preferido */
+  color: grey; 
 }
 
 .step.active {
   background:transparent;
   color: #D55403; 
+}
+
+.container-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.next-button {
+  background-color: #D55403;
+  color: white;
+  border: none;
 }

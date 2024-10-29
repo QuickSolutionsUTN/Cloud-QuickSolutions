@@ -11,5 +11,6 @@ namespace Servicios
     {
         Task<TipoProductoDTO> CrearTipoProductoAsync(TipoProductoCrearDTO tipoProductoCrearDTO);
         Task<List<TipoProductoDTO>> ObtenerTiposProductoAsync();
+        Task<List<TipoProductoDTO>> ObtenerTiposProductoPorCategoriaAsync(int idCategoria);
     }
 }
