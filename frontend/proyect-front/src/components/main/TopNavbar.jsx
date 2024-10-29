@@ -59,11 +59,13 @@ export const TopNavbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
         </div>
       </div>
       <div className="buttons">
-        <button className="join-btn">Únete</button>
         {isAuthenticated ? (
           <button className="auth-btn" onClick={onLogoutClick}>Cerrar Sesión</button>
         ) : (
-          <button className="auth-btn" onClick={onLoginClick}>Iniciar Sesión</button>
+          <>
+            <button className="join-btn">Únete</button>
+            <button className="auth-btn" onClick={onLoginClick}>Iniciar Sesión</button>
+          </>
         )}
       </div>
     </nav>
