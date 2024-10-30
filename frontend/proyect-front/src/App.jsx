@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/app.css';
 
 import MainLayout from './layout/MainLayout.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';

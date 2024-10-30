@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/serviceCard.css'; // Archivo de estilos para la tarjeta de servicio
+import './serviceCard.css'; // Archivo de estilos para la tarjeta de servicio
 
 const ServiceCard = ({ title, description, imgSrc }) => {
   return (
