@@ -1,12 +1,20 @@
 import React from 'react';
-import RequestForm from '../components/Requests/RequestForm';
+import { useContext } from 'react';
+import UserRequestsList from '../components/users/UserRequestsList.jsx';
+import AuthContext from '../contexts/AuthContext.jsx';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+//import '../components/Requests/requestDetails.css';
 //import './RequestPage.css';
 
 export default function UserRequests() {
+  const { userEmail } = useContext(AuthContext);
+
     return (
-        <div className='p-repairsRequest'>
-            <div className='p-repairsRequest titulo'><h2>Solicita tu reparacion</h2> </div>
-            <RequestForm />
+        <div className='container-fluid p-repairsRequestsList my-3 mx-3'>
+            <div className='p-repairsRequestsList tittle'><h2>Listado de reparaciones</h2> </div>
+            <UserRequestsList userEmail={userEmail} />
         </div>
     );
 }

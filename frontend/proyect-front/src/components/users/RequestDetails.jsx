@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { useBackendURL } from '../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
@@ -10,6 +11,7 @@ export default function RequestDetails() {
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
   const [fechaFormateada, setFechaFormateada] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -108,7 +110,7 @@ export default function RequestDetails() {
       </Form>
 
       <div className='buttons-container'>
-        <Button variant='primary' className='custom-button' >Volver</Button>
+        <Button variant='primary' className='custom-button' onClick={() => navigate('../requests')}>Volver</Button>
         <Button variant='secondary' className='custom-button' >Editar</Button>
       </div>
     </>

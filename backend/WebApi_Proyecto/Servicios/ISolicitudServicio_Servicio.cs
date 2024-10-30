@@ -8,6 +8,8 @@ namespace Servicios
     {
         Task<SolicitudRespuestaDTO> CrearSolicitudAsync(SolicitudCreacionDTO solicitudCreacionDTO);
         Task<SolicitudRespuestaDTO> ObtenerSolicitudPorIdAsync(int id );
+
+        Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudPorEmailAsync(string userEmail);
         Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudesAsync();
         //Task<List<UsuarioDTO>> ObtenerUsuariosAsync();
         //Task<UsuarioDTO> ObtenerUsuarioPorEmailAsync(string email);

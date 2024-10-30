@@ -12,7 +12,7 @@ import MaintenancesPage from './pages/MaintenancesPage.jsx';
 import RepairsPage from './pages/RepairsPage.jsx';
 import AboutUsPage from './pages/AboutUsPage.jsx';
 import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
-import UserRequests from './pages/UsersRequestsPage.jsx';
+import UserRequestsPage from './pages/UsersRequestsPage.jsx';
 
 
 function App() {
@@ -39,9 +39,12 @@ function App() {
             <Route path="maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancesPage /></ProtectedRoute>} />
             <Route path="repairs" element={<RepairsPage />} />
             <Route path="requests" element={<RepairsRequest />} />
-            <Route path="requests/:id" element={<RequestDetailsPage />} />
             <Route path="maintenances" element={<MaintenancesPage />} />
             <Route path="aboutUs" element={<AboutUsPage />} />
+            <Route path="users">
+              <Route path="requests" element={<UserRequestsPage />} />
+              <Route path="requests/:id" element={<RequestDetailsPage />} />
+            </Route>
           </Route>
           <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>} />
         </Routes>

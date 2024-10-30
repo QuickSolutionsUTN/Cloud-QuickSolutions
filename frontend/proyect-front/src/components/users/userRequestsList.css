@@ -1,0 +1,19 @@
+.detail-button {
+  background-color: #007bff;
+  color: white;
+  padding: 4px 10px; /* Menos padding */
+  font-size: 12px; /* Fuente más pequeña */
+  font-weight: 500; /* Menos grosor */
+  border: none;
+  border-radius: 3px; /* Borde menos redondeado */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.detail-button:hover {
+  background-color: #0056b3;
+}
+
+.detail-button:active {
+  background-color: #004494;
+}

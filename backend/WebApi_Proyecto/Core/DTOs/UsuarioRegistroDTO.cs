@@ -16,4 +16,7 @@ public class UsuarioRegistroDTO //DTO solo para crear usuario
     [Required]
     public string Password { get; set; }
 
+    [Required]
+    public DateTime FechaNacimiento { get; set; }
+
 }

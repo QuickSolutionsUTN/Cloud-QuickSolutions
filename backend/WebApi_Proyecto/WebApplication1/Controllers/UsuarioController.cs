@@ -20,13 +20,15 @@ namespace WebAPI.Controllers
     {
 
         private readonly IUsuarioServicio _usuarioServicio;
+        private readonly ISolicitudServicio_Servicio _solicitudServicio;
         private readonly SignInManager<Usuario> _signInManager;
         private readonly ITokenServicio _tokenServicio;
         private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(IUsuarioServicio usuarioServicio, SignInManager<Usuario> signInManager, ITokenServicio tokenServicio, ILogger<UsuarioController> logger)
+        public UsuarioController(IUsuarioServicio usuarioServicio, SignInManager<Usuario> signInManager, ITokenServicio tokenServicio, ILogger<UsuarioController> logger, ISolicitudServicio_Servicio solicitudServicio)
         {
             _usuarioServicio = usuarioServicio;
+            _solicitudServicio = solicitudServicio;
             _signInManager = signInManager;
             _tokenServicio = tokenServicio;
             _logger = logger;
@@ -98,6 +100,18 @@ namespace WebAPI.Controllers
             }
             var usuarioCreado = await _usuarioServicio.CrearUsuarioAsync(usuarioRegistroDTO);
             return CreatedAtAction(nameof(CrearUsuario), new { email = usuarioCreado.Email }, usuarioCreado);
+        }
+
+        [HttpGet("{userEmail}/solicitudes")]
+        public async Task<IActionResult> ObtenerSolicitudPorEmail(string userEmail)
+        {
+            var solicitudDTO = await _solicitudServicio.ObtenerSolicitudPorEmailAsync(userEmail);
+            if (solicitudDTO == null)
+            {
+                return NotFound();
+            }
+            return Ok(solicitudDTO);
+
         }
 
         /*

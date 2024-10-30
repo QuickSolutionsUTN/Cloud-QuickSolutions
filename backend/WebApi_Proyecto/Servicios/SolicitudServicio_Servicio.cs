@@ -67,15 +67,33 @@ namespace Servicios
         {
             var solicitud = await _context.SolicitudServicio
                 .Include(e => e.SolicitudServicioEstado)
-                .Include(c=>c.CategoriaProducto)
+                .Include(c => c.CategoriaProducto)
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
-                .Include(ts => ts.TipoServicio )
+                .Include(ts => ts.TipoServicio)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             var solicitudDTO = _mapper.Map<SolicitudRespuestaDTO>(solicitud);
 
             return solicitudDTO;
         }
+
+        public async Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudPorEmailAsync(string userEmail)
+        {
+            var solicitudes = await _context.SolicitudServicio
+                .Include(e => e.SolicitudServicioEstado)
+                .Include(c => c.CategoriaProducto)
+                .Include(tp => tp.TipoProducto)
+                .Include(es => es.Solicitante)
+                .Include(ts => ts.TipoServicio)
+                .Where(es => es.Solicitante.Email == userEmail)
+                .ToListAsync();
+
+            var solicitudesDTO = _mapper.Map<List<SolicitudRespuestaDTO>>(solicitudes);
+
+            return solicitudesDTO;
+        }
     }
 }
+
+

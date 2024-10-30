@@ -51,7 +51,7 @@ export const RequestForm = () => {
         const solicitudId = response.data.id;
         console.log("Formulario enviado correctamente");
         console.log("Respuesta del servidor", response.data);
-        navigate(`/requests/${solicitudId}`);
+        navigate(`/users/requests/${solicitudId}`);
       } else {
         console.log("Error al enviar el formulario", response.data);
       }

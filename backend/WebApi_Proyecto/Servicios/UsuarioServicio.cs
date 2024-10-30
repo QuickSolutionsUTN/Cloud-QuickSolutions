@@ -45,8 +45,6 @@ namespace Servicios
 
                 // Crear el usuario
                 var result = await _userManager.CreateAsync(usuario);
-                //await _context.AddAsync(usuario);
-                //await _context.SaveChangesAsync();
 
                 // Verificar si la creación fue exitosa
                 if (result.Succeeded)
@@ -68,15 +66,11 @@ namespace Servicios
 
             catch (DbUpdateException dbEx)
             {
-                // Manejar excepciones específicas de base de datos
-                // Puedes registrar el error y lanzar una excepción personalizada
-                // Logger.LogError(dbEx, "Error al crear el usuario");
                 throw new Exception("Error al guardar el usuario en la base de datos.", dbEx);
             }
 
             catch (Exception ex)
             {
-                // Manejar excepciones generales
 
                 throw new Exception($"Error inesperado al crear el usuario: {ex.Message}", ex);
             }

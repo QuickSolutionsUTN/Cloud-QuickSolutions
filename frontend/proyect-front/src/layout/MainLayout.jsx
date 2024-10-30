@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useLocation, Outlet } from 'react-router-dom'; 
+import { useLocation, Outlet } from 'react-router-dom';
 import AuthContext from '../contexts/AuthContext.jsx';
 
 import TopNavbar from '../components/main/TopNavbar.jsx';
@@ -45,6 +45,11 @@ function MainLayout() {
     logout();
     console.log("Clickeo cerrar sesion");
   };
+  
+  const handleSwitchToLogin = () => {
+    setShowJoinForm(false);
+    setShowLoginForm(true);
+  };
 
   return (
     <>
@@ -67,6 +72,8 @@ function MainLayout() {
         <ModalJoin
           show={showJoinForm}
           onClose={() => setShowJoinForm(false)}
+          onSwitchToLogin={handleSwitchToLogin}
+
         />
       )}
       <main>
