@@ -1,13 +1,18 @@
-import React, { useState , useEffect } from "react";
+import React, { useState , useContext } from "react";
 import "./topNavBar.css";
 import { Link, NavLink ,useNavigate} from "react-router-dom";
-import logo from "../../assets/images/logo.png";
+import logo from "../../assets/logos/logo.png";
+import user from "../../assets/logos/user-orange.png";
 import { refresh } from "../../utilities/refresh";
 import DropDownCard from "./DropDownCard.jsx"
+import UserMenu from "../UserMenu.jsx";
+import AuthContext from "../../contexts/AuthContext.jsx";
 
-export const TopNavbar = ({ isAuthenticated, onLoginClick, onJoinClick, onLogoutClick }) => {
+export const TopNavbar = ({ onLoginClick, onJoinClick, onLogoutClick }) => {
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuOpen2, setMenuOpen2] = useState(false);
+  const { isAuthenticated, userRole } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -60,7 +65,19 @@ export const TopNavbar = ({ isAuthenticated, onLoginClick, onJoinClick, onLogout
       </div>
       <div className="buttons">
         {isAuthenticated ? (
-          <button className="auth-btn" onClick={onLogoutClick}>Cerrar Sesión</button>
+          <div 
+            className="user-menu-container"
+            onMouseEnter={() => setShowUserMenu(true)}
+          >
+            <button className="user-btn"><img src={user}/></button>
+            {showUserMenu && (
+              <UserMenu 
+                onLogoutClick={onLogoutClick} 
+                onMouseLeave={() => setShowUserMenu(false)} 
+                role={userRole}
+              />
+            )}
+          </div>        
         ) : (
           <>
             <button className="join-btn" onClick={onJoinClick}>Únete</button>

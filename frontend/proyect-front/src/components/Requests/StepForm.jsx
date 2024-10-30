@@ -127,7 +127,7 @@ export default function StepForm({ step, formData, updateData }) {
         </>
       )}
       {step.id === 2 && (
-        <div>
+        <div className='step2'>
           {isAuthenticated ? (
             <>
               <Form.Label><b>Email</b></Form.Label>
@@ -165,7 +165,7 @@ export default function StepForm({ step, formData, updateData }) {
 
             </>
           ) : (
-            <h2>No has iniciado sesión. Por favor, inicia sesión.</h2>
+            <p>No has iniciado sesión. Por favor, inicia sesión para continuar</p>
           )}
         </div>
       )}

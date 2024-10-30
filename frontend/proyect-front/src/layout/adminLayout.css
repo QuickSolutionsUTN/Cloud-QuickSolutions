@@ -63,3 +63,7 @@ html, body {
     user-select: none;
 }
 
+.admin-user-menu-container{
+    position: absolute;
+    right: 30px;
+}
