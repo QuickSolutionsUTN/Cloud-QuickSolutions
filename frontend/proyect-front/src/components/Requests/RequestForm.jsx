@@ -5,6 +5,8 @@ import { useBackendURL } from '../../contexts/BackendURLContext.jsx';
 import axios from 'axios';
 import './requestForm.css';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import AuthContext from '../../contexts/AuthContext.jsx';
 
 const steps = [
   { id: 1, name: 'Datos del Producto', section: 'productData' },
@@ -16,6 +18,7 @@ export const RequestForm = () => {
   const backendURL = useBackendURL();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
+  const { isAuthenticated, userEmail } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     productData: { serviceId: 0, categoryId: 0, productTypeId: 0, problemDescription: '' },
@@ -96,6 +99,7 @@ export const RequestForm = () => {
           className='next-button'
           variant="primary"
           onClick={nextStep}
+          disabled={currentStep === 1 && !isAuthenticated}
         >
           {currentStep === steps.length - 1 ? 'Finalizar' : 'Siguiente'}
         </Button>
