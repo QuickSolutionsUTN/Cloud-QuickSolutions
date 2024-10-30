@@ -1,0 +1,12 @@
+import React from 'react';
+import RequestForm from '../components/Requests/RequestForm';
+//import './RequestPage.css';
+
+export default function UserRequests() {
+    return (
+        <div className='p-repairsRequest'>
+            <div className='p-repairsRequest titulo'><h2>Solicita tu reparacion</h2> </div>
+            <RequestForm />
+        </div>
+    );
+}

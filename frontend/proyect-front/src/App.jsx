@@ -12,6 +12,8 @@ import MaintenancesPage from './pages/MaintenancesPage.jsx';
 import RepairsPage from './pages/RepairsPage.jsx';
 import AboutUsPage from './pages/AboutUsPage.jsx';
 import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
+import UserRequests from './pages/UsersRequestsPage.jsx';
+
 
 function App() {
   const ProtectedRoute = ({ children, roleRequired }) => {
@@ -36,6 +38,12 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>} />
             <Route path="maintenance" element={<ProtectedRoute roleRequired="maitenance"><MaintenancesPage /></ProtectedRoute>} />
+
+            <Route path="/users">
+              <Route path="/profile" index element={<UserRequests />} />
+              <Route path="/requests" element= {<UserRequests />} />
+            </Route>
+
             <Route path="/repairs" element={<RepairsPage />} />
             <Route path="/requests" element={<RepairsRequest />} />
             <Route path="/requests/:id" element={<RequestDetailsPage />} />
