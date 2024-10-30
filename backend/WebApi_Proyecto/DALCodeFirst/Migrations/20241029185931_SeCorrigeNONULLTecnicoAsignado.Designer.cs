@@ -3,6 +3,7 @@ using System;
 using DALCodeFirst;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DALCodeFIrst.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    partial class WebAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20241029185931_SeCorrigeNONULLTecnicoAsignado")]
+    partial class SeCorrigeNONULLTecnicoAsignado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,6 +165,9 @@ namespace DALCodeFIrst.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("IdSolicitudAlquilerEstado")
+                        .HasColumnType("integer");
+
                     b.Property<int>("IdSolicitudServicioEstado")
                         .HasColumnType("integer");
 
@@ -183,7 +189,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdSolicitante");
 
-                    b.HasIndex("IdSolicitudServicioEstado");
+                    b.HasIndex("IdSolicitudAlquilerEstado");
 
                     b.HasIndex("IdTecnicoAsignado");
 
@@ -490,7 +496,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasOne("DALCodeFirst.Modelos.SolicitudServicioEstado", "SolicitudServicioEstado")
                         .WithMany()
-                        .HasForeignKey("IdSolicitudServicioEstado")
+                        .HasForeignKey("IdSolicitudAlquilerEstado")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

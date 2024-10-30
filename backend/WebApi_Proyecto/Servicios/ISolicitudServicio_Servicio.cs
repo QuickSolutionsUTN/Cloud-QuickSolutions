@@ -4,9 +4,11 @@
 
 namespace Servicios
 {
-    public interface ISolicitudServicio
+    public interface ISolicitudServicio_Servicio
     {
         Task<SolicitudRespuestaDTO> CrearSolicitudAsync(SolicitudCreacionDTO solicitudCreacionDTO);
+        Task<SolicitudRespuestaDTO> ObtenerSolicitudPorIdAsync(int id );
+        Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudesAsync();
         //Task<List<UsuarioDTO>> ObtenerUsuariosAsync();
         //Task<UsuarioDTO> ObtenerUsuarioPorEmailAsync(string email);
     }

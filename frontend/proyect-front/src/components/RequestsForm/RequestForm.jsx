@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { ProgressBar, Button } from 'react-bootstrap';
 import StepForm from './StepForm.jsx';
-
-import './RequestForm.css';
+import { useBackendURL } from '../../contexts/BackendURLContext';
+import axios from 'axios';
+import './requestForm.css';
 
 const steps = [
   { id: 1, name: 'Datos del Producto', section: 'productData' },
   { id: 2, name: 'Datos Personales', section: 'personalData' },
-  { id: 3, name: 'Hecho', section: 'confirmation' },
+  { id: 3, name: 'Confirmacion', section: 'confirmation' },
 ];
 
 export const RequestForm = () => {
+  const backendURL = useBackendURL();
   const [currentStep, setCurrentStep] = useState(0);
 
   const [formData, setFormData] = useState({
-    productData: { categoryId: '', productTypeId: '', problemDescription: '' },
+    productData: { serviceId: 0, categoryId: 0, productTypeId: 0, problemDescription: '' },
     personalData: { email: '', firstName: '', lastName: '' },
   });
 
@@ -26,8 +28,37 @@ export const RequestForm = () => {
     }));
   };
 
+  const handleSubmit = async (data) => {
+    const DataToSend={
+      userEmail: data.personalData.email,
+      descripcion: data.productData.problemDescription,
+      idTipoServicio: parseInt(data.productData.serviceId,10),
+      idCategoria: parseInt(data.productData.categoryId,10),
+      idTipoProducto: parseInt(data.productData.productTypeId,10),
+    };
+
+    try {
+      console.log("Formulario completado", DataToSend);
+
+      const response = await axios.post(`${backendURL}/solicitud`, DataToSend);
+
+      if (response.status=201) {
+        console.log("Formulario enviado correctamente");
+        console.log("Respuesta del servidor", response.data);
+      } else {
+        console.log("Error al enviar el formulario", response.data);
+      }
+    } catch (error) {
+      console.error("Error al enviar el formulario", error);
+    }
+  };
+
   const nextStep = () => {
-    setCurrentStep((prevStep) => Math.min(prevStep + 1, steps.length - 1));
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prevStep) => Math.min(prevStep + 1, steps.length - 1));
+    } else {
+      handleSubmit(formData);
+    }
   };
 
   const previousStep = () => {
@@ -41,20 +72,12 @@ export const RequestForm = () => {
         <div className={`step ${currentStep >= 1 ? 'active' : 'inactive'}`}> <b>2. {steps[1].name}</b></div>
         <div className={`step ${currentStep >= 2 ? 'active' : 'inactive'}`}> <b>3. {steps[2].name}</b></div>
       </div>
-      <ProgressBar now={(currentStep + 1) * (100 / steps.length)} className='.custom-progress ' />
+      <ProgressBar now={(currentStep + 1) * (100 / steps.length)} className='custom-progress' />
       <div className="mt-4">
         <StepForm
           step={steps[currentStep]}
           formData={formData[steps[currentStep].section]}
-          updateData={newData =>
-            setFormData(prevData => ({
-              ...prevData,
-              [steps[currentStep].section]: {
-                ...prevData[steps[currentStep].section],
-                ...newData,
-              },
-            }))
-          }
+          updateData={(newData) => updateData(steps[currentStep].section, newData)}
         />
       </div>
       <div className="mt-4 container-buttons">
@@ -69,7 +92,6 @@ export const RequestForm = () => {
           className='next-button'
           variant="primary"
           onClick={nextStep}
-          disabled={currentStep === steps.length - 1}
         >
           {currentStep === steps.length - 1 ? 'Finalizar' : 'Siguiente'}
         </Button>
@@ -79,3 +101,4 @@ export const RequestForm = () => {
 }
 
 export default RequestForm;
+//disabled={currentStep === steps.length - 1}

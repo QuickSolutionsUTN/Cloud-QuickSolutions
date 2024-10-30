@@ -1,8 +1,8 @@
-.progress-bar, .custom-progress{
+.progress-bar, .progress-stacked{
   background-color: #D55403; /* Cambia a tu color preferido */
 }
 
-.steps-tittle-container {
+.steps-title-container {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;

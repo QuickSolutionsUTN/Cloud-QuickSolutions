@@ -94,8 +94,9 @@ public static class ServiceConfiguration
         builder.Services.AddScoped<IRolServicio, RolServicio>();
         builder.Services.AddScoped<ICategoriaServicio, CategoriaServicio>();
         builder.Services.AddScoped<ISolicitudEstadoServicio, SolicitudEstadoServicio>();
-        builder.Services.AddScoped<ISolicitudServicio, SolicitudServicio_Servicio>();
+        builder.Services.AddScoped<ISolicitudServicio_Servicio, SolicitudServicio_Servicio>();
         builder.Services.AddScoped<ITipoProductoServicio, TipoProductoServicio>();
+        builder.Services.AddScoped<ITipoServicio_Servicio, TipoServicio_Servicio>();
         //builder.Services.AddScoped<IEquipoServicio, EquipoServicio>();
         //builder.Services.AddScoped<IEstadoEquipoServicio, EstadoEquipoServicio>();
 

@@ -13,12 +13,12 @@ namespace WebAPI.Controllers
     [ApiController]
     public class SolicitudController : ControllerBase
     {
-        private readonly ISolicitudServicio _solicitudServicio;
+        private readonly ISolicitudServicio_Servicio _solicitudServicio;
         private readonly IValidator<SolicitudCreacionDTO> _validator;
         private readonly ILogger<SolicitudController> _logger;
 
 
-        public SolicitudController(ISolicitudServicio solicitudServicio, ILogger<SolicitudController> logger, IValidator<SolicitudCreacionDTO> validator)
+        public SolicitudController(ISolicitudServicio_Servicio solicitudServicio, ILogger<SolicitudController> logger, IValidator<SolicitudCreacionDTO> validator)
         {
             _solicitudServicio = solicitudServicio;
             _logger = logger;
@@ -40,18 +40,25 @@ namespace WebAPI.Controllers
             return CreatedAtAction(nameof(CrearSolicitud), nuevaSolicitud);
         }
 
-        /*
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ObtenerEquipoPorId(int id)
+        [HttpGet]
+        public async Task<IActionResult> ObtenerSolicitudes()
         {
-            var equipoDTOOut = await _equipoServicio.ObtenerEquipoPorIdAsync(id);
-            if (equipoDTOOut == null)
+            var solicitudes = await _solicitudServicio.ObtenerSolicitudesAsync();
+            return Ok(solicitudes);
+
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObtenerSolicitudPorId(int id)
+        {
+            var solicitudDTO = await _solicitudServicio.ObtenerSolicitudPorIdAsync(id);
+            if (solicitudDTO == null)
             {
                 return NotFound();
             }
-            return Ok(equipoDTOOut);
+            return Ok(solicitudDTO);
 
-        }*/
+        }
 
     }
 

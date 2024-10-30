@@ -12,31 +12,22 @@ export default function StepForm({ step, formData, updateData }) {
   const [categories, setCategories] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
   const { isAuthenticated, userEmail } = useContext(AuthContext);
-  const[email, setEmail] = useState('');
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && step.id === 2) {
       console.log("Usuario autenticado:", userEmail);
       setEmail(userEmail); // Load the user's email
+      handleChange({ target: { name: 'email', value: userEmail } });
     }
-  }, [isAuthenticated, userEmail]);
+  }, [isAuthenticated, userEmail, step]);
+
   //console.log("product data", formData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'email') {
-      setFormData((prevState) => ({
-        ...prevState,
-        personalData: {
-          ...prevState.personalData,
-          email: value, // Update only the email field
-        },
-      }));
-    } else {
     console.log("name", name, "value", value);
     updateData({ [name]: value });
-    }
-
   };
 
 
@@ -68,6 +59,20 @@ export default function StepForm({ step, formData, updateData }) {
     <div className='formInputs'>
       {step.id === 1 && (
         <>
+          <div className='row mb-3'>
+            <div className='col-4'>
+              <p><b>Servicio</b></p>
+              <Form.Select
+                aria-label="Seleccionar servicio"
+                name="serviceId"
+                value={formData.serviceId}
+                onChange={handleChange}
+              >
+                <option value="">Seleccione un servicio</option>
+                <option value="1">Reparación</option>
+              </Form.Select>
+            </div>
+          </div>
           <div className='row mb-3'>
             <div className='col-4'>
               <p><b>Categoria</b></p>
@@ -166,8 +171,7 @@ export default function StepForm({ step, formData, updateData }) {
       )}
       {step.id === 3 && (
         <div>
-          {/* Payment step content */}
-          <p>Aquí va el formulario para la información de pago.</p>
+          <p>Seleccione confirmar para enviar la solicitud del servicio.</p>
         </div>
       )}
     </div>

@@ -44,10 +44,10 @@ namespace DALCodeFirst.Modelos
         [Required]  // FK
         public int IdSolicitudServicioEstado { get; set; }
 
-        [ForeignKey("IdSolicitudAlquilerEstado")]
+        [ForeignKey("IdSolicitudServicioEstado")]
         public SolicitudServicioEstado SolicitudServicioEstado { get; set; }
 
-        public string IdTecnicoAsignado { get; set; }// FK not required
+        public string? IdTecnicoAsignado { get; set; }// FK not required
 
         [ForeignKey("IdTecnicoAsignado")]
         public Usuario TecnicoAsignado { get; set; }
