@@ -5,7 +5,7 @@ import logo from "../../assets/images/logo.png";
 import { refresh } from "../../utilities/refresh";
 import DropDownCard from "./DropDownCard.jsx"
 
-export const TopNavbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
+export const TopNavbar = ({ isAuthenticated, onLoginClick, onJoinClick, onLogoutClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuOpen2, setMenuOpen2] = useState(false);
 
@@ -59,11 +59,13 @@ export const TopNavbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
         </div>
       </div>
       <div className="buttons">
-        <button className="join-btn">Únete</button>
         {isAuthenticated ? (
           <button className="auth-btn" onClick={onLogoutClick}>Cerrar Sesión</button>
         ) : (
-          <button className="auth-btn" onClick={onLoginClick}>Iniciar Sesión</button>
+          <>
+            <button className="join-btn" onClick={onJoinClick}>Únete</button>
+            <button className="auth-btn" onClick={onLoginClick}>Iniciar Sesión</button>
+          </>
         )}
       </div>
     </nav>

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import '../styles/modalLoginForm.css';
+import './modalLoginForm.css';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -8,7 +8,7 @@ import AuthContext from '../contexts/AuthContext';
 import { useBackendURL } from '../contexts/BackendURLContext';
 import axios from 'axios';
 
-function LoginForm({ show, onClose, onSubmit }) {
+function LoginForm({ show, onClose, onJoinClick }) {
   const backendURL = useBackendURL();
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
@@ -104,7 +104,7 @@ function LoginForm({ show, onClose, onSubmit }) {
             <Button className="full-width-button" variant="secondary" onClick={() => console.log("Olvido")}>
               Olvido su contraseña?
             </Button>
-            <Button className="full-width-button" variant="secondary" onClick={() => console.log("Registrarse")}>
+            <Button className="full-width-button" variant="secondary" onClick={onJoinClick}>
               Registrarse
             </Button>
           </div>
