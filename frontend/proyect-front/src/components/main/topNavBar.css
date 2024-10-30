@@ -1,4 +1,5 @@
 nav {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -80,4 +81,19 @@ nav .menu .dropdown .dropbtn {
 
 .logo{
   cursor: pointer;
+}
+
+.user-btn img {
+  height: 35px;
+  width: 35px;
+}
+.user-btn {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  background-color: transparent;
+}
+
+.user-menu-container{
+  position: relative;
 }

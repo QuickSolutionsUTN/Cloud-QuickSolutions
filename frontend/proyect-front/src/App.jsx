@@ -15,13 +15,13 @@ import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
 
 function App() {
   const ProtectedRoute = ({ children, roleRequired }) => {
-    const { isAuthenticated, role } = useContext(AuthContext);
+    const { isAuthenticated, userRole } = useContext(AuthContext);
 
     if (!isAuthenticated) {
       console.log("No validado");
       return <Navigate to="/" />;
     }
-    if (role !== roleRequired) {
+    if (userRole !== roleRequired) {
       console.log("No rol");
       return <Navigate to="/" />;
     }
@@ -34,14 +34,14 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
-            <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>} />
-            <Route path="maintenance" element={<ProtectedRoute roleRequired="maitenance"><MaintenancesPage /></ProtectedRoute>} />
-            <Route path="/repairs" element={<RepairsPage />} />
-            <Route path="/requests" element={<RepairsRequest />} />
-            <Route path="/requests/:id" element={<RequestDetailsPage />} />
-            <Route path="/maintenances" element={<MaintenancesPage />} />
-            <Route path="/aboutUs" element={<AboutUsPage />} />
+            <Route path="maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancesPage /></ProtectedRoute>} />
+            <Route path="repairs" element={<RepairsPage />} />
+            <Route path="requests" element={<RepairsRequest />} />
+            <Route path="requests/:id" element={<RequestDetailsPage />} />
+            <Route path="maintenances" element={<MaintenancesPage />} />
+            <Route path="aboutUs" element={<AboutUsPage />} />
           </Route>
+          <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
