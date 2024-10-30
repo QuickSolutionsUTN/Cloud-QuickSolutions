@@ -1,5 +1,5 @@
 import React from 'react';
-import RequestForm from '../components/RequestsForm/RequestForm';
+import RequestForm from '../components/Requests/RequestForm';
 import './RequestPage.css';
 
 export default function RepairRequest() {

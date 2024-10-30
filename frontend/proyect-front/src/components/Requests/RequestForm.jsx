@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { ProgressBar, Button } from 'react-bootstrap';
 import StepForm from './StepForm.jsx';
-import { useBackendURL } from '../../contexts/BackendURLContext';
+import { useBackendURL } from '../../contexts/BackendURLContext.jsx';
 import axios from 'axios';
 import './requestForm.css';
+import { useNavigate } from 'react-router-dom';
 
 const steps = [
   { id: 1, name: 'Datos del Producto', section: 'productData' },
@@ -13,6 +14,7 @@ const steps = [
 
 export const RequestForm = () => {
   const backendURL = useBackendURL();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
 
   const [formData, setFormData] = useState({
@@ -43,8 +45,10 @@ export const RequestForm = () => {
       const response = await axios.post(`${backendURL}/solicitud`, DataToSend);
 
       if (response.status=201) {
+        const solicitudId = response.data.id;
         console.log("Formulario enviado correctamente");
         console.log("Respuesta del servidor", response.data);
+        navigate(`/requests/${solicitudId}`);
       } else {
         console.log("Error al enviar el formulario", response.data);
       }
