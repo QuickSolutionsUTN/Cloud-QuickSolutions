@@ -1,0 +1,32 @@
+.profile-card {
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.profile-card-img {
+  width: 100%; /* Predeterminado para pantallas pequeñas */
+  max-width: 150px; /* Máximo tamaño para pantallas grandes */
+  height: auto; /* Mantener proporción */
+  object-fit: cover;
+  border-radius: 50%;
+  
+}
+
+.profile-card-title {
+  margin-top: 10px;
+  font-size: 1.6rem; 
+  color: #333;
+}
+
+.profile-card-text {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.profile-card-btn {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}

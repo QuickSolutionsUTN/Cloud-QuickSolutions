@@ -1,0 +1,41 @@
+import React from 'react';
+import { useContext } from 'react';
+import UserRequestsList from '../components/users/UserRequestsList.jsx';
+import AuthContext from '../contexts/AuthContext.jsx';
+import UserCard from '../components/users/UserProfileCard.jsx';
+import PersonalInfoCard from '../components/users/UserPersonalInfoCard.jsx';
+import AddressCard from '../components/users/UserAddressCard.jsx';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './userProfilePage.css';
+
+export default function UserProfile() {
+    //const { userEmail } = useContext(AuthContext);
+
+    return (
+        <div className='p-userprofile p-userprofile-container my-3 mx-3'>
+            <div className='container-fluid p-userprofile card-container'>
+                <UserCard
+                    name='Admin General'
+                    image='https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?t=st=1737921708~exp=1737925308~hmac=5909ba76d7c35d32a51f336ccd9d121802541b6cda2565c78b203df1edbcf79b&w=740'
+                    id='1'
+                />
+                <div className='p-userprofile right-cards'>
+                    <PersonalInfoCard
+                        email='admin@quickrentsolutions.com'
+                        birthDate='18/12/2022'
+                    />
+                    <AddressCard
+                        street='Av. del Petroleo Argentino 417'
+                        city='Berisso'
+                        state='Buenos Aires'
+                        zipCode='1924'
+                        country='Argentina'
+
+                    />
+                </div>
+            </div>
+            {/*<UserRequestsList userEmail={userEmail} />*/}
+        </div>
+    );
+}

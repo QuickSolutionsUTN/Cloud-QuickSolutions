@@ -1,0 +1,75 @@
+$primary: #CE4107;
+$primary-light: #8F4C36;
+$primary-light-container: #FFDBD0;
+$secondary: #77574D;
+$secondary-container: #FFDBD0;
+$tertiary: #6B5E2F;
+$error: #BA1A1A;
+$background: #FFF8F6;
+$surface: #FFF8F6;
+$outline: #85736E;
+$shadow: #000000;
+$inverse-background: #392E2B;
+$inverse-on-background: #FFEDE8;
+
+// Definición del color para el texto sobre el fondo claro
+$on-background: #231917; // Color de texto para fondo claro
+
+// Otros colores según necesidad
+$primary-container: #FFDBD0;
+$on-primary: #FFFFFF;
+$on-secondary: #FFFFFF;
+$on-tertiary: #FFFFFF;
+$on-error: #FFFFFF;
+$on-surface: #231917;
+$on-surface-variant: #53433F;
+
+// Definición de esquema de colores en modo claro
+.light-mode {
+  background-color: $background;
+  color: $on-background;
+  
+  .primary {
+    background-color: $primary;
+    color: $on-primary;
+  }
+
+  .secondary {
+    background-color: $secondary;
+    color: $on-secondary;
+  }
+
+  .tertiary {
+    background-color: $tertiary;
+    color: $on-tertiary;
+  }
+
+  .error {
+    background-color: $error;
+    color: $on-error;
+  }
+
+  .surface {
+    background-color: $surface;
+    color: $on-surface;
+  }
+
+  .outline {
+    border: 1px solid $outline;
+  }
+
+  .shadow {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  // Opciones para los contenedores, etc.
+  .primary-container {
+    background-color: $primary-container;
+    color: $on-primary;
+  }
+
+  .secondary-container {
+    background-color: $secondary-container;
+    color: $on-secondary;
+  }
+}

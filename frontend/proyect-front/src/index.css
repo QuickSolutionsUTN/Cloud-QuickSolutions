@@ -1,12 +1,40 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.light-mode {
+  background-color: #FFF8F6;
+  color: #231917;
+}
+.light-mode.primary {
+  background-color: #E56212;
+  color: #FFFFFF;
+}
+.light-mode.secondary {
+  background-color: #f5af84;
+  color: #FFFFFF;
+}
+.light-mode.tertiary {
+  background-color: #672a0c;
+  color: #FFFFFF;
+}
+.light-mode.error {
+  background-color: #BA1A1A;
+  color: #FFFFFF;
+}
+.light-mode.surface {
+  background-color: #FFF8F6;
+  color: #231917;
+}
+.light-mode.outline {
+  border: 1px solid #85736E;
+}
+.light-mode.shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.light-mode.primary-container {
+  background-color: #FFDBD0;
+  color: #FFFFFF;
+}
+.light-mode.secondary-container {
+  background-color: #FFDBD0;
+  color: #FFFFFF;
 }
 
-body {
-  display: block; 
-  min-width: 320px;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+/*# sourceMappingURL=index.css.map */

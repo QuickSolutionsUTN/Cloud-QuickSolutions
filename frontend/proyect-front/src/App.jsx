@@ -1,7 +1,5 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import MainLayout from './layout/MainLayout.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';
 import RepairsRequest from './pages/RequestPage.jsx';
@@ -12,8 +10,8 @@ import MaintenancesPage from './pages/MaintenancesPage.jsx';
 import RepairsPage from './pages/RepairsPage.jsx';
 import AboutUsPage from './pages/AboutUsPage.jsx';
 import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
-import UserRequestsPage from './pages/UsersRequestsPage.jsx';
-
+import UserRequestsPage from './pages/UserRequestsPage.jsx';
+import UserProfilePage from './pages/UserProfilePage.jsx';
 
 function App() {
   const ProtectedRoute = ({ children, roleRequired }) => {
@@ -42,6 +40,7 @@ function App() {
             <Route path="maintenances" element={<MaintenancesPage />} />
             <Route path="aboutUs" element={<AboutUsPage />} />
             <Route path="users">
+              <Route path="profile" element={<UserProfilePage />} />
               <Route path="requests" element={<UserRequestsPage />} />
               <Route path="requests/:id" element={<RequestDetailsPage />} />
             </Route>

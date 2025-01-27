@@ -5,9 +5,6 @@ import AuthContext from '../contexts/AuthContext.jsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-//import '../components/Requests/requestDetails.css';
-//import './RequestPage.css';
-
 export default function UserRequests() {
   const { userEmail } = useContext(AuthContext);
 

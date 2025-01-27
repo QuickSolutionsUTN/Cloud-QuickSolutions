@@ -1,6 +1,6 @@
-import React, { useState , useContext } from "react";
+import React, { useState, useContext } from "react";
 import "./topNavBar.css";
-import { Link, NavLink ,useNavigate} from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logos/logo.png";
 import user from "../../assets/logos/user-orange.png";
 import { refresh } from "../../utilities/refresh";
@@ -21,43 +21,43 @@ export const TopNavbar = ({ onLoginClick, onJoinClick, onLogoutClick }) => {
   };
 
   return (
-    <nav>
+    <nav className="light-mode">
       <div className='logo' onClick={handleLogoClick}>
-        <img src={logo}/>
+        <img src={logo} />
       </div>
       <div className="menu">
-        <div 
+        <div
           className="dropdown"
-          onMouseEnter={() => setMenuOpen(true)} 
+          onMouseEnter={() => setMenuOpen(true)}
           onMouseLeave={() => setMenuOpen(false)}
         >
           <button className="dropbtn">Mantenimiento</button>
           {menuOpen && (
             <div className="dropdown-content">
               <NavLink to="/">
-                <DropDownCard title="Que ofrecemos?" content="Servicio de mantenimiento etc"/>
+                <DropDownCard title="Que ofrecemos?" content="Servicio de mantenimiento etc" />
               </NavLink>
               <NavLink to="/requests">
-                <DropDownCard title="Solicitar" content="Crea una solicitud para el mantenimiento de tu equipo"/>
+                <DropDownCard title="Solicitar" content="Crea una solicitud para el mantenimiento de tu equipo" />
               </NavLink>
             </div>
           )}
         </div>
       </div>
       <div className="menu">
-        <div 
+        <div
           className="dropdown"
-          onMouseEnter={() => setMenuOpen2(true)} 
+          onMouseEnter={() => setMenuOpen2(true)}
           onMouseLeave={() => setMenuOpen2(false)}
-        > 
+        >
           <button className="dropbtn">Reparaciones</button>
           {menuOpen2 && (
             <div className="dropdown-content">
               <NavLink to="/">
-                <DropDownCard title="Que ofrecemos?" content="Servicio de reparacion etc"/>
+                <DropDownCard title="Que ofrecemos?" content="Servicio de reparacion etc" />
               </NavLink>
               <NavLink to="/requests">
-                <DropDownCard title="Solicitar" content="Crea una solicitud para la reparacion de tu equipo"/>
+                <DropDownCard title="Solicitar" content="Crea una solicitud para la reparacion de tu equipo" />
               </NavLink>
             </div>
           )}
@@ -65,19 +65,19 @@ export const TopNavbar = ({ onLoginClick, onJoinClick, onLogoutClick }) => {
       </div>
       <div className="buttons">
         {isAuthenticated ? (
-          <div 
+          <div
             className="user-menu-container"
             onMouseEnter={() => setShowUserMenu(true)}
           >
-            <button className="user-btn"><img src={user}/></button>
+            <button className="user-btn"><img src={user} /></button>
             {showUserMenu && (
-              <UserMenu 
-                onLogoutClick={onLogoutClick} 
-                onMouseLeave={() => setShowUserMenu(false)} 
+              <UserMenu
+                onLogoutClick={onLogoutClick}
+                onMouseLeave={() => setShowUserMenu(false)}
                 role={userRole}
               />
             )}
-          </div>        
+          </div>
         ) : (
           <>
             <button className="join-btn" onClick={onJoinClick}>Únete</button>

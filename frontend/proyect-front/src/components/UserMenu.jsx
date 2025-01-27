@@ -13,10 +13,13 @@ const UserMenu = ({ onLogoutClick, onMouseLeave, role }) => {
   const handleRequestsClick = () => {
     navigate('/users/requests');
   }
+  const handleProfileClick=()=>{
+    navigate('/users/profile');
+  }
 
   return (
     <div className="options" onMouseLeave={onMouseLeave}>
-      <div className="opc-top"><button>Mi perfil</button></div>
+      <div className="opc-top"><button onClick={handleProfileClick}>Mi perfil</button></div>
       <div className="opc"><button onClick={handleRequestsClick}>Mis solicitudes</button></div>
       {role === 'admin' && (
         <>

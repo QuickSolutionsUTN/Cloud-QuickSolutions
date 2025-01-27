@@ -1,0 +1,16 @@
+.address-card {
+  margin: 10px auto;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.address-card-text {
+  font-size: 1rem;
+  margin: 5px 0;
+}
+
+.address-card .fw-bold {
+  margin-top: 10px;
+  font-size: 1.6rem;
+  color: #333;
+}

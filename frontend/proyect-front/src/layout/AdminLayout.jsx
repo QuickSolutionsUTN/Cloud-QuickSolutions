@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 //import { Routes, Route, Outlet } from 'react-router-dom';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './adminLayout.css';
 import AuthContext from '../contexts/AuthContext.jsx';
 import AsideBar from '../components/admin/AdminsideBar.jsx';

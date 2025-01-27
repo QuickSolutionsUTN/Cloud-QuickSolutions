@@ -1,0 +1,36 @@
+.p-userprofile-container{
+  margin: 10px auto;
+
+}
+.p-userprofile .card-container {
+  display: flex;
+  flex-flow: row wrap;
+  gap:20px;
+  align-items:flex-start;
+  justify-content: space-around;
+  box-sizing: border-box;
+  padding: 20px;
+  margin: 20px auto;
+  width: 100%;
+}
+
+.p-userprofile .profile-card {
+  flex:1 0 25%;
+  box-sizing: border-box;
+}
+
+.right-cards{
+  flex:1 0 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.personal-info-card, .address-card, .profile-card {
+transition: transform 0.5s ease, box-shadow 0.3s ease; /* Transición más lenta para hacer el efecto más suave */
+}
+
+.personal-info-card:hover, .address-card:hover, .profile-card:hover {
+  transform: translateY(-5px); /* Menos elevación */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra más suave */
+}
