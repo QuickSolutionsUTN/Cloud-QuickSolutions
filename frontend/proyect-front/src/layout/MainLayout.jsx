@@ -31,10 +31,6 @@ function MainLayout() {
     console.log("Clickeo registrarse");
   }
 
-  /*const handleLoginSubmit = (data) => {
-    console.log("Clickeo iniciar sesion en modal");
-    setShowLoginForm(false);
-  };*/
   const handleLoginToJoinClick = () => {
     setShowLoginForm(false);
     setShowJoinForm(true);
@@ -49,12 +45,13 @@ function MainLayout() {
   const handleSwitchToLogin = () => {
     setShowJoinForm(false);
     setShowLoginForm(true);
+    console.log("Clickeo iniciar sesion desde registrarse");
   };
 
   return (
     <>
       <header>
-        <TopNavbar
+        <TopNavbar className="top-navbar"
           isAuthenticated={isAuthenticated}
           onLoginClick={handleLoginClick}
           onLogoutClick={handleLogoutClick}

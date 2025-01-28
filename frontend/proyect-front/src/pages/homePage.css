@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+#maintenance-more-info, #repair-more-info {
+    height: 100vh;
+    width: 100%;
+}
+
+#maintenance-more-info h1, #repair-more-info h1 {
+    font-size: 5em;
+    font-family: 'Oswald', sans-serif;
+    padding-top: 8%; /* Ajusta este valor para desplazar hacia abajo */
+    padding-left: 5%; /* Ajusta este valor para desplazar hacia la derecha */
+    margin: 0;
+}
+#maintenance-more-info h2, #repair-more-info h2 {
+    padding-left: 3%;
+    color: beige;
+}
+
+#maintenance-more-info p, #repair-more-info p {
+    font-size: 1.5em;
+    padding: 3%;
+    margin: 0;
+}
+
+#maintenance-more-info button, #repair-more-info button {
+    font-size: 1.2em;
+    margin-left: 5%;
+    background-color: transparent;
+    color: white;
+    border-color: white;
+    border-radius: 5px;
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+    box-shadow: none; /* Quitar sombras */
+}
+
+#maintenance-more-info button:hover, #repair-more-info button:hover {
+    background-color: orange; /* Color de fondo al pasar el cursor */
+}
+
+#maintenance-more-info .outlined-tertiary, #repair-more-info .outlined-tertiary {
+    display: inline-block;
+    font-size: 1.2em;
+    margin-left: 5%;
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    text-decoration: none;
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+    box-shadow: none; /* Quitar sombras */
+}
+
+#maintenance-more-info .outlined-tertiary:hover, #repair-more-info .outlined-tertiary:hover {
+    background-color: orange; /* Color de fondo al pasar el cursor */
+}
