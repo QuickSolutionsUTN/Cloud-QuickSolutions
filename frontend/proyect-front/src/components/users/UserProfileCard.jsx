@@ -1,7 +1,7 @@
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './userProfileCard.css';
+import './userCardsStyles.css';
 
 const UserCard = ({ name, image, id }) => {
   return (

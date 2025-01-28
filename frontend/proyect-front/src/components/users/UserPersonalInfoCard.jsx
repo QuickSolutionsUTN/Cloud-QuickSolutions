@@ -1,6 +1,6 @@
 import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './userPersonalInfoCard.css';
+import './userCardsStyles.css';
 
 const PersonalInfoCard = ({ email, birthDate }) => {
   return (

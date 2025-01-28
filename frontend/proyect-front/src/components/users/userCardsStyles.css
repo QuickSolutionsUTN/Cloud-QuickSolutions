@@ -1,0 +1,47 @@
+.card {
+  margin: 10px auto;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(133, 115, 110, 0.3);
+  transition: border-color 0.3s ease;
+}
+
+.card-text {
+  font-size: 1rem;
+  margin: 5px 0;
+  color: #6c757d;
+}
+
+.card .fw-bold {
+  margin-top: 10px;
+  font-size: 1.6rem;
+  color: #333;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+}
+
+.profile-card-img {
+  width: 100%; 
+  max-width: 150px; 
+  height: auto; 
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-card-btn {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.address-card,
+.personal-info-card {
+  height: auto;
+}
+
+.address-card .card-text,
+.personal-info-card .card-text {
+  /* Los estilos específicos de texto ya están incluidos en .card-text */
+}

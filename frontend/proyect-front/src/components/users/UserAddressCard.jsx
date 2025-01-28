@@ -1,6 +1,6 @@
 import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './userAddressCard.css';
+import './userCardsStyles.css';
 
 const AddressCard = ({ street, city, state, zipCode, country }) => {
   return (
