@@ -17,35 +17,34 @@ export default function UserProfile() {
     const [userData, setUserData] = useState([]);
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                console.log('Fetching user data...', backendURL);
-                const response = await axios.get(`${backendURL}/api/users/me`, {
-                    headers: {
-                        Authorization: `Bearer ${userToken}`,
-                    },
-                });
-                console.log('User data:', response.data);
-                setUserData(response.data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        }
-        fetchUserData();
-    });
+      const fetchUserData = async () => {
+          try {
+              console.log('Fetching user data...', backendURL);
+              const response = await axios.get(`${backendURL}/api/users/me`, {
+                  headers: {
+                      Authorization: `Bearer ${userToken}`,
+                  },
+              });
+              console.log('User data:', response.data);
+              setUserData(response.data);
+          } catch (error) {
+              console.error('Error fetching user data:', error);
+          }
+      };
+      fetchUserData();
+  }, [backendURL, userToken]);
 
     return (
         <div className='p-userprofile p-userprofile-container my-3 mx-3'>
             <div className='container-fluid p-userprofile card-container'>
                 <UserCard
-                    name='Admin General'
+                    name={userData.nombre + ' ' + userData.apellido}
                     image='https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?t=st=1737921708~exp=1737925308~hmac=5909ba76d7c35d32a51f336ccd9d121802541b6cda2565c78b203df1edbcf79b&w=740'
-                    id='1'
                 />
                 <div className='p-userprofile right-cards'>
                     <PersonalInfoCard
-                        email='admin@quickrentsolutions.com'
-                        birthDate='18/12/2022'
+                        email={userData.email}
+                        birthDate={userData.fechaDeNacimiento}
                     />
                     <AddressCard
                         street='Av. del Petroleo Argentino 417'

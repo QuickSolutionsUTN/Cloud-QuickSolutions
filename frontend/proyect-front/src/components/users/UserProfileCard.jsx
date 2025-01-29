@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './userCardsStyles.css';
 
-const UserCard = ({ name, image, id }) => {
+const UserCard = ({ name, image }) => {
   return (
     <Card className='text-center profile-card'>
       <Card.Body>
@@ -14,7 +14,6 @@ const UserCard = ({ name, image, id }) => {
           className="rounded-top profile-card-img"
         />
         <Card.Title className="fw-bold fs-4 profile-card-title">{name}</Card.Title>
-        <Card.Text className="text-muted profile-card-text">ID: #{id}</Card.Text>
         <Button variant="primary" className="rounded-pill px-4 py-2 profile-card-btn">Editar Perfil</Button>
       </Card.Body>
     </Card>
