@@ -1,12 +1,12 @@
 nav {
-  position: fixed; /* Fijar la barra de navegación en la parte superior */
-  top: 0;
-  width: 100%;
+  position: relative; /* Fijar la barra de navegación en la parte superior */
+  /*top: 0;
+  width: 100%;*/
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2%;
-  z-index: 1000; /* Asegurar que la barra esté por encima de otros elementos */
+  /*padding: 0 2%;
+  z-index: 1000; */
 }
 
 nav .logo {

@@ -56,7 +56,6 @@ export default function UserProfile() {
                     />
                 </div>
             </div>
-            {/*<UserRequestsList userEmail={userEmail} />*/}
         </div>
     );
 }

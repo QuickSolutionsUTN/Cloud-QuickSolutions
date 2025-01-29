@@ -15,7 +15,7 @@
   background-image: url('../../assets/images/repair.png');
 }
 
-.card {
+.custom-carousel .card {
   position: absolute; /* Posiciona la tarjeta de manera absoluta dentro del div */
   background-color: transparent;
   border: 0px;

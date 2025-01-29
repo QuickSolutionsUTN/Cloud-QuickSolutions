@@ -17,7 +17,7 @@ export default function CustomCarousel() {
     }
   };
   return (
-    <Carousel data-bs-theme="dark">
+    <Carousel data-bs-theme="dark" className='custom-carousel'>
       <Carousel.Item >
         <div className='maintenance'>
           <Card>
