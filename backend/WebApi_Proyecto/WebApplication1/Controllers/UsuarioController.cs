@@ -1,35 +1,33 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using Serilog;
 
 using Core.DTOs; //libreria que contiene los DTOs
 using Servicios;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using System.Net;
-using DALCodeFirst.Modelos; //libreria que contiene los servicios Categoria
+using DALCodeFirst.Modelos;
 
 
 //Uso del middleware para errores generales y no estar usando tantos try y catch
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/usuarios")]
+    [Route("api/users")]
     public class UsuarioController : ControllerBase
     {
 
         private readonly IUsuarioServicio _usuarioServicio;
         private readonly ISolicitudServicio_Servicio _solicitudServicio;
-        private readonly SignInManager<Usuario> _signInManager;
+        private readonly UserManager<Usuario> _userManager;
         private readonly ITokenServicio _tokenServicio;
         private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(IUsuarioServicio usuarioServicio, SignInManager<Usuario> signInManager, ITokenServicio tokenServicio, ILogger<UsuarioController> logger, ISolicitudServicio_Servicio solicitudServicio)
+        public UsuarioController(IUsuarioServicio usuarioServicio, UserManager<Usuario> userManager, ITokenServicio tokenServicio, ILogger<UsuarioController> logger, ISolicitudServicio_Servicio solicitudServicio)
         {
             _usuarioServicio = usuarioServicio;
             _solicitudServicio = solicitudServicio;
-            _signInManager = signInManager;
+            _userManager = userManager;
             _tokenServicio = tokenServicio;
             _logger = logger;
         }
@@ -37,58 +35,58 @@ namespace WebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UsuarioLoginDTO usuarioLoginDTO)
         {
-            var result = await _signInManager.PasswordSignInAsync(usuarioLoginDTO.Email, usuarioLoginDTO.Password, false, lockoutOnFailure: false);
-
-            if (result.Succeeded)
+            try
             {
-                // Obtener el usuario
+                // Intentar obtener el usuario por correo
                 var usuarioDTO = await _usuarioServicio.ObtenerUsuarioPorEmailAsync(usuarioLoginDTO.Email);
-                var _token = _tokenServicio.GenerarToken(usuarioDTO);
-                _logger.LogInformation("Respuesta de login Exitosa");
-                return Ok(new {
-                    status = "success",
-                    message = "Login exitoso",
-                    data = new
+                if (usuarioDTO == null)
+                {
+                    _logger.LogWarning($"Usuario no encontrado: {usuarioLoginDTO.Email}");
+                    return Unauthorized(new
                     {
-                        token = _token, // El token JWT
-                    }
+                        status = "error",
+                        message = "Credenciales inválidas"
+                    });
+                }
+
+                // Validar credenciales
+                var credencialesValidas = await _usuarioServicio.CheckCredentials(usuarioLoginDTO.Email, usuarioLoginDTO.Password);
+                if (!credencialesValidas)
+                {
+                    _logger.LogWarning($"Intento de inicio de sesión fallido para el usuario: {usuarioLoginDTO.Email}");
+                    return Unauthorized(new
+                    {
+                        status = "error",
+                        message = "Credenciales inválidas"
+                    });
+                }
+
+                // Generar token JWT
+                var token = _tokenServicio.GenerarToken(usuarioDTO);
+                _logger.LogInformation($"Inicio de sesión exitoso para el usuario: {usuarioLoginDTO.Email}");
+
+                return Ok(new
+                {
+                    token = token
                 });
             }
-
-            // Retornamos un mensaje de error en caso de que la autenticación falle
-            _logger.LogWarning($"Intento de inicio de sesión fallido para el usuario: {usuarioLoginDTO.Email}");
-            return Unauthorized(new
+            catch (Exception ex)
             {
-                status = "error",
-                message = "Credenciales inválidas"
-            });
+                _logger.LogError($"Error durante el inicio de sesión: {ex.Message}");
+                return StatusCode(500, new
+                {
+                    status = "error",
+                    message = "Ocurrió un error al procesar la solicitud"
+                });
+            }
         }
 
-        [Authorize(Roles ="admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet] //obtener todos los usuarios
         public async Task<IActionResult> ListarUsuarios()
         {
             var usuarios = await _usuarioServicio.ObtenerUsuariosAsync();
             return Ok(usuarios); // Retorna la lista de usuarios
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpGet("{email}")]
-        public async Task<IActionResult> ObtenerUsuarioPorEmail(string email)
-        {
-            //Log.Information("Buscando usuario con email: {Email}", email);
-
-            var usuarioDto = await _usuarioServicio.ObtenerUsuarioPorEmailAsync(email);
-            if (usuarioDto == null)
-            {
-                Log.Warning("Usuario con email {Email} no fue encontrado", email);
-                return NotFound(new
-                {
-                    status = (int)HttpStatusCode.NotFound,
-                    message = "Usuario no encontrado"
-                });
-            }
-                return Ok(usuarioDto);
         }
 
         [HttpPost]//crear un usuario
@@ -113,11 +111,24 @@ namespace WebAPI.Controllers
             return Ok(solicitudDTO);
 
         }
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 
-        /*
-        [HttpPut("{email}")]*/
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "No se pudo obtener el ID del usuario del token" });
+            }
+            var userDTO = await _usuarioServicio.ObtenerUsuarioPorIdAsync(userId);
 
-        /*[Authorize(Roles = "admin")]
-        [HttpDelete("{email}")]*/
+            if (userDTO == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado" });
+            }
+            return Ok(userDTO);
+        }
+
     }
 }

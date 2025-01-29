@@ -16,7 +16,7 @@ function UserRequestsList({userEmail}) {
     const fetchData=async ()=>{
       try{
         console.log('Fetching user requests...', backendURL,' from user ' , {userEmail});
-        const response= await axios.get(`${backendURL}/usuarios/${userEmail}/solicitudes`);
+        const response= await axios.get(`${backendURL}/api/users/${userEmail}/solicitudes`);
         console.log('User requests:', response.data);
         const mappedData = response.data.map(request => ({
           id: request.id,

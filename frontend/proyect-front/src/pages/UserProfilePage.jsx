@@ -1,16 +1,38 @@
 import React from 'react';
-import { useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { useBackendURL } from '../contexts/BackendURLContext';
 import UserRequestsList from '../components/users/UserRequestsList.jsx';
-import AuthContext from '../contexts/AuthContext.jsx';
 import UserCard from '../components/users/UserProfileCard.jsx';
 import PersonalInfoCard from '../components/users/UserPersonalInfoCard.jsx';
 import AddressCard from '../components/users/UserAddressCard.jsx';
+import AuthContext from '../contexts/AuthContext.jsx';
+import axios from 'axios';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './userProfilePage.css';
 
 export default function UserProfile() {
-    //const { userEmail } = useContext(AuthContext);
+    const backendURL = useBackendURL();
+    const { userToken } = useContext(AuthContext);
+    const [userData, setUserData] = useState([]);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                console.log('Fetching user data...', backendURL);
+                const response = await axios.get(`${backendURL}/api/users/me`, {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`,
+                    },
+                });
+                console.log('User data:', response.data);
+                setUserData(response.data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
+        fetchUserData();
+    });
 
     return (
         <div className='p-userprofile p-userprofile-container my-3 mx-3'>

@@ -24,29 +24,31 @@ ServiceConfiguration.ConfigureServices(builder);
 
 var app = builder.Build();
 
-// Registrar el middleware personalizado
-app.UseMiddleware<ExceptionMiddleware>();
-
-// Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionMiddleware>(); // Middleware para excepciones
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
-
-//app.UseStaticFiles();
-
-app.UseRouting();
-app.UseCors("AllowAllOrigins");
+app.UseRouting(); 
+app.UseCors("AllowAllOrigins"); 
 app.UseAuthentication();
+app.UseAuthorization(); 
+app.MapControllers();
 
-app.UseAuthorization();
-
-app.UseEndpoints(endpoints =>
+app.Use(async (context, next) =>
 {
-    endpoints.MapControllers();
-});
+    var authenticationHeader = context.Request.Headers["Authorization"];
+    if (string.IsNullOrEmpty(authenticationHeader))
+    {
+        Console.WriteLine("No Authorization header found");
+    }
+    else
+    {
+        Console.WriteLine($"Authorization header: {authenticationHeader}");
+    }
 
+    await next();
+});
 app.Run();

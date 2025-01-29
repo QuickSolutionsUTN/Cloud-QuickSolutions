@@ -30,11 +30,12 @@ namespace Servicios
 
             var claims = new[]
             {
-                    new Claim(JwtRegisteredClaimNames.Sub, usuarioDTO.Email),
-                    new Claim(JwtRegisteredClaimNames.Email, usuarioDTO.Email),
-                    new Claim(ClaimTypes.Role, usuarioDTO.Rol),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Identificador único del token
-                    };
+                new Claim(JwtRegisteredClaimNames.Sub, usuarioDTO.Id),          // ID del usuario (Subject)
+                new Claim(JwtRegisteredClaimNames.Email, usuarioDTO.Email),      // Email del usuario
+                new Claim(ClaimTypes.Role, usuarioDTO.Rol),                      // Rol del usuario
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, usuarioDTO.Id)
+            };
 
             var token = new JwtSecurityToken(
                 issuer: _jwtSettingsDTO.Issuer,

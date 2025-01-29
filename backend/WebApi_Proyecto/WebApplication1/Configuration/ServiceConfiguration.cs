@@ -9,10 +9,9 @@ using Servicios;
 using DALCodeFirst;
 using Core.DTOs;
 using DALCodeFirst.Modelos;
-using FluentAssertions.Common;
-using FluentValidation.AspNetCore;
 using WebAPI.Validators;
 using FluentValidation;
+
 
 public static class ServiceConfiguration
 {
@@ -20,25 +19,24 @@ public static class ServiceConfiguration
     {
         // Configurar autenticación
         var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettingsDTO>();
+
         builder.Services.AddSingleton(jwtSettings);//lo registro como servicio para que se pueda acceder desde cualquier parte de la aplicación
 
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings.Issuer,
-                ValidAudience = jwtSettings.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
-            };
-        });
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                };
+            });
 
-        //Autorización
         builder.Services.AddAuthorization(options =>
         {
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
@@ -64,29 +62,36 @@ public static class ServiceConfiguration
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new() { Title = "WebAPI", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "v1" });
+
+            // Definir la seguridad para JWT Bearer
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
                 Description = "Por favor ingrese el token en el formato **Bearer {token}**",
                 Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey
+                Type = SecuritySchemeType.ApiKey,
+                BearerFormat = "JWT",
+                Scheme = "Bearer"
             });
+
+            // Requerir el token JWT en todos los endpoints que lo necesiten
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
             {
+                Reference = new OpenApiReference
                 {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[] { }
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
-            });
-        });
+            },
+            new string[] { }
+        }
+    });
+        }); 
+
 
         //Servicios
         builder.Services.AddScoped<ITokenServicio, TokenServicio>();
@@ -97,16 +102,22 @@ public static class ServiceConfiguration
         builder.Services.AddScoped<ISolicitudServicio_Servicio, SolicitudServicio_Servicio>();
         builder.Services.AddScoped<ITipoProductoServicio, TipoProductoServicio>();
         builder.Services.AddScoped<ITipoServicio_Servicio, TipoServicio_Servicio>();
-        //builder.Services.AddScoped<IEquipoServicio, EquipoServicio>();
-        //builder.Services.AddScoped<IEstadoEquipoServicio, EstadoEquipoServicio>();
 
+        /*
         //Identity
         builder.Services.AddIdentity<Usuario, Rol>(options =>
         {
             // Configuración de opciones de Identity (opcional)
             options.User.RequireUniqueEmail = true;
         })
+        .AddEntityFrameworkStores<WebAPIContext>()
+        .AddDefaultTokenProviders();*/
 
+        builder.Services.AddIdentityCore<Usuario>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddRoles<Rol>()
         .AddEntityFrameworkStores<WebAPIContext>()
         .AddDefaultTokenProviders();
 
@@ -137,16 +148,10 @@ public static class ServiceConfiguration
                 builder =>
                 {
                     builder
-                    .AllowAnyOrigin() // Permitir cualquier origen
+                    .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader();
-
-
-
                 });
         });
-
     }
-
-
 }

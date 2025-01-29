@@ -4,6 +4,8 @@ namespace Core.DTOs;
 public class UsuarioDTO //DTO general de usuario 
 {
     [Required]
+    public string Id { get; set; }
+    [Required]
     public string Email { get; set; }// Heredada de IdentityUser
     [Required]
     public string Nombre { get; set; }

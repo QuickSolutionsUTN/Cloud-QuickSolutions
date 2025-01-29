@@ -33,7 +33,7 @@ export default function StepForm({ step, formData, updateData }) {
 
   // Fetch categories and product types from the backend
   useEffect(() => {
-    axios.get(`${backendURL}/categoria`)
+    axios.get(`${backendURL}/api/categoria`)
       .then(response => {
         console.log(response.data);
         setCategories(response.data)
@@ -47,7 +47,7 @@ export default function StepForm({ step, formData, updateData }) {
     handleChange({ target: { name: 'categoryId', value: categoryId } });
 
     // API call to get product types based on the selected category
-    axios.get(`${backendURL}/tipoproducto/${categoryId}`)
+    axios.get(`${backendURL}/api/tipoproducto/${categoryId}`)
       .then(response => {
         console.log(response.data);
         setProductTypes(response.data);

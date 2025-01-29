@@ -18,43 +18,33 @@ function LoginForm({ show, onClose, onJoinClick }) {
   const handleFormSubmit = async (data) => {
     try {
       console.log("Clic en Iniciar Sesión");
-      const response = await axios.post(`${backendURL}/usuarios/login`, data);
-
-      if (response.status === 200 && response.data.status === "success") {
-        const userToken = response.data.data.token;// Guarda el token
-
-        if (userToken) {
-          localStorage.setItem('authToken', userToken);
-          console.log("Usuario autenticado correctamente");
-          try {
-            const decodedToken = jwtDecode(userToken);
-            console.log("Token decodificado:", decodedToken);
-            const userRole = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-            
-            const userData={
-              role: userRole,
-              email: decodedToken.email,
-              token:userToken,
-            }
-            login(userData);
-
-            // Redirigir al usuario la página correspondiente
-            if (userRole === 'admin') {
-              navigate('/admin');
-            } else if (userRole === 'maintenance') {
-              navigate('/maintenance');
-            }
-            onClose();
-          } catch (error) {
-            console.error('Error al decodificar el token:', error);
-            setErrorMessage("Token inválido. Intente nuevamente.");
+      const response = await axios.post(`${backendURL}/api/users/login`, data);
+      if (response.status === 200) {
+        const userToken = response.data.token;
+        const userRole = jwtDecode(userToken)['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        const userId = jwtDecode(userToken)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+        console.log("Usuario autenticado correctamente");
+        try {
+          const decodedToken = jwtDecode(userToken);
+          const userData = {
+            userId: userId,
+            role: userRole,
+            email: decodedToken.email,
+            token: userToken,
           }
+          login(userData);
+          // Redirigir al usuario la página correspondiente
+          if (userRole === 'admin') {
+            navigate('/admin');
+          } else if (userRole === 'maintenance') {
+            navigate('/maintenance');
+          }
+          onClose();
+        } catch (error) {
+          console.error('Error al decodificar el token:', error);
+          setErrorMessage("Token inválido. Intente nuevamente.");
         }
-      } else {
-        console.error('Error en el login:', response.data.message);
-        setErrorMessage(response.data.message || "Error desconocido en el login.");
       }
-
     } catch (error) {
       console.error('Error al hacer login:', error);
       const errorMessage = error.response?.data?.message || "Error de conexión. Intente más tarde.";

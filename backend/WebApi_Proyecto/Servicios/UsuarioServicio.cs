@@ -32,6 +32,36 @@ namespace Servicios
 
         }
 
+        public async Task<bool> CheckCredentials(string email, string password)
+        {
+            try
+            {
+                // Buscar el usuario por correo electrónico
+                var usuario = await _userManager.FindByEmailAsync(email);
+                if (usuario == null)
+                {
+                    //_logger.LogWarning($"Usuario con email '{email}' no encontrado.");
+                    return false;
+                }
+
+                // Validar la contraseña
+                var resultado = _userManager.PasswordHasher.VerifyHashedPassword(usuario, usuario.PasswordHash, password);
+                if (resultado == PasswordVerificationResult.Success)
+                {
+                    //_logger.LogInformation($"Credenciales válidas para el usuario con email '{email}'.");
+                    return true;
+                }
+
+               // _logger.LogWarning($"Contraseña incorrecta para el usuario con email '{email}'.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError($"Error verificando las credenciales del usuario con email '{email}': {ex.Message}");
+                throw; // Lanza la excepción para que sea manejada en el controlador, si es necesario
+            }
+        }
+
         public async Task<UsuarioDTO> CrearUsuarioAsync(UsuarioRegistroDTO usuarioRegistroDto)
         {
             try
@@ -39,12 +69,8 @@ namespace Servicios
                 //AutoMapper para mapear entre el UsuarioDTO y el modelo Usuario
                 var usuario = _mapper.Map<Usuario>(usuarioRegistroDto);
 
-                // Hashear la contraseña
-                var passwordHasher = new PasswordHasher<Usuario>();
-                usuario.PasswordHash = passwordHasher.HashPassword(usuario, usuarioRegistroDto.Password);
-
                 // Crear el usuario
-                var result = await _userManager.CreateAsync(usuario);
+                var result = await _userManager.CreateAsync(usuario, usuarioRegistroDto.Password);
 
                 // Verificar si la creación fue exitosa
                 if (result.Succeeded)
@@ -95,19 +121,18 @@ namespace Servicios
 
         public async Task<UsuarioDTO> ObtenerUsuarioPorEmailAsync(string email)
         {
-            var usuario = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
 
-            if (usuario == null)
+            if (user == null)
             {
                 // En lugar de lanzar una excepción, devuelve null.
                 return null;
             }
             
 
-            var usuarioDto = _mapper.Map<UsuarioDTO>(usuario);
+            var usuarioDto = _mapper.Map<UsuarioDTO>(user);
 
-  
-            var roles = await _userManager.GetRolesAsync(usuario);
+            var roles = await _userManager.GetRolesAsync(user);
 
             if (roles==null || roles.Count==0)
             {
@@ -117,7 +142,30 @@ namespace Servicios
             usuarioDto.Rol = roles.FirstOrDefault();
 
             return usuarioDto;
-            
+        }
+
+        public async Task<UsuarioDTO> ObtenerUsuarioPorIdAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                // En lugar de lanzar una excepción, devuelve null.
+                return null;
+            }
+
+            var usuarioDto = _mapper.Map<UsuarioDTO>(user);
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles == null || roles.Count == 0)
+            {
+                return null;
+            }
+
+            usuarioDto.Rol = roles.FirstOrDefault();
+
+            return usuarioDto;
         }
     }
 }
