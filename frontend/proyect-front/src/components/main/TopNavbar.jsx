@@ -3,7 +3,6 @@ import "./topNavBar.css";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logos/logo.png";
 import user from "../../assets/logos/user-orange.png";
-import { refresh } from "../../utilities/refresh";
 import DropDownCard from "./DropDownCard.jsx"
 import UserMenu from "../UserMenu.jsx";
 import AuthContext from "../../contexts/AuthContext.jsx";
@@ -20,6 +19,18 @@ export const TopNavbar = ({ onLoginClick, onJoinClick, onLogoutClick }) => {
     navigate('/'); // Redirige a la HomePage
   };
 
+  const handleScrollToMaintenance = () => {
+    const element = document.getElementById('maintenance-more-info');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  const handleScrollToRepair = () => {
+    const element = document.getElementById('repair-more-info');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
     <nav className="light-mode">
       <div className='logo' onClick={handleLogoClick}>
@@ -34,11 +45,11 @@ export const TopNavbar = ({ onLoginClick, onJoinClick, onLogoutClick }) => {
           <button className="dropbtn">Mantenimiento</button>
           {menuOpen && (
             <div className="dropdown-content">
-              <NavLink to="/">
-                <DropDownCard title="Que ofrecemos?" content="Servicio de mantenimiento etc" />
+              <NavLink to="/" onClick={handleScrollToMaintenance}>
+                <DropDownCard title="Que ofrecemos?" content="Servicio de mantenimiento preventivo"/>
               </NavLink>
-              <NavLink to="/requests">
-                <DropDownCard title="Solicitar" content="Crea una solicitud para el mantenimiento de tu equipo" />
+              <NavLink to="/requests?type=maintenance">
+                <DropDownCard title="Solicitar" content="Crea una solicitud para el mantenimiento de tu equipo"/>
               </NavLink>
             </div>
           )}
@@ -53,11 +64,11 @@ export const TopNavbar = ({ onLoginClick, onJoinClick, onLogoutClick }) => {
           <button className="dropbtn">Reparaciones</button>
           {menuOpen2 && (
             <div className="dropdown-content">
-              <NavLink to="/">
-                <DropDownCard title="Que ofrecemos?" content="Servicio de reparacion etc" />
+              <NavLink to="/"  onClick={handleScrollToRepair}>
+                <DropDownCard title="Que ofrecemos?" content="Servicio de reparacion etc"/>
               </NavLink>
-              <NavLink to="/requests">
-                <DropDownCard title="Solicitar" content="Crea una solicitud para la reparacion de tu equipo" />
+              <NavLink to="/requests?type=repair">
+                <DropDownCard title="Solicitar" content="Crea una solicitud para la reparacion de tu equipo"/>
               </NavLink>
             </div>
           )}

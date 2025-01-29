@@ -55,4 +55,12 @@ main {
   color: #FFFFFF;
 }
 
+.outlined-primary {
+  border: 1px solid #33ff00;
+}
+
+.outlined-tertiary {
+  border: 1px solid #33ff00;
+}
+
 /*# sourceMappingURL=index.css.map */

@@ -1,34 +1,58 @@
 import Carousel from 'react-bootstrap/Carousel';
-import slide1 from '../../assets/images/slide1.jpg';
-import slide2 from '../../assets/images/slide1.jpg';
-import slide3 from '../../assets/images/slide1.jpg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './carousel.css';
+import { Card, CardBody, Button } from 'react-bootstrap';
 
 export default function CustomCarousel() {
+  const handleScrollToMaintenance = () => {
+    const element = document.getElementById('maintenance-more-info');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  const handleScrollToRepair = () => {
+    const element = document.getElementById('repair-more-info');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
     <Carousel data-bs-theme="dark">
-      <Carousel.Item>
-        <img src={slide1} alt="First slide"/>
-        <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p></p>
-        </Carousel.Caption>
+      <Carousel.Item >
+        <div className='maintenance'>
+          <Card>
+            <CardBody>
+              <Card.Title>MANTENIMIENTO</Card.Title>
+              <Card.Subtitle>Por qué hacerlo?</Card.Subtitle>
+              <Card.Text>
+                Realizar mantenimiento ayuda a evitar fallos inesperados,<br />
+                reduce costos a largo plazo y garantiza un mejor rendimiento<br /> y durabilidad de los equipos.
+                <br /><br />
+                <Button variant="outline-secondary" onClick={handleScrollToMaintenance}>CONOCER MÁS</Button>
+              </Card.Text>
+            </CardBody>
+          </Card>
+        </div>
       </Carousel.Item>
+
       <Carousel.Item>
-        <img src={slide2} alt="Second slide"/>
-        <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p></p>
-        </Carousel.Caption>
+        <div className='repair'>
+          <Card>
+            <CardBody>
+              <Card.Title>REPARACIÓN</Card.Title>
+              <Card.Subtitle>Por qué elegirnos?</Card.Subtitle>
+              <Card.Text>
+              Ofrecemos soluciones rápidas y efectivas para reparar <br />
+              tus equipos en óptimas condiciones maximizando la vida útil <br />
+              de tus herramientas
+              <br /><br />
+                <Button variant="outline-dark" onClick={handleScrollToRepair}>CONOCER MÁS</Button>
+              </Card.Text>
+            </CardBody>
+          </Card>
+        </div>
       </Carousel.Item>
-      <Carousel.Item>
-        <img src={slide3} alt="Third slide"/>
-        <Carousel.Caption>
-          <h3>Third slide label</h3>
-          <p></p>
-        </Carousel.Caption>
-      </Carousel.Item>
+
     </Carousel>
   );
 }

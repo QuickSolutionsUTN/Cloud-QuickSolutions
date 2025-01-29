@@ -1,21 +1,61 @@
-
-.carousel .carousel-caption h3 {
-  color: white !important;
-}
-
-.carousel .carousel-caption p {
-  color: gray !important;
-}
-
-.carousel {
+.maintenance, .repair{
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat; 
   width: 100%;
-  max-width: 100%;
-  height: auto;
+  padding-bottom: 33.34%; /* Mantiene la relación de aspecto de la imagen (2028:676) */
+  margin: 0px;
+  padding-top: 0px;
+  position: relative;
+}
+.maintenance{
+  background-image: url('../../assets/images/maintenance.png');
+}
+.repair{
+  background-image: url('../../assets/images/repair.png');
 }
 
-.carousel-item img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  max-height: 200px;
+.card {
+  position: absolute; /* Posiciona la tarjeta de manera absoluta dentro del div */
+  background-color: transparent;
+  border: 0px;
 }
+
+.maintenance .card {
+  top: 30%; /* Ajusta este valor para mover la tarjeta hacia arriba o abajo */
+  left: 57%; /* Ajusta este valor para mover la tarjeta hacia la derecha o izquierda */
+}
+.maintenance .card .card-title {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+.maintenance .card .card-subtitle {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: rgb(169, 169, 169);
+}
+
+
+.repair .card {
+  top: 30%; /* Ajusta este valor para mover la tarjeta hacia arriba o abajo */
+  left: 10%; /* Ajusta este valor para mover la tarjeta hacia la derecha o izquierda */
+}
+.repair .card .card-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: black;
+}
+.repair .card .card-subtitle {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: rgb(44, 44, 44);
+}
+.repair .card-text {
+  color: rgb(17, 17, 17);
+}
+
+
+
+
+
+

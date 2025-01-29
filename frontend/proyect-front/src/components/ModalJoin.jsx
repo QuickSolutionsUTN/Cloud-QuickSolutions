@@ -82,19 +82,19 @@ function ModalJoin({ show, onClose, onSwitchToLogin }) {
           <Form.Group controlId="formBirthDate">
             <Form.Label>Fecha de Nacimiento</Form.Label>
             <div className="d-flex birthdate">
-              <Form.Select className='selector' {...register('day', { required: '*Campo obligatorio' })}>
+              <Form.Select className='selector' id="formBirthDateDay" {...register('day', { required: '*Campo obligatorio' })}>
                 <option value="">Día</option>
                 {days.map(day => (
                   <option key={day} value={day}>{day}</option>
                 ))}
               </Form.Select>
-              <Form.Select className='selector' {...register('month', { required: '*Campo obligatorio' })}>
+              <Form.Select className='selector' id="formBirthDateMonth" {...register('month', { required: '*Campo obligatorio' })}>
                 <option value="">Mes</option>
                 {months.map(month => (
                   <option key={month} value={month}>{month}</option>
                 ))}
               </Form.Select>
-              <Form.Select className='selector' {...register('year', { required: '*Campo obligatorio' })}>
+              <Form.Select className='selector' id="formBirthDateYear" {...register('year', { required: '*Campo obligatorio' })}>
                 <option value="">Año</option>
                 {years.map(year => (
                   <option key={year} value={year}>{year}</option>
