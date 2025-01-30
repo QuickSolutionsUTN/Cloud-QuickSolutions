@@ -6,7 +6,7 @@ const DropDownCard = ({title, content}) => {
     <div className="info-section">
       <h6>{title}</h6>
       <hr />
-      <p>{content}</p>
+      <p className='ddc'>{content}</p>
     </div>
   );
 };

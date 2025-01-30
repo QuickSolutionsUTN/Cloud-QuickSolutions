@@ -19,6 +19,7 @@ export const RequestForm = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const { isAuthenticated, userEmail } = useContext(AuthContext);
+  const [isStepComplete, setIsStepComplete] = useState(false);
 
   const [formData, setFormData] = useState({
     productData: { serviceId: 0, categoryId: 0, productTypeId: 0, problemDescription: '' },
@@ -85,6 +86,7 @@ export const RequestForm = () => {
           step={steps[currentStep]}
           formData={formData[steps[currentStep].section]}
           updateData={(newData) => updateData(steps[currentStep].section, newData)}
+          setIsStepComplete={setIsStepComplete}
         />
       </div>
       <div className="mt-4 container-buttons">
@@ -99,7 +101,7 @@ export const RequestForm = () => {
           className='next-button'
           variant="primary"
           onClick={nextStep}
-          disabled={currentStep === 1 && !isAuthenticated}
+          disabled={!isStepComplete || (currentStep === 1 && !isAuthenticated)}
         >
           {currentStep === steps.length - 1 ? 'Finalizar' : 'Siguiente'}
         </Button>

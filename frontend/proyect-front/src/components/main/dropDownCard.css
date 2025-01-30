@@ -35,3 +35,6 @@
 .info-section:hover p {
   color: white; /* Cambiar el color del contenido al pasar el mouse */
 }
+.ddc{
+  width: 100px;
+}
