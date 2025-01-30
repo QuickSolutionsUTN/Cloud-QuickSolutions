@@ -2,10 +2,9 @@ import React, {useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import {useBackendURL} from '../../contexts/BackendURLContext.jsx';
 import DataTable from 'react-data-table-component';
-import axios
-from "axios";
-import { Button } from "react-bootstrap";
-import './userRequestsList.css'
+import axios from "axios";
+import './userRequestsList.css';
+import Button from 'react-bootstrap/Button';
 
 function UserRequestsList({userEmail}) {
   const [userRequests, setRequests]=useState([]);
@@ -39,12 +38,19 @@ function UserRequestsList({userEmail}) {
       name:'Id',
       selector:row=> row.idSolicitud,
       sorteable:true,
-      width: '200px',
+      width: '8%',
+    },
+    {
+      name:'Fecha',
+      selector:row=> row.fechaGeneracion,
+      sorteable:true,
+      width: '8%',
     },
     {
       name:'Servicio',
       selector:row=> row.tipoServicio,
       sorteable:true,
+      width: '10%',
     },
     {
       name:'Categoria',
@@ -57,11 +63,6 @@ function UserRequestsList({userEmail}) {
       sorteable:true,
     },
     {
-      name:'Fecha',
-      selector:row=> row.fechaGeneracion,
-      sorteable:true,
-    },
-    {
       name:'Estado',
       selector:row=> row.estado,
       sorteable:true,
@@ -69,7 +70,7 @@ function UserRequestsList({userEmail}) {
     {
       name: 'Detalle',
       cell: row => (
-        <Button className="detail-button" onClick={() => navigate(`./${row.idSolicitud}`)}>
+        <Button variant="outline-secondary" onClick={() => navigate(`./${row.idSolicitud}`)}>
           Detalle
         </Button>
       ),
@@ -87,4 +88,3 @@ function UserRequestsList({userEmail}) {
 
  export default UserRequestsList;
 
- 

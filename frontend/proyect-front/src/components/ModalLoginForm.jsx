@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import './modalLoginForm.css';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ function LoginForm({ show, onClose, onJoinClick }) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleFormSubmit = async (data) => {
+    setErrorMessage(''); // Clear error message on new submit attempt
     try {
       console.log("Clic en Iniciar Sesión");
       const response = await axios.post(`${backendURL}/api/users/login`, data);
@@ -86,7 +87,11 @@ function LoginForm({ show, onClose, onJoinClick }) {
             />
             {errors.password && <p className="error-message">{errors.password.message}</p>}
           </Form.Group>
-          {errorMessage && <p className="error-message" style={{ marginTop: '10px', marginBottom: '5px' }}>*{errorMessage}</p>}
+          {errorMessage && (
+            <Alert variant="danger" className="mt-3">
+              {errorMessage}
+            </Alert>
+          )}
           <Button className={`full-width-button ${errorMessage ? 'button-error' : ''}`} variant="primary" type="submit">
             Iniciar sesión
           </Button>
@@ -104,4 +109,4 @@ function LoginForm({ show, onClose, onJoinClick }) {
   );
 }
 
-export default LoginForm; 
+export default LoginForm;

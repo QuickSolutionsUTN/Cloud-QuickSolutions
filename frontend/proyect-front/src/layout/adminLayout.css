@@ -1,33 +1,18 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
 
-#root {
-    height: 100vh;
-}
-
-.admin-layout {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
 
 .admin-header{
-    height: 70px;
+    position:absolute;
+    top: 0;
+    height: 10%;
     width: 100%;
     background-color: #D55403;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    z-index: 100;
 }
 
-.admin-aside{
-    width: 200px;
-    height: calc(100-70px);
-    padding-top: 20px;
-}
+
 
 .admin-p{
     color: white;
