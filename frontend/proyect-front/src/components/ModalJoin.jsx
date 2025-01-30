@@ -31,7 +31,7 @@ function ModalJoin({ show, onClose, onSwitchToLogin }) {
     setSuccessMessage('');
     try {
       console.log('Datos del registro: ', mappedUser);
-      const response = await axios.post(`${backendURL}/users`, mappedUser);
+      const response = await axios.post(`${backendURL}/api/users`, mappedUser);
 
       if (response.status === 201) {
         // Mensaje de éxito y redirección

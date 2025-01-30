@@ -9,6 +9,7 @@ body {
   min-width: 100vh;
   min-height: 100vh;
   overflow-x: hidden;
+  padding-top: 4%;
 }
 
 main {
