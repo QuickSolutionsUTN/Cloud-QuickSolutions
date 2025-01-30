@@ -3,6 +3,7 @@ using System;
 using DALCodeFirst;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DALCodeFIrst.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    partial class WebAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250130212144_Correccion_SolicitudServicio")]
+    partial class Correccion_SolicitudServicio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,7 +173,7 @@ namespace DALCodeFIrst.Migrations
                     b.Property<string>("IdTecnicoAsignado")
                         .HasColumnType("text");
 
-                    b.Property<int?>("IdTipoMantenimiento")
+                    b.Property<int>("IdTipoMantenimiento")
                         .HasColumnType("integer");
 
                     b.Property<int>("IdTipoProducto")
@@ -520,7 +523,9 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasOne("DALCodeFirst.Modelos.TipoMantenimiento", "TipoMantenimiento")
                         .WithMany()
-                        .HasForeignKey("IdTipoMantenimiento");
+                        .HasForeignKey("IdTipoMantenimiento")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DALCodeFirst.Modelos.TipoProducto", "TipoProducto")
                         .WithMany()

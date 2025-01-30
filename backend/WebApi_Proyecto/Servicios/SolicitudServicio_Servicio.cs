@@ -34,11 +34,10 @@ namespace Servicios
                 Descripcion = solicitudCreacionDTO.Descripcion,
                 IdSolicitante = userId,
                 IdTipoServicio = solicitudCreacionDTO.IdTipoServicio,
-                IdCategoriaProducto = solicitudCreacionDTO.IdCategoria,
                 IdTipoProducto = solicitudCreacionDTO.IdTipoProducto,
                 FechaGeneracion = DateTime.UtcNow,
                 IdSolicitudServicioEstado = 1,
-                ReparacionLocal = true,
+                Tercearizado = false,
             };
 
             _context.SolicitudServicio.Add(nuevaSolicitud);
@@ -52,7 +51,6 @@ namespace Servicios
         {
             var solicitudes = await _context.SolicitudServicio
                 .Include(e => e.SolicitudServicioEstado)
-                .Include(c => c.CategoriaProducto)
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)
@@ -67,7 +65,6 @@ namespace Servicios
         {
             var solicitud = await _context.SolicitudServicio
                 .Include(e => e.SolicitudServicioEstado)
-                .Include(c => c.CategoriaProducto)
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)
@@ -78,15 +75,14 @@ namespace Servicios
             return solicitudDTO;
         }
 
-        public async Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudPorEmailAsync(string userEmail)
+        public async Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudPorUserIdAsync(string userId)
         {
             var solicitudes = await _context.SolicitudServicio
                 .Include(e => e.SolicitudServicioEstado)
-                .Include(c => c.CategoriaProducto)
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)
-                .Where(es => es.Solicitante.Email == userEmail)
+                .Where(es => es.Solicitante.Id == userId)
                 .ToListAsync();
 
             var solicitudesDTO = _mapper.Map<List<SolicitudRespuestaDTO>>(solicitudes);

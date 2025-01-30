@@ -67,37 +67,31 @@ public static class ServiceConfiguration
 
         //swagger
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
+        builder.Services.AddSwaggerGen(options =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "v1" });
 
             // Definir la seguridad para JWT Bearer
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            var jwtSecurityScheme = new OpenApiSecurityScheme
             {
-                In = ParameterLocation.Header,
-                Description = "Por favor ingrese el token en el formato **Bearer {token}**",
-                Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
                 BearerFormat = "JWT",
-                Scheme = "Bearer"
-            });
-
-            // Requerir el token JWT en todos los endpoints que lo necesiten
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                Description = "Por favor ingrese el token ",
                 Reference = new OpenApiReference
                 {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
                 }
-            },
-            new string[] { }
-        }
-    });
-        }); 
+            };
+            options.AddSecurityDefinition("Bearer", jwtSecurityScheme);
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {jwtSecurityScheme, Array.Empty<string>() }
+            });
+
+        });
 
 
         //Servicios

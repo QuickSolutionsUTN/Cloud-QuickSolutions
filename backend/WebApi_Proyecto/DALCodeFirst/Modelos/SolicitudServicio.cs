@@ -11,8 +11,7 @@ namespace DALCodeFirst.Modelos
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]//Autoincremental
         public int Id { get; set; }
 
-        [Required] 
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
 
         [Required]  // FK
         public string IdSolicitante { get; set; }
@@ -27,16 +26,15 @@ namespace DALCodeFirst.Modelos
         public TipoServicio TipoServicio { get; set; }
 
         [Required]  // FK
-        public int IdCategoriaProducto { get; set; }
-
-        [ForeignKey("IdCategoriaProducto")]
-        public CategoriaProducto CategoriaProducto { get; set; }
-
-        [Required]  // FK
         public int IdTipoProducto { get; set; }
 
         [ForeignKey("IdTipoProducto")]
         public TipoProducto TipoProducto { get; set; }
+
+        public int? IdTipoMantenimiento { get; set; }
+
+        [ForeignKey("IdTipoMantenimiento")]
+        public TipoMantenimiento TipoMantenimiento { get; set; }
 
         [Required]
         public DateTime FechaGeneracion { get; set; }  // Mapea a una columna de tipo DATE en la BD
@@ -52,7 +50,14 @@ namespace DALCodeFirst.Modelos
         [ForeignKey("IdTecnicoAsignado")]
         public Usuario TecnicoAsignado { get; set; }
 
-        [Required]  // FK
-        public bool ReparacionLocal { get; set; }
+        public DateTime? FechaEstimada { get; set; }
+
+        public float? Monto { get; set; }
+
+        [Required]
+        public bool Tercearizado { get; set; }
+
+        [Required]
+        public bool ConLogistica { get; set; }
     }
 }
