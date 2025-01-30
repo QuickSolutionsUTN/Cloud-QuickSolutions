@@ -35,7 +35,7 @@ function AdminLayout() {
             )}
           </div>
       </header>
-      <AsideBar className="admin-aside"/>
+      <AsideBar  className="admin-aside"/>
     </>
   );
 }

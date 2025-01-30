@@ -110,8 +110,7 @@ export default function RequestDetails() {
       </Form>
 
       <div className='buttons-container'>
-        <Button variant='primary' className='custom-button' onClick={() => navigate('../requests')}>Volver</Button>
-        <Button variant='secondary' className='custom-button' >Editar</Button>
+        <Button variant='secondary' className='custom-button' onClick={() => navigate('../requests')}>Volver</Button> 
       </div>
     </>
   );
