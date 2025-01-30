@@ -1,13 +1,15 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { useNavigate } from 'react-router-dom';
 import {useBackendURL} from '../../contexts/BackendURLContext.jsx';
 import DataTable from 'react-data-table-component';
 import axios from "axios";
 import './userRequestsList.css';
 import Button from 'react-bootstrap/Button';
+import AuthContext from '../../contexts/AuthContext.jsx';
 
 function UserRequestsList({userEmail}) {
   const [userRequests, setRequests]=useState([]);
+  const { userToken } = useContext(AuthContext);
   const backendURL = useBackendURL();
   const navigate = useNavigate();
 
@@ -15,13 +17,16 @@ function UserRequestsList({userEmail}) {
     const fetchData=async ()=>{
       try{
         console.log('Fetching user requests...', backendURL,' from user ' , {userEmail});
-        const response= await axios.get(`${backendURL}/api/users/${userEmail}/solicitudes`);
+        const response= await axios.get(`${backendURL}/api/users/solicitudes`,{
+          headers: {
+              Authorization: `Bearer ${userToken}`,
+          },
+      });
         console.log('User requests:', response.data);
         const mappedData = response.data.map(request => ({
           id: request.id,
           idSolicitud: request.id,
           tipoServicio: request.tipoServicio,
-          categoria: request.categoria,
           tipoDeProducto: request.tipoDeProducto,
           fechaGeneracion: new Date(request.fechaGeneracion).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }),
           estado: request.estado
@@ -51,11 +56,6 @@ function UserRequestsList({userEmail}) {
       selector:row=> row.tipoServicio,
       sorteable:true,
       width: '10%',
-    },
-    {
-      name:'Categoria',
-      selector:row=> row.categoria,
-      sorteable:true,
     },
     {
       name:'Producto',

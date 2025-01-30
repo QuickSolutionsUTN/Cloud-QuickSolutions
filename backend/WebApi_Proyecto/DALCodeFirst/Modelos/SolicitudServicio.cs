@@ -31,8 +31,7 @@ namespace DALCodeFirst.Modelos
         [ForeignKey("IdTipoProducto")]
         public TipoProducto TipoProducto { get; set; }
 
-        [Required]
-        public int IdTipoMantenimiento { get; set; }
+        public int? IdTipoMantenimiento { get; set; }
 
         [ForeignKey("IdTipoMantenimiento")]
         public TipoMantenimiento TipoMantenimiento { get; set; }

@@ -75,14 +75,14 @@ namespace Servicios
             return solicitudDTO;
         }
 
-        public async Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudPorEmailAsync(string userEmail)
+        public async Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudPorUserIdAsync(string userId)
         {
             var solicitudes = await _context.SolicitudServicio
                 .Include(e => e.SolicitudServicioEstado)
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)
-                .Where(es => es.Solicitante.Email == userEmail)
+                .Where(es => es.Solicitante.Id == userId)
                 .ToListAsync();
 
             var solicitudesDTO = _mapper.Map<List<SolicitudRespuestaDTO>>(solicitudes);

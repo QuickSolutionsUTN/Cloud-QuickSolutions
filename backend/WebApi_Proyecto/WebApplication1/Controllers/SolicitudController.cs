@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Servicios;
 using WebAPI.Validators;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
@@ -40,6 +41,7 @@ namespace WebAPI.Controllers
             return CreatedAtAction(nameof(CrearSolicitud), nuevaSolicitud);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> ObtenerSolicitudes()
         {

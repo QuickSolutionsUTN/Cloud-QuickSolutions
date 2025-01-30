@@ -100,17 +100,22 @@ namespace WebAPI.Controllers
             return CreatedAtAction(nameof(CrearUsuario), new { email = usuarioCreado.Email }, usuarioCreado);
         }
 
-        [HttpGet("{userEmail}/solicitudes")]
-        public async Task<IActionResult> ObtenerSolicitudPorEmail(string userEmail)
+        [Authorize]
+        [HttpGet("solicitudes")]
+        public async Task<IActionResult> ObtenerSolicitudPorEmail()
         {
-            var solicitudDTO = await _solicitudServicio.ObtenerSolicitudPorEmailAsync(userEmail);
-            if (solicitudDTO == null)
+            var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
             {
-                return NotFound();
+                return Unauthorized(new { message = "No se pudo obtener el ID del usuario del token" });
             }
-            return Ok(solicitudDTO);
+
+            var solicitudes = await _solicitudServicio.ObtenerSolicitudPorUserIdAsync(userId);
+            return Ok(solicitudes);
 
         }
+
         [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
