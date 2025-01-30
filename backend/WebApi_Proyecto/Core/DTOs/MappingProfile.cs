@@ -18,7 +18,6 @@ namespace Core.DTOs
 
             CreateMap<SolicitudServicio, SolicitudRespuestaDTO>()
                 .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => src.SolicitudServicioEstado.Descripcion))
-                .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => src.CategoriaProducto.Descripcion))
                 .ForMember(dest => dest.TipoDeProducto, opt => opt.MapFrom(src => src.TipoProducto.Descripcion))
                 .ForMember(dest => dest.EmailSolicitante, opt => opt.MapFrom(src => src.Solicitante.Email))
                 .ForMember(dest => dest.TipoServicio, opt => opt.MapFrom(src => src.TipoServicio.Descripcion));

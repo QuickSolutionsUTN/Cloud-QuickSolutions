@@ -34,11 +34,10 @@ namespace Servicios
                 Descripcion = solicitudCreacionDTO.Descripcion,
                 IdSolicitante = userId,
                 IdTipoServicio = solicitudCreacionDTO.IdTipoServicio,
-                IdCategoriaProducto = solicitudCreacionDTO.IdCategoria,
                 IdTipoProducto = solicitudCreacionDTO.IdTipoProducto,
                 FechaGeneracion = DateTime.UtcNow,
                 IdSolicitudServicioEstado = 1,
-                ReparacionLocal = true,
+                Tercearizado = false,
             };
 
             _context.SolicitudServicio.Add(nuevaSolicitud);
@@ -52,7 +51,6 @@ namespace Servicios
         {
             var solicitudes = await _context.SolicitudServicio
                 .Include(e => e.SolicitudServicioEstado)
-                .Include(c => c.CategoriaProducto)
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)
@@ -67,7 +65,6 @@ namespace Servicios
         {
             var solicitud = await _context.SolicitudServicio
                 .Include(e => e.SolicitudServicioEstado)
-                .Include(c => c.CategoriaProducto)
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)
@@ -82,7 +79,6 @@ namespace Servicios
         {
             var solicitudes = await _context.SolicitudServicio
                 .Include(e => e.SolicitudServicioEstado)
-                .Include(c => c.CategoriaProducto)
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)

@@ -3,6 +3,7 @@ using System;
 using DALCodeFirst;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DALCodeFIrst.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    partial class WebAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250130212144_Correccion_SolicitudServicio")]
+    partial class Correccion_SolicitudServicio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CategoriaProducto", (string)null);
+                    b.ToTable("CategoriaProducto");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.EmpresaCategoria", b =>
@@ -60,7 +63,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("EmpresaCategoria", (string)null);
+                    b.ToTable("EmpresaCategoria");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.EmpresaExterna", b =>
@@ -88,7 +91,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmpresaExterna", (string)null);
+                    b.ToTable("EmpresaExterna");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.ReparacionExterna", b =>
@@ -111,7 +114,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdSolicitud");
 
-                    b.ToTable("ReparacionExterna", (string)null);
+                    b.ToTable("ReparacionExterna");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.Rol", b =>
@@ -199,7 +202,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdTipoServicio");
 
-                    b.ToTable("SolicitudServicio", (string)null);
+                    b.ToTable("SolicitudServicio");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.SolicitudServicioEstado", b =>
@@ -217,7 +220,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SolicitudServicioEstado", (string)null);
+                    b.ToTable("SolicitudServicioEstado");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.TipoMantenimiento", b =>
@@ -235,7 +238,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoMantenimiento", (string)null);
+                    b.ToTable("TipoMantenimiento");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.TipoProducto", b =>
@@ -258,7 +261,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdCategoriaProducto");
 
-                    b.ToTable("TipoProducto", (string)null);
+                    b.ToTable("TipoProducto");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.TipoServicio", b =>
@@ -276,7 +279,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoServicio", (string)null);
+                    b.ToTable("TipoServicio");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.Usuario", b =>
