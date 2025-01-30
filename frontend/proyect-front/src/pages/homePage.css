@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
 #maintenance-more-info, #repair-more-info {
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
 }
 
