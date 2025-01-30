@@ -4,11 +4,9 @@ import MainLayout from './layout/MainLayout.jsx';
 import AdminLayout from './layout/AdminLayout.jsx';
 import RepairsRequest from './pages/RequestPage.jsx';
 import HomePage from './pages/HomePage.jsx';
-
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
 import MaintenancesPage from './pages/MaintenancesPage.jsx';
 import RepairsPage from './pages/RepairsPage.jsx';
-import AboutUsPage from './pages/AboutUsPage.jsx';
 import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
 import UserRequestsPage from './pages/UserRequestsPage.jsx';
 import UserProfilePage from './pages/UserProfilePage.jsx';
@@ -37,8 +35,6 @@ function App() {
             <Route path="maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancesPage /></ProtectedRoute>} />
             <Route path="repairs" element={<RepairsPage />} />
             <Route path="requests" element={<RepairsRequest />} />
-            <Route path="maintenances" element={<MaintenancesPage />} />
-            <Route path="aboutUs" element={<AboutUsPage />} />
             <Route path="users">
               <Route path="profile" element={<UserProfilePage />} />
               <Route path="requests" element={<UserRequestsPage />} />

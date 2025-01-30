@@ -65,7 +65,7 @@ export const TopNavbar = ({ onLoginClick, onJoinClick, onLogoutClick }) => {
           {menuOpen2 && (
             <div className="dropdown-content">
               <NavLink to="/"  onClick={handleScrollToRepair}>
-                <DropDownCard title="Que ofrecemos?" content="Servicio de reparacion etc"/>
+                <DropDownCard title="Que ofrecemos?" content="Servicio de reparacion local y a domicilio"/>
               </NavLink>
               <NavLink to="/requests?type=repair">
                 <DropDownCard title="Solicitar" content="Crea una solicitud para la reparacion de tu equipo"/>

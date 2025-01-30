@@ -1,7 +1,9 @@
-.p-repairsRequest .titulo {
+.p-request .title {
   text-align: center;
+  margin-bottom: 5%;
 }
 
-div .p-repairsRequest {
-  margin-top: 10%;
+div .p-request {
+  margin-top: 5%;
 }
+
