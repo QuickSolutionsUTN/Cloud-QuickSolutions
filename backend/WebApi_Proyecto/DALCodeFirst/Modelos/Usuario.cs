@@ -17,7 +17,6 @@ namespace DALCodeFirst.Modelos
         [StringLength(100, ErrorMessage = "El apellido no puede exceder los 100 caracteres.")]
         public string Apellido { get; set; }
 
-        [DataType(DataType.Date)]
-        public DateTime FechaDeNacimiento { get; set; }
+        public DateOnly FechaDeNacimiento { get; set; }
     }
 }

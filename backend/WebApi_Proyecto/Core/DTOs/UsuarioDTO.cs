@@ -15,6 +15,5 @@ public class UsuarioDTO //DTO general de usuario
     public string Rol { get; set; }
 
     [Required]
-    [DataType(DataType.Date)]
-    public DateTime FechaDeNacimiento { get; set; }
+    public DateOnly FechaDeNacimiento { get; set; }
 }

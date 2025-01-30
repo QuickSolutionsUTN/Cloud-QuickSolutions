@@ -85,9 +85,6 @@ namespace Servicios
                     throw new Exception("Error al crear el usuario: " + string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
 
-                // Retornar el DTO del usuario creado
-
-
             }
 
             catch (DbUpdateException dbEx)

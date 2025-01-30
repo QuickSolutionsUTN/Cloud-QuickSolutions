@@ -10,11 +10,9 @@ namespace Core.DTOs
         {
             CreateMap<UsuarioRegistroDTO, Usuario>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.FechaDeNacimiento, opt => opt.MapFrom(src => src.FechaDeNacimiento.Date));
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
 
-            CreateMap<Usuario, UsuarioDTO>()
-                 .ForMember(dest => dest.FechaDeNacimiento, opt => opt.MapFrom(src => src.FechaDeNacimiento.Date)); 
+            CreateMap<Usuario, UsuarioDTO>();
 
             CreateMap<RolDTO, Rol>();
 

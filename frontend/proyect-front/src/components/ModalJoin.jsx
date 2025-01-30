@@ -32,17 +32,13 @@ function ModalJoin({ show, onClose, onSwitchToLogin }) {
     try {
       console.log('Datos del registro: ', mappedUser);
       const response = await axios.post(`${backendURL}/api/users`, mappedUser);
-
+      console.log('Respuesta del registro: ', response);
       if (response.status === 201) {
         // Mensaje de éxito y redirección
         setSuccessMessage('Registro exitoso, redireccionando a login...');
         setTimeout(() => {
           onSwitchToLogin();
         }, 2000);
-      }
-
-      if (!response.ok) {
-        throw new Error('Registration failed', );
       }
     } catch (error) {
       setErrorMessage('Registration failed. Please try again.');
