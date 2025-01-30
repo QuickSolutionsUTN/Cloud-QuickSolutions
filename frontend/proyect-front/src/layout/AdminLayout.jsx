@@ -1,14 +1,10 @@
 import React, { useState, useContext } from 'react';
-//import { Routes, Route, Outlet } from 'react-router-dom';
-
+import { Outlet } from 'react-router-dom';
 import './adminLayout.css';
 import AuthContext from '../contexts/AuthContext.jsx';
 import AsideBar from '../components/admin/AdminsideBar.jsx';
 import UserMenu from '../components/UserMenu.jsx';
 import user from '../assets/logos/user-white.png';
-//import AdminMaintenance from '../components/admin/AdminMaintenance.jsx';
-//import AdminCatalog from '../components/admin/AdminCatalog.jsx';
-//import AdminUsers from '../components/admin/AdminUsers.jsx';
 
 function AdminLayout() {
   const { username, logout, isAuthenticated, userRole } = useContext(AuthContext);
@@ -36,6 +32,7 @@ function AdminLayout() {
           </div>
       </header>
       <AsideBar  className="admin-aside"/>
+      <Outlet />
     </>
   );
 }

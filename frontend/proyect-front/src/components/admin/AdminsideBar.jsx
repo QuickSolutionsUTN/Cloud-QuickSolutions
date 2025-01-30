@@ -8,7 +8,7 @@ const AdminSideBar = () => {
 
   return (
     <Nav
-      className="admin-aside col-md-12 d-none d-md-block bg-light h-100"
+      className="admin-aside"
       activeKey="/home"
       onSelect={selectedKey => {
         navigate(selectedKey);
@@ -18,10 +18,7 @@ const AdminSideBar = () => {
         <span className="title-section">Solicitudes</span>
       </Nav.Item>
       <Nav.Item className="nav-item">
-        <Nav.Link onClick={() => navigate(`${currentPath}/rental`)}>de alquiler</Nav.Link>
-      </Nav.Item>
-      <Nav.Item className="nav-item">
-        <Nav.Link onClick={() => navigate(`${currentPath}/maintenance`)}>de mantenimiento</Nav.Link>
+        <Nav.Link onClick={() => navigate(`${currentPath}/requests`)}>Solicitudes</Nav.Link>
       </Nav.Item>
       <Nav.Item className="nav-item-section-title">
         <span className="title-section">Administración</span>
