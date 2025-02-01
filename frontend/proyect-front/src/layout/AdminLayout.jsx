@@ -35,9 +35,9 @@ function AdminLayout() {
           )}
         </div>
       </header>
-      <div className="admin-layout container">
-        <AsideBar className="admin-aside container" />
-        < div className="admin-page-content container">
+      <div className="admin-layout-container">
+        <AsideBar className="admin-aside" />
+        < div className="admin-content container">
           <Outlet />
         </div>
       </div>
