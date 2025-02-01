@@ -32,6 +32,19 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [HttpGet("{email}")]
+        public async Task<IActionResult> ObtenerUsuarioPorEmail(string email)
+        {
+            var usuario = await _usuarioServicio.ObtenerUsuarioPorEmailAsync(email);
+            if (usuario == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado" });
+            }
+            return Ok(usuario);
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UsuarioLoginDTO usuarioLoginDTO)
         {
@@ -45,7 +58,7 @@ namespace WebAPI.Controllers
                     return Unauthorized(new
                     {
                         status = "error",
-                        message = "Credenciales inválidas"
+                        message = "Credenciales invï¿½lidas"
                     });
                 }
 
@@ -53,17 +66,17 @@ namespace WebAPI.Controllers
                 var credencialesValidas = await _usuarioServicio.CheckCredentials(usuarioLoginDTO.Email, usuarioLoginDTO.Password);
                 if (!credencialesValidas)
                 {
-                    _logger.LogWarning($"Intento de inicio de sesión fallido para el usuario: {usuarioLoginDTO.Email}");
+                    _logger.LogWarning($"Intento de inicio de sesiï¿½n fallido para el usuario: {usuarioLoginDTO.Email}");
                     return Unauthorized(new
                     {
                         status = "error",
-                        message = "Credenciales inválidas"
+                        message = "Credenciales invï¿½lidas"
                     });
                 }
 
                 // Generar token JWT
                 var token = _tokenServicio.GenerarToken(usuarioDTO);
-                _logger.LogInformation($"Inicio de sesión exitoso para el usuario: {usuarioLoginDTO.Email}");
+                _logger.LogInformation($"Inicio de sesiï¿½n exitoso para el usuario: {usuarioLoginDTO.Email}");
 
                 return Ok(new
                 {
@@ -72,11 +85,11 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error durante el inicio de sesión: {ex.Message}");
+                _logger.LogError($"Error durante el inicio de sesiï¿½n: {ex.Message}");
                 return StatusCode(500, new
                 {
                     status = "error",
-                    message = "Ocurrió un error al procesar la solicitud"
+                    message = "Ocurriï¿½ un error al procesar la solicitud"
                 });
             }
         }
@@ -94,7 +107,7 @@ namespace WebAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // Retorna errores de validación
+                return BadRequest(ModelState); // Retorna errores de validaciï¿½n
             }
             var usuarioCreado = await _usuarioServicio.CrearUsuarioAsync(usuarioRegistroDTO);
             return CreatedAtAction(nameof(CrearUsuario), new { email = usuarioCreado.Email }, usuarioCreado);
