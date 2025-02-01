@@ -1,0 +1,31 @@
+.admin-sidebar {
+  background-color: #212121;
+  height: 100%;
+}
+
+.admin-sidebar-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.admin-sidebar-header .title {
+  color: #FAFAFA;
+  display: inline;
+  margin-top: 15%;
+  margin-left: 5%;
+}
+.nav-item-section-title{
+  color: #FAFAFA;
+  display: inline;
+  margin-left: 5%;
+}
+.nav-item .nav-link{
+  color: #B0B0B0;
+  display: inline;
+  margin-left: 5%;
+}
+
+.nav-item .nav-link:hoover{
+  color: black;
+}
