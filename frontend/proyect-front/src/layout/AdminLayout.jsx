@@ -21,24 +21,26 @@ function AdminLayout() {
     <>
       <header className="admin-header">
         <p className="admin-p">Bienvenido, {username}</p>
-        <div 
-            className="admin-user-menu-container"
-            onMouseEnter={() => setShowUserMenu(true)}
-          >
-          <button className="user-btn"><img src={user}/></button>
-            {showUserMenu && (
-              <UserMenu 
-                onLogoutClick={onLogoutClick} 
-                onMouseLeave={() => setShowUserMenu(false)} 
-                role={userRole}
-              />
-            )}
-          </div>
+        <div
+          className="admin-user-menu-container"
+          onMouseEnter={() => setShowUserMenu(true)}
+        >
+          <button className="user-btn"><img src={user} /></button>
+          {showUserMenu && (
+            <UserMenu
+              onLogoutClick={onLogoutClick}
+              onMouseLeave={() => setShowUserMenu(false)}
+              role={userRole}
+            />
+          )}
+        </div>
       </header>
-      <AsideBar  className="admin-aside"/>
-      <main>
-        <Outlet />
-      </main>
+      <div className="admin-layout container">
+        <AsideBar className="admin-aside container" />
+        < div className="admin-page-content container">
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 }
