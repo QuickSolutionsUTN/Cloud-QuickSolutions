@@ -1,58 +1,76 @@
-.footer_content{
-  display: flex;
-  justify-content: flex-start;
-  padding: 20px;
+.footer_content {
+  position: relative; /* Ensure the child elements are positioned relative to this container */
+  height: 170px; /* Adjust the height as needed */
+  padding-top: 1%;
+  margin-left: 2%;
+  margin-right: 2%;
+  width: 96%;
 }
 
-.footer_content .column{
-  margin-right: 100px;
+.footer_column {
+  position: absolute;
 }
 
-.footer_social .icon{
+.footer_content .column {
+  text-align: left; /* Align the content of each column to the left */
+}
+
+.footer_social .icon {
   height: 25px;
   margin-right: 10px;
 }
-.footer_contact .container{
+
+.footer_contact .container {
   display: flex;
   flex-direction: row;
   padding: 0;
 }
 
-.footer_social .container{
+.footer_social .container {
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: center; /* Center the content horizontally */
 }
 
-.footer_link{
+.footer_link {
   display: block;
   color: #D3CFCF;
   font-size: 1rem;
   margin-right: 10px;
-  text-decoration: none; 
+  text-decoration: none;
 }
 
 .footer_link:hover {
   color: #D3CFCF;
-  text-decoration: underline; 
+  text-decoration: underline;
 }
+
 .footer_link:visited {
   color: #D3CFCF;
 }
-.footer_social .footer_title{
-  margin-right: 10px;
 
+.footer_social .footer_title {
+  margin-right: 10px;
 }
-.footer_text{
-  color:#D3CFCF;
+
+.footer_text {
+  color: #D3CFCF;
   font-size: 1rem;
 }
 
-.footer_logo img{
+.footer_logo img {
   height: 70px;
   margin-right: 10px;
 }
 
 .custom-icon {
-  margin-right: 8px; /* Ajusta el valor según sea necesario */
+  margin-right: 8px; /* Adjust the value as needed */
 }
+
+footer {
+  position: absolute;
+  bottom: 100;
+  width: 100%;
+  margin: 0; /* Remove margin */
+}
+

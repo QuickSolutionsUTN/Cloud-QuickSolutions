@@ -7,8 +7,6 @@ import LoginForm from '../components/ModalLoginForm.jsx';
 import ModalJoin from '../components/ModalJoin.jsx';
 import Footer from '../components/Footer.jsx';
 
-
-
 function MainLayout() {
   //const location = useLocation();
   const { isAuthenticated, logout, login } = useContext(AuthContext);
@@ -76,7 +74,7 @@ function MainLayout() {
       <main>
         <Outlet /> {/*Para renderizarán las rutas hijas */}
       </main>
-      <footer><Footer /></footer>
+      <Footer /> {/* Add the Footer component */}
     </>
   );
 }
