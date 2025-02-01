@@ -1,0 +1,27 @@
+.Admin-Requests h2{
+    text-align: left;
+    padding-left: 3%;
+    margin-top: 2%;
+}
+
+.admin-Requests-table{
+    margin: 3%;
+}
+
+.requestManagement{
+    position: absolute;
+    top: 10%;
+    left: 15%;
+    width: 85%;
+    height: 90%;
+}
+
+.requestManagement .tittle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+    margin-top: 1%;
+
+}

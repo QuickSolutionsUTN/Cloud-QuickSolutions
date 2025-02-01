@@ -1,0 +1,70 @@
+.progress-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 20px auto;
+    width: 80%;
+}
+
+/* Línea de fondo gris */
+.progress-line-background {
+    position: absolute;
+    top: 15px;
+    left: 10%;
+    height: 4px;
+    background: #ddd;
+    width: 80%;
+    z-index: -2;
+}
+
+/* Línea de progreso dinámica */
+.progress-line {
+    position: absolute;
+    top: 15px;
+    left: 10%;
+    height: 4px;
+    background: green;
+    transition: width 0.3s ease-in-out;
+    z-index: -1;
+}
+
+.step {
+    text-align: center;
+    position: relative;
+    flex: 1;
+}
+
+.step p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+/* Estilo de los puntos */
+.circle {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    background: #ddd;
+    display: inline-block;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* Cambiar color de los pasos activos */
+.active .circle {
+    background: green;
+}
+
+/* Cambiar color y estilo de los nombres de los pasos activos */
+.active p {
+    color: green;
+    font-weight: bold;
+}
+
+/* Ajustar la línea de progreso para que no se extienda más allá del último paso */
+.progress-container .progress-line {
+    width: calc((100% - 30px) * var(--progress));
+}
