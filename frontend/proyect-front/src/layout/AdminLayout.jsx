@@ -1,10 +1,14 @@
 import React, { useState, useContext } from 'react';
 import { Outlet } from 'react-router-dom';
+
 import './adminLayout.css';
 import AuthContext from '../contexts/AuthContext.jsx';
 import AsideBar from '../components/admin/AdminsideBar.jsx';
 import UserMenu from '../components/UserMenu.jsx';
 import user from '../assets/logos/user-white.png';
+//import AdminMaintenance from '../components/admin/AdminMaintenance.jsx';
+//import AdminCatalog from '../components/admin/AdminCatalog.jsx';
+//import AdminUsers from '../components/admin/AdminUsers.jsx';
 
 function AdminLayout() {
   const { username, logout, isAuthenticated, userRole } = useContext(AuthContext);
@@ -17,22 +21,26 @@ function AdminLayout() {
     <>
       <header className="admin-header">
         <p className="admin-p">Bienvenido, {username}</p>
-        <div 
-            className="admin-user-menu-container"
-            onMouseEnter={() => setShowUserMenu(true)}
-          >
-          <button className="user-btn"><img src={user}/></button>
-            {showUserMenu && (
-              <UserMenu 
-                onLogoutClick={onLogoutClick} 
-                onMouseLeave={() => setShowUserMenu(false)} 
-                role={userRole}
-              />
-            )}
-          </div>
+        <div
+          className="admin-user-menu-container"
+          onMouseEnter={() => setShowUserMenu(true)}
+        >
+          <button className="user-btn"><img src={user} /></button>
+          {showUserMenu && (
+            <UserMenu
+              onLogoutClick={onLogoutClick}
+              onMouseLeave={() => setShowUserMenu(false)}
+              role={userRole}
+            />
+          )}
+        </div>
       </header>
-      <AsideBar  className="admin-aside"/>
-      <Outlet />
+      <div className="admin-layout-container">
+        <AsideBar className="admin-aside" />
+        < div className="admin-content container">
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 }

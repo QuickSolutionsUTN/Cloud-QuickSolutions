@@ -6,10 +6,11 @@ import RepairsRequest from './pages/RequestPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
 import MaintenancesPage from './pages/MaintenancesPage.jsx';
-import AdminRequests from './pages/adminRequests.jsx';
+import AdminRequests from '../src/components/admin/adminRequests.jsx';
 import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
 import UserRequestsPage from './pages/UserRequestsPage.jsx';
 import UserProfilePage from './pages/UserProfilePage.jsx';
+import RequestManagement from '../src/components/admin/RequestManagement.jsx';
 import AdminCatalog from './pages/AdminCatalogPage.jsx';
 
 function App() {
@@ -41,9 +42,8 @@ function App() {
               <Route path="requests/:id" element={<RequestDetailsPage />} />
             </Route>
           </Route>
-          <Route path="admin" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>}>
+          <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>}>
             <Route path="requests" element={<AdminRequests />} />
-            <Route path="catalog" element={<AdminCatalog />} />
           </Route>
         </Routes>
       </Router>

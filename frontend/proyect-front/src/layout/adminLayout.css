@@ -10,18 +10,35 @@
     z-index: 100;
 }
 
-.admin-aside{
-    position: absolute;
-    top: 10%;
-    left: 0;
-    height: 90%;
-    width: 15%;
+.admin-layout-container{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+    box-sizing: border-box;
+    margin-top:10px
+}
+
+.admin-content.container{
+    display: flex;
+    flex-direction: column;
     background-color: #F5F5F5;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    z-index: 100;
+    margin: 0;
+}
+.admin-aside{
+    height: 100%;
+    width: 10%;
+    background-color: #F5F5F5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .admin-p{
@@ -29,10 +46,6 @@
     display: inline;
     margin: 0;
     padding-left: 30px;
-}
-
-.admin-aside{
-    padding: 3% 0 0 0;
 }
 
 .nav-item {
@@ -63,12 +76,11 @@
     right: 30px;
 }
 
-
-
 .Admin-Requests{
-    position: absolute;
     top: 10%;
     left: 15%;
     width: 85%;
     height: 90%;
 }
+
+
