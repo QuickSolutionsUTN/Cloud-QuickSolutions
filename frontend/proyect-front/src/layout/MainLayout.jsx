@@ -5,7 +5,7 @@ import AuthContext from '../contexts/AuthContext.jsx';
 import TopNavbar from '../components/main/TopNavbar.jsx';
 import LoginForm from '../components/ModalLoginForm.jsx';
 import ModalJoin from '../components/ModalJoin.jsx';
-
+import Footer from '../components/Footer.jsx';
 
 
 
@@ -76,6 +76,7 @@ function MainLayout() {
       <main>
         <Outlet /> {/*Para renderizarán las rutas hijas */}
       </main>
+      <footer><Footer /></footer>
     </>
   );
 }

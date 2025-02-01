@@ -56,6 +56,11 @@ main {
   color: #FFFFFF;
 }
 
+.light-mode.footer {
+  background-color: #2A0F0A ;
+  color: #FFFFFF;
+}
+
 .outlined-primary {
   border: 1px solid #33ff00;
 }

@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "npm install",
+			"command": "npm",
+			"args": [
+				"i",
+				"--save",
+				"@awesome.me/kit-KIT_CODE"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/frontend/proyect-front"
+			},
+			"presentation": {
+				"reveal": "silent"
+			}
+		}
+	]
+}
