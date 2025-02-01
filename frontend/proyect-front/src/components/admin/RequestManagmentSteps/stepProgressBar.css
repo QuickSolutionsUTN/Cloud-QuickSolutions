@@ -59,7 +59,7 @@
 }
 
 /* Cambiar color y estilo de los nombres de los pasos activos */
-.active p {
+.progress-container .active p {
     color: green;
     font-weight: bold;
 }
