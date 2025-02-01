@@ -74,7 +74,7 @@ function MainLayout() {
       <main>
         <Outlet /> {/*Para renderizarán las rutas hijas */}
       </main>
-      <Footer /> {/* Add the Footer component */}
+      <Footer />
     </>
   );
 }
