@@ -31,14 +31,9 @@
     justify-content: flex-start;
     margin: 0;
 }
-.admin-aside{
+.admin-sidebar-container {
     height: 100%;
-    width: 10%;
-    background-color: #F5F5F5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    width: 20%;
 }
 
 .admin-p{
