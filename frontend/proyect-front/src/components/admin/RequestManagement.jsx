@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useBackendURL } from '../../contexts/BackendURLContext';
-import { Form, Button } from 'react-bootstrap';
 import StepProgressBar from './RequestManagmentSteps/StepProgressBar.jsx';
 import StartedStep from './RequestManagmentSteps/StartedStep.jsx';
 import ProductReviewedStep from './RequestManagmentSteps/ProductReviewedStep.jsx';
@@ -17,6 +16,7 @@ function RequestManagement (){
     const backendURL = useBackendURL();
     const [fechaFormateada, setFechaFormateada] = useState('');
     const navigate = useNavigate();
+
     useEffect(() => {
         const fetchSolicitudDetails = async () => {
           try {
@@ -41,7 +41,7 @@ function RequestManagement (){
       }
 
       const renderContent = () => {
-        switch (data.estado) {
+        switch (solicitud.estado) {
           case 'Iniciada':
             return <StartedStep />;
           case 'ProductoRevisado':
@@ -62,7 +62,7 @@ function RequestManagement (){
           <div className='tittle'>
             <h2>Gestión de solicitud #{solicitudId}</h2>
           </div>
-          <StepProgressBar currentStep={data.estado} onStepChange={actualizarEstado} />
+          <StepProgressBar currentStep={solicitud.estado} onStepChange={"actualizarEstado"} />
           {renderContent()}
         </div>
       );

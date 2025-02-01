@@ -44,6 +44,7 @@ function App() {
           </Route>
           <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>}>
             <Route path="requests" element={<AdminRequests />} />
+            <Route path="requests/:id" element={<RequestManagement />} />
           </Route>
         </Routes>
       </Router>
