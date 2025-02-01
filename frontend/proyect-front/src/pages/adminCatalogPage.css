@@ -1,0 +1,4 @@
+.p-admin-catalog .container {
+  contain-intrinsic-size: auto;
+  margin-top: 20px;
+}
