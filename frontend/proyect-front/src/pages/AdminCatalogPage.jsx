@@ -1,9 +1,12 @@
 import React from 'react';
+import { Nav, Container, Row } from 'react-bootstrap';
 import './adminCatalogPage.css';
+
 function AdminCatalog() {
-  return <div className='p-admin-catalog container'>
-    <h1>Admin Catalog Page</h1>
-  </div>;
+  return (
+    <div className='admin-catalog container'>
+    </div>
+  );
 }
 
 export default AdminCatalog;

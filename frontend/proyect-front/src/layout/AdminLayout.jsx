@@ -35,11 +35,11 @@ function AdminLayout() {
           )}
         </div>
       </header>
-      <div className="admin-layout-container">
-        <div className="admin-sidebar-container">
+      <div className="admin-layout d-flex">
+        <div className="admin-sidebar">
           <AsideBar />
         </div>
-        < div className="admin-content container">
+        < div className="admin-content container-fluid flex-grow-1">
           <Outlet />
         </div>
       </div>

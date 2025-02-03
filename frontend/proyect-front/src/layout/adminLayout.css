@@ -10,9 +10,8 @@
     z-index: 100;
 }
 
-.admin-layout-container{
-    display: flex;
-    flex-direction: row;
+
+.admin-layout{
     height: 100vh;
     width: 100%;
     margin-right: 0;
@@ -21,7 +20,7 @@
     margin-top:10px
 }
 
-.admin-content.container{
+.admin-content{
     display: flex;
     flex-direction: column;
     background-color: #F5F5F5;
@@ -31,7 +30,7 @@
     justify-content: flex-start;
     margin: 0;
 }
-.admin-sidebar-container {
+.admin-sidebar {
     height: 100%;
     width: 20%;
 }

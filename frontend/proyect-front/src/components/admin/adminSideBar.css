@@ -1,6 +1,9 @@
 .admin-sidebar {
   background-color: #212121;
-  height: 100%;
+}
+
+.admin-sidebar .icon {
+  margin-right: 8px; 
 }
 
 .admin-sidebar-header {
@@ -18,14 +21,9 @@
 .nav-item-section-title{
   color: #FAFAFA;
   display: inline;
-  margin-left: 5%;
 }
 .nav-item .nav-link{
   color: #B0B0B0;
   display: inline;
   margin-left: 5%;
-}
-
-.nav-item .nav-link:hoover{
-  color: black;
 }

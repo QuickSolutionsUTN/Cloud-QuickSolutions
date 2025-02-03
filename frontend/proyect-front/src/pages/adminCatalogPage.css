@@ -1,4 +1,4 @@
-.p-admin-catalog .container {
-  contain-intrinsic-size: auto;
-  margin-top: 20px;
+.admin-catalog-header .nav{
+  display: flex;
+  flex-wrap: nowrap;
 }

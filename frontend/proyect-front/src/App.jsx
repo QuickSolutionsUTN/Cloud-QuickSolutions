@@ -44,6 +44,7 @@ function App() {
           </Route>
           <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>}>
             <Route path="requests" element={<AdminRequests />} />
+            <Route path="catalog" element={<AdminCatalog />} />
           </Route>
         </Routes>
       </Router>
