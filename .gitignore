@@ -120,3 +120,6 @@ ipch/
 # Visual Studio profiler
 *.psess
 *.vsp
+
+package-lock.json
+package.json
