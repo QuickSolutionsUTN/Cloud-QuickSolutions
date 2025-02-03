@@ -76,7 +76,7 @@ namespace Servicios
                 if (result.Succeeded)
                 {
                     // Asignar el rol "user" al nuevo usuario
-                    await _userManager.AddToRoleAsync(usuario, "user");
+                    await _userManager.AddToRoleAsync(usuario,"user");
                     return _mapper.Map<UsuarioDTO>(usuario);// Devuelves el DTO
                 }
                 else

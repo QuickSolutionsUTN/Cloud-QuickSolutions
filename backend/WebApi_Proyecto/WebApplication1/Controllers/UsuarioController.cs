@@ -31,8 +31,7 @@ namespace WebAPI.Controllers
             _tokenServicio = tokenServicio;
             _logger = logger;
         }
-/*
-        [HttpGet]
+
         [Authorize(Roles = "admin")]
         [HttpGet("{email}")]
         public async Task<IActionResult> ObtenerUsuarioPorEmail(string email)
@@ -44,7 +43,7 @@ namespace WebAPI.Controllers
             }
             return Ok(usuario);
         }
-*/
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UsuarioLoginDTO usuarioLoginDTO)
         {

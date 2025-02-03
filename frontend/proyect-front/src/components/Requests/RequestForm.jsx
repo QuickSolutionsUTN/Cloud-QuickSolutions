@@ -28,6 +28,7 @@ export const RequestForm = () => {
 
   // Function to update the data of each step
   const updateData = (section, newData) => {
+    console.log(`Updating section ${section} with data:`, newData);
     setFormData((prevData) => ({
       ...prevData,
       [section]: { ...prevData[section], ...newData }
@@ -35,6 +36,7 @@ export const RequestForm = () => {
   };
 
   const handleSubmit = async (data) => {
+    console.log("Enviando formulario:", data);
     const DataToSend={
       userEmail: data.personalData.email,
       descripcion: data.productData.problemDescription,
@@ -46,7 +48,7 @@ export const RequestForm = () => {
     try {
       console.log("Formulario completado", DataToSend);
 
-      const response = await axios.post(`${backendURL}/solicitud`, DataToSend);
+      const response = await axios.post(`${backendURL}/api/solicitud`, DataToSend);
 
       if (response.status=201) {
         const solicitudId = response.data.id;

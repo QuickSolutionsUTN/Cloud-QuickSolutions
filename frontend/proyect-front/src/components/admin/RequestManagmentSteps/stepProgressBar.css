@@ -15,7 +15,7 @@
     height: 4px;
     background: #ddd;
     width: 80%;
-    z-index: -2;
+    z-index: 0;
 }
 
 /* Línea de progreso dinámica */
@@ -26,7 +26,7 @@
     height: 4px;
     background: green;
     transition: width 0.3s ease-in-out;
-    z-index: -1;
+    z-index: 0;
 }
 
 .step {
