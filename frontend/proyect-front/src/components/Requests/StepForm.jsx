@@ -12,22 +12,20 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const serviceType = queryParams.get('type');
-  const { register, handleSubmit, setValue, watch, formState: { isValid, errors } } = useForm({
+  const { register,getValues, handleSubmit, setValue, watch, formState: { isValid, errors } } = useForm({
     defaultValues: formData,
     mode: 'onChange'
   });
   const [categories, setCategories] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
   const { isAuthenticated, userEmail } = useContext(AuthContext);
-  const [email, setEmail] = useState('');
 
   const categoryId = watch('categoryId');
 
   useEffect(() => {
     if (isAuthenticated && step.id === 2) {
       console.log("Usuario autenticado:", userEmail);
-      setEmail(userEmail);
-      setValue('email', userEmail);
+      handleChange({ ...watch(), userEmail: userEmail });
     }
   }, [isAuthenticated, userEmail, step, setValue]);
 
@@ -50,7 +48,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
     if (categoryId) {
       axios.get(`${backendURL}/api/tipoproducto/${categoryId}`)
         .then(response => {
-          console.log(response.data);
+          console.log("Se  actualizaron prods", response.data);
           setProductTypes(response.data);
         })
         .catch(error => console.error('Error loading product types:', error));
@@ -61,6 +59,16 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
     setIsStepComplete(isValid);
   }, [isValid, setIsStepComplete]);
 
+  useEffect(() => {
+    if (serviceType === 'repair') {
+      setValue('serviceId', 2);
+      handleChange({ ...getValues(), serviceId: 2 });
+    } else if (serviceType === 'maintenance') {
+      setValue('serviceId', 1);
+      handleChange({ ...getValues(), serviceId: 1 });
+    }
+  }, [serviceType, setValue, getValues]);
+
   return (
     <Form onSubmit={handleSubmit(handleChange)} className='formInputs'>
       {step.id === 1 && (
@@ -70,10 +78,11 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
               <p><b>Categoria</b></p>
               <Form.Select
                 aria-label="Seleccionar categoria"
-                {...register('categoryId', { required: true })}
+                {...register('categoryId', { required: false })}
                 disabled={!serviceType}
                 onChange={(e) => {
-                  handleChange({ ...watch(), categoryId: e.target.value });
+                  setValue('categoryId', e.target.value);
+                  handleChange({ ...getValues(), categoryId: e.target.value });
                 }}
               >
                 <option value="">Seleccione una categoría</option>
@@ -89,9 +98,10 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
               <p><b>Tipo de producto</b></p>
               <Form.Select
                 aria-label="Seleccionar tipo de producto"
-                {...register('productTypeId', { required: true })}
+                {...register('productTypeId', { required: false })}
                 disabled={!categoryId}
                 onChange={(e) => {
+                  setValue('productTypeId', e.target.value);
                   handleChange({ ...watch(), productTypeId: e.target.value });
                 }}
               >
@@ -116,8 +126,9 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                 <Form.Control
                   as="textarea"
                   aria-label="With textarea"
-                  {...register('problemDescription', { required: true })}
+                  {...register('problemDescription', { required: false })}
                   onChange={(e) => {
+                    setValue('problemDescription', e.target.value);
                     handleChange({ ...watch(), problemDescription: e.target.value });
                   }}
                 />
@@ -151,11 +162,9 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
               <Form.Label><b>Email</b></Form.Label>
               <Form.Control
                 type='text'
-                placeholder={email}
+                placeholder={userEmail}
                 aria-label='Email'
-                {...register('email')}
                 readOnly
-                onChange={(e) => handleChange(watch())}
               ></Form.Control>
               <br />
               <div className='row mb-3'>
@@ -166,7 +175,6 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                     placeholder='Usuario'
                     aria-label='Disabled input example'
                     readOnly
-                    onChange={(e) => handleChange(watch())}
                   ></Form.Control>
                 </div>
                 <div className='col-6'>
@@ -176,15 +184,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                     placeholder='Prueba'
                     aria-label='Disabled input example'
                     readOnly
-                    onChange={(e) => handleChange(watch())}
                   ></Form.Control>
-                </div>
-              </div>
-              <div className='row mb-3'>
-                <div className='col-12'>
-                  <button type="submit" className="btn btn-primary" disabled={!isValid}>
-                    Siguiente
-                  </button>
                 </div>
               </div>
             </>
@@ -196,13 +196,6 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
       {step.id === 3 && (
         <div>
           <p>Seleccione confirmar para enviar la solicitud del servicio.</p>
-          <div className='row mb-3'>
-            <div className='col-12'>
-              <button type="submit" className="btn btn-primary" disabled={!isValid}>
-                Confirmar
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </Form>

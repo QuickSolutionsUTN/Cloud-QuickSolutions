@@ -38,7 +38,7 @@ export const RequestForm = () => {
   const handleSubmit = async (data) => {
     console.log("Enviando formulario:", data);
     const DataToSend={
-      userEmail: data.personalData.email,
+      userEmail: data.personalData.userEmail,
       descripcion: data.productData.problemDescription,
       idTipoServicio: parseInt(data.productData.serviceId,10),
       idCategoria: parseInt(data.productData.categoryId,10),
