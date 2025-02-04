@@ -12,7 +12,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const serviceType = queryParams.get('type');
-  const { register,getValues, handleSubmit, setValue, watch, formState: { isValid, errors } } = useForm({
+  const { register, getValues, handleSubmit, setValue, watch, formState: { isValid, errors } } = useForm({
     defaultValues: formData,
     mode: 'onChange'
   });
@@ -48,7 +48,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
     if (categoryId) {
       axios.get(`${backendURL}/api/tipoproducto/${categoryId}`)
         .then(response => {
-          console.log("Se  actualizaron prods", response.data);
+          console.log("Se actualizaron prods", response.data);
           setProductTypes(response.data);
         })
         .catch(error => console.error('Error loading product types:', error));
@@ -56,8 +56,15 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
   }, [categoryId, backendURL]);
 
   useEffect(() => {
+    console.log("useEffect ejecutado: isValid =", isValid);
+    if (isValid) {
+      console.log("Formulario es válido");
+    }
     setIsStepComplete(isValid);
-  }, [isValid, setIsStepComplete]);
+    if (isValid) {
+      console.log("isStepComplete es true");
+    }
+  }, [isValid, setIsStepComplete, watch]);
 
   useEffect(() => {
     if (serviceType === 'repair') {
@@ -78,7 +85,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
               <p><b>Categoria</b></p>
               <Form.Select
                 aria-label="Seleccionar categoria"
-                {...register('categoryId', { required: false })}
+                {...register('categoryId', { required: true })}
                 disabled={!serviceType}
                 onChange={(e) => {
                   setValue('categoryId', e.target.value);
@@ -98,7 +105,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
               <p><b>Tipo de producto</b></p>
               <Form.Select
                 aria-label="Seleccionar tipo de producto"
-                {...register('productTypeId', { required: false })}
+                {...register('productTypeId', { required: true })}
                 disabled={!categoryId}
                 onChange={(e) => {
                   setValue('productTypeId', e.target.value);
@@ -126,7 +133,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                 <Form.Control
                   as="textarea"
                   aria-label="With textarea"
-                  {...register('problemDescription', { required: false })}
+                  {...register('problemDescription', { required: serviceType === 'repair' })}
                   onChange={(e) => {
                     setValue('problemDescription', e.target.value);
                     handleChange({ ...watch(), problemDescription: e.target.value });
@@ -142,7 +149,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                 <p><b>Tipo de mantenimiento</b></p>
                 <Form.Select
                   aria-label="Seleccionar tipo de mantenimiento"
-                  {...register('maintenanceType', { required: false })}
+                  {...register('maintenanceType', { required: serviceType === 'maintenance' })}
                   onChange={(e) => {
                     handleChange({ ...watch(), maintenanceType: e.target.value });
                   }}

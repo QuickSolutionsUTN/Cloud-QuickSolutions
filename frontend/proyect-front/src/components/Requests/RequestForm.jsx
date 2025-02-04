@@ -19,7 +19,7 @@ export const RequestForm = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const { isAuthenticated, userEmail } = useContext(AuthContext);
-  const [isStepComplete, setIsStepComplete] = useState(false);
+  const [stepComplete, setStepComplete] = useState(false);
 
   const [formData, setFormData] = useState({
     productData: { serviceId: 0, categoryId: 0, productTypeId: 0, problemDescription: '' },
@@ -71,6 +71,16 @@ export const RequestForm = () => {
     }
   };
 
+  const isStepComplete = () => {
+    const currentData = formData[steps[currentStep].section];
+    if (currentStep === 0) {
+      return currentData.serviceId && currentData.categoryId && currentData.productTypeId && (currentData.problemDescription || currentData.maintenanceType);
+    } else if (currentStep === 1) {
+      return isAuthenticated;
+    }
+    return true;
+  };
+
   const previousStep = () => {
     setCurrentStep((prevStep) => Math.max(prevStep - 1, 0));
   };
@@ -88,7 +98,7 @@ export const RequestForm = () => {
           step={steps[currentStep]}
           formData={formData[steps[currentStep].section]}
           updateData={(newData) => updateData(steps[currentStep].section, newData)}
-          setIsStepComplete={setIsStepComplete}
+          setIsStepComplete={setStepComplete}
         />
       </div>
       <div className="mt-4 container-buttons">
@@ -103,7 +113,7 @@ export const RequestForm = () => {
           className='next-button'
           variant="primary"
           onClick={nextStep}
-          disabled={!isStepComplete || (currentStep === 1 && !isAuthenticated)}
+          disabled={!isStepComplete() || (currentStep === 1 && !isAuthenticated)}
         >
           {currentStep === steps.length - 1 ? 'Finalizar' : 'Siguiente'}
         </Button>
