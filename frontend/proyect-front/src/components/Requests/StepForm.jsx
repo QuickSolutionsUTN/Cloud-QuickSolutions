@@ -66,25 +66,15 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
       {step.id === 1 && (
         <>
           <div className='row mb-3'>
-            {/*<div className='col-4'>
-            
-              <p><b>Servicio</b></p>
-              <Form.Control
-                type='text'
-                value={serviceType === 'maintenance' ? 'Mantenimiento' : 'Reparación'}
-                readOnly
-              />
-              <p><b>Servicio:</b> {serviceType === 'maintenance' ? 'Mantenimiento' : 'Reparación'}</p>
-            </div>
-              */}
-          </div>
-          <div className='row mb-3'>
             <div className='col-4'>
               <p><b>Categoria</b></p>
               <Form.Select
                 aria-label="Seleccionar categoria"
                 {...register('categoryId', { required: true })}
                 disabled={!serviceType}
+                onChange={(e) => {
+                  handleChange({ ...watch(), categoryId: e.target.value });
+                }}
               >
                 <option value="">Seleccione una categoría</option>
                 {categories.map(category => (
@@ -101,6 +91,9 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                 aria-label="Seleccionar tipo de producto"
                 {...register('productTypeId', { required: true })}
                 disabled={!categoryId}
+                onChange={(e) => {
+                  handleChange({ ...watch(), productTypeId: e.target.value });
+                }}
               >
                 <option value="">Seleccione un tipo de producto</option>
                 {productTypes.length > 0 ? (
@@ -124,6 +117,9 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                   as="textarea"
                   aria-label="With textarea"
                   {...register('problemDescription', { required: true })}
+                  onChange={(e) => {
+                    handleChange({ ...watch(), problemDescription: e.target.value });
+                  }}
                 />
               </InputGroup>
               {errors.problemDescription && <span className="text-danger">Este campo es obligatorio</span>}
@@ -135,10 +131,12 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                 <p><b>Tipo de mantenimiento</b></p>
                 <Form.Select
                   aria-label="Seleccionar tipo de mantenimiento"
-                  {...register('maintenanceType', { required: true })}
+                  {...register('maintenanceType', { required: false })}
+                  onChange={(e) => {
+                    handleChange({ ...watch(), maintenanceType: e.target.value });
+                  }}
                 >
                   <option value="">Seleccione un tipo de mantenimiento</option>
-                  {/* Add options here */}
                 </Form.Select>
                 {errors.maintenanceType && <span className="text-danger">Este campo es obligatorio</span>}
               </div>
@@ -157,6 +155,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                 aria-label='Email'
                 {...register('email')}
                 readOnly
+                onChange={(e) => handleChange(watch())}
               ></Form.Control>
               <br />
               <div className='row mb-3'>
@@ -167,6 +166,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                     placeholder='Usuario'
                     aria-label='Disabled input example'
                     readOnly
+                    onChange={(e) => handleChange(watch())}
                   ></Form.Control>
                 </div>
                 <div className='col-6'>
@@ -176,7 +176,15 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                     placeholder='Prueba'
                     aria-label='Disabled input example'
                     readOnly
+                    onChange={(e) => handleChange(watch())}
                   ></Form.Control>
+                </div>
+              </div>
+              <div className='row mb-3'>
+                <div className='col-12'>
+                  <button type="submit" className="btn btn-primary" disabled={!isValid}>
+                    Siguiente
+                  </button>
                 </div>
               </div>
             </>
@@ -188,6 +196,13 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
       {step.id === 3 && (
         <div>
           <p>Seleccione confirmar para enviar la solicitud del servicio.</p>
+          <div className='row mb-3'>
+            <div className='col-12'>
+              <button type="submit" className="btn btn-primary" disabled={!isValid}>
+                Confirmar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </Form>

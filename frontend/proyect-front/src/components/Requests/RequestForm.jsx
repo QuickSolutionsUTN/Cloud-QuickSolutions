@@ -113,4 +113,3 @@ export const RequestForm = () => {
 }
 
 export default RequestForm;
-//disabled={currentStep === steps.length - 1}
