@@ -34,7 +34,6 @@ namespace Servicios
             await _context.SaveChangesAsync();
 
             var tipoProductoCreado = await _context.TipoProducto
-                .Include(tp => tp.CategoriaProducto) // Incluir la categoría
                 .FirstOrDefaultAsync(tp => tp.Id == tipoProducto.Id);
 
             var tipoProductoOutDTO = _mapper.Map<TipoProductoDTO>(tipoProductoCreado);
@@ -46,7 +45,6 @@ namespace Servicios
         public async Task<List<TipoProductoDTO>> ObtenerTiposProductoAsync()
         {
             var tiposProducto = await _context.TipoProducto
-                .Include(tp => tp.CategoriaProducto)
                 .ToListAsync();
 
             var tiposProductoDTO = _mapper.Map<List<TipoProductoDTO>>(tiposProducto);
@@ -57,13 +55,27 @@ namespace Servicios
         public async Task<List<TipoProductoDTO>> ObtenerTiposProductoPorCategoriaAsync(int idCategoria)
         {
             var tiposProducto = await _context.TipoProducto
-                .Include(tp => tp.CategoriaProducto)
                 .Where(tp => tp.IdCategoriaProducto == idCategoria)
                 .ToListAsync();
 
             var tiposProductoDTO = _mapper.Map<List<TipoProductoDTO>>(tiposProducto);
 
             return tiposProductoDTO;
+        }
+
+        public async Task<TipoProductoDTO> ActualizarTipoProductoAsync (int id, TipoProductoModificarDTO tipoProductoModificarDTO)
+        {
+            var tipoProducto = await _context.TipoProducto
+                .FirstOrDefaultAsync(tp => tp.Id == tipoProductoModificarDTO.Id);
+
+            tipoProducto.Descripcion = tipoProductoModificarDTO.Descripcion;
+            tipoProducto.IdCategoriaProducto = tipoProductoModificarDTO.IdCategoria;
+
+            await _context.SaveChangesAsync();
+
+            var tipoProductoOutDTO = _mapper.Map<TipoProductoDTO>(tipoProducto);
+
+            return tipoProductoOutDTO;
         }
     }
 }

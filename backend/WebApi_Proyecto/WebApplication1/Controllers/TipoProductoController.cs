@@ -14,9 +14,7 @@ namespace WebAPI.Controllers
         public TipoProductoController(ITipoProductoServicio tipoProductoServicio)
         {
             _tipoProductoServicio = tipoProductoServicio;
-
         }
-
 
         [Authorize(Roles = "admin")]
         [HttpPost]
@@ -31,7 +29,6 @@ namespace WebAPI.Controllers
             return CreatedAtAction(nameof(CrearTipoProducto), nuevoTipoProducto);
         }
 
-        
         [HttpGet]
         public async Task<IActionResult> ObtenerTiposProducto()
         {
@@ -46,5 +43,18 @@ namespace WebAPI.Controllers
             return Ok(tiposProducto);
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ActualizarTipoProducto(int id, [FromBody] TipoProductoModificarDTO tipoProductoModificarDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var resultado = await _tipoProductoServicio.ActualizarTipoProductoAsync(id, tipoProductoModificarDTO);
+
+            return Ok(resultado);
+        }
     }
 }

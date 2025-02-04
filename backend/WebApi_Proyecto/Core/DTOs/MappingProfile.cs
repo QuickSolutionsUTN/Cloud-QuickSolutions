@@ -21,10 +21,10 @@ namespace Core.DTOs
                 .ForMember(dest => dest.TipoDeProducto, opt => opt.MapFrom(src => src.TipoProducto.Descripcion))
                 .ForMember(dest => dest.EmailSolicitante, opt => opt.MapFrom(src => src.Solicitante.Email))
                 .ForMember(dest => dest.TipoServicio, opt => opt.MapFrom(src => src.TipoServicio.Descripcion));
-
+           
             CreateMap<TipoProducto, TipoProductoDTO>()
-                .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => src.CategoriaProducto.Descripcion));
-
+                .ForMember(dest => dest.IdCategoria, opt => opt.MapFrom(src => src.IdCategoriaProducto));
+           
         }
     }
 }

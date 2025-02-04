@@ -1,8 +1,12 @@
 .admin-sidebar {
   background-color: #212121;
 }
-
 .admin-sidebar .icon {
+  margin-right: 8px; 
+}
+
+.admin-sidebar .icon-expand {
+  color: #FAFAFA; 
   margin-right: 8px; 
 }
 
@@ -17,13 +21,58 @@
   display: inline;
   margin-top: 15%;
   margin-left: 5%;
+  font-weight: bold;
+  text-align: left;
+  padding: 3% 0 3% 10%;
 }
-.nav-item-section-title{
+.admin-sidebar .nav-item-section-title{
   color: #FAFAFA;
   display: inline;
+  margin-top: 10%;
+  margin-left: 5%;
+  padding:2%;
 }
+
+.admin-sidebar-content .nav-collapse{
+  display: flex;
+  flex-direction: column;
+}
+.admin-sidebar .nav-item.nav-item-section-collpase{
+  color: #FAFAFA;
+  display: inline;
+  margin-top: 15%;
+  margin-left: 5%;
+  text-align: left;
+  padding: 0;
+}
+
 .nav-item .nav-link{
   color: #B0B0B0;
   display: inline;
   margin-left: 5%;
+}
+
+.nav-item {
+    width: 100%;
+    text-align: left;
+    padding: 3% 0 3% 10%;
+}
+
+.admin-sidebar .nav-item:hover {
+    cursor:default;
+}
+
+.admin-sidebar .nav-item-section-collpase:hover {
+  cursor: pointer;
+}
+
+.admin-sidebar .nav-item .nav-link:hover {
+  color: #B0B0B0;
+  font-weight: bold;
+}
+
+
+.admin-sidebar .nav-item .nav-link:focus,.admin-sidebar .nav-item .nav-link.active {
+  color: #B0B0B0;
+  font-weight: bold;
 }
