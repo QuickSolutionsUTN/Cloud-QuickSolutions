@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
-import "./StepProgressBar.css"; // Importa los estilos
+import "./StepProgressBar.css";
 
 const StepProgressBar = () => {
-    const steps = ["Iniciada", "Producto revisado", "Presupuestado", "Aprobado", "Finalizado"];
+    const steps = ["Iniciada", "Presupuestado", "Aprobado", "Finalizado"];
     const [currentStep, setCurrentStep] = useState(0);
 
     const nextStep = () => {
@@ -25,7 +25,7 @@ const StepProgressBar = () => {
             {/* Contenedor de la barra de progreso */}
             <div className="progress-container">
                 <div className="progress-line-background"></div>
-                <div className="progress-line" style={{ width: `${(currentStep / (steps.length - 1)) * 80   }%` }}></div>
+                <div className="progress-line" style={{ width: `${(currentStep / (steps.length - 1)) * 77   }%` }}></div>
                 {steps.map((step, index) => (
                     <div key={index} className={`step ${index <= currentStep ? "active" : ""}`}>
                         <div className="circle">{index + 1}</div>

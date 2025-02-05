@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useBackendURL } from '../../contexts/BackendURLContext';
 import StepProgressBar from './RequestManagmentSteps/StepProgressBar.jsx';
 import StartedStep from './RequestManagmentSteps/StartedStep.jsx';
-import ProductReviewedStep from './RequestManagmentSteps/ProductReviewedStep.jsx';
 import BudgetedStep from './RequestManagmentSteps/BudgetedStep.jsx';
 import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
@@ -44,8 +43,6 @@ function RequestManagement (){
         switch (solicitud.estado) {
           case 'Iniciada':
             return <StartedStep />;
-          case 'ProductoRevisado':
-            return <ProductReviewedStep />;
           case 'Presupuestada':
             return <BudgetedStep />;
           case 'Aprobada':
