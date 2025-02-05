@@ -16,4 +16,5 @@ public class UsuarioDTO //DTO general de usuario
 
     [Required]
     public DateOnly FechaDeNacimiento { get; set; }
+
 }

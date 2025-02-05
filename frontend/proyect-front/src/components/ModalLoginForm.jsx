@@ -32,6 +32,7 @@ function LoginForm({ show, onClose, onJoinClick }) {
             role: userRole,
             email: decodedToken.email,
             token: userToken,
+            refreshToken: response.data.refreshToken
           }
           login(userData);
           // Redirigir al usuario la página correspondiente

@@ -8,6 +8,7 @@ using Core.DTOs;
 using FluentAssertions.Common;
 using System.Configuration;
 using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
 
 namespace Servicios
 {
@@ -46,6 +47,18 @@ namespace Servicios
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        
+        public string GenerarRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+    
     }
+
 
 }

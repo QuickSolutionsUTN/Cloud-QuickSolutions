@@ -62,7 +62,6 @@ namespace Servicios
 
             return tiposProductoDTO;
         }
-
         public async Task<TipoProductoDTO> ActualizarTipoProductoAsync (int id, TipoProductoModificarDTO tipoProductoModificarDTO)
         {
             var tipoProducto = await _context.TipoProducto

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.DTOs;
-public class UsuarioLoginDTO //DTO solo para crear usuario
+public class UsuarioLoginDTO
 {
     [Required]
     [EmailAddress]

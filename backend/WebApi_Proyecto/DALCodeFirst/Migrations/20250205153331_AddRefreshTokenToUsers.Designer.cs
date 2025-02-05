@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DALCodeFIrst.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    [Migration("20250203215110_PruebaPostgre")]
-    partial class PruebaPostgre
+    [Migration("20250205153331_AddRefreshTokenToUsers")]
+    partial class AddRefreshTokenToUsers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -336,6 +336,13 @@ namespace DALCodeFIrst.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RefreshTokenExpiration")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");

@@ -8,8 +8,6 @@ using DALCodeFirst.Modelos;
 using Microsoft.EntityFrameworkCore;
 using DALCodeFirst;
 using System.Data;
-using Serilog;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Servicios
 
@@ -31,7 +29,6 @@ namespace Servicios
             _context = contex; // Agregado para usar el DbContext
 
         }
-
         public async Task<bool> CheckCredentials(string email, string password)
         {
             try
@@ -66,25 +63,19 @@ namespace Servicios
         {
             try
             {
-                //AutoMapper para mapear entre el UsuarioDTO y el modelo Usuario
                 var usuario = _mapper.Map<Usuario>(usuarioRegistroDto);
 
-                // Crear el usuario
                 var result = await _userManager.CreateAsync(usuario, usuarioRegistroDto.Password);
 
-                // Verificar si la creación fue exitosa
                 if (result.Succeeded)
                 {
-                    // Asignar el rol "user" al nuevo usuario
                     await _userManager.AddToRoleAsync(usuario,"user");
-                    return _mapper.Map<UsuarioDTO>(usuario);// Devuelves el DTO
+                    return _mapper.Map<UsuarioDTO>(usuario);
                 }
                 else
                 {
-                    // Si hubo errores, lanzar una excepción con los mensajes
                     throw new Exception("Error al crear el usuario: " + string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
-
             }
 
             catch (DbUpdateException dbEx)
@@ -101,19 +92,19 @@ namespace Servicios
 
         public async Task<List<UsuarioDTO>> ObtenerUsuariosAsync()
         {
-            var usuarios = await _context.Users.ToListAsync(); // Obtiene la lista de usuarios
+            var usuarios = await _context.Users.ToListAsync();
             var usuarioDtos = new List<UsuarioDTO>();
 
             foreach (var usuario in usuarios)
             {
-                var roles = await _userManager.GetRolesAsync(usuario); // Obtiene los roles del usuario
-                var usuarioDto = _mapper.Map<UsuarioDTO>(usuario); // Mapea a UsuarioDTO
+                var roles = await _userManager.GetRolesAsync(usuario);
+                var usuarioDto = _mapper.Map<UsuarioDTO>(usuario);
 
-                usuarioDto.Rol = roles.FirstOrDefault(); // Asigna el nombre del primer rol al DTO
+                usuarioDto.Rol = roles.FirstOrDefault();
 
-                usuarioDtos.Add(usuarioDto); // Mapea a UsuarioDTO
+                usuarioDtos.Add(usuarioDto);
             }
-            return usuarioDtos;// Devuelve la lista de DTOs
+            return usuarioDtos;
         }
 
         public async Task<UsuarioDTO> ObtenerUsuarioPorEmailAsync(string email)
@@ -122,10 +113,8 @@ namespace Servicios
 
             if (user == null)
             {
-                // En lugar de lanzar una excepción, devuelve null.
                 return null;
             }
-            
 
             var usuarioDto = _mapper.Map<UsuarioDTO>(user);
 
@@ -147,7 +136,6 @@ namespace Servicios
 
             if (user == null)
             {
-                // En lugar de lanzar una excepción, devuelve null.
                 return null;
             }
 
@@ -163,6 +151,57 @@ namespace Servicios
             usuarioDto.Rol = roles.FirstOrDefault();
 
             return usuarioDto;
+        }
+
+        public async Task GuardarRefreshToken(string userId, string refreshToken, DateTime refreshTokenExpiration)
+        {
+            try
+            {
+                var usuario = await _userManager.FindByIdAsync(userId);
+                if (usuario == null)
+                {
+                    throw new Exception($"Usuario con ID '{userId}' no encontrado.");
+                }
+                usuario.RefreshToken = refreshToken;
+                usuario.RefreshTokenExpiration = refreshTokenExpiration;
+                
+                var result = await _userManager.UpdateAsync(usuario);
+                if (!result.Succeeded)
+                {
+                    throw new Exception("Error al actualizar el token de refresco: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error inesperado al guardar el token de refresco: {ex.Message}", ex);
+            }
+        }
+        public async Task<UsuarioDTO> ValidarUsuarioPorRefreshToken(string refreshToken)
+        {
+            try
+            {
+                var usuario = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+                if (usuario == null || usuario.RefreshTokenExpiration <= DateTime.UtcNow)
+                {
+                    return null;
+                }
+                var usuarioDto = _mapper.Map<UsuarioDTO>(usuario);
+
+                var roles = await _userManager.GetRolesAsync(usuario);
+
+                if (roles == null || roles.Count == 0)
+                {
+                    return null;
+                }
+                usuarioDto.Rol = roles.FirstOrDefault();
+
+                return usuarioDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error inesperado al obtener el usuario por token de refresco: {ex.Message}", ex);
+            }
         }
     }
 }

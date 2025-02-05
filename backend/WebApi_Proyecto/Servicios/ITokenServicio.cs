@@ -4,4 +4,5 @@ namespace Servicios;
 public interface ITokenServicio
 {
     string GenerarToken(UsuarioDTO usuarioDTO);
+    string GenerarRefreshToken();
 }

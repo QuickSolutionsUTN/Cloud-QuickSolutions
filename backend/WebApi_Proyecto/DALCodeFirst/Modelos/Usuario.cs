@@ -7,7 +7,6 @@ namespace DALCodeFirst.Modelos
     //[Table("Usuarios")]  // Especifica el nombre de la tabla
     public class Usuario : IdentityUser
     {
-
         //IdentityUser ya tiene Id, UserName, Email, PasswordHash
         [Required]
         [StringLength(100, ErrorMessage = "El nombre no puede exceder los 100 caracteres.")]
@@ -18,5 +17,8 @@ namespace DALCodeFirst.Modelos
         public string Apellido { get; set; }
 
         public DateOnly FechaDeNacimiento { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiration { get; set; }
+
     }
 }

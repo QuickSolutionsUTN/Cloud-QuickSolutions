@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
                     return Unauthorized(new
                     {
                         status = "error",
-                        message = "Credenciales inv�lidas"
+                        message = "Credenciales inválidas"
                     });
                 }
 
@@ -65,33 +65,78 @@ namespace WebAPI.Controllers
                 var credencialesValidas = await _usuarioServicio.CheckCredentials(usuarioLoginDTO.Email, usuarioLoginDTO.Password);
                 if (!credencialesValidas)
                 {
-                    _logger.LogWarning($"Intento de inicio de sesi�n fallido para el usuario: {usuarioLoginDTO.Email}");
+                    _logger.LogWarning($"Intento de inicio de sesión fallido para el usuario: {usuarioLoginDTO.Email}");
                     return Unauthorized(new
                     {
                         status = "error",
-                        message = "Credenciales inv�lidas"
+                        message = "Credenciales inválidas"
                     });
                 }
+                // Generar tokens
+                var userToken = _tokenServicio.GenerarToken(usuarioDTO);
+                var userRefreshToken = _tokenServicio.GenerarRefreshToken();
+                var refreshTokenExpiration = DateTime.UtcNow.AddDays(7);
 
-                // Generar token JWT
-                var token = _tokenServicio.GenerarToken(usuarioDTO);
-                _logger.LogInformation($"Inicio de sesi�n exitoso para el usuario: {usuarioLoginDTO.Email}");
+                // Guardar el Refresh Token en la base de datos
+                await _usuarioServicio.GuardarRefreshToken(usuarioDTO.Id, userRefreshToken, refreshTokenExpiration);
+
+                _logger.LogInformation($"Inicio de sesión exitoso para el usuario: {usuarioLoginDTO.Email}");
 
                 return Ok(new
                 {
-                    token = token
+                    token = userToken,
+                    refreshToken = userRefreshToken
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error durante el inicio de sesi�n: {ex.Message}");
+                _logger.LogError($"Error durante el inicio de sesión: {ex.Message}");
                 return StatusCode(500, new
                 {
                     status = "error",
-                    message = "Ocurri� un error al procesar la solicitud"
+                    message = "Ocurrió un error al procesar la solicitud"
                 });
             }
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDTO request)
+        {
+            try
+            {
+                var usuarioDTO = await _usuarioServicio.ValidarUsuarioPorRefreshToken(request.RefreshToken);
+
+                if (usuarioDTO == null)
+                {
+                    _logger.LogWarning($"Intento de refrescar token inválido.");
+                    return Unauthorized(new
+                    {
+                        status = "error",
+                        message = "Token de actualización inválido o expirado"
+                    });
+                }
+                // Generar nuevos tokens
+                var newAccessToken = _tokenServicio.GenerarToken(usuarioDTO);
+
+                _logger.LogInformation($"Token refrescado correctamente para el usuario: {usuarioDTO.Email}");
+
+                return Ok(new
+                {
+                    token = newAccessToken,
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error durante la actualización del token: {ex.Message}");
+                return StatusCode(500, new
+                {
+                    status = "error",
+                    message = "Ocurrió un error al procesar la solicitud"
+                });
+            }
+        }
+
+
 
         [Authorize(Roles = "admin")]
         [HttpGet] //obtener todos los usuarios

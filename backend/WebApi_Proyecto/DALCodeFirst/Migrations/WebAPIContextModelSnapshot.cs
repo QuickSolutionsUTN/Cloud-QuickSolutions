@@ -37,7 +37,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CategoriaProducto");
+                    b.ToTable("CategoriaProducto", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.EmpresaCategoria", b =>
@@ -60,7 +60,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("EmpresaCategoria");
+                    b.ToTable("EmpresaCategoria", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.EmpresaExterna", b =>
@@ -88,7 +88,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmpresaExterna");
+                    b.ToTable("EmpresaExterna", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.ReparacionExterna", b =>
@@ -111,7 +111,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdSolicitud");
 
-                    b.ToTable("ReparacionExterna");
+                    b.ToTable("ReparacionExterna", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.Rol", b =>
@@ -199,7 +199,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdTipoServicio");
 
-                    b.ToTable("SolicitudServicio");
+                    b.ToTable("SolicitudServicio", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.SolicitudServicioEstado", b =>
@@ -217,7 +217,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SolicitudServicioEstado");
+                    b.ToTable("SolicitudServicioEstado", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.TipoMantenimiento", b =>
@@ -235,7 +235,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoMantenimiento");
+                    b.ToTable("TipoMantenimiento", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.TipoProducto", b =>
@@ -258,7 +258,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasIndex("IdCategoriaProducto");
 
-                    b.ToTable("TipoProducto");
+                    b.ToTable("TipoProducto", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.TipoServicio", b =>
@@ -276,7 +276,7 @@ namespace DALCodeFIrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoServicio");
+                    b.ToTable("TipoServicio", (string)null);
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.Usuario", b =>
@@ -333,6 +333,13 @@ namespace DALCodeFIrst.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RefreshTokenExpiration")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
