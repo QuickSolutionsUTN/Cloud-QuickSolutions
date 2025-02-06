@@ -12,6 +12,7 @@ import UserRequestsPage from './pages/UserRequestsPage.jsx';
 import UserProfilePage from './pages/UserProfilePage.jsx';
 import RequestManagement from '../src/components/admin/RequestManagement.jsx';
 import AdminProductsPage from './pages/AdminProductsPage.jsx';
+import AdminCategoriesPage from './pages/AdminCategoriesPage.jsx';
 
 function App() {
   const ProtectedRoute = ({ children, roleRequired }) => {
@@ -46,6 +47,8 @@ function App() {
             <Route path="requests" element={<AdminRequests />} />
             <Route path="requests/:id" element={<RequestManagement />} />
             <Route path="products" element={<AdminProductsPage />} />
+            <Route path="categories" element={<AdminCategoriesPage />} />
+
           </Route>
         </Routes>
       </Router>

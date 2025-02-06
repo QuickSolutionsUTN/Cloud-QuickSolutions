@@ -13,5 +13,6 @@ namespace Servicios
         Task<List<TipoProductoDTO>> ObtenerTiposProductoAsync();
         Task<List<TipoProductoDTO>> ObtenerTiposProductoPorCategoriaAsync(int idCategoria);
         Task<TipoProductoDTO> ActualizarTipoProductoAsync(int id,TipoProductoModificarDTO tipoProductoModificarDTO);
+        Task<bool> EliminarTipoProductoAsync(int id);
     }
 }

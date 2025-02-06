@@ -66,7 +66,7 @@
   width: 20%;
   overflow-y: auto;
 }
-.d-flex {
+.admin-layout .admin-content-container {
   display: flex;
   height: 100%;
   width: 100%;

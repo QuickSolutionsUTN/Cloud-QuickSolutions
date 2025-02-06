@@ -56,5 +56,17 @@ namespace WebAPI.Controllers
 
             return Ok(resultado);
         }
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarTipoProducto(int id)
+        {
+            var resultado = await _tipoProductoServicio.EliminarTipoProductoAsync(id);
+            if (!resultado)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
     }
 }

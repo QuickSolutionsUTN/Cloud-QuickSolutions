@@ -35,5 +35,31 @@ namespace WebAPI.Controllers
             var categorias = await _categoriaServicio.ObtenerCategoriasAsync();
             return Ok(categorias); // Retorna la lista de usuarios
         }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ActualizarCategoria(int id, [FromBody] CategoriaModificarDTO categoriaModificarDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var resultado = await _categoriaServicio.ActualizarCategoriaAsync(id, categoriaModificarDTO);
+
+            return Ok(resultado);
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarCategoria(int id)
+        {
+            var resultado = await _categoriaServicio.EliminarCategoriaAsync(id);
+            if (!resultado)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
     }
 }

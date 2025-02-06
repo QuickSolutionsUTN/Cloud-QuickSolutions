@@ -11,6 +11,8 @@ namespace Servicios
     {
         Task<CategoriaDTO> CrearCategoriaAsync(string categoriaDescripcion);
         Task<List<CategoriaDTO>> ObtenerCategoriasAsync();
+        Task<CategoriaDTO> ActualizarCategoriaAsync(int id, CategoriaModificarDTO categoriaModificarDTO);
+        Task<bool> EliminarCategoriaAsync(int id);
 
     }
 }

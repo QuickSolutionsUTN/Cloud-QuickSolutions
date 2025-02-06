@@ -76,5 +76,20 @@ namespace Servicios
 
             return tipoProductoOutDTO;
         }
+
+        public async Task<bool> EliminarTipoProductoAsync(int id)
+        {
+            
+            var tipoProducto = await _context.TipoProducto.FindAsync(id);
+
+            if (tipoProducto == null)
+            {
+                return false;
+            }
+
+            _context.TipoProducto.Remove(tipoProducto);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

@@ -5,24 +5,28 @@ import { Modal, Form, Button } from "react-bootstrap";
 import axios from "axios";
 import { useBackendURL } from '../../contexts/BackendURLContext.jsx';
 import AuthContext from '../../contexts/AuthContext.jsx';
+import { faPenToSquare, faTrash, faSortUp, faSortDown, faSort } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function AdminProductsTable({ initialProducts, categories }) {
   const [data, setData] = useState(initialProducts);
-  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const [sorting, setSorting] = useState([{ id: 'id', desc: false }]); // Ordenar por 'id' ascendente por defecto
   const backendURL = useBackendURL();
   const { userToken } = useContext(AuthContext);
 
   useEffect(() => {
     if (!initialProducts.length) {
-      setData(initialProducts); 
+      setData(initialProducts);
     }
   }, [initialProducts]);
 
   const handleEdit = (producto) => {
     setSelectedProduct(producto);
-    setShowModal(true);
+    setShowEditModal(true);
   };
 
   const handleChange = (e) => {
@@ -43,11 +47,38 @@ export default function AdminProductsTable({ initialProducts, categories }) {
       .then(() => {
         setData(data.map(p => (p.id === id ? selectedProduct : p)));
         console.log("Producto actualizado correctamente");
-        setShowModal(false);
+        setShowEditModal(false);
       })
       .catch((error) => {
         console.error("Error al actualizar el producto:", error);
       });
+  };
+
+  // Manejo de eliminación: abre el modal de confirmación
+  const handleDelete = (id) => {
+    console.log("Eliminar producto con id:", id);
+    setSelectedId(id);
+    setShowDeleteModal(true);
+  };
+
+  // Confirma la eliminación
+  const confirmDelete = () => {
+    if (selectedId) {
+      axios
+        .delete(`${backendURL}/api/tipoproducto/${selectedId}`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        })
+        .then(() => {
+          setData(data.filter((p) => p.id !== selectedId));
+          setShowDeleteModal(false);
+        })
+        .catch((error) => {
+          console.error("Error al eliminar el producto:", error);
+          setShowDeleteModal(false);
+        });
+    }
   };
 
   const columns = [
@@ -64,11 +95,16 @@ export default function AdminProductsTable({ initialProducts, categories }) {
     {
       header: "Acciones",
       cell: ({ row }) => (
-        <button onClick={() => handleEdit(row.original)} className="btn btn-primary">
-          Editar
-        </button>
+        <>
+          <Button onClick={() => handleEdit(row.original)} className="btn btn-edit" variant="outline-primary">
+            <FontAwesomeIcon icon={faPenToSquare} />
+          </Button>
+          <Button onClick={() => handleDelete(row.original.id)} className="btn btn-delete" variant="outline-danger" style={{ marginLeft: '10px' }}>
+            <FontAwesomeIcon icon={faTrash} />
+          </Button>
+        </>
       ),
-    },
+    enableSorting: false,},
   ];
 
   const table = useReactTable({
@@ -82,16 +118,16 @@ export default function AdminProductsTable({ initialProducts, categories }) {
 
   return (
     <div className="table-container">
-      <table className="table">
+      <table className="admin-products-table">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="sticky-col">
               {headerGroup.headers.map((header) => (
-                <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
+                <th key={header.id} onClick={header.column.getToggleSortingHandler()} className="px-3">
                   {flexRender(header.column.columnDef.header, header.getContext())}
                   {{
-                    asc: ' 🔼',
-                    desc: ' 🔽',
+                    asc: <FontAwesomeIcon icon={faSortUp} className="sort-icon"/>,
+                    desc: <FontAwesomeIcon icon={faSortDown} className="sort-icon" />,
                   }[header.column.getIsSorted()] ?? null}
                 </th>
               ))}
@@ -110,7 +146,7 @@ export default function AdminProductsTable({ initialProducts, categories }) {
           ))}
         </tbody>
       </table>
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Editar Producto</Modal.Title>
         </Modal.Header>
@@ -145,8 +181,22 @@ export default function AdminProductsTable({ initialProducts, categories }) {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>Cancelar</Button>
           <Button variant="primary" onClick={handleSave}>Guardar Cambios</Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>¿Estás seguro de que quieres eliminar este elemento?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Eliminar
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

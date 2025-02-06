@@ -16,6 +16,8 @@ namespace Core.DTOs
 
             CreateMap<RolDTO, Rol>();
 
+            CreateMap<CategoriaDTO, CategoriaProducto>();
+
             CreateMap<SolicitudServicio, SolicitudRespuestaDTO>()
                 .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => src.SolicitudServicioEstado.Descripcion))
                 .ForMember(dest => dest.TipoDeProducto, opt => opt.MapFrom(src => src.TipoProducto.Descripcion))

@@ -1,0 +1,60 @@
+.admin-table-component {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden; 
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  /*max-height: calc(100vh - 200px);*/
+}
+
+.admin-table-component th {
+  background: #CE4107;
+  text-align: left;
+  padding: 10px 15px;
+  font-weight: 600;
+}
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background: #CE4107;
+  color: #ffffff;
+  z-index: 2;
+}
+
+.admin-table-component thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.admin-table-component td {
+  padding: 8px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-table-component tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table-component tr:hover {
+  background: rgba(0, 0, 0, 0.05); 
+}
+.admin-table-component th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.admin-table-component th:last-child {
+  border-top-right-radius: 10px;
+}
+.btn-edit {
+  border-radius: 8px; 
+  font-weight: 500;
+  padding: 6px 12px;
+  transition: all 0.3s ease;
+}
+
+.sort-icon{
+  margin-left: 10px;
+}

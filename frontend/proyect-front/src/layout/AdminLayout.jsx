@@ -36,7 +36,7 @@ function AdminLayout() {
             )}
           </div>
         </header>
-        <div className="d-flex">
+        <div className="admin-content-container">
           <aside className="admin-sidebar">
             <AsideBar />
           </aside>
