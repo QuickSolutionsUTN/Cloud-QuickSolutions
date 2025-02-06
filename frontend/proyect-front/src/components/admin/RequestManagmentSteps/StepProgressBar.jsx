@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap";
 import "./StepProgressBar.css";
 
 const StepProgressBar = () => {
-    const steps = ["Iniciada", "Presupuestado", "Aprobado", "Finalizado"];
+    const steps = ["Iniciada", "Revisada", "Presupuestado", "Aprobado", "Finalizado"];
     const [currentStep, setCurrentStep] = useState(0);
 
     const nextStep = () => {
@@ -25,11 +25,12 @@ const StepProgressBar = () => {
             {/* Contenedor de la barra de progreso */}
             <div className="progress-container">
                 <div className="progress-line-background"></div>
-                <div className="progress-line" style={{ width: `${(currentStep / (steps.length - 1)) * 77   }%` }}></div>
+                <div className="progress-line" style={{ width: `${(currentStep / (steps.length - 1)) * 80}%` }}></div>
                 {steps.map((step, index) => (
                     <div key={index} className={`step ${index <= currentStep ? "active" : ""}`}>
                         <div className="circle">{index + 1}</div>
-                        <p>{step}</p>
+                        <p className="step-name">{step}</p>
+                        <p className={`date ${index <= currentStep ? "visible" : ""}`}>Fecha</p>
                     </div>
                 ))}
             </div>

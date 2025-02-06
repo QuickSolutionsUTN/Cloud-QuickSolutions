@@ -35,8 +35,21 @@
     flex: 1;
 }
 
-.step p {
+.step .date {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #6c757d;
+    visibility: hidden;
+}
+
+.step .date.visible {
+    visibility: visible;
+}
+
+.step .step-name {
     margin-top: 8px;
+    margin-bottom: 0;
+    padding: 0;
     font-size: 14px;
     color: #6c757d;
 }
@@ -59,7 +72,7 @@
 }
 
 /* Cambiar color y estilo de los nombres de los pasos activos */
-.progress-container .active p {
+.progress-container .active .step-name {
     color: green;
     font-weight: bold;
 }
@@ -68,3 +81,4 @@
 .progress-container .progress-line {
     width: calc((100% - 30px) * var(--progress));
 }
+
