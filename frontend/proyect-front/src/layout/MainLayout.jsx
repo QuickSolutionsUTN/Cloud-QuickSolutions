@@ -68,10 +68,9 @@ function MainLayout() {
           show={showJoinForm}
           onClose={() => setShowJoinForm(false)}
           onSwitchToLogin={handleSwitchToLogin}
-
         />
       )}
-      <main>
+      <main className='' style={{ paddingTop: '4%' }}>
         <Outlet /> {/*Para renderizarán las rutas hijas */}
       </main>
       <Footer />

@@ -40,6 +40,12 @@ export const AuthProvider = ({ children }) => {
   const [userId, setUserId] = useState(() => {
     return localStorage.getItem('userId') || null;
   });
+  const [userName, setUserName] = useState(() => {
+    return localStorage.getItem('name') || null;
+  });
+  const [userSurName, setUserSurName] = useState(() => {
+    return localStorage.getItem('surName') || null;
+  });
 
 
   const login = (userData) => {
@@ -48,13 +54,19 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('email', userData.email);
     localStorage.setItem('role', userData.role);
     localStorage.setItem('authToken', userData.token);
+    localStorage.setItem('refreshToken', userData.refreshToken);
     localStorage.setItem('userId', userData.userId);
+    localStorage.setItem('name', userData.name);
+    localStorage.setItem('surName', userData.surName);
 
     setIsAuthenticated(true);
     setRole(userData.role);
     setUserEmail(userData.email);
     setUserToken(userData.token);
     setUserId(userData.userId);
+    setRefreshToken(userData.refreshToken);
+    setUserName(userData.name);
+    setUserSurName(userData.surName);
 
     console.log("Usuario autenticado correctamente");
   };
@@ -66,10 +78,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('role');
     localStorage.removeItem('email');
     localStorage.removeItem('userId');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('name');
+    localStorage.removeItem('surName');
     setUserToken(null);
     setRole(null);
     setUserEmail(null);
     setUserId(null);
+    setRefreshToken(null);
+    setUserName(null);
+    setUserSurName(null);
   };
 
   const refreshAccessToken = async () => {
@@ -93,22 +111,24 @@ export const AuthProvider = ({ children }) => {
     // Si el token de acceso está presente, pero es inválido
     if (userToken && !isTokenValid(userToken)) {
       console.log("Access token expirado, intentando refrescar...");
+      console.log("Refresh token: ", refreshToken);
       // Intentar refrescar el access token con el refresh token
       refreshAccessToken();
     }
   }, [userToken]);
 
-  useEffect(() => {
-    /*
+  /*useEffect(() => {
     console.log("Estado: ", isAuthenticated);
     console.log("Rol: ", userRole);
     console.log("Email: ", userEmail);
     console.log("UserId: ", userId);
-    console.log("Token: ", userToken);*/
-  }, [isAuthenticated, userRole, userEmail]);
+    console.log("Token: ", userToken);
+    console.log("Nombre: ", userName);
+    console.log("Apellido: ", userSurName);
+  }, []);*/
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userRole, userEmail, userToken, userId, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userRole, userEmail, userToken, refreshToken, userId, userName, userSurName, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

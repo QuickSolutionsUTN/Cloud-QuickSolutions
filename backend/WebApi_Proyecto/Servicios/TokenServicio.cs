@@ -23,20 +23,20 @@ namespace Servicios
 
         public string GenerarToken(UsuarioDTO usuarioDTO)
         {
-
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettingsDTO.SecretKey));
             // Crear credenciales
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             // Definir los claims (información contenida en el token)
-
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, usuarioDTO.Id),          // ID del usuario (Subject)
-                new Claim(JwtRegisteredClaimNames.Email, usuarioDTO.Email),      // Email del usuario
-                new Claim(ClaimTypes.Role, usuarioDTO.Rol),                      // Rol del usuario
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, usuarioDTO.Id)
-            };
+                    new Claim(JwtRegisteredClaimNames.Sub, usuarioDTO.Id),          // ID del usuario (Subject)
+                    new Claim(JwtRegisteredClaimNames.Email, usuarioDTO.Email),      // Email del usuario
+                    new Claim(ClaimTypes.Role, usuarioDTO.Rol),                      // Rol del usuario
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, usuarioDTO.Id),
+                    new Claim(ClaimTypes.Name, usuarioDTO.Nombre),                    // Nombre del usuario
+                    new Claim(ClaimTypes.Surname, usuarioDTO.Apellido)                // Apellido del usuario
+                };
 
             var token = new JwtSecurityToken(
                 issuer: _jwtSettingsDTO.Issuer,
@@ -47,7 +47,7 @@ namespace Servicios
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        
+
         public string GenerarRefreshToken()
         {
             var randomNumber = new byte[32];
@@ -57,7 +57,6 @@ namespace Servicios
                 return Convert.ToBase64String(randomNumber);
             }
         }
-    
     }
 
 

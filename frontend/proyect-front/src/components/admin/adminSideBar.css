@@ -19,11 +19,11 @@
 .admin-sidebar-header .title {
   color: #FAFAFA;
   display: inline;
-  margin-top: 15%;
   margin-left: 5%;
   font-weight: bold;
   text-align: left;
-  padding: 3% 0 3% 10%;
+  padding: 5%;
+  align-items: center;
 }
 .admin-sidebar .nav-item-section-title{
   color: #FAFAFA;

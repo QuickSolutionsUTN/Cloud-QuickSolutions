@@ -1,5 +1,5 @@
 import React from "react";
-import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, flexRender, getSortedRowModel } from "@tanstack/react-table";
 import { useState, useEffect, useContext } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 import axios from "axios";
@@ -10,6 +10,7 @@ export default function AdminProductsTable({ initialProducts, categories }) {
   const [data, setData] = useState(initialProducts);
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [sorting, setSorting] = useState([{ id: 'id', desc: false }]); // Ordenar por 'id' ascendente por defecto
   const backendURL = useBackendURL();
   const { userToken } = useContext(AuthContext);
 
@@ -50,7 +51,7 @@ export default function AdminProductsTable({ initialProducts, categories }) {
   };
 
   const columns = [
-    { accessorKey: "id", header: "ID" },
+    { accessorKey: "id", header: "ID", enableSorting: true },
     { accessorKey: "descripcion", header: "Nombre" },
     {
       accessorKey: "idCategoria",
@@ -73,7 +74,10 @@ export default function AdminProductsTable({ initialProducts, categories }) {
   const table = useReactTable({
     data,
     columns,
+    state: { sorting },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -83,8 +87,12 @@ export default function AdminProductsTable({ initialProducts, categories }) {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="sticky-col">
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
                   {flexRender(header.column.columnDef.header, header.getContext())}
+                  {{
+                    asc: ' 🔼',
+                    desc: ' 🔽',
+                  }[header.column.getIsSorted()] ?? null}
                 </th>
               ))}
             </tr>

@@ -24,7 +24,9 @@ function LoginForm({ show, onClose, onJoinClick }) {
         const userToken = response.data.token;
         const userRole = jwtDecode(userToken)['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
         const userId = jwtDecode(userToken)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
-        console.log("Usuario autenticado correctamente");
+        const userName = jwtDecode(userToken)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+        const userSurname = jwtDecode(userToken)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'];
+        console.log("Usuario autenticado correctamente, token: ", userToken);
         try {
           const decodedToken = jwtDecode(userToken);
           const userData = {
@@ -32,7 +34,9 @@ function LoginForm({ show, onClose, onJoinClick }) {
             role: userRole,
             email: decodedToken.email,
             token: userToken,
-            refreshToken: response.data.refreshToken
+            refreshToken: response.data.refreshToken,
+            name: userName,
+            surName: userSurname
           }
           login(userData);
           // Redirigir al usuario la página correspondiente
