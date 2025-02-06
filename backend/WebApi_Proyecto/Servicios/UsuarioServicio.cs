@@ -43,14 +43,14 @@ namespace Servicios
                 }
 
                 // Validar la contraseña
-                var resultado = _userManager.PasswordHasher.VerifyHashedPassword(usuario, usuario.PasswordHash, password);
-                if (resultado == PasswordVerificationResult.Success)
+                var resultado = await _userManager.CheckPasswordAsync(usuario, password);
+                if (resultado)
                 {
                     //_logger.LogInformation($"Credenciales válidas para el usuario con email '{email}'.");
                     return true;
                 }
 
-               // _logger.LogWarning($"Contraseña incorrecta para el usuario con email '{email}'.");
+                // _logger.LogWarning($"Contraseña incorrecta para el usuario con email '{email}'.");
                 return false;
             }
             catch (Exception ex)
@@ -70,7 +70,7 @@ namespace Servicios
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(usuario,"user");
+                    await _userManager.AddToRoleAsync(usuario, "user");
                     return _mapper.Map<UsuarioDTO>(usuario);
                 }
                 else
@@ -121,7 +121,7 @@ namespace Servicios
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            if (roles==null || roles.Count==0)
+            if (roles == null || roles.Count == 0)
             {
                 return null;
             }
@@ -165,7 +165,7 @@ namespace Servicios
                 }
                 usuario.RefreshToken = refreshToken;
                 usuario.RefreshTokenExpiration = refreshTokenExpiration;
-                
+
                 var result = await _userManager.UpdateAsync(usuario);
                 if (!result.Succeeded)
                 {
@@ -181,7 +181,7 @@ namespace Servicios
         {
             try
             {
-                var usuario = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+                var usuario =  _context.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
 
                 if (usuario == null || usuario.RefreshTokenExpiration <= DateTime.UtcNow)
                 {

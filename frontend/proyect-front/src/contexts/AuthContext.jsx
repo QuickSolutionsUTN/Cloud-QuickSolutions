@@ -96,11 +96,10 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(`${backendURL}/api/users/refresh-token`, {
         refreshToken: refreshToken,
       });
-      const { accessToken } = response.data.token;
-      // Actualiza los tokens
+      const accessToken = response.data.token;
       setUserToken(accessToken);
       localStorage.setItem('authToken', accessToken);
-      console.log("Token actualizado correctamente");
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Error al refrescar el token:', error);
       logout(); // Cerrar sesión si el refresh token no es válido
