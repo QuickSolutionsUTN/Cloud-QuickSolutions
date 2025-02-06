@@ -62,7 +62,7 @@ namespace DALCodeFirst.Modelos
 
         public DateTime FechaPresupuestada { get; set; }
 
-        public string DiagnosticoTecnico { get; set; }
+        public string? DiagnosticoTecnico { get; set; }
 
         public DateTime FechaAprobada { get; set; }
 

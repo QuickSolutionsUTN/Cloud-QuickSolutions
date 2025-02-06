@@ -36,6 +36,7 @@ namespace Servicios
                 IdTipoServicio = solicitudCreacionDTO.IdTipoServicio,
                 IdTipoProducto = solicitudCreacionDTO.IdTipoProducto,
                 FechaGeneracion = DateTime.UtcNow,
+                ConLogistica = solicitudCreacionDTO.ConLogistica,
                 IdSolicitudServicioEstado = 1,
                 Tercearizado = false,
             };

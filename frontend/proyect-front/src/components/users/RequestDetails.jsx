@@ -89,6 +89,16 @@ export default function RequestDetails() {
             </Form.Control>
           </div>
         </div>
+        <div className='row my-3'>
+          <div className='col-4'>
+            <Form.Check 
+              type='checkbox' 
+              label='Con servicio de logistica' 
+              checked={solicitud.ConLogistica} 
+              readOnly 
+            />
+          </div>
+        </div>
 
         <div className="my-4"></div>
         <div className='row'>
