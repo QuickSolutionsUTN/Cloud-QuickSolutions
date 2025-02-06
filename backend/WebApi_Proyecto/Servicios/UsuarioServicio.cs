@@ -8,6 +8,7 @@ using DALCodeFirst.Modelos;
 using Microsoft.EntityFrameworkCore;
 using DALCodeFirst;
 using System.Data;
+using Azure.Core;
 
 namespace Servicios
 
@@ -202,6 +203,36 @@ namespace Servicios
             {
                 throw new Exception($"Error inesperado al obtener el usuario por token de refresco: {ex.Message}", ex);
             }
+        }
+
+
+        public async Task<bool> ActualizarRolAsync(UsuarioDTO usuarioDTO, string rol)
+        {
+            var user = await _userManager.FindByIdAsync(usuarioDTO.Id);
+            // Obtener los roles actuales del usuario
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+            // Si el usuario ya tiene el rol, no es necesario hacer nada
+            if (currentRoles.Contains(rol))
+            {
+                return false;
+            }
+
+            // Eliminar roles anteriores si es necesario
+            foreach (var role in currentRoles)
+            {
+                await _userManager.RemoveFromRoleAsync(user, role);
+            }
+
+            // Asignar el nuevo rol
+            var result = await _userManager.AddToRoleAsync(user, rol);
+
+            if (!result.Succeeded)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

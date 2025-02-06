@@ -191,6 +191,35 @@ namespace WebAPI.Controllers
             }
             return Ok(userDTO);
         }
+        [Authorize(Roles = "admin")]
+        [HttpPut("api/users/{userId}/role")]
+        public async Task<IActionResult> UpdateUserRole(string userId, [FromBody] UpdateRoleRequestDTO request)
+        {
+
+            var userDTO = await _usuarioServicio.ObtenerUsuarioPorIdAsync(userId);
+
+            if (userDTO == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado" });
+            }
+
+            // temporal
+            var validRoles = new List<string> { "admin", "user"};
+            if (!validRoles.Contains(request.rol))
+            {
+                return BadRequest(new { message = "Rol Invalido" });
+            }
+
+            var result = await _usuarioServicio.ActualizarRolAsync(userDTO, request.rol);
+
+            if (!result)
+            {
+                return StatusCode(500, new { message = "Failed to assign role" });
+            }
+                
+
+            return Ok(new { message = "Role updated successfully" });
+        }
 
     }
 }

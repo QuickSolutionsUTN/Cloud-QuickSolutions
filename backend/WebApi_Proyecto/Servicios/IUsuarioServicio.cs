@@ -14,6 +14,8 @@ namespace Servicios
         Task<bool> CheckCredentials(string email, string password);
         Task GuardarRefreshToken(string userId, string refreshToken, DateTime refreshTokenExpiration);
         Task<UsuarioDTO> ValidarUsuarioPorRefreshToken(string refreshToken);
+
+        Task<bool> ActualizarRolAsync(UsuarioDTO usuarioDTO, string rol);
         //List<UsuarioDTO> ObtenerUsers();
     }
 }

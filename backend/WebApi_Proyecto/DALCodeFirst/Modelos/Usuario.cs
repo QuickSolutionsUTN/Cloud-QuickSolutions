@@ -17,8 +17,8 @@ namespace DALCodeFirst.Modelos
         public string Apellido { get; set; }
 
         public DateOnly FechaDeNacimiento { get; set; }
-        public string RefreshToken { get; set; }
-        public DateTime RefreshTokenExpiration { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiration { get; set; }
 
     }
 }
