@@ -1,0 +1,27 @@
+.reviewed-step-form .row {
+    display: flex;
+}
+
+.reviewed-step-form .col-diagnostico {
+    flex: 2;
+    padding: 0 1rem;
+}
+
+.reviewed-step-form .col-monto {
+    flex: 1;
+    padding: 0 1rem;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.button-group button {
+    width: 100%; /* Adjust width to match button */
+}
+
+.monto {
+    width: 100%;
+}

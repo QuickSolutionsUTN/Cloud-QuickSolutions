@@ -81,4 +81,3 @@
 .progress-container .progress-line {
     width: calc((100% - 30px) * var(--progress));
 }
-

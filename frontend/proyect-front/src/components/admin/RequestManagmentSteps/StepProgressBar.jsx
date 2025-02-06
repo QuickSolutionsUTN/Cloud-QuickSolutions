@@ -1,51 +1,27 @@
-import React, { useState } from "react";
-import { Button } from "react-bootstrap";
+import React from "react";
 import "./StepProgressBar.css";
 
-const StepProgressBar = () => {
-    const steps = ["Iniciada", "Revisada", "Presupuestado", "Aprobado", "Finalizado"];
-    const [currentStep, setCurrentStep] = useState(0);
+const StepProgressBar = ({ currentStep }) => {
+  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
+  const stepIndex = steps.indexOf(currentStep);
 
-    const nextStep = () => {
-        if (currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1);
-        }
-    };
-
-    const prevStep = () => {
-        if (currentStep > 0) {
-            setCurrentStep(currentStep - 1);
-        }
-    };
-
-    return (
-        <div className="container text-center mt-4">
-            <h4>Progreso: {steps[currentStep]}</h4>
-
-            {/* Contenedor de la barra de progreso */}
-            <div className="progress-container">
-                <div className="progress-line-background"></div>
-                <div className="progress-line" style={{ width: `${(currentStep / (steps.length - 1)) * 77}%` }}></div>
-                {steps.map((step, index) => (
-                    <div key={index} className={`step ${index <= currentStep ? "active" : ""}`}>
-                        <div className="circle">{index + 1}</div>
-                        <p className="step-name">{step}</p>
-                        <p className={`date ${index <= currentStep ? "visible" : ""}`}>Fecha</p>
-                    </div>
-                ))}
-            </div>
-
-            {/* Botones de Control */}
-            <div className="mt-3">
-                <Button variant="secondary" onClick={prevStep} disabled={currentStep === 0}>
-                    Anterior
-                </Button>
-                <Button variant="primary" onClick={nextStep} className="ms-2" disabled={currentStep === steps.length - 1}>
-                    Siguiente
-                </Button>
-            </div>
-        </div>
-    );
+  return (
+    <div className="container text-center mt-4">
+      <h4>Progreso: {steps[stepIndex]}</h4>
+      {/* Contenedor de la barra de progreso */}
+      <div className="progress-container">
+        <div className="progress-line-background"></div>
+        <div className="progress-line" style={{ width: `${(stepIndex / (steps.length - 1)) * 80}%` }}></div>
+        {steps.map((step, index) => (
+          <div key={index} className={`step ${index <= stepIndex ? "active" : ""}`}>
+            <div className="circle">{index + 1}</div>
+            <p className="step-name">{step}</p>
+            <p className={`date ${index <= stepIndex ? "visible" : ""}`}>Fecha</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default StepProgressBar;
