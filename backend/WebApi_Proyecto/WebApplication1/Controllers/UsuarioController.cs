@@ -192,7 +192,7 @@ namespace WebAPI.Controllers
             return Ok(userDTO);
         }
         [Authorize(Roles = "admin")]
-        [HttpPut("api/users/{userId}/role")]
+        [HttpPut("{userId}/role")]
         public async Task<IActionResult> UpdateUserRole(string userId, [FromBody] UpdateRoleRequestDTO request)
         {
 
@@ -219,6 +219,22 @@ namespace WebAPI.Controllers
                 
 
             return Ok(new { message = "Role updated successfully" });
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> EiminarUsuario(string userId)
+        {
+            var result = await _usuarioServicio.EliminaUsuarioAsync(userId);
+
+
+            if (!result)
+            {
+                return StatusCode(500, new { message = "Error al eliminar el usuario" });
+            }
+
+
+            return NoContent();
         }
 
     }

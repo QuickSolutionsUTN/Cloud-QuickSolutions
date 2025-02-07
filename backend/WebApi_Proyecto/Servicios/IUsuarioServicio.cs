@@ -16,6 +16,8 @@ namespace Servicios
         Task<UsuarioDTO> ValidarUsuarioPorRefreshToken(string refreshToken);
 
         Task<bool> ActualizarRolAsync(UsuarioDTO usuarioDTO, string rol);
+
+        Task<bool> EliminaUsuarioAsync(string userId);
         //List<UsuarioDTO> ObtenerUsers();
     }
 }

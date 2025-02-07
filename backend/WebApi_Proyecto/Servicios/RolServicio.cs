@@ -7,6 +7,7 @@ using Core.DTOs;
 using DALCodeFirst;
 using DALCodeFirst.Modelos;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Servicios
 {
@@ -27,7 +28,7 @@ namespace Servicios
             {
                 var rol = new Rol
                 {
-                    Name = rolDto.Nombre
+                    Name = rolDto.Descripcion
                 };
 
                 // Utilizamos RoleManager para crear el rol
@@ -41,7 +42,7 @@ namespace Servicios
                 }
 
                 // Retornamos el DTO del rol creado
-                return new RolDTO { Nombre = rol.Name };
+                return new RolDTO { Descripcion = rol.Name };
             }
             catch (DbUpdateException dbEx)
             {
@@ -50,6 +51,27 @@ namespace Servicios
             catch (Exception ex)
             {
                 throw new Exception("Error inesperado al crear el rol.", ex);
+            }
+        }
+
+        public async Task<List<RolDTO>> ObtenerRolesAsync()
+        {
+            try
+            {
+                // Obtenemos todos los roles
+                var roles = await _roleManager.Roles.ToListAsync();
+
+                var rolesDto = roles.Select(r => new RolDTO
+                {
+                    Id = r.Id,
+                    Descripcion = r.Name
+                }).ToList();
+
+                return rolesDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error inesperado al obtener los roles.", ex);
             }
         }
     }

@@ -234,5 +234,24 @@ namespace Servicios
 
             return true;
         }
+
+        public async Task<bool> EliminaUsuarioAsync(string userId)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return false;
+                }
+
+                var result = await _userManager.DeleteAsync(user);
+                return result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error inesperado al eliminar el usuario: {ex.Message}", ex);
+            }
+        }
     }
 }
