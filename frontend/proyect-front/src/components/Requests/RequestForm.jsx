@@ -22,7 +22,7 @@ export const RequestForm = () => {
   const [stepComplete, setStepComplete] = useState(false);
 
   const [formData, setFormData] = useState({
-    productData: { serviceId: 0, categoryId: 0, productTypeId: 0, problemDescription: '' },
+    productData: { serviceId: 0, categoryId: 0, productTypeId: 0, problemDescription: '', conLogistica: false },
     personalData: { email: '', firstName: '', lastName: '' },
   });
 
@@ -43,6 +43,7 @@ export const RequestForm = () => {
       idTipoServicio: parseInt(data.productData.serviceId,10),
       idCategoria: parseInt(data.productData.categoryId,10),
       idTipoProducto: parseInt(data.productData.productTypeId,10),
+      conLogistica: data.productData.conLogistica,
     };
 
     try {

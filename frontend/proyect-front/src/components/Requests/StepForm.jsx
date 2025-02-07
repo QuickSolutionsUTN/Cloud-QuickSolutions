@@ -68,10 +68,10 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
 
   useEffect(() => {
     if (serviceType === 'repair') {
-      setValue('serviceId', 2);
+      setValue('serviceId', 1);
       handleChange({ ...getValues(), serviceId: 2 });
     } else if (serviceType === 'maintenance') {
-      setValue('serviceId', 1);
+      setValue('serviceId', 2);
       handleChange({ ...getValues(), serviceId: 1 });
     }
   }, [serviceType, setValue, getValues]);
@@ -160,6 +160,19 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
               </div>
             </div>
           )}
+          <div className='row mb-3'>
+            <div className='col-4'>
+              <Form.Check
+                type="checkbox"
+                label="Con servicio de logistica"
+                {...register('conLogistica')}
+                onChange={(e) => {
+                  setValue('conLogistica', e.target.checked);
+                  handleChange({ ...getValues(), conLogistica: e.target.checked });
+                }}
+              />
+            </div>
+          </div>
         </>
       )}
       {step.id === 2 && (

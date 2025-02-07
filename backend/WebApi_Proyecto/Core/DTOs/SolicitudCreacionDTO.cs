@@ -25,6 +25,9 @@ namespace Core.DTOs
         [Required]
         public int IdTipoProducto { get; set; }
 
+        [Required]
+        public bool ConLogistica { get; set; }
+
         /*
         [Required]
         [DataType(DataType.Date)]

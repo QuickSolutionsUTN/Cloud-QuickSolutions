@@ -61,6 +61,21 @@ namespace WebAPI.Controllers
             return Ok(solicitudDTO);
 
         }
+        
+        [HttpPut("actualizar-estado")]
+        public async Task<IActionResult> ActualizarEstadoSolicitud([FromBody] SolicitudServicioEstadoUpdateDTO solicitudServicioEstadoUpdateDTO)
+        {
+            try
+            {
+                var solicitudActualizada = await _solicitudServicio.ActualizarEstadoSolicitudAsync(solicitudServicioEstadoUpdateDTO);
+                return Ok(solicitudActualizada);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al actualizar el estado de la solicitud");
+                return StatusCode(500, "Internal server error");
+            }
+        }
 
     }
 

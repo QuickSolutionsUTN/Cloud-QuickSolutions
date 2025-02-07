@@ -3,6 +3,7 @@ using System;
 using DALCodeFirst;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DALCodeFIrst.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    partial class WebAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250206003030_modificandoSolicitud")]
+    partial class modificandoSolicitud
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,6 +158,7 @@ namespace DALCodeFIrst.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("DiagnosticoTecnico")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("FechaAprobada")
@@ -347,9 +351,10 @@ namespace DALCodeFIrst.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("RefreshToken")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("RefreshTokenExpiration")
+                    b.Property<DateTime>("RefreshTokenExpiration")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")

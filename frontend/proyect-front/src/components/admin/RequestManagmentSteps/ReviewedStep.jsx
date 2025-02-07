@@ -4,15 +4,20 @@ import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
-import "./StartedStep.css";
+import "./reviewedStep.css"
 
-function StartedStep({ nextStep, subcontractStep, cancelStep }) {
+function ReviewedStep({ nextStep }) {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
+  const navigate = useNavigate();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const [idCategoria, setIdCategoria] = useState(null);
-  const navigate = useNavigate();
+
+  const handleNextStep = (event) => {
+    event.preventDefault();
+    nextStep();
+  };
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -38,42 +43,12 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
   return (
     <>
       <Form className='data-container'>
-        <div className="my-4"></div>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.emailSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Apellido</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.apellidoSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.nombreSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-          </div>
           <div className='row my-3'>
             <div className='col-4'>
               <Form.Label>Servicio</Form.Label>
               <Form.Control
                 type='text'
-                defaultValue={solicitud.tipoServicio}
+                defaultValue={solicitud.tipoServicio || ""}
                 readOnly
               >
               </Form.Control>
@@ -82,7 +57,7 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
               <Form.Label>Categoria</Form.Label>
               <Form.Control
                 type='text'
-                value={solicitud.categoria}
+                value={solicitud.categoria || ""}
                 readOnly
               >
               </Form.Control>
@@ -91,20 +66,8 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
               <Form.Label>Producto</Form.Label>
               <Form.Control
                 type='text'
-                value={solicitud.tipoDeProducto}
+                value={solicitud.tipoDeProducto || ""}
                 readOnly
-              >
-              </Form.Control>
-            </div>
-          </div>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Monto</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.monto}
-                readOnly
-                style={{ width: '100%' }} // Adjust width to match button
               >
               </Form.Control>
             </div>
@@ -118,38 +81,46 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
                   as='textarea'
                   rows={3}
                   type='text'
-                  value={solicitud.descripcion}
+                  value={solicitud.descripcion || ""}
                   readOnly
                   style={{ resize: 'vertical' }}
                 />
               </Form.Group>
-            </div>
-            <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Check
-                type='checkbox'
-                label='Con servicio de logistica'
-                checked={solicitud.conLogistica}
-                readOnly
-              />
-            </div>
-          </div>
+            </div> 
           </div>
           <div className="my-4"></div>
       </Form>
-      <div className="buttons-container">
-        <Button className="cancel" variant="danger" onClick={cancelStep}>
-          Cancelar
-        </Button>
-        <Button className="subcontract" variant="warning" onClick={subcontractStep}>
-          Subcontratar
-        </Button>
-        <Button variant="success" onClick={nextStep}>
-          Aceptar servicio
-        </Button>
-      </div>
+      <Form className='reviewed-step-form' onSubmit={handleNextStep}>
+        <div className='row'>
+          <div className='col-diagnostico'>
+            <Form.Group controlId='diagnostico'>
+              <Form.Label>Diagnostico</Form.Label>
+              <Form.Control
+                as='textarea'
+                rows={3}
+                type='text'
+                placeholder='Ingrese el diagnostico'
+              />
+            </Form.Group>
+          </div>
+          <div className='col-monto'>
+            <Form.Group controlId='monto'>
+              <Form.Label>Monto</Form.Label>
+              <Form.Control
+                type='number'
+                placeholder='Ingrese el monto'
+              />
+            </Form.Group>
+            <div className='button-group'>
+              <Button variant='success' type='submit' className='button' onClick={nextStep}>
+                Enviar Diagnostico
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Form>
     </>
   );
 }
 
-export default StartedStep;
+export default ReviewedStep;
