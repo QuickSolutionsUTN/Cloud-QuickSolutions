@@ -1,0 +1,8 @@
+.buttons-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 20px auto;
+    width: 40%;
+}

@@ -11,10 +11,10 @@
 .progress-line-background {
     position: absolute;
     top: 15px;
-    left: 10%;
+    left: 12%;
     height: 4px;
     background: #ddd;
-    width: 80%;
+    width: 76%;
     z-index: 0;
 }
 
@@ -22,7 +22,7 @@
 .progress-line {
     position: absolute;
     top: 15px;
-    left: 10%;
+    left: 12%;
     height: 4px;
     background: green;
     transition: width 0.3s ease-in-out;
@@ -35,8 +35,21 @@
     flex: 1;
 }
 
-.step p {
+.step .date {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #6c757d;
+    visibility: hidden;
+}
+
+.step .date.visible {
+    visibility: visible;
+}
+
+.step .step-name {
     margin-top: 8px;
+    margin-bottom: 0;
+    padding: 0;
     font-size: 14px;
     color: #6c757d;
 }
@@ -59,7 +72,7 @@
 }
 
 /* Cambiar color y estilo de los nombres de los pasos activos */
-.progress-container .active p {
+.progress-container .active .step-name {
     color: green;
     font-weight: bold;
 }

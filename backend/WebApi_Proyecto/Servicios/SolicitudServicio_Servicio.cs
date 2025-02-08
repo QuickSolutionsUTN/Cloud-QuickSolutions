@@ -36,6 +36,7 @@ namespace Servicios
                 IdTipoServicio = solicitudCreacionDTO.IdTipoServicio,
                 IdTipoProducto = solicitudCreacionDTO.IdTipoProducto,
                 FechaGeneracion = DateTime.UtcNow,
+                ConLogistica = solicitudCreacionDTO.ConLogistica,
                 IdSolicitudServicioEstado = 1,
                 Tercearizado = false,
             };
@@ -88,6 +89,23 @@ namespace Servicios
             var solicitudesDTO = _mapper.Map<List<SolicitudRespuestaDTO>>(solicitudes);
 
             return solicitudesDTO;
+        }
+
+        public async Task<SolicitudRespuestaDTO> ActualizarEstadoSolicitudAsync(SolicitudServicioEstadoUpdateDTO solicitudServicioEstadoUpdateDTO)
+        {
+            var solicitud = await _context.SolicitudServicio
+                .FirstOrDefaultAsync(s => s.Id == solicitudServicioEstadoUpdateDTO.Id);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            solicitud.IdSolicitudServicioEstado = solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado;
+            await _context.SaveChangesAsync();
+
+            var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
+            return solicitudActualizada;
         }
     }
 }

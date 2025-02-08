@@ -11,6 +11,8 @@ namespace Servicios
 
         Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudPorUserIdAsync(string userId);
         Task<List<SolicitudRespuestaDTO>> ObtenerSolicitudesAsync();
+
+        Task<SolicitudRespuestaDTO> ActualizarEstadoSolicitudAsync(SolicitudServicioEstadoUpdateDTO SolicitudServicioEstadoUpdateDTO);
         //Task<List<UsuarioDTO>> ObtenerUsuariosAsync();
         //Task<UsuarioDTO> ObtenerUsuarioPorEmailAsync(string email);
     }
