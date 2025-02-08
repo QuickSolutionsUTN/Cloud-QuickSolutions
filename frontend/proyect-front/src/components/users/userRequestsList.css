@@ -1,19 +1,42 @@
 .detail-button {
-  background-color: #007bff;
-  color: white;
-  padding: 4px 10px; /* Menos padding */
-  font-size: 12px; /* Fuente más pequeña */
-  font-weight: 500; /* Menos grosor */
-  border: none;
-  border-radius: 3px; /* Borde menos redondeado */
-  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .detail-button:hover {
-  background-color: #0056b3;
+  background-color: #464d55;
 }
 
 .detail-button:active {
-  background-color: #004494;
+  background-color: #444a51;
+}
+
+.detail-button.cancelada:hover {
+  background-color: rgb(253, 65, 65);
+}
+
+.detail-button.presupuestada:hover {
+  background-color: rgb(250, 237, 54);
+}
+
+.detail-button.aprobada:hover {
+  background-color: rgb(19, 182, 19);
+}
+
+.detail-button.finalizada:hover {
+  background-color: #ea7f32;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 10px; /* Separación entre los botones */
+  transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+.cancel-button:active {
+  background-color: #bd2130;
 }
