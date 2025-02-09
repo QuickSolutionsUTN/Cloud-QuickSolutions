@@ -93,7 +93,7 @@ export default function RequestDetails() {
             <h4>Monto: ${solicitud.monto}</h4>
             {solicitud.estado === 'Presupuestada' && (
               <>
-                <Button variant="success" className="mr-2" onClick={() => setShowAcceptModal(true)}>Aceptar</Button>
+                <Button variant="success" className="button-spacing" onClick={() => setShowAcceptModal(true)}>Aceptar</Button>
                 <Button variant="danger" onClick={() => setShowRejectModal(true)}>Rechazar</Button>
               </>
             )}
