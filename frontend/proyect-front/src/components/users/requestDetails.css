@@ -42,3 +42,7 @@
 .custom-button.secondary:hover {
   background-color: #5a6268; 
 }
+
+.button-spacing {
+  margin-right: 10px;
+}

@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { useBackendURL } from '../../contexts/BackendURLContext.jsx';
+import AuthContext from '../../contexts/AuthContext.jsx';
 import { useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function RequestDetails() {
+  const { userToken } = useContext(AuthContext);
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const navigate = useNavigate();
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -30,6 +34,44 @@ export default function RequestDetails() {
     fetchSolicitudDetails();
   }, [solicitudId]);
 
+  const handleAccept = async () => {
+    try {
+      await axios.put(`${backendURL}/api/Solicitud/actualizar-estado`, {
+        id: solicitud.id,
+        idSolicitudServicioEstado: 4 // 4 es el ID para el estado "Aprobada"
+      }, {
+        headers: {
+          Authorization: `Bearer ${userToken}`
+        }
+      });
+      // Actualizar el estado local o recargar la página para reflejar el cambio
+      console.log('Solicitud aceptada');
+      setSolicitud(prevSolicitud => ({ ...prevSolicitud, estado: 'Aprobada' }));
+      setShowAcceptModal(false);
+    } catch (error) {
+      console.error('Error al aceptar la solicitud:', error);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      await axios.put(`${backendURL}/api/Solicitud/actualizar-estado`, {
+        id: solicitud.id,
+        idSolicitudServicioEstado: 6
+      }, {
+        headers: {
+          Authorization: `Bearer ${userToken}`
+        }
+      });
+      // Actualizar el estado local o recargar la página para reflejar el cambio
+      console.log('Solicitud rechazada');
+      setSolicitud(prevSolicitud => ({ ...prevSolicitud, estado: 'Cancelada' }));
+      setShowRejectModal(false);
+    } catch (error) {
+      console.error('Error al rechazar la solicitud:', error);
+    }
+  };
+
   if (!solicitud) {
     return <div>Cargando...</div>;
   }
@@ -45,6 +87,22 @@ export default function RequestDetails() {
         <h4>Estado: {solicitud.estado}</h4>
         <h4>Fecha: {fechaFormateada}</h4>
       </div>
+      {(solicitud.estado === 'Presupuestada' || solicitud.estado === 'Aprobada') && (
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4>Monto: ${solicitud.monto}</h4>
+            {solicitud.estado === 'Presupuestada' && (
+              <>
+                <Button variant="success" className="button-spacing" onClick={() => setShowAcceptModal(true)}>Aceptar</Button>
+                <Button variant="danger" onClick={() => setShowRejectModal(true)}>Rechazar</Button>
+              </>
+            )}
+          </div>
+          <div>
+            <h4>Fecha Estimada: {new Date(solicitud.fechaEstimada).toLocaleDateString('es-ES')}</h4>
+          </div>
+        </div>
+      )}
       <div className="my-4"></div>
 
       <Form className='data-container'>
@@ -118,9 +176,43 @@ export default function RequestDetails() {
         </div>
       </Form>
 
-      <div className='buttons-container'>
+      <div className='d-flex justify-content-end mt-3'>
         <Button variant='secondary' className='custom-button' onClick={() => navigate('../requests')}>Volver</Button> 
       </div>
+
+      <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Aceptación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que deseas aceptar esta solicitud?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAcceptModal(false)}>
+            Atrás
+          </Button>
+          <Button variant="success" onClick={handleAccept}>
+            Confirmar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Rechazo</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que deseas rechazar esta solicitud?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
+            Atrás
+          </Button>
+          <Button variant="danger" onClick={handleReject}>
+            Confirmar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 
