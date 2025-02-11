@@ -43,6 +43,7 @@ function RequestManagement() {
     if (stepIndex < steps.length - 1) {
       const newStep = steps[stepIndex + 1];
       try {
+        console.log('step viejo:', newStep);
         await axios.put(`${backendURL}/api/solicitud/actualizar-estado`, {
           id: solicitudId,
           idSolicitudServicioEstado: stepIndex + 2
@@ -51,7 +52,8 @@ function RequestManagement() {
         setSolicitud(prevSolicitud => ({
           ...prevSolicitud,
           estado: newStep
-        }));console.log('Updated currentStep:', newStep);
+        }));
+        console.log('Updated step nuevo:', newStep);
         console.log('Updated solicitud:', {
           ...solicitud,
           estado: newStep
