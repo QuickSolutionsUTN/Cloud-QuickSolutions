@@ -8,7 +8,7 @@ import ReviewedStep from './RequestManagmentSteps/ReviewedStep.jsx';
 import BudgetedStep from './RequestManagmentSteps/BudgetedStep.jsx';
 import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
-import { Button } from 'react-bootstrap';
+import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -18,6 +18,7 @@ function RequestManagement() {
   const navigate = useNavigate();
   const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
   const [currentStep, setCurrentStep] = useState("Iniciada");
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -69,20 +70,30 @@ function RequestManagement() {
     }
   };
 
+  const cancelStep = async () => {
+    setCurrentStep("Cancelada");
+    setShowCancelModal(true);
+    const newStep = "Cancelada";
+    await updateSolicitudEstado(newStep, stepIndex);
+  };
+
+  /*
   const prevStep = () => {
     const stepIndex = steps.indexOf(currentStep);
     if (stepIndex > 0) {
       setCurrentStep(steps[stepIndex - 1]);
     }
   };
-
+*/
   const subcontractStep = async () => {
     console.log('Subcontratar');
   };
 
-  const cancelStep = () => {
-    setCurrentStep("Cancelada");
+  const handleCloseCancelModal = () => {
+    setShowCancelModal(false);
   };
+
+  
 
   if (!solicitud) {
     return <div>Cargando...</div>;
@@ -112,6 +123,7 @@ function RequestManagement() {
       </div>
       <StepProgressBar currentStep={currentStep} />
       {renderContent()}
+      <CancelModalForm show={showCancelModal} onClose={handleCloseCancelModal} onJoinClick={handleCloseCancelModal} />
     </div>
   );
 }

@@ -35,6 +35,11 @@
     flex: 1;
 }
 
+/* Ocultar el paso cancelado */
+.step.cancelada {
+    display: none;
+}
+
 .step .date {
     margin-bottom: 8px;
     font-size: 14px;
@@ -64,6 +69,11 @@
     display: inline-block;
     font-weight: bold;
     color: #fff;
+}
+
+/* Cambiar el contenido del círculo para el paso cancelado */
+.step.cancelada .circle {
+    content: "6";
 }
 
 /* Cambiar color de los pasos activos */

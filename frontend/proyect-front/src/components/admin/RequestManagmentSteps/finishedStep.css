@@ -1,0 +1,7 @@
+.diagnostic-column {
+    width: 67%; /* Adjusted to occupy more than 50% */
+}
+
+.amount-column {
+    width: 33%; /* Adjusted to occupy the remaining width */
+}
