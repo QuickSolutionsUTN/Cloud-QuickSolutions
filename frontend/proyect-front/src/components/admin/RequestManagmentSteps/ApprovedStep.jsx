@@ -5,19 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
 
-function ApprovedStep({nextStep}) {
+function ApprovedStep({ nextStep }) {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
   const navigate = useNavigate();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const [idCategoria, setIdCategoria] = useState(null);
-
-  const handleNextStep = (event) => {
-    event.preventDefault();
-    nextStep();
-  };
-
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -40,66 +34,76 @@ function ApprovedStep({nextStep}) {
     return <div>Cargando...</div>;
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (event.target.name === 'cancel') {
+      console.log("cancel");
+      // Lógica de cancelación
+    } else {
+      nextStep();
+    }
+  };
+
   return (
     <>
-    <div className="data-container budgeted-step-container">
-      <Form className='reviewed-step-form' onSubmit={handleNextStep}>
-        <div className='row my-3'>
-          <div className='col-4'>
-            <Form.Label>Servicio</Form.Label>
-            <Form.Control
-              type='text'
-              defaultValue={solicitud.tipoServicio}
-              readOnly
-            >
-            </Form.Control>
-          </div>
-          <div className='col-4'>
-            <Form.Label>Categoria</Form.Label>
-            <Form.Control
-              type='text'
-              value={solicitud.categoria}
-              readOnly
-            >
-            </Form.Control>
-          </div>
-          <div className='col-4'>
-            <Form.Label>Producto</Form.Label>
-            <Form.Control
-              type='text'
-              value={solicitud.tipoDeProducto}
-              readOnly
-            >
-            </Form.Control>
-          </div>
-        </div>
-        <div className='row reviewed-show'>
-          <div className='col-diagnostic'>
-            <Form.Group controlId='diagnostic'>
-              <Form.Label>Diagnostico</Form.Label>
+      <div className="data-container budgeted-step-container">
+        <Form className='reviewed-step-form'>
+          <div className='row my-3'>
+            <div className='col-4'>
+              <Form.Label>Servicio</Form.Label>
               <Form.Control
-                as='textarea'
-                rows={3}
                 type='text'
-                placeholder='Ingrese el diagnostico'
+                defaultValue={solicitud.tipoServicio}
                 readOnly
-              />
-            </Form.Group>
-          </div>
-          <div className='col-amount'>
-            <Form.Group controlId='amount'>
-              <Form.Label>Monto</Form.Label>
+              >
+              </Form.Control>
+            </div>
+            <div className='col-4'>
+              <Form.Label>Categoria</Form.Label>
               <Form.Control
-                type='number'
-                placeholder='Ingrese el monto'
+                type='text'
+                value={solicitud.categoria}
                 readOnly
-              />
-            </Form.Group>
+              >
+              </Form.Control>
+            </div>
+            <div className='col-4'>
+              <Form.Label>Producto</Form.Label>
+              <Form.Control
+                type='text'
+                value={solicitud.tipoDeProducto}
+                readOnly
+              >
+              </Form.Control>
+            </div>
           </div>
-        </div>
-      </Form>
-    </div>
-    <Form className='reviewed-step-form' onSubmit={handleNextStep}>
+          <div className='row reviewed-show'>
+            <div className='col-diagnostic'>
+              <Form.Group controlId='diagnostic'>
+                <Form.Label>Diagnostico</Form.Label>
+                <Form.Control
+                  as='textarea'
+                  rows={3}
+                  type='text'
+                  placeholder='Ingrese el diagnostico'
+                  readOnly
+                />
+              </Form.Group>
+            </div>
+            <div className='col-amount'>
+              <Form.Group controlId='amount'>
+                <Form.Label>Monto</Form.Label>
+                <Form.Control
+                  type='number'
+                  placeholder='Ingrese el monto'
+                  readOnly
+                />
+              </Form.Group>
+            </div>
+          </div>
+        </Form>
+      </div>
+      <Form className='reviewed-step-form' onSubmit={handleSubmit}>
         <div className='row'>
           <div className='col-diagnostic'>
             <Form.Group controlId='diagnostic'>
@@ -112,14 +116,14 @@ function ApprovedStep({nextStep}) {
               />
             </Form.Group>
           </div>
-            <div className='button-group approvedStep'>
-                <Button variant='danger' type='submit' className='button' onClick={console.log("cancel")}>
-                Cancelar
-              </Button>
-              <Button variant='success' type='submit' className='button' onClick={nextStep}>
-                Enviar resumen
-              </Button>
-            </div>
+          <div className='button-group approvedStep'>
+            <Button variant='danger' type='submit' className='button' >
+              Cancelar
+            </Button>
+            <Button variant='success' type='submit' className='button' >
+              Enviar resumen
+            </Button>
+          </div>
         </div>
       </Form>
     </>

@@ -16,7 +16,7 @@ function RequestManagement() {
   const backendURL = useBackendURL();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const navigate = useNavigate();
-  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobado", "Finalizado"];
+  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
   const [currentStep, setCurrentStep] = useState("Iniciada");
 
   useEffect(() => {
@@ -37,30 +37,35 @@ function RequestManagement() {
     fetchSolicitudDetails();
   }, [solicitudId, backendURL]);
 
+  const updateSolicitudEstado = async (newStep, stepIndex) => {
+    try {
+      await axios.put(`${backendURL}/api/solicitud/actualizar-estado`, {
+        id: solicitudId,
+        idSolicitudServicioEstado: stepIndex + 2
+      });
+      setCurrentStep(newStep);
+      setSolicitud(prevSolicitud => ({
+        ...prevSolicitud,
+        estado: newStep
+      }));
+      console.log('Updated solicitud:', {
+        ...solicitud,
+        estado: newStep
+      });
+    } catch (error) {
+      console.error('Error updating request state:', error);
+    }
+  };
+
   const nextStep = async () => {
     console.log('Next step');
     const stepIndex = steps.indexOf(currentStep);
+    console.log('stepIndex:', stepIndex);
     if (stepIndex < steps.length - 1) {
       const newStep = steps[stepIndex + 1];
-      try {
-        console.log('step viejo:', newStep);
-        await axios.put(`${backendURL}/api/solicitud/actualizar-estado`, {
-          id: solicitudId,
-          idSolicitudServicioEstado: stepIndex + 2
-        });
-        setCurrentStep(newStep);
-        setSolicitud(prevSolicitud => ({
-          ...prevSolicitud,
-          estado: newStep
-        }));
-        console.log('Updated step nuevo:', newStep);
-        console.log('Updated solicitud:', {
-          ...solicitud,
-          estado: newStep
-        });
-      } catch (error) {
-        console.error('Error updating request state:', error);
-      }
+      console.log('step viejo:', newStep);
+      await updateSolicitudEstado(newStep, stepIndex);
+      console.log('Updated step nuevo:', newStep);
     }
   };
 
@@ -71,9 +76,9 @@ function RequestManagement() {
     }
   };
 
-const subcontractStep = async () => {
-  console.log('Subcontratar');
-};
+  const subcontractStep = async () => {
+    console.log('Subcontratar');
+  };
 
   const cancelStep = () => {
     setCurrentStep("Cancelada");
