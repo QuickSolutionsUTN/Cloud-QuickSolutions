@@ -9,9 +9,9 @@ import './adminTable.css';
 export default function AdminTable({
   initialData,
   columns: userColumns,
-  onEditSave, // Función para guardar la edición (debe devolver una promesa)
-  onDeleteConfirm, // Función para confirmar eliminación (debe devolver una promesa)
-  renderEditForm, // Función que renderiza el formulario de edición (recibe (selectedItem, handleEditChange))
+  onEditSave, 
+  onDeleteConfirm, 
+  renderEditForm, 
   editModalTitle = "Editar Elemento",
   deleteModalTitle = "Confirmar Eliminación",
   deleteModalMessage = "¿Estás seguro de que quieres eliminar este elemento?",
@@ -34,12 +34,6 @@ export default function AdminTable({
   const handleDelete = (id) => {
     setSelectedId(id);
     setShowDeleteModal(true);
-  };
-  const handleChange = (e) => {
-    setSelectedItem({
-      ...selectedItem,
-      [e.target.name]: e.target.value,
-    });
   };
 
   const handleEditChange = (e) => {

@@ -3,7 +3,19 @@ import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-export default function RenderEditMaintenanceForm({ selectedItem, handleEditChange, products, handleTaskChange, addTask }) {
+export default function RenderEditMaintenanceForm({ maintenance, products, handleEditChange }) {
+
+  const handleChecklistChange = (index, field, value) => {
+    const updatedChecklist = [...maintenance.checklist];
+    updatedChecklist[index][field] = value;
+    handleEditChange({ target: { name: 'checklist', value: updatedChecklist } });
+  };
+
+  const addTask = () => {
+    const updatedChecklist = [...maintenance.checklist, { descripcion: '', obligatorio: false }];
+    handleEditChange({ target: { name: 'checklist', value: updatedChecklist } });
+  };
+
   return (
     <Form>
       <Form.Group className="mb-3">
@@ -13,7 +25,7 @@ export default function RenderEditMaintenanceForm({ selectedItem, handleEditChan
             <Form.Control
               as="select"
               name="idTipoProducto"
-              value={selectedItem.idTipoProducto || ""}
+              value={maintenance.idTipoProducto}
               onChange={handleEditChange}
             >
               <option value="">Seleccione un producto</option>
@@ -29,7 +41,7 @@ export default function RenderEditMaintenanceForm({ selectedItem, handleEditChan
             <Form.Control
               type="text"
               name="nombre"
-              value={selectedItem.nombre}
+              value={maintenance.nombre}
               onChange={handleEditChange}
             />
           </Col>
@@ -40,7 +52,7 @@ export default function RenderEditMaintenanceForm({ selectedItem, handleEditChan
         <Form.Control
           type="text"
           name="descripcion"
-          value={selectedItem.descripcion}
+          value={maintenance.descripcion}
           onChange={handleEditChange}
         />
       </Form.Group>
@@ -53,14 +65,14 @@ export default function RenderEditMaintenanceForm({ selectedItem, handleEditChan
             </Button>
           </Col>
         </Row>
-        {selectedItem.checkList.map((task, index) => (
+        {(maintenance.checklist ? maintenance.checklist : []).map((task, index) => (
           <Row key={index} className="mb-2">
             <Col>
               <Form.Control
                 type="text"
                 name={`task-${index}`}
                 value={task.descripcion}
-                onChange={(e) => handleTaskChange(e, index)}
+                onChange={(e) => handleChecklistChange(index, "descripcion", e.target.value)}
                 placeholder="Descripción de la tarea"
               />
             </Col>
@@ -69,13 +81,12 @@ export default function RenderEditMaintenanceForm({ selectedItem, handleEditChan
                 type="checkbox"
                 name={`mandatory-${index}`}
                 checked={task.obligatorio}
-                onChange={(e) => handleTaskChange(e, index)}
+                onChange={(e) => handleChecklistChange(index, "obligatorio", e.target.checked)}
                 label="Obligatoria"
               />
             </Col>
           </Row>
         ))}
-
       </Form.Group>
     </Form>
   );

@@ -3,8 +3,18 @@ import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-export default function RenderMaintenanceForm({ selectedItem, products, handleChange, handleChecklistChange, addTask }) {
-  const isEditMode = selectedItem !== null;
+export default function RenderMaintenanceForm({ maintenance, products, handleChange }) {
+
+  const handleChecklistChange = (index, field, value) => {
+    const updatedChecklist = [...maintenance.checklist];
+    updatedChecklist[index][field] = value;
+    handleChange({ target: { name: 'checklist', value: updatedChecklist } });
+  };
+
+  const addTask = () => {
+    const updatedChecklist = [...maintenance.checklist, { descripcion: '', obligatorio: false }];
+    handleChange({ target: { name: 'checklist', value: updatedChecklist } });
+  };
 
   return (
     <Form>
@@ -15,7 +25,7 @@ export default function RenderMaintenanceForm({ selectedItem, products, handleCh
             <Form.Control
               as="select"
               name="idTipoProducto"
-              value={isEditMode ? selectedItem.idTipoProducto : ""}
+              value={maintenance.idTipoProducto}
               onChange={handleChange}
             >
               <option value="">Seleccione un producto</option>
@@ -31,7 +41,7 @@ export default function RenderMaintenanceForm({ selectedItem, products, handleCh
             <Form.Control
               type="text"
               name="nombre"
-              value={isEditMode ? selectedItem.nombre : ""}
+              value={maintenance.nombre}
               onChange={handleChange}
             />
           </Col>
@@ -42,7 +52,7 @@ export default function RenderMaintenanceForm({ selectedItem, products, handleCh
         <Form.Control
           type="text"
           name="descripcion"
-          value={isEditMode ? selectedItem.descripcion : ""}
+          value={maintenance.descripcion}
           onChange={handleChange}
         />
       </Form.Group>
@@ -55,7 +65,7 @@ export default function RenderMaintenanceForm({ selectedItem, products, handleCh
             </Button>
           </Col>
         </Row>
-        {(isEditMode && selectedItem.checklist ? selectedItem.checklist : []).map((task, index) => (
+        {(maintenance.checklist ? maintenance.checklist : []).map((task, index) => (
           <Row key={index} className="mb-2">
             <Col>
               <Form.Control
