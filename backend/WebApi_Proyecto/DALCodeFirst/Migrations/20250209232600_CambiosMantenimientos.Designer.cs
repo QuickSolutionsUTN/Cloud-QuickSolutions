@@ -3,6 +3,7 @@ using System;
 using DALCodeFirst;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DALCodeFIrst.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    partial class WebAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250209232600_CambiosMantenimientos")]
+    partial class CambiosMantenimientos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,32 +41,6 @@ namespace DALCodeFIrst.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CategoriaProducto");
-                });
-
-            modelBuilder.Entity("DALCodeFirst.Modelos.CheckListMantenimiento", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("IdTipoMantenimiento")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("Obligatorio")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Tarea")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdTipoMantenimiento");
-
-                    b.ToTable("CheckListMantenimiento");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.EmpresaCategoria", b =>
@@ -514,17 +491,6 @@ namespace DALCodeFIrst.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("DALCodeFirst.Modelos.CheckListMantenimiento", b =>
-                {
-                    b.HasOne("DALCodeFirst.Modelos.TipoMantenimiento", "TipoMantenimiento")
-                        .WithMany()
-                        .HasForeignKey("IdTipoMantenimiento")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TipoMantenimiento");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.EmpresaCategoria", b =>
