@@ -35,11 +35,6 @@
     flex: 1;
 }
 
-/* Ocultar el paso cancelado */
-.step.cancelada {
-    display: none;
-}
-
 .step .date {
     margin-bottom: 8px;
     font-size: 14px;
@@ -71,11 +66,6 @@
     color: #fff;
 }
 
-/* Cambiar el contenido del círculo para el paso cancelado */
-.step.cancelada .circle {
-    content: "6";
-}
-
 /* Cambiar color de los pasos activos */
 .active .circle {
     background: green;
@@ -90,4 +80,14 @@
 /* Ajustar la línea de progreso para que no se extienda más allá del último paso */
 .progress-container .progress-line {
     width: calc((100% - 30px) * var(--progress));
+}
+
+/* Cambiar el contenido del círculo y el color de la barra para el paso cancelado */
+.step.cancelada .circle {
+    background: red;
+    content: "0";
+}
+
+.progress-container.cancelada .progress-line {
+    background: red;
 }
