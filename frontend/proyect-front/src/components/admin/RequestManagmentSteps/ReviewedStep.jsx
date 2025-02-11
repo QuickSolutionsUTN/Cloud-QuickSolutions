@@ -75,7 +75,7 @@ function ReviewedStep({ nextStep }) {
           <div className="my-4"></div>
           <div className='row'>
             <div className='col-12'>
-              <Form.Group controlId='descripcion'>
+              <Form.Group controlId='description'>
                 <Form.Label>Descripcion del problema</Form.Label>
                 <Form.Control
                   as='textarea'
@@ -92,8 +92,8 @@ function ReviewedStep({ nextStep }) {
       </Form>
       <Form className='reviewed-step-form' onSubmit={handleNextStep}>
         <div className='row'>
-          <div className='col-diagnostico'>
-            <Form.Group controlId='diagnostico'>
+          <div className='col-diagnostic'>
+            <Form.Group controlId='diagnostic'>
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
@@ -103,8 +103,8 @@ function ReviewedStep({ nextStep }) {
               />
             </Form.Group>
           </div>
-          <div className='col-monto'>
-            <Form.Group controlId='monto'>
+          <div className='col-amount'>
+            <Form.Group controlId='amount'>
               <Form.Label>Monto</Form.Label>
               <Form.Control
                 type='number'
@@ -112,6 +112,9 @@ function ReviewedStep({ nextStep }) {
               />
             </Form.Group>
             <div className='button-group'>
+            <Button variant='danger' type='submit' className='button' onClick={console.log("cancel")}>
+                Cancelar
+              </Button>
               <Button variant='success' type='submit' className='button' onClick={nextStep}>
                 Enviar Diagnostico
               </Button>

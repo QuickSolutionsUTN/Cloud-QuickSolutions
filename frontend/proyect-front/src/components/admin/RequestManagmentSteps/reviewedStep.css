@@ -2,26 +2,27 @@
     display: flex;
 }
 
-.reviewed-step-form .col-diagnostico {
+.reviewed-step-form .col-diagnostic {
     flex: 2;
     padding: 0 1rem;
 }
 
-.reviewed-step-form .col-monto {
+.reviewed-step-form .col-amount {
     flex: 1;
     padding: 0 1rem;
 }
 
 .button-group {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     margin-top: 1rem;
+    gap: 1rem; /* Add gap to separate buttons */
 }
 
 .button-group button {
-    width: 100%; /* Adjust width to match button */
+    flex: 1;
 }
 
-.monto {
+.amount {
     width: 100%;
 }

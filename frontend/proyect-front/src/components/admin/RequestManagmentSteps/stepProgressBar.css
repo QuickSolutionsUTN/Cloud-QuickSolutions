@@ -11,10 +11,10 @@
 .progress-line-background {
     position: absolute;
     top: 15px;
-    left: 12%;
+    left: 10%;
     height: 4px;
     background: #ddd;
-    width: 76%;
+    width: 80%;
     z-index: 0;
 }
 
@@ -22,7 +22,7 @@
 .progress-line {
     position: absolute;
     top: 15px;
-    left: 12%;
+    left: 10%;
     height: 4px;
     background: green;
     transition: width 0.3s ease-in-out;

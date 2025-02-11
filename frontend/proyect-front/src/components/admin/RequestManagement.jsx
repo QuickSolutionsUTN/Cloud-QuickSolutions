@@ -88,7 +88,7 @@ const subcontractStep = async () => {
       case 'Revisada':
         return <ReviewedStep nextStep={nextStep} cancelStep={cancelStep}/>;
       case 'Presupuestada':
-        return <BudgetedStep nextStep={nextStep} cancelStep={cancelStep}/>;
+        return <BudgetedStep/>;
       case 'Aprobada':
         return <ApprovedStep nextStep={nextStep} cancelStep={cancelStep}/>;
       case 'Finalizada':
