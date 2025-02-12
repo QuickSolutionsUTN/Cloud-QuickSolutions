@@ -18,7 +18,7 @@ function RequestManagement() {
   const navigate = useNavigate();
   const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
   const [currentStep, setCurrentStep] = useState("Iniciada");
-  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showCancelModalForm, setShowCancelModalForm] = useState(false);
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -83,11 +83,11 @@ function RequestManagement() {
   };
 
   const cancelStep = () => {
-    setShowCancelModal(true);
+    setShowCancelModalForm(true);
   };
 
-  const handleCloseCancelModal = () => {
-    setShowCancelModal(false);
+  const handleCloseCancelModalForm = () => {
+    setShowCancelModalForm(false);
   };
 
   
@@ -120,7 +120,7 @@ function RequestManagement() {
       </div>
       <StepProgressBar currentStep={currentStep} />
       {renderContent()}
-      <CancelModalForm show={showCancelModal} onClose={handleCloseCancelModal} onJoinClick={handleCloseCancelModal} />
+      <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm}/>
     </div>
   );
 }

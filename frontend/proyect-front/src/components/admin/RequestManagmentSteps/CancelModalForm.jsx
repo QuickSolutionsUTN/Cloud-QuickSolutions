@@ -17,17 +17,17 @@ function CancelModalForm({ show, onClose }) {
         id: solicitudId,
         resumen: data.reason
       });
-      onSubmitClick(data.reason); // Pass the reason to the parent component
-      onClose();
+      window.location.reload();
     } catch (error) {
       console.error('Error cancelling request:', error);
     }
+    onClose();
   };
 
   return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Estas seguro de que desea eliminar la solicitud?</Modal.Title>
+        <Modal.Title>Estas seguro de que desea cancelar la solicitud?</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit(onSubmit)}>

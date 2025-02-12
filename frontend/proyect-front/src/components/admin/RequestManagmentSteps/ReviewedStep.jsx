@@ -112,7 +112,7 @@ function ReviewedStep({ nextStep, cancelStep }) {
               />
             </Form.Group>
             <div className='button-group'>
-            <Button variant='danger' type='submit' className='button' onClick={cancelStep}>
+            <Button variant='danger' className='button' onClick={cancelStep}>
                 Cancelar
               </Button>
               <Button variant='success' type='submit' className='button' onClick={nextStep}>
