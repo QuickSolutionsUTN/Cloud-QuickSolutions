@@ -8,5 +8,6 @@ namespace Servicios
     {
         //task para que sea asincrono
         Task<RolDTO> CrearRolAsync(RolDTO rolDTO); //
+        Task<List<RolDTO>> ObtenerRolesAsync();
     }
 }

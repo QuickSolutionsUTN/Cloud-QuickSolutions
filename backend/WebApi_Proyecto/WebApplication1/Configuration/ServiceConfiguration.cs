@@ -11,6 +11,7 @@ using Core.DTOs;
 using DALCodeFirst.Modelos;
 using WebAPI.Validators;
 using FluentValidation;
+using FluentAssertions.Common;
 
 
 public static class ServiceConfiguration
@@ -103,7 +104,7 @@ public static class ServiceConfiguration
         builder.Services.AddScoped<ISolicitudServicio_Servicio, SolicitudServicio_Servicio>();
         builder.Services.AddScoped<ITipoProductoServicio, TipoProductoServicio>();
         builder.Services.AddScoped<ITipoServicio_Servicio, TipoServicio_Servicio>();
-
+        builder.Services.AddScoped<IMantenimientoServicio, MantenimientoServicio>();
         /*
         //Identity
         builder.Services.AddIdentity<Usuario, Rol>(options =>

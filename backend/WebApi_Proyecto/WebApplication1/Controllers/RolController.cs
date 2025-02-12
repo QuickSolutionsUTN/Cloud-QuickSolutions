@@ -1,4 +1,5 @@
 ﻿using Core.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Servicios;
 using System.Threading.Tasks;
@@ -16,7 +17,8 @@ namespace WebAPI.Controllers
             _rolServicio = rolServicio;
         }
 
-        [HttpPost("crear")]
+        [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> CrearRol([FromBody] RolDTO rolDto)
         {
             if (rolDto == null)
@@ -33,6 +35,15 @@ namespace WebAPI.Controllers
             {
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        public async Task<IActionResult> ObtenerRoles()
+        {
+
+            var roles = await _rolServicio.ObtenerRolesAsync();
+            return Ok(roles); // Retorna la lista de usuarios
         }
     }
 }
