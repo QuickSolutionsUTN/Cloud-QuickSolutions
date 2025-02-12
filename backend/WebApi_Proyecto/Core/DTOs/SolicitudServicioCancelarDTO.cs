@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Core.DTOs
-
+{
     public class SolicitudServicioCancelarDTO
     {
         [Required]
