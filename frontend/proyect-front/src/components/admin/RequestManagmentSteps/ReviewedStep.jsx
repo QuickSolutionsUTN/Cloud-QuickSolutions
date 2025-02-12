@@ -110,7 +110,7 @@ function ReviewedStep({ nextStep, cancelStep }) {
                 type='date'
               />
             </Form.Group>
-            <Form.Group controlId='amount'>
+            <Form.Group className='amount-form-label' controlId='amount'>
               <Form.Label>Monto</Form.Label>
               <Form.Control
                 type='number'

@@ -43,3 +43,7 @@
 .reviewed-step-form .col-diagnostic .form-group {
     height: 100%;
 }
+
+.amount-form-label {
+    margin-top: 4%;
+}
