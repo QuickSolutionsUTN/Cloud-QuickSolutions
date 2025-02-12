@@ -83,11 +83,11 @@
 }
 
 /* Cambiar el contenido del círculo y el color de la barra para el paso cancelado */
-.step.cancelada .circle {
+.step.Cancelada .circle {
     background: red;
     content: "0";
 }
 
-.progress-container.cancelada .progress-line {
+.progress-container.Cancelada .progress-line {
     background: red;
 }

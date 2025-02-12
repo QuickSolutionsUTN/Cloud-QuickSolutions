@@ -12,11 +12,11 @@ const StepProgressBar = ({ currentStep }) => {
     <div className="container text-center mt-4">
       <h4>Progreso: {isCanceled ? "Cancelada" : steps[stepIndex]}</h4>
       {/* Contenedor de la barra de progreso */}
-      <div className={`progress-container ${isCanceled ? "cancelada" : ""}`}>
+      <div className={`progress-container ${isCanceled ? "Cancelada" : ""}`}>
         <div className="progress-line-background"></div>
         <div className="progress-line" style={{ width: `${(stepIndex / (steps.length - 1)) * 80}%` }}></div>
         {steps.map((step, index) => (
-          <div key={index} className={`step ${index <= stepIndex ? "active" : ""} ${isCanceled && index === stepIndex ? "cancelada" : ""}`}>
+          <div key={index} className={`step ${index <= stepIndex ? "active" : ""} ${isCanceled && index === stepIndex ? "Cancelada" : ""}`}>
             <div className="circle">
               {isCanceled && index === stepIndex ? "0" : (index === 4 ? <FontAwesomeIcon icon={faCheck} /> : index + 1)}
             </div>
