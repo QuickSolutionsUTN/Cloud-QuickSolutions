@@ -8,7 +8,7 @@ import ReviewedStep from './RequestManagmentSteps/ReviewedStep.jsx';
 import BudgetedStep from './RequestManagmentSteps/BudgetedStep.jsx';
 import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
-import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
+import CancelModalForm from './RequestManagmentSteps/cancelModalForm.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -70,13 +70,6 @@ function RequestManagement() {
     }
   };
 
-  const cancelStep = async () => {
-    setCurrentStep("Cancelada");
-    setShowCancelModal(true);
-    const newStep = "Cancelada";
-    await updateSolicitudEstado(newStep, stepIndex);
-  };
-
   /*
   const prevStep = () => {
     const stepIndex = steps.indexOf(currentStep);
@@ -87,6 +80,10 @@ function RequestManagement() {
 */
   const subcontractStep = async () => {
     console.log('Subcontratar');
+  };
+
+  const cancelStep = () => {
+    setShowCancelModal(true);
   };
 
   const handleCloseCancelModal = () => {

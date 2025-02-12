@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext';
 import axios from 'axios';
 
-function CancelModalForm({ show, onClose, onSubmitClick }) {
+function CancelModalForm({ show, onClose }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const backendURL = useBackendURL();
   const { id: solicitudId } = useParams();
@@ -15,10 +15,10 @@ function CancelModalForm({ show, onClose, onSubmitClick }) {
     try {
       await axios.put(`${backendURL}/api/solicitud/cancelar`, {
         id: solicitudId,
-        motivo: data.reason
+        resumen: data.reason
       });
+      onSubmitClick(data.reason); // Pass the reason to the parent component
       onClose();
-      navigate('/admin/requests');
     } catch (error) {
       console.error('Error cancelling request:', error);
     }
@@ -43,7 +43,7 @@ function CancelModalForm({ show, onClose, onSubmitClick }) {
           <Button variant="danger" type="submit">
             Cancelar solicitud
           </Button>
-          <Button variant="secondary" onClick={onSubmitClick}>
+          <Button variant="secondary" onClick={onClose}>
             Volver
           </Button>
         </Form>

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
 
-function ApprovedStep({ nextStep }) {
+function ApprovedStep({ nextStep, cancelStep }) {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
@@ -35,13 +35,8 @@ function ApprovedStep({ nextStep }) {
   }
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    if (event.target.name === 'cancel') {
-      console.log("cancel");
-      // Lógica de cancelación
-    } else {
+      event.preventDefault();
       nextStep();
-    }
   };
 
   return (
@@ -117,10 +112,10 @@ function ApprovedStep({ nextStep }) {
             </Form.Group>
           </div>
           <div className='button-group approvedStep'>
-            <Button variant='danger' type='submit' className='button' >
+            <Button variant='danger' className='button' onClick={cancelStep} >
               Cancelar
             </Button>
-            <Button variant='success' type='submit' className='button' >
+            <Button variant='success' type='submit' className='button' onClick={nextStep}>
               Enviar resumen
             </Button>
           </div>

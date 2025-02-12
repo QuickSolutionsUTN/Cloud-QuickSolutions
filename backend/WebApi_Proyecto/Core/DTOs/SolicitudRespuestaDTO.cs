@@ -26,5 +26,6 @@ namespace Core.DTOs
         public DateTime? FechaEstimada { get; set; }
         public bool? Tercearizado { get; set; }
         public DateTime? FechaPresupuestada { get; set; }
+        public string? Resumen { get; set; }
     }
 }

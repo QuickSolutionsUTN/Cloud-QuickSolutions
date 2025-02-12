@@ -6,7 +6,7 @@ import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
 import "./reviewedStep.css"
 
-function ReviewedStep({ nextStep }) {
+function ReviewedStep({ nextStep, cancelStep }) {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
@@ -112,7 +112,7 @@ function ReviewedStep({ nextStep }) {
               />
             </Form.Group>
             <div className='button-group'>
-            <Button variant='danger' type='submit' className='button' onClick={console.log("cancel")}>
+            <Button variant='danger' type='submit' className='button' onClick={cancelStep}>
                 Cancelar
               </Button>
               <Button variant='success' type='submit' className='button' onClick={nextStep}>

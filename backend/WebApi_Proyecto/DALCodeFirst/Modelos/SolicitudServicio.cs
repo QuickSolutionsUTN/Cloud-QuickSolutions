@@ -67,5 +67,7 @@ namespace DALCodeFirst.Modelos
         public DateTime FechaAprobada { get; set; }
 
         public DateTime FechaFinalizada { get; set; }
+        
+        public string? Resumen { get; set; }
     }
 }

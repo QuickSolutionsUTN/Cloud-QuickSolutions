@@ -107,6 +107,24 @@ namespace Servicios
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudActualizada;
         }
+
+        public async Task<SolicitudRespuestaDTO> CancelarSolicitudAsync(SolicitudServicioCancelarDTO solicitudServicioCancelarDTO)
+        {
+            var solicitud = await _context.SolicitudServicio
+                .FirstOrDefaultAsync(s => s.Id == solicitudServicioCancelarDTO.Id);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            solicitud.IdSolicitudServicioEstado = 6; // Estado "Cancelada"
+            solicitud.Resumen = solicitudServicioCancelarDTO.Resumen;
+            await _context.SaveChangesAsync();
+
+            var solicitudCancelada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
+            return solicitudCancelada;
+        }
     }
 }
 

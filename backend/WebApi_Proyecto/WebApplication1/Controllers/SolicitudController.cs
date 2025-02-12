@@ -77,6 +77,21 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpPut("cancelar")]
+        public async Task<IActionResult> CancelarSolicitud([FromBody] SolicitudServicioCancelarDTO solicitudServicioCancelarDTO)
+        {
+            try
+            {
+                var solicitudCancelada = await _solicitudServicio.CancelarSolicitudAsync(solicitudServicioCancelarDTO);
+                return Ok(solicitudCancelada);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al cancelar la solicitud");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
     }
 
 
