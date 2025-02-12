@@ -97,13 +97,19 @@ function ReviewedStep({ nextStep, cancelStep }) {
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
-                rows={3}
+                rows={6} // Adjust the number of rows to match the height
                 type='text'
                 placeholder='Ingrese el diagnostico'
               />
             </Form.Group>
           </div>
           <div className='col-amount'>
+            <Form.Group controlId='estimated-date'>
+              <Form.Label>Fecha estimada</Form.Label>
+              <Form.Control
+                type='date'
+              />
+            </Form.Group>
             <Form.Group controlId='amount'>
               <Form.Label>Monto</Form.Label>
               <Form.Control
@@ -111,15 +117,15 @@ function ReviewedStep({ nextStep, cancelStep }) {
                 placeholder='Ingrese el monto'
               />
             </Form.Group>
-            <div className='button-group'>
-            <Button variant='danger' className='button' onClick={cancelStep}>
-                Cancelar
-              </Button>
-              <Button variant='success' type='submit' className='button' onClick={nextStep}>
-                Enviar Diagnostico
-              </Button>
-            </div>
           </div>
+        </div>
+        <div className='button-group'>
+          <Button variant='danger' className='button' onClick={cancelStep}>
+            Cancelar
+          </Button>
+          <Button variant='success' type='submit' className='button' onClick={nextStep}>
+            Enviar Diagnostico
+          </Button>
         </div>
       </Form>
     </>

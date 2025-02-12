@@ -5,11 +5,23 @@
 .reviewed-step-form .col-diagnostic {
     flex: 2;
     padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 1%;
 }
 
 .reviewed-step-form .col-amount {
     flex: 1;
     padding: 0 1rem;
+}
+
+.col-amount {
+    margin-top: 1%;
+}
+
+.reviewed-step-form .col-amount .form-group {
+    margin-bottom: 1rem; /* Add space between fields */
 }
 
 .button-group {
@@ -21,8 +33,13 @@
 
 .button-group button {
     flex: 1;
+    margin-bottom: 1%;
 }
 
 .amount {
     width: 100%;
+}
+
+.reviewed-step-form .col-diagnostic .form-group {
+    height: 100%;
 }
