@@ -78,10 +78,68 @@ namespace Servicios
                 mantenimientosOutDTO.Add(mantenimientoOutDTO);
             }
 
-          
-                
-               
             return mantenimientosOutDTO;
         }
+
+        public async Task<MantenimientoOutDTO> ActualizarMantenimientoAsync(MantenimientoActualizarDTO mantenimientoActualizarDTO, int id)
+        {
+            var mantenimiento = await _context.TipoMantenimiento.FindAsync(id);
+
+            if (mantenimiento == null)
+            {
+                // Handle the case when the maintenance record is not found
+                return null;
+            }
+
+            // Update the properties of the maintenance record
+            mantenimiento.Nombre = mantenimientoActualizarDTO.Nombre;
+            mantenimiento.Descripcion = mantenimientoActualizarDTO.Descripcion;
+
+            // Remove existing checklist items
+            var existingChecklistItems = await _context.CheckListMantenimiento
+                .Where(c => c.IdTipoMantenimiento == mantenimiento.Id)
+                .ToListAsync();
+            _context.CheckListMantenimiento.RemoveRange(existingChecklistItems);
+
+            // Add updated checklist items
+            foreach (var item in mantenimientoActualizarDTO.Checklist)
+            {
+                var checkListMantenimientoDTO = new CheckListMantenimientoDTO
+                {
+                    IdTipoMantenimiento = mantenimiento.Id,
+                    Tarea = item.Descripcion,
+                    Obligatorio = item.Obligatorio
+                };
+                var checkListMantenimiento = _mapper.Map<CheckListMantenimiento>(checkListMantenimientoDTO);
+                _context.CheckListMantenimiento.Add(checkListMantenimiento);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var mantenimientoOutDTO = _mapper.Map<MantenimientoOutDTO>(mantenimiento);
+            return mantenimientoOutDTO;
+        }
+
+        public async Task<bool> EliminarMantenimientoAsync(int id)
+        {
+            var mantenimiento = await _context.TipoMantenimiento.FindAsync(id);
+
+            if (mantenimiento == null)
+            {
+                return false; // Return false if the maintenance record is not found
+            }
+
+            var checklistItems = await _context.CheckListMantenimiento
+                .Where(c => c.IdTipoMantenimiento == mantenimiento.Id)
+                .ToListAsync();
+
+            _context.CheckListMantenimiento.RemoveRange(checklistItems);
+            _context.TipoMantenimiento.Remove(mantenimiento);
+
+            await _context.SaveChangesAsync();
+
+            return true; // Return true if the maintenance record is successfully deleted
+        }
+
     }
 }

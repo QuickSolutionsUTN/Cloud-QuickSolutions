@@ -46,13 +46,12 @@ const apiService = {
   deleteUser: (id) => api.delete(`/users/${id}`),*/
 
   // Mantenimientos
-  getMaintenanceRequests: () => api.get("/mantenimiento"),
-  createMaintenanceRequest: (data) => api.post("/mantenimiento", data),
-  deleteMaintenanceRequest: (id) => api.delete(`/mantenimiento/${id}`),
+  getMaintenanceArray: () => api.get("/mantenimiento"),
+  createMaintenance: (data) => api.post("/mantenimiento", data),
+  updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}`, data),
+  deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}`),
 
   getProducts: () => api.get("/tipoProducto"),
-
-  createMaintenanceRequest: (data) => api.post("/mantenimiento", data),
 };
 
 export default apiService;

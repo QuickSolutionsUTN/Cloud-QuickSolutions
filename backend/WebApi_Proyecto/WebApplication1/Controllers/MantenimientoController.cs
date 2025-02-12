@@ -1,4 +1,5 @@
 ﻿using Core.DTOs;
+using DALCodeFirst.Modelos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Servicios;
@@ -37,38 +38,39 @@ namespace WebAPI.Controllers
             return Ok(mantenimientos);
         }
 
-        /*
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ObtenerTiposProductoPorCategoria(int id)
-        {
-            var tiposProducto = await _mantenimientoServicio.ObtenerTiposProductoPorCategoriaAsync(id);
-            return Ok(tiposProducto);
-        }
-
         [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> ActualizarTipoProducto(int id, [FromBody] TipoProductoModificarDTO tipoProductoModificarDTO)
+        public async Task<IActionResult> ActualizarMantenimiento(int id, [FromBody] MantenimientoActualizarDTO mantenimientoActualizarDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var resultado = await _mantenimientoServicio.ActualizarTipoProductoAsync(id, tipoProductoModificarDTO);
-
-            return Ok(resultado);
-        }
-        [Authorize(Roles = "admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> EliminarTipoProducto(int id)
-        {
-            var resultado = await _mantenimientoServicio.EliminarTipoProductoAsync(id);
-            if (!resultado)
+            try
             {
-                return NotFound();
+                var mantenimientoActualizado = await _mantenimientoServicio.ActualizarMantenimientoAsync(mantenimientoActualizarDTO, id);
+                return Ok(mantenimientoActualizado);
             }
-            return NoContent();
-        }*/
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarMantenimiento(int id)
+        {
+            try
+            {
+                await _mantenimientoServicio.EliminarMantenimientoAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
 
     }
 }

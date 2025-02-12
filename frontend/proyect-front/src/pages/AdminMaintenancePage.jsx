@@ -30,7 +30,7 @@ function AdminMaintenancePage() {
 
   const loadMaintenances = async () => {
     try {
-      const response = await apiService.getMaintenanceRequests();
+      const response = await apiService.getMaintenanceArray();
       console.log("Mantenimientos obtenidos:", response.data);
       setMaintenanceArray(response.data);
       setLoading(false);
@@ -68,7 +68,6 @@ function AdminMaintenancePage() {
   };
 
   const handleChange = (e) => {
-    console.log("Cambiando mantenimiento...", e.target.name, e.target.value);
     const { name, value } = e.target;
     setMaintenance((prevMaintenance) => ({
       ...prevMaintenance,
@@ -78,34 +77,34 @@ function AdminMaintenancePage() {
 
   const handleEditSave = async (updatedItem) => {
     console.log("Guardando cambios en el mantenimiento...", updatedItem);
-    /*try {
-      
-      const response = await apiService.updateMaintenanceRequest(updatedItem);
+    try {
+      const response = await apiService.updateMaintenance(updatedItem);
       console.log("Mantenimiento actualizado correctamente:", response.data);
+      setMaintenanceArray((prevArray) =>
+        prevArray.map((item) => (item.id === updatedItem.id ? response.data : item))
+      );
       return response.data;
     } catch (error) {
       console.error("Error al actualizar el mantenimiento:", error);
-    }*/
+    }
   };
 
   const handleSave = async () => {
     const maintenanceToSave = { ...maintenance };
     console.log("guardando mantenimiento... ", maintenanceToSave);
     try {
-      const response = await apiService.createMaintenanceRequest(maintenanceToSave);
+      const response = await apiService.createMaintenance(maintenanceToSave);
       console.log("Mantenimiento guardado correctamente:", response.data);
       setMaintenanceArray((prevArray) => [...prevArray, response.data]);
       setShowModal(false);
     } catch (error) {
       console.error("Error al guardar el mantenimiento:", error);
     }
-  }
+  };
 
   const onDeleteConfirm = async (id) => {
     try {
-      await axios.delete(`${backendURL}/api/mantenimiento/${id}`, {
-        headers: { Authorization: `Bearer ${userToken}` },
-      });
+      const response = await apiService.deleteMaintenance(id);
       console.log("Mantenimiento eliminado correctamente");
       setMaintenanceArray((prevArray) => prevArray.filter((item) => item.id !== id));
     } catch (error) {
