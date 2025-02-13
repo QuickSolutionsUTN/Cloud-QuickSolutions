@@ -60,12 +60,18 @@ namespace DALCodeFirst.Modelos
         [Required]
         public bool ConLogistica { get; set; }
 
-        public DateTime FechaPresupuestada { get; set; }
+        public DateTime? FechaAceptada { get; set; }
+
+        public DateTime? FechaPresupuestada { get; set; }
 
         public string? DiagnosticoTecnico { get; set; }
 
-        public DateTime FechaAprobada { get; set; }
+        public DateTime? FechaAprobada { get; set; }
 
-        public DateTime FechaFinalizada { get; set; }
+        public DateTime? FechaFinalizada { get; set; }
+        
+        public DateTime? FechaCancelada { get; set; }
+
+        public string? Resumen { get; set; }
     }
 }

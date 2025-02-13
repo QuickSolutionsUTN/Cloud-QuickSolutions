@@ -97,22 +97,10 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
               </Form.Control>
             </div>
           </div>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Monto</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.monto}
-                readOnly
-                style={{ width: '100%' }} // Adjust width to match button
-              >
-              </Form.Control>
-            </div>
-          </div>
           <div className="my-4"></div>
           <div className='row'>
             <div className='col-12'>
-              <Form.Group controlId='descripcion'>
+              <Form.Group controlId='description'>
                 <Form.Label>Descripcion del problema</Form.Label>
                 <Form.Control
                   as='textarea'

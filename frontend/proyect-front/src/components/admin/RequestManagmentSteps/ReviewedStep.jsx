@@ -6,7 +6,7 @@ import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
 import "./reviewedStep.css"
 
-function ReviewedStep({ nextStep }) {
+function ReviewedStep({ nextStep, cancelStep }) {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
@@ -75,7 +75,7 @@ function ReviewedStep({ nextStep }) {
           <div className="my-4"></div>
           <div className='row'>
             <div className='col-12'>
-              <Form.Group controlId='descripcion'>
+              <Form.Group controlId='description'>
                 <Form.Label>Descripcion del problema</Form.Label>
                 <Form.Control
                   as='textarea'
@@ -92,31 +92,40 @@ function ReviewedStep({ nextStep }) {
       </Form>
       <Form className='reviewed-step-form' onSubmit={handleNextStep}>
         <div className='row'>
-          <div className='col-diagnostico'>
-            <Form.Group controlId='diagnostico'>
+          <div className='col-diagnostic'>
+            <Form.Group controlId='diagnostic'>
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
-                rows={3}
+                rows={5} // Adjust the number of rows to match the height
                 type='text'
                 placeholder='Ingrese el diagnostico'
               />
             </Form.Group>
           </div>
-          <div className='col-monto'>
-            <Form.Group controlId='monto'>
+          <div className='col-amount'>
+            <Form.Group controlId='estimated-date'>
+              <Form.Label>Fecha estimada</Form.Label>
+              <Form.Control
+                type='date'
+              />
+            </Form.Group>
+            <Form.Group className='amount-form-label' controlId='amount'>
               <Form.Label>Monto</Form.Label>
               <Form.Control
                 type='number'
                 placeholder='Ingrese el monto'
               />
             </Form.Group>
-            <div className='button-group'>
-              <Button variant='success' type='submit' className='button' onClick={nextStep}>
-                Enviar Diagnostico
-              </Button>
-            </div>
           </div>
+        </div>
+        <div className='button-group'>
+          <Button variant='danger' className='button' onClick={cancelStep}>
+            Cancelar
+          </Button>
+          <Button variant='success' type='submit' className='button' onClick={nextStep}>
+            Enviar Diagnostico
+          </Button>
         </div>
       </Form>
     </>

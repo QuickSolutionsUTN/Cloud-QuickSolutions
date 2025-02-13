@@ -11,10 +11,10 @@
 .progress-line-background {
     position: absolute;
     top: 15px;
-    left: 12%;
+    left: 10%;
     height: 4px;
     background: #ddd;
-    width: 76%;
+    width: 80%;
     z-index: 0;
 }
 
@@ -22,7 +22,7 @@
 .progress-line {
     position: absolute;
     top: 15px;
-    left: 12%;
+    left: 10%;
     height: 4px;
     background: green;
     transition: width 0.3s ease-in-out;
@@ -34,6 +34,7 @@
     position: relative;
     flex: 1;
 }
+
 
 .step .date {
     margin-bottom: 8px;
@@ -66,6 +67,7 @@
     color: #fff;
 }
 
+
 /* Cambiar color de los pasos activos */
 .active .circle {
     background: green;
@@ -81,3 +83,21 @@
 .progress-container .progress-line {
     width: calc((100% - 30px) * var(--progress));
 }
+
+/* Cambiar el contenido del círculo y el color de la barra para el paso cancelado 
+.step.Cancelada .circle {
+    background: red;
+    content: "0";
+}
+
+.progress-container.Cancelada .progress-line {
+    background: red;
+}
+
+
+Cambiar el contenido del círculo para el paso cancelado 
+.step.cancelada .circle {
+    content: "6";
+}
+
+*/
