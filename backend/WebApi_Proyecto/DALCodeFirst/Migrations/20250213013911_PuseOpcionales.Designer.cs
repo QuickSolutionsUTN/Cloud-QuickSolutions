@@ -3,6 +3,7 @@ using System;
 using DALCodeFirst;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DALCodeFIrst.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    partial class WebAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250213013911_PuseOpcionales")]
+    partial class PuseOpcionales
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,32 +41,6 @@ namespace DALCodeFIrst.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CategoriaProducto");
-                });
-
-            modelBuilder.Entity("DALCodeFirst.Modelos.CheckListMantenimiento", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("IdTipoMantenimiento")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("Obligatorio")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Tarea")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdTipoMantenimiento");
-
-                    b.ToTable("CheckListMantenimiento");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.EmpresaCategoria", b =>
@@ -277,20 +254,10 @@ namespace DALCodeFIrst.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
-
-                    b.Property<int>("IdTipoProducto")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdTipoProducto");
 
                     b.ToTable("TipoMantenimiento");
                 });
@@ -525,17 +492,6 @@ namespace DALCodeFIrst.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DALCodeFirst.Modelos.CheckListMantenimiento", b =>
-                {
-                    b.HasOne("DALCodeFirst.Modelos.TipoMantenimiento", "TipoMantenimiento")
-                        .WithMany()
-                        .HasForeignKey("IdTipoMantenimiento")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TipoMantenimiento");
-                });
-
             modelBuilder.Entity("DALCodeFirst.Modelos.EmpresaCategoria", b =>
                 {
                     b.HasOne("DALCodeFirst.Modelos.CategoriaProducto", "Categoria")
@@ -619,17 +575,6 @@ namespace DALCodeFIrst.Migrations
                     b.Navigation("TipoProducto");
 
                     b.Navigation("TipoServicio");
-                });
-
-            modelBuilder.Entity("DALCodeFirst.Modelos.TipoMantenimiento", b =>
-                {
-                    b.HasOne("DALCodeFirst.Modelos.TipoProducto", "TipoProducto")
-                        .WithMany()
-                        .HasForeignKey("IdTipoProducto")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TipoProducto");
                 });
 
             modelBuilder.Entity("DALCodeFirst.Modelos.TipoProducto", b =>

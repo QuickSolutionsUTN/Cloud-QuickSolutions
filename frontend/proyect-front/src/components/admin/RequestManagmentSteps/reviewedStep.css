@@ -2,26 +2,48 @@
     display: flex;
 }
 
-.reviewed-step-form .col-diagnostico {
+.reviewed-step-form .col-diagnostic {
     flex: 2;
     padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 1%;
 }
 
-.reviewed-step-form .col-monto {
+.reviewed-step-form .col-amount {
     flex: 1;
     padding: 0 1rem;
 }
 
+.col-amount {
+    margin-top: 1%;
+}
+
+.reviewed-step-form .col-amount .form-group {
+    margin-bottom: 1rem; /* Add space between fields */
+}
+
 .button-group {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     margin-top: 1rem;
+    gap: 1rem; /* Add gap to separate buttons */
 }
 
 .button-group button {
-    width: 100%; /* Adjust width to match button */
+    flex: 1;
+    margin-bottom: 1%;
 }
 
-.monto {
+.amount {
     width: 100%;
+}
+
+.reviewed-step-form .col-diagnostic .form-group {
+    height: 100%;
+}
+
+.amount-form-label {
+    margin-top: 4%;
 }

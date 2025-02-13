@@ -8,7 +8,7 @@ import ReviewedStep from './RequestManagmentSteps/ReviewedStep.jsx';
 import BudgetedStep from './RequestManagmentSteps/BudgetedStep.jsx';
 import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
-import { Button } from 'react-bootstrap';
+import CancelModalForm from './RequestManagmentSteps/cancelModalForm.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -16,8 +16,9 @@ function RequestManagement() {
   const backendURL = useBackendURL();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const navigate = useNavigate();
-  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobado", "Finalizado"];
+  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
   const [currentStep, setCurrentStep] = useState("Iniciada");
+  const [showCancelModalForm, setShowCancelModalForm] = useState(false);
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -37,45 +38,59 @@ function RequestManagement() {
     fetchSolicitudDetails();
   }, [solicitudId, backendURL]);
 
-  const nextStep = async () => {
-    console.log('Next step');
-    const stepIndex = steps.indexOf(currentStep);
-    if (stepIndex < steps.length - 1) {
-      const newStep = steps[stepIndex + 1];
-      try {
-        await axios.put(`${backendURL}/api/solicitud/actualizar-estado`, {
-          id: solicitudId,
-          idSolicitudServicioEstado: stepIndex + 2
-        });
-        setCurrentStep(newStep);
-        setSolicitud(prevSolicitud => ({
-          ...prevSolicitud,
-          estado: newStep
-        }));console.log('Updated currentStep:', newStep);
-        console.log('Updated solicitud:', {
-          ...solicitud,
-          estado: newStep
-        });
-      } catch (error) {
-        console.error('Error updating request state:', error);
-      }
+  const updateSolicitudEstado = async (newStep, stepIndex) => {
+    try {
+      await axios.put(`${backendURL}/api/solicitud/actualizar-estado`, {
+        id: solicitudId,
+        idSolicitudServicioEstado: stepIndex + 2
+      });
+      setCurrentStep(newStep);
+      setSolicitud(prevSolicitud => ({
+        ...prevSolicitud,
+        estado: newStep
+      }));
+      console.log('Updated solicitud:', {
+        ...solicitud,
+        estado: newStep
+      });
+    } catch (error) {
+      console.error('Error updating request state:', error);
     }
   };
 
+  const nextStep = async () => {
+    console.log('Next step');
+    const stepIndex = steps.indexOf(currentStep);
+    console.log('stepIndex:', stepIndex);
+    if (stepIndex < steps.length - 1) {
+      const newStep = steps[stepIndex + 1];
+      console.log('step viejo:', newStep);
+      await updateSolicitudEstado(newStep, stepIndex);
+      console.log('Updated step nuevo:', newStep);
+    }
+  };
+
+  /*
   const prevStep = () => {
     const stepIndex = steps.indexOf(currentStep);
     if (stepIndex > 0) {
       setCurrentStep(steps[stepIndex - 1]);
     }
   };
-
-const subcontractStep = async () => {
-  console.log('Subcontratar');
-};
+*/
+  const subcontractStep = async () => {
+    console.log('Subcontratar');
+  };
 
   const cancelStep = () => {
-    setCurrentStep("Cancelada");
+    setShowCancelModalForm(true);
   };
+
+  const handleCloseCancelModalForm = () => {
+    setShowCancelModalForm(false);
+  };
+
+  
 
   if (!solicitud) {
     return <div>Cargando...</div>;
@@ -88,7 +103,7 @@ const subcontractStep = async () => {
       case 'Revisada':
         return <ReviewedStep nextStep={nextStep} cancelStep={cancelStep}/>;
       case 'Presupuestada':
-        return <BudgetedStep nextStep={nextStep} cancelStep={cancelStep}/>;
+        return <BudgetedStep/>;
       case 'Aprobada':
         return <ApprovedStep nextStep={nextStep} cancelStep={cancelStep}/>;
       case 'Finalizada':
@@ -105,6 +120,7 @@ const subcontractStep = async () => {
       </div>
       <StepProgressBar currentStep={currentStep} />
       {renderContent()}
+      <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm}/>
     </div>
   );
 }
