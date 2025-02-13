@@ -97,7 +97,7 @@ function ReviewedStep({ nextStep, cancelStep }) {
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
-                rows={6} // Adjust the number of rows to match the height
+                rows={5} // Adjust the number of rows to match the height
                 type='text'
                 placeholder='Ingrese el diagnostico'
               />

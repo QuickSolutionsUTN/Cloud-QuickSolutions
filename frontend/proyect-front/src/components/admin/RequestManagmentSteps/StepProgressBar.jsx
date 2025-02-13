@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'  
 
 const StepProgressBar = ({ currentStep }) => {
-  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada", "Cancelada"];
+  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
   const stepIndex = steps.indexOf(currentStep);
 
   return (
     <div className="container text-center mt-4">
-      <h4>Progreso: {steps[stepIndex]}</h4>
+      <h4>Progreso: {currentStep === "Cancelada" ? "Cancelada" : steps[stepIndex]}</h4>
       {/* Contenedor de la barra de progreso */}
       <div className="progress-container">
         <div className="progress-line-background"></div>

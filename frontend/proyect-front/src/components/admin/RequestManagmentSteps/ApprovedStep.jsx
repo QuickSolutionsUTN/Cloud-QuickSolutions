@@ -4,6 +4,7 @@ import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
+import "./approvedStep.css";
 
 function ApprovedStep({ nextStep, cancelStep }) {
   const [solicitud, setSolicitud] = useState(null);
@@ -73,29 +74,36 @@ function ApprovedStep({ nextStep, cancelStep }) {
             </div>
           </div>
           <div className='row reviewed-show'>
-            <div className='col-diagnostic'>
-              <Form.Group controlId='diagnostic'>
-                <Form.Label>Diagnostico</Form.Label>
-                <Form.Control
-                  as='textarea'
-                  rows={3}
-                  type='text'
-                  placeholder='Ingrese el diagnostico'
-                  readOnly
-                />
-              </Form.Group>
-            </div>
-            <div className='col-amount'>
-              <Form.Group controlId='amount'>
-                <Form.Label>Monto</Form.Label>
-                <Form.Control
-                  type='number'
-                  placeholder='Ingrese el monto'
-                  readOnly
-                />
-              </Form.Group>
-            </div>
+          <div className='col-diagnostic'>
+            <Form.Group controlId='diagnostic'>
+              <Form.Label>Diagnostico</Form.Label>
+              <Form.Control
+                as='textarea'
+                rows={5}
+                type='text'
+                readOnly
+              />
+            </Form.Group>
           </div>
+          <div className='col-amount'>
+            <Form.Group controlId='estimated-date'>
+              <Form.Label>Fecha estimada</Form.Label>
+              <Form.Control
+                type='date'
+                value={solicitud.fechaEstimada ? new Date(solicitud.fechaEstimada).toISOString().split('T')[0] : ''}
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group className="amount-form" controlId='amount'>
+              <Form.Label>Monto</Form.Label>
+              <Form.Control
+                type='number'
+                value={solicitud.monto || ''}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        </div>
         </Form>
       </div>
       <Form className='reviewed-step-form' onSubmit={handleSubmit}>

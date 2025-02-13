@@ -5,3 +5,33 @@
 .amount-column {
     width: 33%; /* Adjusted to occupy the remaining width */
 }
+
+.finished-step-container .row {
+    display: flex;
+}
+
+.finished-step-container .col-diagnostic {
+    flex: 2;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 1%;
+}
+
+.finished-step-container .col-amount {
+    flex: 1;
+    padding: 0 1rem;
+}
+
+.col-amount {
+    margin-top: 1%;
+}
+
+.finished-step-container .col-amount .form-group {
+    margin-bottom: 1rem; /* Add space between fields */
+}
+
+.amount-form {
+    margin-top: 4%;
+}

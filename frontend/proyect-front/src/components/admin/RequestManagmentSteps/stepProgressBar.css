@@ -84,10 +84,6 @@
     width: calc((100% - 30px) * var(--progress));
 }
 
-/*Ocultar el paso cancelado*/
-.step.cancelada {
-    display: none;
-}
 /* Cambiar el contenido del círculo y el color de la barra para el paso cancelado 
 .step.Cancelada .circle {
     background: red;

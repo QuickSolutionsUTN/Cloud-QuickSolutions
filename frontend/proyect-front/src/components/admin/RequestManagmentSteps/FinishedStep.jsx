@@ -61,7 +61,7 @@ function FinishedStep() {
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
-                rows={3}
+                rows={4}
                 type='text'
                 value={solicitud.diagnostico}
                 readOnly
@@ -69,6 +69,14 @@ function FinishedStep() {
             </Form.Group>
           </div>
           <div className='col-6 amount-column'>
+            <Form.Group controlId='estimated-date'>
+              <Form.Label>Fecha estimada</Form.Label>
+              <Form.Control
+                type='date'
+                value={solicitud.fechaEstimada ? new Date(solicitud.fechaEstimada).toISOString().split('T')[0] : ''}
+                readOnly
+              />
+            </Form.Group>
             <Form.Group controlId='amount'>
               <Form.Label>Monto</Form.Label>
               <Form.Control

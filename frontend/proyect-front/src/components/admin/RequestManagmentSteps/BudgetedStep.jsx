@@ -79,19 +79,26 @@ function BudgetedStep() {
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
-                rows={3}
+                rows={5}
                 type='text'
-                placeholder='Ingrese el diagnostico'
                 readOnly
               />
             </Form.Group>
           </div>
           <div className='col-amount'>
-            <Form.Group controlId='amount'>
+            <Form.Group controlId='estimated-date'>
+              <Form.Label>Fecha estimada</Form.Label>
+              <Form.Control
+                type='date'
+                value={solicitud.fechaEstimada ? new Date(solicitud.fechaEstimada).toISOString().split('T')[0] : ''}
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group className="amount-form" controlId='amount'>
               <Form.Label>Monto</Form.Label>
               <Form.Control
                 type='number'
-                placeholder='Ingrese el amount'
+                value={solicitud.monto || ''}
                 readOnly
               />
             </Form.Group>
