@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Form, InputGroup, Card } from 'react-bootstrap';
+import { Form, InputGroup, Card, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTruck, faPerson } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useBackendURL } from '../../contexts/BackendURLContext';
 import AuthContext from '../../contexts/AuthContext.jsx';
@@ -249,19 +251,6 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
               </div>
             </div>
           )}
-          <div className='row mb-3'>
-            <div className='col-4'>
-              <Form.Check
-                type="checkbox"
-                label="Con servicio de logistica"
-                {...register('conLogistica')}
-                onChange={(e) => {
-                  setValue('conLogistica', e.target.checked);
-                  handleChange({ ...getValues(), conLogistica: e.target.checked });
-                }}
-              />
-            </div>
-          </div>
         </>
       )}
       {step.id === 2 && (
@@ -301,12 +290,38 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
             <p>No has iniciado sesión. Por favor, inicia sesión para continuar</p>
           )}
         </div>
-      )}
+      )
+      }
       {step.id === 3 && (
-        <div>
-          <p>Seleccione confirmar para enviar la solicitud del servicio.</p>
+        <div className='row mb-3'>
+          <h6>Seleccione el tipo de envio</h6>
+          <ToggleButtonGroup
+            type="radio"
+            name="conLogistica"
+            value={getValues("conLogistica") ? "logistica" : "particular"}
+            onChange={(value) => {
+              const isChecked = value === "logistica";
+              setValue("conLogistica", isChecked);
+              handleChange({ ...getValues(), conLogistica: isChecked });
+            }}>
+            <ToggleButton id="particular" value="particular" variant="outline-primary">
+              <FontAwesomeIcon icon={faPerson} className='me-2' />
+              Envío Particular
+            </ToggleButton>
+            <ToggleButton id="logistica" value="logistica" variant="outline-primary">
+              <FontAwesomeIcon icon={faTruck} className='me-2' />
+              Servicio de Logística
+            </ToggleButton>
+          </ToggleButtonGroup>
         </div>
       )}
-    </Form>
+      {
+        step.id === 4 && (
+          <div className='mb-3'>
+            <p>Seleccione confirmar para enviar la solicitud del servicio.</p>
+          </div>
+        )
+      }
+    </Form >
   );
 }
