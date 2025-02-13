@@ -11,7 +11,8 @@ import AuthContext from '../../contexts/AuthContext.jsx';
 const steps = [
   { id: 1, name: 'Datos del Producto', section: 'productData' },
   { id: 2, name: 'Datos Personales', section: 'personalData' },
-  { id: 3, name: 'Confirmacion', section: 'confirmation' },
+  { id: 3, name: 'Envio', section: 'envio' },
+  { id: 4, name: 'Confirmacion', section: 'confirmation' },
 ];
 
 export const RequestForm = () => {
@@ -22,7 +23,7 @@ export const RequestForm = () => {
   const [stepComplete, setStepComplete] = useState(false);
 
   const [formData, setFormData] = useState({
-    productData: { serviceId: 0, categoryId: 0, productTypeId: 0, problemDescription: '', conLogistica: false },
+    productData: { serviceId: 0, categoryId: 0, productTypeId: 0, maintenanceTypeId: 0, problemDescription: '', conLogistica: false },
     personalData: { email: '', firstName: '', lastName: '' },
   });
 
@@ -37,12 +38,12 @@ export const RequestForm = () => {
 
   const handleSubmit = async (data) => {
     console.log("Enviando formulario:", data);
-    const DataToSend={
+    const DataToSend = {
       userEmail: data.personalData.userEmail,
       descripcion: data.productData.problemDescription,
-      idTipoServicio: parseInt(data.productData.serviceId,10),
-      idCategoria: parseInt(data.productData.categoryId,10),
-      idTipoProducto: parseInt(data.productData.productTypeId,10),
+      idTipoServicio: parseInt(data.productData.serviceId, 10),
+      idCategoria: parseInt(data.productData.categoryId, 10),
+      idTipoProducto: parseInt(data.productData.productTypeId, 10),
       conLogistica: data.productData.conLogistica,
     };
 
@@ -51,7 +52,7 @@ export const RequestForm = () => {
 
       const response = await axios.post(`${backendURL}/api/solicitud`, DataToSend);
 
-      if (response.status=201) {
+      if (response.status = 201) {
         const solicitudId = response.data.id;
         console.log("Formulario enviado correctamente");
         console.log("Respuesta del servidor", response.data);
@@ -75,7 +76,7 @@ export const RequestForm = () => {
   const isStepComplete = () => {
     const currentData = formData[steps[currentStep].section];
     if (currentStep === 0) {
-      return currentData.serviceId && currentData.categoryId && currentData.productTypeId && (currentData.problemDescription || currentData.maintenanceType);
+      return currentData.serviceId && currentData.categoryId && currentData.productTypeId && (currentData.problemDescription || currentData.maintenanceTypeId);
     } else if (currentStep === 1) {
       return isAuthenticated;
     }
@@ -92,6 +93,7 @@ export const RequestForm = () => {
         <div className={`step ${currentStep >= 0 ? 'active' : 'inactive'}`}> <b>1. {steps[0].name}</b></div>
         <div className={`step ${currentStep >= 1 ? 'active' : 'inactive'}`}> <b>2. {steps[1].name}</b></div>
         <div className={`step ${currentStep >= 2 ? 'active' : 'inactive'}`}> <b>3. {steps[2].name}</b></div>
+        <div className={`step ${currentStep >= 3 ? 'active' : 'inactive'}`}> <b>4. {steps[3].name}</b></div>
       </div>
       <ProgressBar now={(currentStep + 1) * (100 / steps.length)} className='custom-progress' />
       <div className="mt-4">

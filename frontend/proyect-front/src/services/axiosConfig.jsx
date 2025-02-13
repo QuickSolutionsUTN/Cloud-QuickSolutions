@@ -1,4 +1,5 @@
 import axios from "axios";
+import { get } from "react-hook-form";
 
 const api = axios.create({
   baseURL: "https://localhost:7216/api",
@@ -51,7 +52,10 @@ const apiService = {
   updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}`, data),
   deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}`),
 
+  getCategories: () => api.get("/categoria"),
+  
   getProducts: () => api.get("/tipoProducto"),
+  getProductByCatId: (id) => api.get(`/tipoProducto/${id}`),
 };
 
 export default apiService;

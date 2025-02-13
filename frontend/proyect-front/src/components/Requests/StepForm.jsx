@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Form, InputGroup } from 'react-bootstrap';
+import { Form, InputGroup, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
 import { useBackendURL } from '../../contexts/BackendURLContext';
 import AuthContext from '../../contexts/AuthContext.jsx';
 import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
+import apiService from '../../services/axiosConfig.jsx';
 
 export default function StepForm({ step, formData, updateData, setIsStepComplete }) {
   const backendURL = useBackendURL();
@@ -16,11 +16,26 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
     defaultValues: formData,
     mode: 'onChange'
   });
+  const [maintenanceArray, setMaintenanceArray] = useState([]);
   const [categories, setCategories] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
   const { isAuthenticated, userEmail } = useContext(AuthContext);
 
-  const categoryId = watch('categoryId');
+  const categoryId = Number(watch('categoryId'));
+  const productTypeId = Number(watch('productTypeId'));
+
+  useEffect(() => {
+    if (serviceType === 'repair') {
+      setValue('serviceId', 1);
+      handleChange({ ...getValues(), serviceId: 1 });
+    } else if (serviceType === 'maintenance') {
+      setValue('serviceId', 2);
+      handleChange({ ...getValues(), serviceId: 2 });
+      loadMaintenances();
+      loadCategories();
+      loadProducts();
+    }
+  }, [serviceType, setValue, getValues]);
 
   useEffect(() => {
     if (isAuthenticated && step.id === 2) {
@@ -28,32 +43,6 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
       handleChange({ ...watch(), userEmail: userEmail });
     }
   }, [isAuthenticated, userEmail, step, setValue]);
-
-  const handleChange = (data) => {
-    updateData(data);
-  };
-
-  useEffect(() => {
-    if (serviceType) {
-      axios.get(`${backendURL}/api/categoria`)
-        .then(response => {
-          console.log(response.data);
-          setCategories(response.data);
-        })
-        .catch(error => console.error("Error fetching categories:", error));
-    }
-  }, [serviceType, backendURL]);
-
-  useEffect(() => {
-    if (categoryId) {
-      axios.get(`${backendURL}/api/tipoproducto/${categoryId}`)
-        .then(response => {
-          console.log("Se actualizaron prods", response.data);
-          setProductTypes(response.data);
-        })
-        .catch(error => console.error('Error loading product types:', error));
-    }
-  }, [categoryId, backendURL]);
 
   useEffect(() => {
     console.log("useEffect ejecutado: isValid =", isValid);
@@ -66,18 +55,114 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
     }
   }, [isValid, setIsStepComplete, watch]);
 
+  const handleChange = (data) => {
+    updateData(data);
+  };
+
   useEffect(() => {
-    if (serviceType === 'repair') {
-      setValue('serviceId', 1);
-      handleChange({ ...getValues(), serviceId: 2 });
-    } else if (serviceType === 'maintenance') {
-      setValue('serviceId', 2);
-      handleChange({ ...getValues(), serviceId: 1 });
+    if (serviceType) {
+      loadCategories();
     }
-  }, [serviceType, setValue, getValues]);
+  }, [serviceType]);
+
+  useEffect(() => {
+    if (categoryId && serviceType === 'repair') {
+      loadProductsByCatId(categoryId);
+    }
+  }, [categoryId, setValue]);
+
+  const loadMaintenances = async () => {
+    try {
+      const response = await apiService.getMaintenanceArray();
+      console.log("Mantenimientos obtenidos:", response.data);
+      setMaintenanceArray(response.data);
+    } catch (error) {
+      console.error("Error al obtener los mantenimientos:", error);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const response = await apiService.getCategories();
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error al obtener las categorias:", error);
+    }
+  };
+
+  const loadProducts = async () => {
+    try {
+      const response = await apiService.getProducts();
+      setProductTypes(response.data);
+    } catch (error) {
+      console.error("Error al obtener los productos:", error);
+    }
+  };
+
+  const loadProductsByCatId = async (id) => {
+    try {
+      const response = await apiService.getProductByCatId(id);
+      console.log("Productos obtenidos:", response.data);
+      setProductTypes(response.data);
+    } catch (error) {
+      console.error("Error al obtener los productos:", error);
+    }
+  };
+
+  const getCategoryByProductTypeId = (id) => {
+    const productType = productTypes.find(type => type.id === id);
+    return categories.find(category => category.id === productType.idCategoria);
+  };
+
+  const getProductNameById = (id) => {
+    const productType = productTypes.find(type => type.id === id);
+    return productType.descripcion;
+  };
+
+  const handleCardClick = async (maintenance) => {
+    setValue('maintenanceTypeId', maintenance.id);
+    setValue('productTypeId', maintenance.idTipoProducto);
+
+    const category = getCategoryByProductTypeId(maintenance.idTipoProducto);
+    setValue('categoryId', category.id);
+
+    handleChange({ ...getValues(), maintenanceTypeId: maintenance.id, categoryId: category?.id, productTypeId: maintenance.idTipoProducto });
+  };
+
+  const filteredCategories = serviceType === 'maintenance' ? categories.filter(category =>
+    maintenanceArray.some(maintenance => {
+      const productType = productTypes.find(type => type.id === maintenance.idTipoProducto);
+      return productType && productType.idCategoria === category.id;
+    })
+  ) : categories;
+
+  const filteredProductTypes = serviceType === 'maintenance' ? productTypes.filter(productType =>
+    maintenanceArray.some(maintenance => maintenance.idTipoProducto === productType.id)
+  ) : productTypes;
+
+  const filteredMaintenanceArray = maintenanceArray.filter(maintenance => {
+    const productType = productTypes.find(type => type.id === maintenance.idTipoProducto);
+    const categoryMatch = categoryId ? productType?.idCategoria === categoryId : true;
+    const productMatch = productTypeId ? maintenance.idTipoProducto === productTypeId : true;
+
+    return categoryMatch && productMatch;
+  });
+
+  const handleCategoryChange = (e) => {
+    setValue('categoryId', e.target.value);
+    if (serviceType === 'maintenance') setValue('maintenanceTypeId', '');
+    setValue('productTypeId', '');
+    handleChange({ ...getValues(), categoryId: e.target.value, maintenanceTypeId: '' });
+  };
+
+  const handleProductTypeChange = (e) => {
+    setValue('productTypeId', e.target.value);
+    if (serviceType === 'maintenance') setValue('maintenanceTypeId', ''); setValue('maintenanceTypeId', '');
+    handleChange({ ...getValues(), productTypeId: e.target.value, maintenanceTypeId: '' });
+  };
 
   return (
-    <Form onSubmit={handleSubmit(handleChange)} className='formInputs'>
+    <Form className='formInputs'>
       {step.id === 1 && (
         <>
           <div className='row mb-3'>
@@ -87,13 +172,10 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                 aria-label="Seleccionar categoria"
                 {...register('categoryId', { required: true })}
                 disabled={!serviceType}
-                onChange={(e) => {
-                  setValue('categoryId', e.target.value);
-                  handleChange({ ...getValues(), categoryId: e.target.value });
-                }}
+                onChange={handleCategoryChange}
               >
                 <option value="">Seleccione una categoría</option>
-                {categories.map(category => (
+                {filteredCategories.map(category => (
                   <option key={category.id} value={category.id}>
                     {category.descripcion}
                   </option>
@@ -107,14 +189,11 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                 aria-label="Seleccionar tipo de producto"
                 {...register('productTypeId', { required: true })}
                 disabled={!categoryId}
-                onChange={(e) => {
-                  setValue('productTypeId', e.target.value);
-                  handleChange({ ...watch(), productTypeId: e.target.value });
-                }}
+                onChange={handleProductTypeChange}
               >
                 <option value="">Seleccione un tipo de producto</option>
-                {productTypes.length > 0 ? (
-                  productTypes.map(type => (
+                {filteredProductTypes.length > 0 ? (
+                  filteredProductTypes.map(type => (
                     <option key={type.id} value={type.id}>
                       {type.descripcion}
                     </option>
@@ -145,18 +224,28 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
           )}
           {serviceType === "maintenance" && (
             <div className='row mb-3'>
-              <div className='col-4'>
+              <div className='col-12'>
                 <p><b>Tipo de mantenimiento</b></p>
-                <Form.Select
-                  aria-label="Seleccionar tipo de mantenimiento"
-                  {...register('maintenanceType', { required: serviceType === 'maintenance' })}
-                  onChange={(e) => {
-                    handleChange({ ...watch(), maintenanceType: e.target.value });
-                  }}
-                >
-                  <option value="">Seleccione un tipo de mantenimiento</option>
-                </Form.Select>
-                {errors.maintenanceType && <span className="text-danger">Este campo es obligatorio</span>}
+                <div className="row">
+                  {filteredMaintenanceArray.map((maintenance) => (
+                    <div key={maintenance.id} className="col-md-4">
+                      <Card style={{
+                        width: '18rem',
+                        cursor: 'pointer',
+                        border: watch('maintenanceTypeId') === maintenance.id ? '1px solid #007bff' : '',
+                      }} className="card"
+                        onClick={() => handleCardClick(maintenance)}
+                      >
+                        <Card.Body>
+                          <Card.Title>{maintenance.nombre}</Card.Title>
+                          <Card.Subtitle className="mb-2 text-muted">{getProductNameById(maintenance.idTipoProducto)}</Card.Subtitle>
+                          <Card.Text>{maintenance.descripcion}</Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+                {errors.IdTipoMantenimiento && <span className="text-danger">Debes seleccionar un tipo de mantenimiento</span>}
               </div>
             </div>
           )}
