@@ -104,7 +104,7 @@ export const RequestForm = () => {
           setIsStepComplete={setStepComplete}
         />
       </div>
-      <div className="mt-4 container-buttons">
+      <div className="mt-4 mb-3 container-buttons">
         <Button
           variant="secondary"
           onClick={previousStep}

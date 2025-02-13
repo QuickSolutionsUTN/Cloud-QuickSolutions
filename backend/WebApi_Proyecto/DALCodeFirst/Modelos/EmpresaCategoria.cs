@@ -19,12 +19,12 @@ namespace DALCodeFirst.Modelos
         public int IdEmpresa{ get; set; }
 
         [ForeignKey("IdEmpresa")]
-        public EmpresaExterna Empresa { get; set; }
+        public EmpresaExterna EmpresaExterna { get; set; }
 
         [Required]  // FK requerida
         public int IdCategoria { get; set; }
 
         [ForeignKey("IdCategoria")]
-        public CategoriaProducto Categoria { get; set; }
+        public CategoriaProducto CategoriaProducto { get; set; }
     }
 }

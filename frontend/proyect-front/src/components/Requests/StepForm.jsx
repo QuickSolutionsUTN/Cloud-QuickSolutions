@@ -7,6 +7,7 @@ import { useBackendURL } from '../../contexts/BackendURLContext';
 import AuthContext from '../../contexts/AuthContext.jsx';
 import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
+import FormSummary from './FormSummary.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 
 export default function StepForm({ step, formData, updateData, setIsStepComplete }) {
@@ -313,13 +314,46 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
               Servicio de Logística
             </ToggleButton>
           </ToggleButtonGroup>
+          {getValues("conLogistica") && (
+            <div className="mt-3">
+              <Form.Group controlId="calle">
+                <Form.Label>Calle</Form.Label>
+                <Form.Control
+                  type="text"
+                  {...register("calle", { required: getValues("conLogistica") })}
+                />
+                {errors.calle && <small className="text-danger">Este campo es obligatorio</small>}
+              </Form.Group>
+
+              <Form.Group controlId="ciudad" className="mt-2">
+                <Form.Label>Ciudad</Form.Label>
+                <Form.Control
+                  type="text"
+                  {...register("ciudad", { required: getValues("conLogistica") })}
+                />
+                {errors.ciudad && <small className="text-danger">Este campo es obligatorio</small>}
+              </Form.Group>
+
+              <Form.Group controlId="codigoPostal" className="mt-2">
+                <Form.Label>Código Postal</Form.Label>
+                <Form.Control
+                  type="text"
+                  {...register("codigoPostal", { required: getValues("conLogistica") })}
+                />
+                {errors.codigoPostal && <small className="text-danger">Este campo es obligatorio</small>}
+              </Form.Group>
+            </div>
+          )}
         </div>
       )}
       {
         step.id === 4 && (
+          <>
+          <FormSummary formData={formData} />
           <div className='mb-3'>
             <p>Seleccione confirmar para enviar la solicitud del servicio.</p>
           </div>
+          </>
         )
       }
     </Form >

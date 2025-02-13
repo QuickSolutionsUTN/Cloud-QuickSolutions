@@ -23,6 +23,8 @@ public partial class WebAPIContext : IdentityDbContext<Usuario, Rol, string>
     public DbSet<SolicitudServicioEstado> SolicitudServicioEstado { get; set; }
     public DbSet<TipoMantenimiento> TipoMantenimiento { get; set; }
     public DbSet<CheckListMantenimiento> CheckListMantenimiento { get; set; }
+    public DbSet<Domicilio> Domicilio { get; set; }
+    public DbSet<Envio> Envio { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

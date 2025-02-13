@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DALCodeFirst.Modelos
 {
-  [Table("EmpresaCategoria")]
+  [Table("Domicilio")]
   public class Domicilio
   {
       [Key]
@@ -39,8 +39,8 @@ namespace DALCodeFirst.Modelos
       public string Pais { get; set; }
 
       [Required]  // FK requerida
-      public int UsuarioId { get; set; }
-      [ForeignKey("UsuarioId")]
+      public string IdUsuario { get; set; }
+      [ForeignKey("IdUsuario")]
       public Usuario Usuario { get; set; }  // Relación con Usuario
   }
 }
