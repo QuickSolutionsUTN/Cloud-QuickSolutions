@@ -26,7 +26,8 @@ namespace WebAPI.Controllers
             _validator= validator;
         }
 
-        [HttpPost]//Crear un equipo
+        [Authorize]
+        [HttpPost]
         public async Task<IActionResult> CrearSolicitud([FromBody] SolicitudCreacionDTO solicitudCreacionDTO)
         {
             var validationResult = await _validator.ValidateAsync(solicitudCreacionDTO);

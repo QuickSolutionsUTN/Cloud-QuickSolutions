@@ -17,10 +17,6 @@ namespace WebAPI.Validators
             _context = context;
             _userManager = userManager;
 
-            RuleFor(x => x.Descripcion)
-            .NotEmpty().WithMessage("La descripción es requerida.")
-            .Length(5, 250).WithMessage("La descripción de la solicitud debe tener entre 5 y 250 caracteres.");
-
             RuleFor(x => x.UserEmail)
                 .NotEmpty().WithMessage("El email del usuario es requerido.")
                 .MustAsync(async (userEmail, cancellation) => await UsuarioExiste(userEmail))

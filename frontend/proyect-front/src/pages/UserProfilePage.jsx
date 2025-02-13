@@ -52,7 +52,6 @@ export default function UserProfile() {
                         state='Buenos Aires'
                         zipCode='1924'
                         country='Argentina'
-
                     />
                 </div>
             </div>

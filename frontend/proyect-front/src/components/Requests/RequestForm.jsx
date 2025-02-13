@@ -7,11 +7,12 @@ import './requestForm.css';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AuthContext from '../../contexts/AuthContext.jsx';
+import apiService from '../../services/axiosConfig';
 
 const steps = [
   { id: 1, name: 'Datos del Producto', section: 'productData' },
   { id: 2, name: 'Datos Personales', section: 'personalData' },
-  { id: 3, name: 'Envio', section: 'envio' },
+  { id: 3, name: 'Envio', section: 'logisticsData' },
   { id: 4, name: 'Confirmacion', section: 'confirmation' },
 ];
 
@@ -21,10 +22,11 @@ export const RequestForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const { isAuthenticated, userEmail } = useContext(AuthContext);
   const [stepComplete, setStepComplete] = useState(false);
-
+  const [requestId,setRequestId] = useState(0);
   const [formData, setFormData] = useState({
-    productData: { serviceId: 0, categoryId: 0, productTypeId: 0, maintenanceTypeId: 0, problemDescription: '', conLogistica: false },
+    productData: { serviceId: 0, categoryId: 0, productTypeId: 0, maintenanceTypeId: 0, problemDescription: '' },
     personalData: { email: '', firstName: '', lastName: '' },
+    logisticsData: { conLogistica: false, street: '', number: '', city: '', state: '', zipCode: '', country: '' },
   });
 
   // Function to update the data of each step
@@ -44,24 +46,39 @@ export const RequestForm = () => {
       idTipoServicio: parseInt(data.productData.serviceId, 10),
       idCategoria: parseInt(data.productData.categoryId, 10),
       idTipoProducto: parseInt(data.productData.productTypeId, 10),
-      conLogistica: data.productData.conLogistica,
+      conLogistica: data.logisticsData.conLogistica,
     };
 
+    if (data.conLogistica) {
+      DataToSend.envio = {
+      calle: data.logisticsData.street,
+      numero: data.logisticsData.number,
+      ciudad: data.logisticsData.city,
+      provincia: data.logisticsData.state,
+      codigoPostal: data.logisticsData.zipCode,
+      pais: 'Argentina'
+    }}else{DataToSend.envio = null;}
+    console.log("Formulario completado", DataToSend);
+    createRequest(DataToSend);
+  };
+
+
+  const createRequest = async (data) => {
     try {
-      console.log("Formulario completado", DataToSend);
-
-      const response = await axios.post(`${backendURL}/api/solicitud`, DataToSend);
-
-      if (response.status = 201) {
-        const solicitudId = response.data.id;
-        console.log("Formulario enviado correctamente");
-        console.log("Respuesta del servidor", response.data);
-        navigate(`/users/requests/${solicitudId}`);
-      } else {
-        console.log("Error al enviar el formulario", response.data);
-      }
+      const response = await apiService.createRequest(data);
+      handleServerResponse(response);
     } catch (error) {
-      console.error("Error al enviar el formulario", error);
+      console.error("Error al enviar el formulario:", error);
+    }
+  };
+
+  const handleServerResponse = (response) => {
+    if (response.status === 201) {
+      console.log("Formulario enviado correctamente");
+      console.log("Respuesta del servidor", response.data);
+      navigate(`/users/requests/${response.data.id}`);
+    } else {
+      console.error("Error al enviar el formulario:", response);
     }
   };
 
@@ -79,8 +96,10 @@ export const RequestForm = () => {
       return currentData.serviceId && currentData.categoryId && currentData.productTypeId && (currentData.problemDescription || currentData.maintenanceTypeId);
     } else if (currentStep === 1) {
       return isAuthenticated;
-    }
-    return true;
+    } else if (currentStep === 2) {
+      if (currentData.conLogistica) { return currentData.street && currentData.number && currentData.city && currentData.zipCode && currentData.state; }
+      else { return true; }
+    } else if (currentStep === 3) { return true; }
   };
 
   const previousStep = () => {
@@ -116,7 +135,7 @@ export const RequestForm = () => {
           className='next-button'
           variant="primary"
           onClick={nextStep}
-          disabled={!isStepComplete() || (currentStep === 1 && !isAuthenticated)}
+          disabled={!isStepComplete()}
         >
           {currentStep === steps.length - 1 ? 'Finalizar' : 'Siguiente'}
         </Button>

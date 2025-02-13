@@ -12,12 +12,12 @@ namespace Core.DTOs
         [Required]
         public string UserEmail { get; set; }
 
-        [Required]
-        [MaxLength(250)]
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
         
         [Required]
         public int IdTipoServicio { get; set; }
+
+        public int? IdTipoMantenimiento { get; set; }
 
         [Required]
         public int IdCategoria { get; set; }
@@ -28,6 +28,7 @@ namespace Core.DTOs
         [Required]
         public bool ConLogistica { get; set; }
 
+        public EnvioDTO? Envio { get; set; }
         /*
         [Required]
         [DataType(DataType.Date)]

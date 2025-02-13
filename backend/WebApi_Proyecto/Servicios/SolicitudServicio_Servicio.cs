@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,8 +32,7 @@ namespace Servicios
             var userId = user?.Id;
 
             var nuevaSolicitud = new SolicitudServicio
-            {
-                Descripcion = solicitudCreacionDTO.Descripcion,
+            { 
                 IdSolicitante = userId,
                 IdTipoServicio = solicitudCreacionDTO.IdTipoServicio,
                 IdTipoProducto = solicitudCreacionDTO.IdTipoProducto,
@@ -41,7 +42,29 @@ namespace Servicios
                 Tercearizado = false,
             };
 
+            if (solicitudCreacionDTO.IdTipoServicio == 1){nuevaSolicitud.Descripcion = solicitudCreacionDTO.Descripcion;}
+            if (solicitudCreacionDTO.IdTipoServicio == 2) { nuevaSolicitud.IdTipoMantenimiento = solicitudCreacionDTO.IdTipoMantenimiento; }
+
             _context.SolicitudServicio.Add(nuevaSolicitud);
+
+            await _context.SaveChangesAsync();
+
+            if (solicitudCreacionDTO.Envio != null)
+            {
+                var nuevoEnvio = new Envio
+                {
+                    IdSolicitudServicio = nuevaSolicitud.Id,
+                    Calle = solicitudCreacionDTO.Envio.Calle,
+                    Numero = solicitudCreacionDTO.Envio.Numero,
+                    Ciudad = solicitudCreacionDTO.Envio.Ciudad,
+                    Provincia = solicitudCreacionDTO.Envio.Provincia,
+                    CodigoPostal = solicitudCreacionDTO.Envio.CodigoPostal,
+                    Pais = solicitudCreacionDTO.Envio.Pais,
+                };
+                _context.Envio.Add(nuevoEnvio);
+                await _context.SaveChangesAsync();
+
+            }
             await _context.SaveChangesAsync();
 
             var solicitudCreada = await ObtenerSolicitudPorIdAsync(nuevaSolicitud.Id);
@@ -69,6 +92,7 @@ namespace Servicios
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)
+                .Include(env=>env.Envio)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             var solicitudDTO = _mapper.Map<SolicitudRespuestaDTO>(solicitud);

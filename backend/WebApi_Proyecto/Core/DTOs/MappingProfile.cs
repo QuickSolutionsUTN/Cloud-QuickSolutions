@@ -17,12 +17,15 @@ namespace Core.DTOs
             CreateMap<RolDTO, Rol>();
 
             CreateMap<CategoriaDTO, CategoriaProducto>();
+            CreateMap<Envio, EnvioDTO>();
 
             CreateMap<SolicitudServicio, SolicitudRespuestaDTO>()
                 .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => src.SolicitudServicioEstado.Descripcion))
                 .ForMember(dest => dest.TipoDeProducto, opt => opt.MapFrom(src => src.TipoProducto.Descripcion))
                 .ForMember(dest => dest.EmailSolicitante, opt => opt.MapFrom(src => src.Solicitante.Email))
-                .ForMember(dest => dest.TipoServicio, opt => opt.MapFrom(src => src.TipoServicio.Descripcion));
+                .ForMember(dest => dest.TipoServicio, opt => opt.MapFrom(src => src.TipoServicio.Descripcion))
+                .ForMember(dest => dest.Envio, opt => opt.MapFrom(src => src.Envio));
+
 
             CreateMap<TipoProducto, TipoProductoDTO>()
                 .ForMember(dest => dest.IdCategoria, opt => opt.MapFrom(src => src.IdCategoriaProducto));

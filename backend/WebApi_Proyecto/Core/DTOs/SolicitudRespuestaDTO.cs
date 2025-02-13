@@ -19,6 +19,7 @@ namespace Core.DTOs
         public string EmailSolicitante { get; set; }
         public string TipoServicio { get; set; }
         public bool ConLogistica { get; set; }
+        public EnvioDTO? Envio { get; set; }
         // Campos que se usan a partir del estado "Presupuestada"
         public string? DiagnosticoTecnico { get; set; }
         public float? Monto { get; set; }

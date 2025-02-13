@@ -2,16 +2,14 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Form, InputGroup, Card, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faPerson } from '@fortawesome/free-solid-svg-icons';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { useBackendURL } from '../../contexts/BackendURLContext';
 import AuthContext from '../../contexts/AuthContext.jsx';
 import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import FormSummary from './FormSummary.jsx';
 import apiService from '../../services/axiosConfig.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function StepForm({ step, formData, updateData, setIsStepComplete }) {
-  const backendURL = useBackendURL();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const serviceType = queryParams.get('type');
@@ -160,7 +158,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
 
   const handleProductTypeChange = (e) => {
     setValue('productTypeId', e.target.value);
-    if (serviceType === 'maintenance') setValue('maintenanceTypeId', ''); setValue('maintenanceTypeId', '');
+    if (serviceType === 'maintenance') setValue('maintenanceTypeId', '');
     handleChange({ ...getValues(), productTypeId: e.target.value, maintenanceTypeId: '' });
   };
 
@@ -316,31 +314,53 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
           </ToggleButtonGroup>
           {getValues("conLogistica") && (
             <div className="mt-3">
-              <Form.Group controlId="calle">
+              <Form.Group controlId="street">
                 <Form.Label>Calle</Form.Label>
                 <Form.Control
                   type="text"
-                  {...register("calle", { required: getValues("conLogistica") })}
+                  {...register("street", { required: getValues("conLogistica") })}
+                  onChange={(e) => handleChange({ ...getValues(), street: e.target.value })}
                 />
-                {errors.calle && <small className="text-danger">Este campo es obligatorio</small>}
+                {errors.street && <small className="text-danger">Este campo es obligatorio</small>}
+              </Form.Group>
+              <Form.Group controlId="number">
+                <Form.Label>Numero</Form.Label>
+                <Form.Control
+                  type="text"
+                  {...register("number", { required: getValues("conLogistica") })}
+                  onChange={(e) => handleChange({ ...getValues(), number: e.target.value })}
+                />
+                {errors.number && <small className="text-danger">Este campo es obligatorio</small>}
               </Form.Group>
 
-              <Form.Group controlId="ciudad" className="mt-2">
+              <Form.Group controlId="city" className="mt-2">
                 <Form.Label>Ciudad</Form.Label>
                 <Form.Control
                   type="text"
-                  {...register("ciudad", { required: getValues("conLogistica") })}
+                  {...register("city", { required: getValues("conLogistica") })}
+                  onChange={(e) => handleChange({ ...getValues(), city: e.target.value })}
                 />
-                {errors.ciudad && <small className="text-danger">Este campo es obligatorio</small>}
+                {errors.city && <small className="text-danger">Este campo es obligatorio</small>}
               </Form.Group>
 
-              <Form.Group controlId="codigoPostal" className="mt-2">
+              <Form.Group controlId="zipCode" className="mt-2">
                 <Form.Label>Código Postal</Form.Label>
                 <Form.Control
                   type="text"
-                  {...register("codigoPostal", { required: getValues("conLogistica") })}
+                  {...register("zipCode", { required: getValues("conLogistica") })}
+                  onChange={(e) => handleChange({ ...getValues(), zipCode: e.target.value })}
                 />
-                {errors.codigoPostal && <small className="text-danger">Este campo es obligatorio</small>}
+                {errors.zipCode && <small className="text-danger">Este campo es obligatorio</small>}
+              </Form.Group>
+
+              <Form.Group controlId="state" className="mt-2">
+                <Form.Label>Provincia</Form.Label>
+                <Form.Control
+                  type="text"
+                  {...register("state", { required: getValues("conLogistica") })}
+                  onChange={(e) => handleChange({ ...getValues(), state: e.target.value })}
+                />
+                {errors.state && <small className="text-danger">Este campo es obligatorio</small>}
               </Form.Group>
             </div>
           )}

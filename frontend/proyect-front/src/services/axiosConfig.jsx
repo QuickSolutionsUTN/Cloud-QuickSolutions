@@ -56,6 +56,8 @@ const apiService = {
   
   getProducts: () => api.get("/tipoProducto"),
   getProductByCatId: (id) => api.get(`/tipoProducto/${id}`),
+
+  createRequest: (data) => api.post("/solicitud", data),
 };
 
 export default apiService;
