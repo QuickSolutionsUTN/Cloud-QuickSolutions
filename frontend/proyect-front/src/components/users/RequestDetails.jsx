@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Modal } from 'react-bootstrap';
+import { Form, Button, Modal, ToastContainer, Toast } from 'react-bootstrap';
 import axios from 'axios';
 import { useBackendURL } from '../../contexts/BackendURLContext.jsx';
 import AuthContext from '../../contexts/AuthContext.jsx';
 import { useParams } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import apiService from '../../services/axiosConfig.jsx';
+import envioService from '../../services/apiEnviosService.jsx';
 
 export default function RequestDetails() {
   const { userToken } = useContext(AuthContext);
@@ -16,6 +17,8 @@ export default function RequestDetails() {
   const navigate = useNavigate();
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -24,7 +27,7 @@ export default function RequestDetails() {
         const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
         console.log('Solicitud details:', response.data);
         setSolicitud(response.data);
-        const fechaGeneracion= new Date(response.data.fechaGeneracion);
+        const fechaGeneracion = new Date(response.data.fechaGeneracion);
         const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
         setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
       } catch (error) {
@@ -35,48 +38,45 @@ export default function RequestDetails() {
   }, [solicitudId]);
 
   const handleAccept = async () => {
-    try {
-      await axios.put(`${backendURL}/api/Solicitud/actualizar-estado`, {
-        id: solicitud.id,
-        idSolicitudServicioEstado: 4 // 4 es el ID para el estado "Aprobada"
-      }, {
-        headers: {
-          Authorization: `Bearer ${userToken}`
-        }
-      });
-      // Actualizar el estado local o recargar la página para reflejar el cambio
-      console.log('Solicitud aceptada');
-      setSolicitud(prevSolicitud => ({ ...prevSolicitud, estado: 'Aprobada' }));
-      setShowAcceptModal(false);
-    } catch (error) {
-      console.error('Error al aceptar la solicitud:', error);
-    }
+    const dataToUpdate = {
+      id: solicitud.id,
+      idSolicitudServicioEstado: 4
+    };
+    updateRequest(dataToUpdate, 'Aprobada');
+    setShowAcceptModal(false);
   };
 
   const handleReject = async () => {
+    const dataToUpdate = {
+      id: solicitud.id,
+      idSolicitudServicioEstado: 6
+    };
+    updateRequest(dataToUpdate, 'Cancelada');
+    setShowRejectModal(false);
+  };
+
+  const updateRequest = async (data, estado) => {
     try {
-      await axios.put(`${backendURL}/api/Solicitud/actualizar-estado`, {
-        id: solicitud.id,
-        idSolicitudServicioEstado: 6
-      }, {
-        headers: {
-          Authorization: `Bearer ${userToken}`
-        }
-      });
-      // Actualizar el estado local o recargar la página para reflejar el cambio
-      console.log('Solicitud rechazada');
-      setSolicitud(prevSolicitud => ({ ...prevSolicitud, estado: 'Cancelada' }));
-      setShowRejectModal(false);
+      const response = await apiService.updateRequestUser(data);
+      console.log('Solicitud actualizada', response.data);
+      setSolicitud(prevSolicitud => ({ ...prevSolicitud, estado: { estado } }));
     } catch (error) {
-      console.error('Error al rechazar la solicitud:', error);
+      console.error('Error al aceptar la solicitud:', error);
+      handleError();
     }
   };
+
+  const handleError = () => {
+    setErrorMessage("Hubo un problema al actualizar la solicitud.");
+    setShowToast(true);
+  };
+
 
   if (!solicitud) {
     return <div>Cargando...</div>;
   }
 
-  
+
   return (
     <>
       <div className="title-container space-between mb-4">
@@ -152,32 +152,32 @@ export default function RequestDetails() {
         <div className='row'>
           <div className='col-12'>
             <Form.Group controlId='descripcion'>
-            <Form.Label>Descripcion del problema</Form.Label>
-            <Form.Control
-              as='textarea'
-              rows={3}
-              type='text'
-              value={solicitud.descripcion}
-              readOnly
-              style={{ resize: 'vertical' }}
-            />
+              <Form.Label>Descripcion del problema</Form.Label>
+              <Form.Control
+                as='textarea'
+                rows={3}
+                type='text'
+                value={solicitud.descripcion}
+                readOnly
+                style={{ resize: 'vertical' }}
+              />
             </Form.Group>
           </div>
         </div>
         <div className='row my-3'>
           <div className='col-4'>
-            <Form.Check 
-              type='checkbox' 
-              label='Con servicio de logistica' 
-              checked={solicitud.conLogistica} 
-              readOnly 
+            <Form.Check
+              type='checkbox'
+              label='Con servicio de logistica'
+              checked={solicitud.conLogistica}
+              readOnly
             />
           </div>
         </div>
       </Form>
 
       <div className='d-flex justify-content-end mt-3'>
-        <Button variant='secondary' className='custom-button' onClick={() => navigate('../requests')}>Volver</Button> 
+        <Button variant='secondary' className='custom-button' onClick={() => navigate('../requests')}>Volver</Button>
       </div>
 
       <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)}>
@@ -213,6 +213,15 @@ export default function RequestDetails() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <ToastContainer position="top-end" className="p-3">
+        <Toast bg="danger" onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide>
+          <Toast.Header>
+            <strong className="me-auto text-white">Error</strong>
+          </Toast.Header>
+          <Toast.Body className="text-white">{errorMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </>
   );
 

@@ -29,9 +29,5 @@ namespace Core.DTOs
         public bool ConLogistica { get; set; }
 
         public EnvioDTO? Envio { get; set; }
-        /*
-        [Required]
-        [DataType(DataType.Date)]
-        public DateTime fechaGeneracion { get; set; }*/
     }
 }

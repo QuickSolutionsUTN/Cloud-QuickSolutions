@@ -7,6 +7,8 @@ using Servicios;
 using WebAPI.Validators;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using DALCodeFirst.Modelos;
 
 namespace WebAPI.Controllers
 {
@@ -15,15 +17,17 @@ namespace WebAPI.Controllers
     public class SolicitudController : ControllerBase
     {
         private readonly ISolicitudServicio_Servicio _solicitudServicio;
+        private readonly ISolicitudEstadoServicio _solicitudEstadoServicio;
         private readonly IValidator<SolicitudCreacionDTO> _validator;
         private readonly ILogger<SolicitudController> _logger;
 
 
-        public SolicitudController(ISolicitudServicio_Servicio solicitudServicio, ILogger<SolicitudController> logger, IValidator<SolicitudCreacionDTO> validator)
+        public SolicitudController(ISolicitudServicio_Servicio solicitudServicio, ISolicitudEstadoServicio solicitudEstadoServicio, ILogger<SolicitudController> logger, IValidator<SolicitudCreacionDTO> validator)
         {
             _solicitudServicio = solicitudServicio;
+            _solicitudEstadoServicio = solicitudEstadoServicio;
             _logger = logger;
-            _validator= validator;
+            _validator = validator;
         }
 
         [Authorize]
@@ -62,7 +66,8 @@ namespace WebAPI.Controllers
             return Ok(solicitudDTO);
 
         }
-        
+
+        [Authorize(Roles = "admin")]
         [HttpPut("actualizar-estado")]
         public async Task<IActionResult> ActualizarEstadoSolicitud([FromBody] SolicitudServicioEstadoUpdateDTO solicitudServicioEstadoUpdateDTO)
         {
@@ -93,7 +98,54 @@ namespace WebAPI.Controllers
             }
         }
 
-    }
+        [Authorize]
+        [HttpPut("{solicitudId}/estado-usuario")]
+        public async Task<IActionResult> ActualizarEstadoUser(int solicitudId, [FromBody] SolicitudServicioEstadoUpdateDTO solicitudServicioEstadoUpdateDTO)
+        {
+            try
+            {
 
+                var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+                var solicitud = await _solicitudServicio.ObtenerSolicitudPorIdAsync(solicitudId);
+                if (solicitud == null)
+                {
+                    return NotFound(new { message = "Solicitud no encontrada." });
+                }
+
+                if (solicitud.EmailSolicitante != userEmail)
+                {
+                    return Forbid("Esta solicitud no pertenece al usuario autenticado.");
+                }
+
+                if (solicitud.Estado != "Iniciada" && solicitud.Estado != "Presupuestada")
+                {
+                    return BadRequest(new { message = "La solicitud no se encuentra en un estado válido para actualizar su estado." });
+                }
+
+                var solicitudEstados = await _solicitudEstadoServicio.ObtenerSolicitudEstadosAsync();
+                var estadoAprobada = solicitudEstados.FirstOrDefault(e => e.Descripcion == "Aprobada");
+                var estadoRechazada = solicitudEstados.FirstOrDefault(e => e.Descripcion == "Cancelada");
+
+                if (estadoAprobada == null || estadoRechazada == null)
+                {
+                    return StatusCode(500, new { message = "Error interno: No se encontraron los estados requeridos." });
+                }
+
+                if (solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado != estadoAprobada.Id &&
+                    solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado != estadoRechazada.Id)
+                {
+                    return Forbid("Id para cambio de estado inválido, debe ser 'Aprobada' o 'Rechazada'.");
+                }
+                // Actualizar estado de la solicitud
+                var solicitudActualizada = await _solicitudServicio.ActualizarEstadoSolicitudAsync(solicitudServicioEstadoUpdateDTO);
+                return Ok(solicitudActualizada);
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: ex.Message, statusCode: 500, title: "Error interno del servidor");
+            }
+        }
+
+    }
 
 }

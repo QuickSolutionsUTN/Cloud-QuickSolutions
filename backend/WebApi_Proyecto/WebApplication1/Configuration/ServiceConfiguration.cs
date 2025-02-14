@@ -50,6 +50,16 @@ public static class ServiceConfiguration
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
         });
 
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 8; 
+        });
+
+
         //configurar Serilog
         builder.Host.UseSerilog();
 

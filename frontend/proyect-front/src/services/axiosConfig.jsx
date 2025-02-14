@@ -58,6 +58,8 @@ const apiService = {
   getProductByCatId: (id) => api.get(`/tipoProducto/${id}`),
 
   createRequest: (data) => api.post("/solicitud", data),
+
+  updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario`, data),
 };
 
 export default apiService;
