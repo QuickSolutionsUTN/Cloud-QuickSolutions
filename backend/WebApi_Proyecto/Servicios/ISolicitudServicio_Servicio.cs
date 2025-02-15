@@ -14,6 +14,7 @@ namespace Servicios
 
         Task<SolicitudRespuestaDTO> ActualizarEstadoSolicitudAsync(SolicitudServicioEstadoUpdateDTO SolicitudServicioEstadoUpdateDTO);
         Task<SolicitudRespuestaDTO> CancelarSolicitudAsync(SolicitudServicioCancelarDTO solicitudServicioCancelarDTO);
+        Task<SolicitudRespuestaDTO> ActualizarPresupuestoSolicitudAsync(SolicitudServicioPresupuestoUpdateDTO solicitudServicioPresupuestoUpdateDTO);
         //Task<List<UsuarioDTO>> ObtenerUsuariosAsync();
         //Task<UsuarioDTO> ObtenerUsuarioPorEmailAsync(string email);
     }

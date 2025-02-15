@@ -68,7 +68,7 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        [HttpPut("actualizar-estado")]
+        [HttpPut("estado-admin")]
         public async Task<IActionResult> ActualizarEstadoSolicitud([FromBody] SolicitudServicioEstadoUpdateDTO solicitudServicioEstadoUpdateDTO)
         {
             try
@@ -143,6 +143,21 @@ namespace WebAPI.Controllers
             catch (Exception ex)
             {
                 return Problem(detail: ex.Message, statusCode: 500, title: "Error interno del servidor");
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("{solicitudId}/presupuesto")]
+        public async Task<IActionResult> ActualizarPresupuestoSolicitud([FromBody] SolicitudServicioPresupuestoUpdateDTO solicitudServicioPresupuestoUpdateDTO)
+        {
+            try
+            {
+                var solicitudActualizada = await _solicitudServicio.ActualizarPresupuestoSolicitudAsync(solicitudServicioPresupuestoUpdateDTO);
+                return Ok(solicitudActualizada);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 

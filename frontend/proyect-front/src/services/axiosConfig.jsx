@@ -59,6 +59,8 @@ const apiService = {
 
   createRequest: (data) => api.post("/solicitud", data),
 
+  updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin`, data),
+  updateRequestBudgetAdmin: (data) => api.put(`/solicitud/${data.id}/presupuesto`, data),
   updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario`, data),
 };
 

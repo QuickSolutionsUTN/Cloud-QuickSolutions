@@ -9,6 +9,7 @@ import BudgetedStep from './RequestManagmentSteps/BudgetedStep.jsx';
 import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
 import CancelModalForm from './RequestManagmentSteps/cancelModalForm.jsx';
+import apiService from '../../services/axiosConfig.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -23,7 +24,7 @@ function RequestManagement() {
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
       try {
-        console.log('Fetching solicitud details...', backendURL);
+        console.log('Fetching solicitud details...');
         const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
         console.log('Solicitud details:', response.data);
         setSolicitud(response.data);
@@ -40,10 +41,36 @@ function RequestManagement() {
 
   const updateSolicitudEstado = async (newStep, stepIndex) => {
     try {
-      await axios.put(`${backendURL}/api/solicitud/actualizar-estado`, {
-        id: solicitudId,
-        idSolicitudServicioEstado: stepIndex + 2
+      console.log('Updating request state...');
+      const requestData = {id: solicitudId, idSolicitudServicioEstado: stepIndex + 2};
+      await apiService.updateRequestStateAdmin(requestData);
+      setCurrentStep(newStep);
+      setSolicitud(prevSolicitud => ({
+        ...prevSolicitud,
+        estado: newStep
+      }));
+      console.log('Updated solicitud:', {
+        ...solicitud,
+        estado: newStep
       });
+    } catch (error) {
+      console.error('Error updating request state:', error);
+    }
+  };
+
+  const updateSolicitudPresupuesto=async()=>{
+    try {
+      const stepIndex = steps.indexOf(currentStep);
+      const newStep = steps[stepIndex + 1];
+      console.log('Updating request state...', solicitud);
+      const requestData = {
+        id: solicitudId, 
+        diagnosticoTecnico: solicitud.diagnosticoTecnico,
+        idSolicitudServicioEstado: stepIndex + 2,
+        monto: solicitud.monto,
+        fechaEstimada: solicitud.fechaEstimada
+      };
+      await apiService.updateRequestBudgetAdmin(requestData);
       setCurrentStep(newStep);
       setSolicitud(prevSolicitud => ({
         ...prevSolicitud,
@@ -62,22 +89,18 @@ function RequestManagement() {
     console.log('Next step');
     const stepIndex = steps.indexOf(currentStep);
     console.log('stepIndex:', stepIndex);
-    if (stepIndex < steps.length - 1) {
+    if (stepIndex < steps.length - 1 && steps[stepIndex + 1]!=='Presupuestada') {
       const newStep = steps[stepIndex + 1];
       console.log('step viejo:', newStep);
       await updateSolicitudEstado(newStep, stepIndex);
       console.log('Updated step nuevo:', newStep);
     }
-  };
-
-  /*
-  const prevStep = () => {
-    const stepIndex = steps.indexOf(currentStep);
-    if (stepIndex > 0) {
-      setCurrentStep(steps[stepIndex - 1]);
+    if (steps[stepIndex + 1]==='Presupuestada'){
+      console.log('Solicitud: ', solicitud);
+      await updateSolicitudPresupuesto();
     }
   };
-*/
+
   const subcontractStep = async () => {
     console.log('Subcontratar');
   };
@@ -90,7 +113,14 @@ function RequestManagement() {
     setShowCancelModalForm(false);
   };
 
-  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log('handleChange:', name, value);
+    setSolicitud((prevSolicitud) => ({
+      ...prevSolicitud,
+      [name]: value,
+    }));
+  };
 
   if (!solicitud) {
     return <div>Cargando...</div>;
@@ -99,13 +129,13 @@ function RequestManagement() {
   const renderContent = () => {
     switch (solicitud.estado) {
       case 'Iniciada':
-        return <StartedStep nextStep={nextStep} subcontractStep={subcontractStep} cancelStep={cancelStep}/>;
+        return <StartedStep nextStep={nextStep} subcontractStep={subcontractStep} cancelStep={cancelStep} />;
       case 'Revisada':
-        return <ReviewedStep nextStep={nextStep} cancelStep={cancelStep}/>;
+        return <ReviewedStep solicitud={solicitud} nextStep={nextStep} cancelStep={cancelStep} handleChange={handleChange} />;
       case 'Presupuestada':
-        return <BudgetedStep/>;
+        return <BudgetedStep />;
       case 'Aprobada':
-        return <ApprovedStep nextStep={nextStep} cancelStep={cancelStep}/>;
+        return <ApprovedStep nextStep={nextStep} cancelStep={cancelStep} />;
       case 'Finalizada':
         return <FinishedStep />;
       default:
@@ -120,7 +150,7 @@ function RequestManagement() {
       </div>
       <StepProgressBar currentStep={currentStep} />
       {renderContent()}
-      <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm}/>
+      <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm} />
     </div>
   );
 }

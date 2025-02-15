@@ -32,7 +32,7 @@ namespace Servicios
             var userId = user?.Id;
 
             var nuevaSolicitud = new SolicitudServicio
-            { 
+            {
                 IdSolicitante = userId,
                 IdTipoServicio = solicitudCreacionDTO.IdTipoServicio,
                 IdTipoProducto = solicitudCreacionDTO.IdTipoProducto,
@@ -42,7 +42,7 @@ namespace Servicios
                 Tercearizado = false,
             };
 
-            if (solicitudCreacionDTO.IdTipoServicio == 1){nuevaSolicitud.Descripcion = solicitudCreacionDTO.Descripcion;}
+            if (solicitudCreacionDTO.IdTipoServicio == 1) { nuevaSolicitud.Descripcion = solicitudCreacionDTO.Descripcion; }
             if (solicitudCreacionDTO.IdTipoServicio == 2) { nuevaSolicitud.IdTipoMantenimiento = solicitudCreacionDTO.IdTipoMantenimiento; }
 
             _context.SolicitudServicio.Add(nuevaSolicitud);
@@ -92,7 +92,7 @@ namespace Servicios
                 .Include(tp => tp.TipoProducto)
                 .Include(es => es.Solicitante)
                 .Include(ts => ts.TipoServicio)
-                .Include(env=>env.Envio)
+                .Include(env => env.Envio)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             var solicitudDTO = _mapper.Map<SolicitudRespuestaDTO>(solicitud);
@@ -148,6 +148,25 @@ namespace Servicios
 
             var solicitudCancelada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudCancelada;
+        }
+        public async Task<SolicitudRespuestaDTO> ActualizarPresupuestoSolicitudAsync(SolicitudServicioPresupuestoUpdateDTO solicitudServicioPresupuestoUpdateDTO)
+        {
+            var solicitud = await _context.SolicitudServicio
+                .FirstOrDefaultAsync(s => s.Id == solicitudServicioPresupuestoUpdateDTO.Id);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            solicitud.IdSolicitudServicioEstado = solicitudServicioPresupuestoUpdateDTO.IdSolicitudServicioEstado;
+            solicitud.DiagnosticoTecnico = solicitudServicioPresupuestoUpdateDTO.DiagnosticoTecnico;
+            solicitud.Monto = solicitudServicioPresupuestoUpdateDTO.Monto;
+            solicitud.FechaPresupuestada = DateTime.UtcNow;
+            solicitud.FechaEstimada= DateTime.SpecifyKind(solicitudServicioPresupuestoUpdateDTO.FechaEstimada, DateTimeKind.Utc); 
+            await _context.SaveChangesAsync();
+            var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
+            return solicitudActualizada;
         }
     }
 }

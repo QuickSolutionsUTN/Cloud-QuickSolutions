@@ -6,19 +6,22 @@ import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
 import "./reviewedStep.css"
 
-function ReviewedStep({ nextStep, cancelStep }) {
-  const [solicitud, setSolicitud] = useState(null);
+function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
   const navigate = useNavigate();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const [idCategoria, setIdCategoria] = useState(null);
+  const [diagnostico, setDiagnostico] = useState('');
+  const [fechaEstimada, setFechaEstimada] = useState('');
+  const [monto, setMonto] = useState('');
 
   const handleNextStep = (event) => {
     event.preventDefault();
     nextStep();
   };
 
+  /*
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
       try {
@@ -34,7 +37,7 @@ function ReviewedStep({ nextStep, cancelStep }) {
       }
     }
     fetchSolicitudDetails();
-  }, [solicitudId]);
+  }, [solicitudId]);*/
 
   if (!solicitud) {
     return <div>Cargando...</div>;
@@ -90,16 +93,19 @@ function ReviewedStep({ nextStep, cancelStep }) {
           </div>
           <div className="my-4"></div>
       </Form>
-      <Form className='reviewed-step-form' onSubmit={handleNextStep}>
+      <Form className='reviewed-step-form'>
         <div className='row'>
           <div className='col-diagnostic'>
             <Form.Group controlId='diagnostic'>
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
-                rows={5} // Adjust the number of rows to match the height
+                rows={5}
                 type='text'
                 placeholder='Ingrese el diagnostico'
+                name='diagnosticoTecnico'
+                value={solicitud.diagnosticoTecnico}
+                onChange={handleChange}
               />
             </Form.Group>
           </div>
@@ -108,6 +114,9 @@ function ReviewedStep({ nextStep, cancelStep }) {
               <Form.Label>Fecha estimada</Form.Label>
               <Form.Control
                 type='date'
+                name="fechaEstimada"
+                value={solicitud.fechaEstimada}
+                onChange={handleChange}
               />
             </Form.Group>
             <Form.Group className='amount-form-label' controlId='amount'>
@@ -115,6 +124,9 @@ function ReviewedStep({ nextStep, cancelStep }) {
               <Form.Control
                 type='number'
                 placeholder='Ingrese el monto'
+                name='monto'
+                value={solicitud.monto}
+                onChange={handleChange}
               />
             </Form.Group>
           </div>
@@ -123,7 +135,7 @@ function ReviewedStep({ nextStep, cancelStep }) {
           <Button variant='danger' className='button' onClick={cancelStep}>
             Cancelar
           </Button>
-          <Button variant='success' type='submit' className='button' onClick={nextStep}>
+          <Button variant='success' type='submit' className='button' onClick={handleNextStep}>
             Enviar Diagnostico
           </Button>
         </div>
