@@ -56,10 +56,9 @@ namespace Servicios
                     IdSolicitudServicio = nuevaSolicitud.Id,
                     Calle = solicitudCreacionDTO.Envio.Calle,
                     Numero = solicitudCreacionDTO.Envio.Numero,
-                    Ciudad = solicitudCreacionDTO.Envio.Ciudad,
-                    Provincia = solicitudCreacionDTO.Envio.Provincia,
-                    CodigoPostal = solicitudCreacionDTO.Envio.CodigoPostal,
-                    Pais = solicitudCreacionDTO.Envio.Pais,
+                    Piso = solicitudCreacionDTO.Envio.Piso,
+                    Departamento = solicitudCreacionDTO.Envio.Departamento,
+                    localidadID = solicitudCreacionDTO.Envio.IdLocalidad,
                 };
                 _context.Envio.Add(nuevoEnvio);
                 await _context.SaveChangesAsync();

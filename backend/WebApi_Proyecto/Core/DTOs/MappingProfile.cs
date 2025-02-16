@@ -17,7 +17,9 @@ namespace Core.DTOs
             CreateMap<RolDTO, Rol>();
 
             CreateMap<CategoriaDTO, CategoriaProducto>();
-            CreateMap<Envio, EnvioDTO>();
+
+            CreateMap<Envio, EnvioDTO>()
+                .ForMember(dest => dest.IdLocalidad, opt => opt.MapFrom(src => src.localidadID));
 
             CreateMap<SolicitudServicio, SolicitudRespuestaDTO>()
                 .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => src.SolicitudServicioEstado.Descripcion))
@@ -26,15 +28,14 @@ namespace Core.DTOs
                 .ForMember(dest => dest.TipoServicio, opt => opt.MapFrom(src => src.TipoServicio.Descripcion))
                 .ForMember(dest => dest.Envio, opt => opt.MapFrom(src => src.Envio));
 
-
             CreateMap<TipoProducto, TipoProductoDTO>()
                 .ForMember(dest => dest.IdCategoria, opt => opt.MapFrom(src => src.IdCategoriaProducto));
 
-            CreateMap<CheckListMantenimientoDTO,CheckListMantenimiento >();
+            CreateMap<CheckListMantenimientoDTO, CheckListMantenimiento>();
 
             CreateMap<MantenimientoInDTO, TipoMantenimiento>();
 
-            CreateMap<TipoMantenimiento,MantenimientoOutDTO>();
+            CreateMap<TipoMantenimiento, MantenimientoOutDTO>();
         }
     }
 }

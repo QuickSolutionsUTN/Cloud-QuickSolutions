@@ -7,7 +7,9 @@ import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import FormSummary from './FormSummary.jsx';
 import apiService from '../../services/axiosConfig.jsx';
+import ApiDeliveryForm from './StepsRequestForm/ApiDelivery.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export default function StepForm({ step, formData, updateData, setIsStepComplete }) {
   const location = useLocation();
@@ -291,88 +293,13 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
         </div>
       )
       }
-      {step.id === 3 && (
-        <div className='row mb-3'>
-          <h6>Seleccione el tipo de envio</h6>
-          <ToggleButtonGroup
-            type="radio"
-            name="conLogistica"
-            value={getValues("conLogistica") ? "logistica" : "particular"}
-            onChange={(value) => {
-              const isChecked = value === "logistica";
-              setValue("conLogistica", isChecked);
-              handleChange({ ...getValues(), conLogistica: isChecked });
-            }}>
-            <ToggleButton id="particular" value="particular" variant="outline-primary">
-              <FontAwesomeIcon icon={faPerson} className='me-2' />
-              Envío Particular
-            </ToggleButton>
-            <ToggleButton id="logistica" value="logistica" variant="outline-primary">
-              <FontAwesomeIcon icon={faTruck} className='me-2' />
-              Servicio de Logística
-            </ToggleButton>
-          </ToggleButtonGroup>
-          {getValues("conLogistica") && (
-            <div className="mt-3">
-              <Form.Group controlId="street">
-                <Form.Label>Calle</Form.Label>
-                <Form.Control
-                  type="text"
-                  {...register("street", { required: getValues("conLogistica") })}
-                  onChange={(e) => handleChange({ ...getValues(), street: e.target.value })}
-                />
-                {errors.street && <small className="text-danger">Este campo es obligatorio</small>}
-              </Form.Group>
-              <Form.Group controlId="number">
-                <Form.Label>Numero</Form.Label>
-                <Form.Control
-                  type="text"
-                  {...register("number", { required: getValues("conLogistica") })}
-                  onChange={(e) => handleChange({ ...getValues(), number: e.target.value })}
-                />
-                {errors.number && <small className="text-danger">Este campo es obligatorio</small>}
-              </Form.Group>
-
-              <Form.Group controlId="city" className="mt-2">
-                <Form.Label>Ciudad</Form.Label>
-                <Form.Control
-                  type="text"
-                  {...register("city", { required: getValues("conLogistica") })}
-                  onChange={(e) => handleChange({ ...getValues(), city: e.target.value })}
-                />
-                {errors.city && <small className="text-danger">Este campo es obligatorio</small>}
-              </Form.Group>
-
-              <Form.Group controlId="zipCode" className="mt-2">
-                <Form.Label>Código Postal</Form.Label>
-                <Form.Control
-                  type="text"
-                  {...register("zipCode", { required: getValues("conLogistica") })}
-                  onChange={(e) => handleChange({ ...getValues(), zipCode: e.target.value })}
-                />
-                {errors.zipCode && <small className="text-danger">Este campo es obligatorio</small>}
-              </Form.Group>
-
-              <Form.Group controlId="state" className="mt-2">
-                <Form.Label>Provincia</Form.Label>
-                <Form.Control
-                  type="text"
-                  {...register("state", { required: getValues("conLogistica") })}
-                  onChange={(e) => handleChange({ ...getValues(), state: e.target.value })}
-                />
-                {errors.state && <small className="text-danger">Este campo es obligatorio</small>}
-              </Form.Group>
-            </div>
-          )}
-        </div>
-      )}
       {
         step.id === 4 && (
           <>
-          <FormSummary formData={formData} />
-          <div className='mb-3'>
-            <p>Seleccione confirmar para enviar la solicitud del servicio.</p>
-          </div>
+            <FormSummary formData={formData} />
+            <div className='mb-3'>
+              <p>Seleccione confirmar para enviar la solicitud del servicio.</p>
+            </div>
           </>
         )
       }

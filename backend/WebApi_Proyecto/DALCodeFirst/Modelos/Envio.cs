@@ -28,23 +28,13 @@ namespace DALCodeFirst.Modelos
         [Required]
         public int Numero { get; set; }
 
-        [MaxLength(50)]
+        public string? Piso { get; set; }  // Campo opcional
         public string? Departamento { get; set; }  // Campo opcional
 
         [Required]
-        [MaxLength(50)]
-        public string Ciudad { get; set; }
+        public int localidadID { get; set; } //para la api de envios
 
-        [Required]
-        [MaxLength(50)]
-        public string Provincia { get; set; }
+        public int? nroSeguimiento { get; set; } //para la api de envios
 
-        [Required]
-        [MaxLength(50)]
-        public string CodigoPostal { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Pais { get; set; }
     }
 }

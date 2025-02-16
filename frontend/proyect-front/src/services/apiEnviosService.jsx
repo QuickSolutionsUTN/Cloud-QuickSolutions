@@ -40,14 +40,13 @@ const obtenerToken = async () => {
 
 // Servicio para manejar envíos
 const envioService = {
-  generarEnvio: async (solicitudId, direccion) => {
-    try {
-      const response = await envioApi.post("/envios", { solicitudId, direccion });
-      return response.data;
-    } catch (error) {
-      console.error("❌ Error al generar el envío:", error);
-      throw error;
-    }
+  getLocalidades: async () => {
+    const response = await axios.get("/api/localidades", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
   },
 
   //obtenerEnvio: async (envioId) => envioApi.get(`/envios/${envioId}`),

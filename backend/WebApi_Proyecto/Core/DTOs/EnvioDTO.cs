@@ -10,24 +10,12 @@ namespace Core.DTOs
         [Required]
         public int Numero { get; set; }
 
-        /*[MaxLength(50)]
-        public string? Departamento { get; set; }  // Campo opcional*/
+        public string? Piso { get; set; }
+
+        public string? Departamento { get; set; } 
 
         [Required]
-        [MaxLength(50)]
-        public string Ciudad { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Provincia { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string CodigoPostal { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Pais { get; set; }
+        public int IdLocalidad { get; set; }
 
 
     }
