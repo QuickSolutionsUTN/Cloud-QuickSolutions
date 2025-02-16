@@ -21,6 +21,11 @@
   border: 0px;
 }
 
+.custom-carousel .carousel-control-prev,
+.custom-carousel .carousel-control-next {
+  width: 160px; /* Ajusta este valor según tus necesidades */
+}
+
 .maintenance .card {
   top: 30%; /* Ajusta este valor para mover la tarjeta hacia arriba o abajo */
   left: 57%; /* Ajusta este valor para mover la tarjeta hacia la derecha o izquierda */

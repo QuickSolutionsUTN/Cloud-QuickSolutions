@@ -33,6 +33,7 @@ function AdminRequests() {
 
           //cliente: `${request.user.apellido} ${request.user.nombre}`
         }));
+        mappedData.sort((a, b) => b.idSolicitud - a.idSolicitud);
         setUserRequests(mappedData);
       } catch (error) {
         console.error("Error: ", error);

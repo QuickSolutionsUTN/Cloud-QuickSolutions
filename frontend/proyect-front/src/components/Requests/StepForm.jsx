@@ -22,7 +22,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
   const [maintenanceArray, setMaintenanceArray] = useState([]);
   const [categories, setCategories] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
-  const { isAuthenticated, userEmail } = useContext(AuthContext);
+  const { isAuthenticated, userEmail, userName, userSurName } = useContext(AuthContext);
 
   const categoryId = Number(watch('categoryId'));
   const productTypeId = Number(watch('productTypeId'));
@@ -43,7 +43,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
   useEffect(() => {
     if (isAuthenticated && step.id === 2) {
       console.log("Usuario autenticado:", userEmail);
-      handleChange({ ...watch(), userEmail: userEmail });
+      handleChange({ ...watch(), userEmail: userEmail, firstName: userName, lastName: userSurName });
     }
   }, [isAuthenticated, userEmail, step, setValue]);
 
@@ -271,7 +271,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                   <Form.Label><b>Nombre</b></Form.Label>
                   <Form.Control
                     type='text'
-                    placeholder='Usuario'
+                    placeholder={userName}
                     aria-label='Disabled input example'
                     readOnly
                   ></Form.Control>
@@ -280,7 +280,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
                   <Form.Label><b>Apellido</b></Form.Label>
                   <Form.Control
                     type='text'
-                    placeholder='Prueba'
+                    placeholder={userSurName}
                     aria-label='Disabled input example'
                     readOnly
                   ></Form.Control>

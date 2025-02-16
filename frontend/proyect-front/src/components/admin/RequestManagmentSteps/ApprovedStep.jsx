@@ -81,6 +81,7 @@ function ApprovedStep({ nextStep, cancelStep }) {
                 as='textarea'
                 rows={5}
                 type='text'
+                value={solicitud.diagnosticoTecnico}
                 readOnly
               />
             </Form.Group>
