@@ -40,7 +40,7 @@ export default function StepLogistics({ formData, control, errors }) {
 
       {formData?.logisticsData?.conLogistica && (
         <ApiDeliveryForm
-        formData={formData}
+          formData={formData}
           control={control}
           errors={errors}
         />

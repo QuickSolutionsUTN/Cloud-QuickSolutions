@@ -79,6 +79,7 @@ function BudgetedStep() {
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
+                value={solicitud.diagnosticoTecnico}
                 rows={5}
                 type='text'
                 readOnly

@@ -43,7 +43,7 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
   useEffect(() => {
     if (isAuthenticated && step.id === 2) {
       console.log("Usuario autenticado:", userEmail);
-      handleChange({ ...watch(), userEmail: userEmail, firstName: userName, lastName: userSurName });
+      handleChange({ ...watch(), userEmail: userEmail });
     }
   }, [isAuthenticated, userEmail, step, setValue]);
 

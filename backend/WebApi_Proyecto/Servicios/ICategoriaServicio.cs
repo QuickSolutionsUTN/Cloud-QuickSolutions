@@ -13,6 +13,7 @@ namespace Servicios
         Task<List<CategoriaDTO>> ObtenerCategoriasAsync();
         Task<CategoriaDTO> ActualizarCategoriaAsync(int id, CategoriaModificarDTO categoriaModificarDTO);
         Task<bool> EliminarCategoriaAsync(int id);
+        Task<CategoriaDTO> ObtenerCategoriaPorTipoProducto(TipoProductoDTO tipoProductoDTO);
 
     }
 }

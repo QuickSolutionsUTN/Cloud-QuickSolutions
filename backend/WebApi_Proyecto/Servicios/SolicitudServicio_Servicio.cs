@@ -19,11 +19,13 @@ namespace Servicios
         private readonly WebAPIContext _context;
         private readonly UserManager<Usuario> _userManager;
         private readonly IMapper _mapper;
-        public SolicitudServicio_Servicio(WebAPIContext context, UserManager<Usuario> userManager, IMapper mapper)
+        private readonly ICategoriaServicio _categoriaServicio;
+        public SolicitudServicio_Servicio(WebAPIContext context, UserManager<Usuario> userManager, IMapper mapper, ICategoriaServicio categoriaServicio)
         {
             _context = context;
             _userManager = userManager;
             _mapper = mapper;
+            _categoriaServicio = categoriaServicio;
         }
 
         public async Task<SolicitudRespuestaDTO> CrearSolicitudAsync(SolicitudCreacionDTO solicitudCreacionDTO)
@@ -94,7 +96,18 @@ namespace Servicios
                 .Include(env => env.Envio)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            var tipoProductoDTO = _mapper.Map<TipoProductoDTO>(solicitud.TipoProducto);
+
+            var categoriaDTO = await _categoriaServicio.ObtenerCategoriaPorTipoProducto(tipoProductoDTO);
+
             var solicitudDTO = _mapper.Map<SolicitudRespuestaDTO>(solicitud);
+
+            solicitudDTO.Categoria = categoriaDTO.Descripcion;
 
             return solicitudDTO;
         }
@@ -109,7 +122,9 @@ namespace Servicios
                 .Where(es => es.Solicitante.Id == userId)
                 .ToListAsync();
 
+            
             var solicitudesDTO = _mapper.Map<List<SolicitudRespuestaDTO>>(solicitudes);
+
 
             return solicitudesDTO;
         }

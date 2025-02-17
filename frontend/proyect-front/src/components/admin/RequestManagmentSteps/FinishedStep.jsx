@@ -63,7 +63,7 @@ function FinishedStep() {
                 as='textarea'
                 rows={4}
                 type='text'
-                value={solicitud.diagnostico}
+                value={solicitud.diagnosticoTecnico}
                 readOnly
               />
             </Form.Group>

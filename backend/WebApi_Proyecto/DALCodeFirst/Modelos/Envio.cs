@@ -28,7 +28,7 @@ namespace DALCodeFirst.Modelos
         [Required]
         public int Numero { get; set; }
 
-        public string? Piso { get; set; }  // Campo opcional
+        public int? Piso { get; set; }  // Campo opcional
         public string? Departamento { get; set; }  // Campo opcional
 
         [Required]

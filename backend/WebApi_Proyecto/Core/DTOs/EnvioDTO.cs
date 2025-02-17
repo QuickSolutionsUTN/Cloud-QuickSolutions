@@ -10,7 +10,7 @@ namespace Core.DTOs
         [Required]
         public int Numero { get; set; }
 
-        public string? Piso { get; set; }
+        public int? Piso { get; set; }
 
         public string? Departamento { get; set; } 
 
