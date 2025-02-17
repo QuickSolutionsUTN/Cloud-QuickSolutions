@@ -1,15 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext';
 import axios from 'axios';
+import "./cancelModalForm.css";
 
 function CancelModalForm({ show, onClose }) {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, watch } = useForm();
   const backendURL = useBackendURL();
   const { id: solicitudId } = useParams();
   const navigate = useNavigate();
+  const reason = watch('reason', '');
 
   const onSubmit = async (data) => {
     try {
@@ -31,21 +33,24 @@ function CancelModalForm({ show, onClose }) {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group controlId="cancelForm">
+          <Form.Group controlId="cancelForm" className='cancel-reason'>
             <Form.Label>Motivo</Form.Label>
-            <Form.Control
-              type="text"
+            <Form.Control className='cancel-reason-input'
+              as="textarea"
+              rows={5}
               placeholder="Ingrese el motivo"
               {...register('reason', { required: true })}
             />
-            {errors.reason && <Alert variant="danger">Este campo es obligatorio</Alert>}
+            {errors.reason && <p className="error-text" style={{ color: 'red', fontSize: 'small' }}>{errors.reason.message}</p>}
           </Form.Group>
-          <Button variant="danger" type="submit">
-            Cancelar solicitud
-          </Button>
-          <Button variant="secondary" onClick={onClose}>
-            Volver
-          </Button>
+          <div className='cancel-buttons'>
+            <Button variant="secondary" onClick={onClose}>
+              Volver
+            </Button>
+            <Button variant="danger" type="submit" disabled={!reason}>
+              Cancelar solicitud
+            </Button>
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

@@ -1,0 +1,11 @@
+.cancel-reason {
+  padding-bottom: 5%;
+}
+.cancel-buttons {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 5%;
+}
+.cancel-buttons button {
+  width: 45%;
+}
