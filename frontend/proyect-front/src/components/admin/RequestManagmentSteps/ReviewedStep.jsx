@@ -15,9 +15,37 @@ function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
   const [diagnostico, setDiagnostico] = useState('');
   const [fechaEstimada, setFechaEstimada] = useState('');
   const [monto, setMonto] = useState('');
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    const isValid = solicitud.diagnosticoTecnico && solicitud.monto && solicitud.fechaEstimada;
+    setIsFormValid(isValid);
+  }, [solicitud]);
 
   const handleNextStep = (event) => {
     event.preventDefault();
+    const newErrors = {};
+    if (!solicitud.diagnosticoTecnico) {
+      newErrors.diagnosticoTecnico = "El diagnóstico es obligatorio.";
+    }
+    if (!solicitud.monto) {
+      newErrors.monto = "El monto es obligatorio.";
+    }
+    if (!solicitud.fechaEstimada) {
+      newErrors.fechaEstimada = "La fecha estimada es obligatoria.";
+    } else {
+      const today = new Date();
+      const estimatedDate = new Date(solicitud.fechaEstimada);
+      if (estimatedDate <= today) {
+        newErrors.fechaEstimada = "La fecha estimada debe ser posterior a la fecha actual.";
+      }
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
     nextStep();
   };
 
@@ -106,7 +134,9 @@ function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
                 name='diagnosticoTecnico'
                 value={solicitud.diagnosticoTecnico}
                 onChange={handleChange}
+                required
               />
+              {errors.diagnosticoTecnico && <p className="error-text" style={{ color: 'red', fontSize: 'small' }}>{errors.diagnosticoTecnico}</p>}
             </Form.Group>
           </div>
           <div className='col-amount'>
@@ -117,7 +147,9 @@ function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
                 name="fechaEstimada"
                 value={solicitud.fechaEstimada}
                 onChange={handleChange}
+                required
               />
+              {errors.fechaEstimada && <p className="error-text" style={{ color: 'red', fontSize: 'small' }}>{errors.fechaEstimada}</p>}
             </Form.Group>
             <Form.Group className='amount-form-label' controlId='amount'>
               <Form.Label>Monto</Form.Label>
@@ -127,7 +159,9 @@ function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
                 name='monto'
                 value={solicitud.monto}
                 onChange={handleChange}
+                required
               />
+              {errors.monto && <p className="error-text" style={{ color: 'red', fontSize: 'small' }}>{errors.monto}</p>}
             </Form.Group>
           </div>
         </div>
@@ -135,7 +169,7 @@ function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
           <Button variant='danger' className='button' onClick={cancelStep}>
             Cancelar
           </Button>
-          <Button variant='success' type='submit' className='button' onClick={handleNextStep}>
+          <Button variant='success' type='submit' className='button' onClick={handleNextStep} disabled={!isFormValid}>
             Enviar Diagnostico
           </Button>
         </div>
