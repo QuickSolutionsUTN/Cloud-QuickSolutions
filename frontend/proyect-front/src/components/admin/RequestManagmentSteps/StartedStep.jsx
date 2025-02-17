@@ -71,7 +71,7 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
       console.log('Solicitando envio...' ,envioData);
       const response = await envioService.postEnvio(envioData);
       console.log('Envio solicitado:', response);
-      //navigate('/admin/solicitudes');
+      nextStep();
     } catch (error) {
       console.error('Error solicitando envio:', error);
     }
