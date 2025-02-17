@@ -13,6 +13,9 @@ function ApprovedStep({ nextStep, cancelStep }) {
   const navigate = useNavigate();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const [idCategoria, setIdCategoria] = useState(null);
+  const [resumenTrabajo, setResumenTrabajo] = useState('');
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -31,13 +34,26 @@ function ApprovedStep({ nextStep, cancelStep }) {
     fetchSolicitudDetails();
   }, [solicitudId]);
 
+  useEffect(() => {
+    setIsFormValid(!!resumenTrabajo);
+  }, [resumenTrabajo]);
+
   if (!solicitud) {
     return <div>Cargando...</div>;
   }
 
   const handleSubmit = (event) => {
-      event.preventDefault();
-      nextStep();
+    event.preventDefault();
+    const newErrors = {};
+    if (!resumenTrabajo) {
+      newErrors.resumenTrabajo = "El resumen del trabajo es obligatorio.";
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+    nextStep();
   };
 
   return (
@@ -117,14 +133,18 @@ function ApprovedStep({ nextStep, cancelStep }) {
                 rows={3}
                 type='text'
                 placeholder='Ingrese el resumen'
+                value={resumenTrabajo}
+                onChange={(e) => setResumenTrabajo(e.target.value)}
+                required
               />
+              {errors.resumenTrabajo && <p className="error-text">{errors.resumenTrabajo}</p>}
             </Form.Group>
           </div>
           <div className='button-group approvedStep'>
-            <Button variant='danger' className='button' onClick={cancelStep} >
+            <Button variant='danger' className='button' onClick={cancelStep}>
               Cancelar
             </Button>
-            <Button variant='success' type='submit' className='button' onClick={nextStep}>
+            <Button variant='success' type='submit' className='button' disabled={!isFormValid}>
               Enviar resumen
             </Button>
           </div>
