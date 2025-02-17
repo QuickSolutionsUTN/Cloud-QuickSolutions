@@ -27,11 +27,6 @@ namespace WebAPI.Validators
                 .MustAsync(async (IdTipoServicio, cancellation) => await TipoServicioExiste(IdTipoServicio))
                 .WithMessage("El tipo de servicio especificado no existe.");
 
-            RuleFor(x => x.IdCategoria)
-                .NotEmpty().WithMessage("El ID de la categoria es requerido.")
-                .MustAsync(async (idCategoria, cancellation) => await CategoriaExiste(idCategoria))
-                .WithMessage("La categoria especificada no existe.");
-
             RuleFor(x => x.IdTipoProducto)
                .NotEmpty().WithMessage("El ID del tipo de producto es requerido.")
                .MustAsync(async (idTipoProducto, cancellation) => await TipoProductoExiste(idTipoProducto))

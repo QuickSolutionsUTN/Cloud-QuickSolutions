@@ -1,37 +1,37 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const envioApi = axios.create({
-  baseURL: "http://localhost:3001/api", // URL de la API de envíos
+  baseURL: "/api", // URL de la API de envíos
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true, // Habilita el envío de cookies en las solicitudes
 });
 
-// Función para obtener el token desde la cookie
-const getTokenFromCookie = () => Cookies.get("logisticaToken");
-
 // Interceptor para agregar el token a cada solicitud
-envioApi.interceptors.request.use(
-  (config) => {
-    const token = getTokenFromCookie();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    } else {
+
+envioApi.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
       obtenerToken();
-      console.warn("⚠ No hay token de logística en las cookies.");
     }
-    return config;
-  },
-  (error) => Promise.reject(error)
+    return Promise.reject(error);
+  }
 );
 
 const obtenerToken = async () => {
   try {
-    const response = await axios.post("http://localhost:3001/api/auth/login", {
-      username: "admin@quicksolutions.com",
-      password: "admin123",
-    });
+    const response = await axios.post(
+      "/api/auth/login",
+      {
+        email: "admin@quicksolutions.com",
+        password: "admin123"
+      },
+      { withCredentials: true }
+    );
+    console.log("✅ Token de logística obtenido");
   } catch (error) {
     console.error("❌ Error al obtener el token:", error);
     throw error;
@@ -48,6 +48,14 @@ const envioService = {
     });
     return response.data;
   },
+
+  postEnvio: async (envioData) => {
+    const response = await envioApi.post("/envios/create", envioData, { withCredentials: true });
+    return response.data;
+  },
+
+  getUuidAdmin: async () => {const response = await envioApi.post("/envios/create", envioData, { withCredentials: true });
+  return response.data;},
 
   //obtenerEnvio: async (envioId) => envioApi.get(`/envios/${envioId}`),
 

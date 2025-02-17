@@ -18,6 +18,8 @@ namespace Core.DTOs
 
             CreateMap<CategoriaDTO, CategoriaProducto>();
 
+            CreateMap<CategoriaProducto, CategoriaDTO>();
+
             CreateMap<Envio, EnvioDTO>()
                 .ForMember(dest => dest.IdLocalidad, opt => opt.MapFrom(src => src.localidadID));
 

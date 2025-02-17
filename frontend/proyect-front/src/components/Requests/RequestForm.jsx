@@ -65,12 +65,9 @@ export const RequestForm = () => {
     if (envioData.conLogistica) {data.logisticsData.conLogistica = true;}
 
     const DataToSend = {
-      nombre: data.personalData.firstName,
-      apellido: data.personalData.lastName,
       userEmail: data.personalData.userEmail,
       descripcion: data.productData.problemDescription,
       idTipoServicio: parseInt(data.productData.serviceId, 10),
-      idCategoria: parseInt(data.productData.categoryId, 10),
       idTipoProducto: parseInt(data.productData.productTypeId, 10),
       conLogistica: data.logisticsData.conLogistica,
     };

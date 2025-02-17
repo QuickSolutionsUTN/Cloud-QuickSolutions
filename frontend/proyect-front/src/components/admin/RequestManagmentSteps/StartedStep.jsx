@@ -4,6 +4,8 @@ import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
+import envioService from "../../../services/apiEnviosService.jsx";
+
 import "./StartedStep.css";
 
 function StartedStep({ nextStep, subcontractStep, cancelStep }) {
@@ -34,6 +36,49 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
   if (!solicitud) {
     return <div>Cargando...</div>;
   }
+
+  const handleNextStep= () => {
+    solicitarEnvio(solicitud.envio);
+  }
+
+  const solicitarEnvio = async (data) => {
+    const uuid_admin='cda6ad47-e784-4b29-9b34-f680b21e1563';
+    const envioData = {
+      descripcion: "Envio de paquete",
+      hora: "12:00",
+      pesoGramos: 1000,
+      reserva:true,
+      origen: {
+        calle: data.calle,
+        numero: data.numero,
+        piso: data?.piso || 0,
+        depto: data?.departamento || null,
+        descripcion: "Casa",
+        localidadID: data.idLocalidad
+      },
+      destino: {
+        calle: "Av del petroleo",
+        numero: 417,
+        piso: 0,
+        depto: null,
+        descripcion: "UTN la mas grande",
+        localidadID: 68
+      },
+      cliente: uuid_admin
+    };
+
+    try {
+      console.log('Solicitando envio...' ,envioData);
+      const response = await envioService.postEnvio(envioData);
+      console.log('Envio solicitado:', response);
+      nextStep();
+    } catch (error) {
+      console.error('Error solicitando envio:', error);
+    }
+  }
+
+
+
 
   return (
     <>
@@ -132,7 +177,7 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
         <Button className="subcontract" variant="warning" onClick={subcontractStep}>
           Subcontratar
         </Button>
-        <Button variant="success" onClick={nextStep}>
+        <Button variant="success" onClick={handleNextStep}>
           Aceptar servicio
         </Button>
       </div>

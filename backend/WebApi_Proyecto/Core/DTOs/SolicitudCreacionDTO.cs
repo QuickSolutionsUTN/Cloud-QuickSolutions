@@ -20,9 +20,6 @@ namespace Core.DTOs
         public int? IdTipoMantenimiento { get; set; }
 
         [Required]
-        public int IdCategoria { get; set; }
-
-        [Required]
         public int IdTipoProducto { get; set; }
 
         [Required]

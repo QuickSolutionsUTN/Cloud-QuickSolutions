@@ -76,5 +76,21 @@ namespace Servicios
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<CategoriaDTO> ObtenerCategoriaPorTipoProducto(TipoProductoDTO tipoProductoDTO)
+        {
+            var categoria = await _context.CategoriaProducto
+                .FirstOrDefaultAsync(c => c.Id == tipoProductoDTO.IdCategoria);
+
+            if (categoria == null)
+            {
+                return null;
+            }
+
+            var categoriaDTO = _mapper.Map<CategoriaDTO>(categoria);
+
+            return categoriaDTO;
+
+        }
     }
 }
