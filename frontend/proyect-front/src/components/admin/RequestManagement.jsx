@@ -10,6 +10,7 @@ import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
 import CancelModalForm from './RequestManagmentSteps/cancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
+import { Button } from 'react-bootstrap';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -145,6 +146,15 @@ function RequestManagement() {
 
   return (
     <div className='requestManagement'>
+      <div className='back-button'>
+        <Button 
+          variant="outline-dark" 
+          style={{ position: 'absolute', marginTop: '1%', marginLeft: '1%' }}
+          onClick={() => navigate('/admin/requests')}
+        >
+          Volver
+        </Button>
+      </div>
       <div className='tittle'>
         <h2>Gestión de solicitud #{solicitudId}</h2>
       </div>

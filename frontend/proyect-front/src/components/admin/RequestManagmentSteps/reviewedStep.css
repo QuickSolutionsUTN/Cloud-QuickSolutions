@@ -47,9 +47,3 @@
 .amount-form-label {
     margin-top: 4%;
 }
-
-.error-text {
-    color: red;
-    font-size: 0.875rem; /* Smaller font size */
-    margin-top: 0.25rem;
-}
