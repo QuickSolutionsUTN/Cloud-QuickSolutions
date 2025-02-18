@@ -15,7 +15,7 @@ function AdminRequests() {
       try {
         console.log("Buscando solicitudes con backendURL: ");
         const response = await apiService.getRequestsAdmin();
-        console.log("Respuesta... ", response);
+        console.log("Solicitudes... ", response.data);
         const mappedData = response.data.map(request => ({
           id: request.id,
           idSolicitud: request.id,

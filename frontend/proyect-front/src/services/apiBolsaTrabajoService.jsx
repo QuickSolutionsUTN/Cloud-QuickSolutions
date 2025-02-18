@@ -42,7 +42,7 @@ const obtenerToken = async () => {
 
 const apiReparacionExterna = {
   getTrabajadores: async () => {
-    const response = await bolsaTrabajoApi.get("/interaccion/trabajadores");
+    const response = await bolsaTrabajoApi.get("/interaccion");
     return response.data;
   },
 
