@@ -3,9 +3,14 @@ import "./StepProgressBar.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'  
 
-const StepProgressBar = ({ currentStep }) => {
+const StepProgressBar = ({ currentStep, solicitud }) => {
   const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
   const stepIndex = steps.indexOf(currentStep);
+  
+  const formatDateTime = (dateTime) => {
+    const date = new Date(dateTime);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  };
 
   return (
     <div className="container text-center mt-4">
@@ -20,7 +25,13 @@ const StepProgressBar = ({ currentStep }) => {
               {index === 4 ? <FontAwesomeIcon icon={faCheck} /> : index + 1}
             </div>
             <p className="step-name">{step}</p>
-            <p className={`date ${index <= stepIndex ? "visible" : ""}`}>Fecha</p>
+            <p className={`date ${index <= stepIndex ? "visible" : ""}`}>
+              {step === "Iniciada" && solicitud.fechaGeneracion && formatDateTime(solicitud.fechaGeneracion)}
+              {step === "Revisada" && solicitud.fechaRevisada && formatDateTime(solicitud.fechaRevisada)}
+              {step === "Presupuestada" && solicitud.fechaPresupuestada && formatDateTime(solicitud.fechaPresupuestada)}
+              {step === "Aprobada" && solicitud.fechaAprobada && formatDateTime(solicitud.fechaAprobada)}
+              {step === "Finalizada" && solicitud.fechaFinalizada && formatDateTime(solicitud.fechaFinalizada)}
+            </p>
           </div>
         ))}
       </div>

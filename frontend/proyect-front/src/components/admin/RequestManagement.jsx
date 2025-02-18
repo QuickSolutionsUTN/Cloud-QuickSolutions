@@ -189,7 +189,7 @@ function RequestManagement() {
         return <div>Error al obtener el estado</div>;
     }
   };
-
+  
   return (
     <div className='requestManagement'>
       <div className='back-button'>
@@ -204,7 +204,7 @@ function RequestManagement() {
       <div className='tittle'>
         <h2>Gestión de solicitud #{solicitudId}</h2>
       </div>
-      <StepProgressBar currentStep={currentStep} />
+      <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
       {renderContent()}
       <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm} />
     </div>
