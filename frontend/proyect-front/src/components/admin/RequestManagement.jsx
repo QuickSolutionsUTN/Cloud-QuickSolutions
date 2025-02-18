@@ -8,7 +8,7 @@ import ReviewedStep from './RequestManagmentSteps/ReviewedStep.jsx';
 import BudgetedStep from './RequestManagmentSteps/BudgetedStep.jsx';
 import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
-import CancelModalForm from './RequestManagmentSteps/cancelModalForm.jsx';
+import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 import { Button } from 'react-bootstrap';
 
