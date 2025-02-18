@@ -6,8 +6,7 @@ import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
 import "./approvedStep.css";
 
-function ApprovedStep({ nextStep, cancelStep }) {
-  const [solicitud, setSolicitud] = useState(null);
+function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
   const navigate = useNavigate();
@@ -35,8 +34,8 @@ function ApprovedStep({ nextStep, cancelStep }) {
   }, [solicitudId]);
 
   useEffect(() => {
-    setIsFormValid(!!Resumen);
-  }, [Resumen]);
+    setIsFormValid(!!solicitud.Resumen);
+  }, [solicitud.Resumen]);
 
   if (!solicitud) {
     return <div>Cargando...</div>;
@@ -45,7 +44,7 @@ function ApprovedStep({ nextStep, cancelStep }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const newErrors = {};
-    if (!Resumen) {
+    if (!solicitud.Resumen) {
       newErrors.Resumen = "El resumen del trabajo es obligatorio.";
     }
     if (Object.keys(newErrors).length > 0) {
@@ -54,7 +53,7 @@ function ApprovedStep({ nextStep, cancelStep }) {
     }
     setErrors({});
     console.log('Solicitud para finalizar:', solicitud);
-    console.log('Resumen del trabajo:', Resumen);
+    console.log('Resumen del trabajo:', solicitud.Resumen);
     nextStep();
   };
 
@@ -135,11 +134,12 @@ function ApprovedStep({ nextStep, cancelStep }) {
                 rows={3}
                 type='text'
                 placeholder='Ingrese el resumen'
-                value={Resumen}
+                name='Resumen'
+                value={solicitud.Resumen}
                 onChange={handleChange}
                 required
               />
-              {errors.Resumen && <p className="error-text">{errors.Resumen}</p>}
+              {errors.Resumen && <p className="error-text" style={{ color: 'red', fontSize: 'small' }}>{errors.Resumen}</p>}
             </Form.Group>
           </div>
           <div className='button-group approvedStep'>

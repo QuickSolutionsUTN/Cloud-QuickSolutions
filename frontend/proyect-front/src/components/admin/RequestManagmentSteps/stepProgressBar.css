@@ -33,25 +33,39 @@
     text-align: center;
     position: relative;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Ensure items are aligned at the top */
+    min-height: 100px; /* Ensure a minimum height to accommodate dates */
 }
 
-
 .step .date {
-    margin-bottom: 8px;
     font-size: 14px;
     color: #6c757d;
     visibility: hidden;
+    margin: 0px;
 }
 
 .step .date.visible {
     visibility: visible;
 }
 
-.step .step-name {
-    margin-top: 8px;
-    margin-bottom: 0;
-    padding: 0;
+.step .time {
     font-size: 14px;
+    color: #6c757d;
+    visibility: hidden;
+    margin: 0px;
+}
+
+.step .time.visible {
+    visibility: visible;
+}
+
+.step .step-name {
+    margin-bottom: 1%;
+    padding: 0;
+    font-size: 15px;
     color: #6c757d;
 }
 
@@ -66,7 +80,6 @@
     font-weight: bold;
     color: #fff;
 }
-
 
 /* Cambiar color de los pasos activos */
 .active .circle {

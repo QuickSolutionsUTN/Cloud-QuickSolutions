@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from 'axios';
-import { Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
-import { useParams } from 'react-router-dom';
+import axios from "axios";
+import { Form, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { useBackendURL } from "../../../contexts/BackendURLContext.jsx";
+import { useParams } from "react-router-dom";
 import envioService from "../../../services/apiEnviosService.jsx";
 
 import "./StartedStep.css";
@@ -12,11 +12,11 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
   // const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
-  const [fechaFormateada, setFechaFormateada] = useState('');
+  const [fechaFormateada, setFechaFormateada] = useState("");
   const [idCategoria, setIdCategoria] = useState(null);
   const navigate = useNavigate();
 
- /*useEffect(() => {
+  /*useEffect(() => {
     const fetchSolicitudDetails = async () => {
       try {
         console.log('Fetching solicitud details...', backendURL);
@@ -37,33 +37,34 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     return <div>Cargando...</div>;
   }
 
-  const handleNextStep= async () => {
-    if(solicitud.conLogistica) {
+  const handleNextStep = async () => {
+    if (solicitud.conLogistica) {
       const nroSeguimiento = await solicitarEnvio(solicitud.envio);
-      if (!nroSeguimiento){
-        alert('Error al conectarse con el servicio de envios. Intente nuevamente mas tarde');
+      if (!nroSeguimiento) {
+        alert(
+          "Error al conectarse con el servicio de envios. Intente nuevamente mas tarde"
+        );
         return;
       }
-      solicitud.envio.nroSeguimiento= nroSeguimiento;
+      solicitud.envio.nroSeguimiento = nroSeguimiento;
     }
     nextStep();
-  }
+  };
 
   const solicitarEnvio = async (data) => {
-
-    const uuid_admin='cda6ad47-e784-4b29-9b34-f680b21e1563';
+    const uuid_admin = "cda6ad47-e784-4b29-9b34-f680b21e1563";
     const envioData = {
       descripcion: "Envio de paquete",
       hora: "12:00",
       pesoGramos: 1000,
-      reserva:true,
+      reserva: true,
       origen: {
         calle: data.calle,
         numero: data.numero,
         piso: data?.piso || 0,
         depto: data?.departamento || null,
         descripcion: "Casa",
-        localidadID: data.idLocalidad
+        localidadID: data.idLocalidad,
       },
       destino: {
         calle: "Av del petroleo",
@@ -71,40 +72,36 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
         piso: 0,
         depto: null,
         descripcion: "UTN la mas grande",
-        localidadID: 68
+        localidadID: 68,
       },
-      cliente: uuid_admin
+      cliente: uuid_admin,
     };
 
     try {
-      console.log('Solicitando envio...' ,envioData);
+      console.log("Solicitando envio...", envioData);
       const response = await envioService.postEnvio(envioData);
-      console.log('Envio solicitado:', response);
+      console.log("Envio solicitado:", response);
       const nroSeguimiento = response.nroSeguimiento;
       return nroSeguimiento;
     } catch (error) {
-      console.error('Error solicitando envio:', error);
+      console.error("Error solicitando envio:", error);
     }
-  }
-
-
-
+  };
 
   return (
     <>
-      <Form className='data-container'>
+      <Form className="data-container">
         <div className="my-4"></div>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.emailSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
+        <div className="row my-3">
+          <div className="col-4">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="text"
+              defaultValue={solicitud.emailSolicitante}
+              readOnly
+            ></Form.Control>
+          </div>
+          {/* <div className='col-4'>
               <Form.Label>Apellido</Form.Label>
               <Form.Control
                 type='text'
@@ -121,70 +118,75 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
                 readOnly
               >
               </Form.Control>
-            </div>
+            </div> */}
+        </div>
+        <div className="row my-3">
+          <div className="col-4">
+            <Form.Label>Servicio</Form.Label>
+            <Form.Control
+              type="text"
+              defaultValue={solicitud.tipoServicio}
+              readOnly
+            ></Form.Control>
           </div>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Servicio</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.tipoServicio}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Categoria</Form.Label>
-              <Form.Control
-                type='text'
-                value={solicitud.categoria}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Producto</Form.Label>
-              <Form.Control
-                type='text'
-                value={solicitud.tipoDeProducto}
-                readOnly
-              >
-              </Form.Control>
-            </div>
+          <div className="col-4">
+            <Form.Label>Categoria</Form.Label>
+            <Form.Control
+              type="text"
+              value={solicitud.categoria}
+              readOnly
+            ></Form.Control>
           </div>
-          <div className="my-4"></div>
-          <div className='row'>
-            <div className='col-12'>
-              <Form.Group controlId='description'>
-                <Form.Label>Descripcion del problema</Form.Label>
-                <Form.Control
-                  as='textarea'
-                  rows={3}
-                  type='text'
-                  value={solicitud.descripcion}
-                  readOnly
-                  style={{ resize: 'vertical' }}
-                />
-              </Form.Group>
-            </div>
-            <div className='row my-3'>
-            <div className='col-4'>
+          <div className="col-4">
+            <Form.Label>Producto</Form.Label>
+            <Form.Control
+              type="text"
+              value={solicitud.tipoDeProducto}
+              readOnly
+            ></Form.Control>
+          </div>
+        </div>
+        <div className="my-4"></div>
+        <div className="row">
+          {solicitud.tipoServicio === "Reparacion" ? (
+            <>
+              <div className="col-12">
+                <Form.Group controlId="description">
+                  <Form.Label>Descripcion del problema</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    type="text"
+                    value={solicitud.descripcion}
+                    readOnly
+                    style={{ resize: "vertical" }}
+                  />
+                </Form.Group>
+              </div>
+            </>
+          ) : null}
+          <div className="row my-3">
+            <div className="col-4">
               <Form.Check
-                type='checkbox'
-                label='Con servicio de logistica'
+                type="checkbox"
+                label="Con servicio de logistica"
                 checked={solicitud.conLogistica}
                 readOnly
               />
             </div>
           </div>
-          </div>
-          <div className="my-4"></div>
+        </div>
+        <div className="my-4"></div>
       </Form>
       <div className="buttons-container">
         <Button className="cancel" variant="danger" onClick={cancelStep}>
           Cancelar
         </Button>
-        <Button className="subcontract" variant="warning" onClick={subcontractStep}>
+        <Button
+          className="subcontract"
+          variant="warning"
+          onClick={subcontractStep}
+        >
           Subcontratar
         </Button>
         <Button variant="success" onClick={handleNextStep}>

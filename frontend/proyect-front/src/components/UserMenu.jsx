@@ -25,7 +25,7 @@ const UserMenu = ({ onLogoutClick, onMouseLeave, role }) => {
         <>
           <div className="divider"></div>
           <div className="opc-admin">
-            {location.pathname === '/admin' ? (
+            {location.pathname.includes('admin') ? (
               <button onClick={handleHomeClick}>Inicio</button>
             ) : (
               <button onClick={handleAdminClick}>Menu Admin</button>)}

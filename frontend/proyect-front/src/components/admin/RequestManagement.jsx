@@ -13,6 +13,7 @@ import apiService from '../../services/axiosConfig.jsx';
 import apiReparacionExterna from '../../services/apiBolsaTrabajoService.jsx';
 
 import { Button } from 'react-bootstrap';
+import './RequestManagement.css';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -69,6 +70,7 @@ function RequestManagement() {
       console.error('Error updating request state:', error);
     }
   };
+ 
   const updateRequestBudgeted=async()=>{
     try {
       const stepIndex = steps.indexOf(currentStep);
@@ -133,10 +135,12 @@ function RequestManagement() {
     }
     if (steps[stepIndex + 1]==='Revisada') {
       const newStep = steps[stepIndex + 1];
+      const id= solicitud.id;
       console.log('step viejo:', newStep);
       console.log('Solicitud: ', solicitud);
       await updateSolicitudEnvio(solicitud);
       await updateSolicitudEstado(newStep, stepIndex);
+      await apiService.updateRequestReviewed(id);
       console.log('Updated step nuevo:', newStep);
     }
 
@@ -195,20 +199,20 @@ function RequestManagement() {
       case 'Presupuestada':
         return <BudgetedStep />;
       case 'Aprobada':
-        return <ApprovedStep nextStep={nextStep} cancelStep={cancelStep} />;
+        return <ApprovedStep solicitud={solicitud} nextStep={nextStep} cancelStep={cancelStep} handleChange={handleChange} />;
       case 'Finalizada':
         return <FinishedStep />;
       default:
         return <div>Error al obtener el estado</div>;
     }
   };
-
+  
   return (
     <div className='requestManagement'>
       <div className='back-button'>
         <Button 
           variant="outline-dark" 
-          style={{ position: 'absolute', marginTop: '1%', marginLeft: '1%' }}
+          style={{ position: 'absolute', marginLeft: '1%' }}
           onClick={() => navigate('/admin/requests')}
         >
           Volver
@@ -216,8 +220,9 @@ function RequestManagement() {
       </div>
       <div className='tittle'>
         <h2>Gestión de solicitud #{solicitudId}</h2>
+        <p style={{ color: 'gray' }}>Generada: {fechaFormateada} {new Date(solicitud.fechaGeneracion).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
       </div>
-      <StepProgressBar currentStep={currentStep} />
+      <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
       {renderContent()}
       <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm} />
     </div>
