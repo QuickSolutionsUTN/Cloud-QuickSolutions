@@ -163,7 +163,23 @@ namespace WebAPI.Controllers
                 return Problem(detail: ex.Message, statusCode: 500, title: "Error interno del servidor");
             }
         }
-
+        
+        [Authorize(Roles = "admin")]
+        [HttpPut("{solicitudId}/iniciar")]
+        public async Task<IActionResult> IniciarSolicitud(int solicitudId)
+        {
+            try
+            {
+                var solicitudActualizada = await _solicitudServicio.IniciarSolicitudAsync(solicitudId);
+                return Ok(solicitudActualizada);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al iniciar la solicitud");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        
         [Authorize(Roles = "admin")]
         [HttpPut("{solicitudId}/presupuestar")]
         public async Task<IActionResult> PresupuestarSolicitud([FromBody] SolicitudServicioPresupuestarDTO solicitudServicioPresupuestarDTO)

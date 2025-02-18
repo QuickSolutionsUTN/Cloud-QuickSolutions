@@ -22,6 +22,7 @@ namespace Core.DTOs
         public EnvioDTO? Envio { get; set; }
         public bool? Tercearizado { get; set; }
         public string? TecnicoAsignado { get; set; }
+        public DateTime? FechaIniciada { get; set; }
         public DateTime? FechaRevisada { get; set; }
         public string? DiagnosticoTecnico { get; set; }
         public DateTime? FechaEstimada { get; set; }

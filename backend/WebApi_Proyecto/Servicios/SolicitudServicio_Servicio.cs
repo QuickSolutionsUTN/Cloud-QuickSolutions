@@ -163,6 +163,22 @@ namespace Servicios
             var solicitudCancelada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudCancelada;
         }
+        public async Task<SolicitudRespuestaDTO> IniciarSolicitudAsync(int id)
+        {
+            var solicitud = await _context.SolicitudServicio
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            solicitud.FechaIniciada = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            var solicitudActualizada = await ObtenerSolicitudPorIdAsync(id);
+            return solicitudActualizada;
+        }
         public async Task<SolicitudRespuestaDTO> ActualizarEnvioSolicitudAsync(int id, EnvioDTO envioDTO)
         {
             var solicitud = await _context.SolicitudServicio

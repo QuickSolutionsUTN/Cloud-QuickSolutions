@@ -11,6 +11,7 @@ import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
 import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 import { Button } from 'react-bootstrap';
+import './RequestManagement.css';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -67,6 +68,7 @@ function RequestManagement() {
       console.error('Error updating request state:', error);
     }
   };
+ 
   const updateRequestBudgeted=async()=>{
     try {
       const stepIndex = steps.indexOf(currentStep);
@@ -131,10 +133,12 @@ function RequestManagement() {
     }
     if (steps[stepIndex + 1]==='Revisada') {
       const newStep = steps[stepIndex + 1];
+      const id= solicitud.id;
       console.log('step viejo:', newStep);
       console.log('Solicitud: ', solicitud);
       await updateSolicitudEnvio(solicitud);
       await updateSolicitudEstado(newStep, stepIndex);
+      await apiService.updateRequestReviewed(id);
       console.log('Updated step nuevo:', newStep);
     }
 
@@ -195,7 +199,7 @@ function RequestManagement() {
       <div className='back-button'>
         <Button 
           variant="outline-dark" 
-          style={{ position: 'absolute', marginTop: '1%', marginLeft: '1%' }}
+          style={{ position: 'absolute', marginLeft: '1%' }}
           onClick={() => navigate('/admin/requests')}
         >
           Volver
@@ -203,6 +207,7 @@ function RequestManagement() {
       </div>
       <div className='tittle'>
         <h2>Gestión de solicitud #{solicitudId}</h2>
+        <p style={{ color: 'gray' }}>Generada: {fechaFormateada} {new Date(solicitud.fechaGeneracion).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
       </div>
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
       {renderContent()}
