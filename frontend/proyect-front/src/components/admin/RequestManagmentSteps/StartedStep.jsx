@@ -40,6 +40,10 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
   const handleNextStep= async () => {
     if(solicitud.conLogistica) {
       const nroSeguimiento = await solicitarEnvio(solicitud.envio);
+      if (!nroSeguimiento){
+        alert('Error al conectarse con el servicio de envios. Intente nuevamente mas tarde');
+        return;
+      }
       solicitud.envio.nroSeguimiento= nroSeguimiento;
     }
     nextStep();
