@@ -17,6 +17,8 @@ namespace Core.DTOs
         [Required]
         public int IdLocalidad { get; set; }
 
+        public int? nroSeguimiento { get; set; }
+
 
     }
 }

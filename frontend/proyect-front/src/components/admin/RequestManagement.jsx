@@ -58,6 +58,15 @@ function RequestManagement() {
       console.error('Error updating request state:', error);
     }
   };
+  const updateSolicitudEnvio = async (solicitud) => {
+    try {
+      console.log('Updating request deliver...');
+      await apiService.updateRequestDeliverAdmin(solicitud.id, solicitud.envio);
+      console.log('Updated request deliver');
+    } catch (error) {
+      console.error('Error updating request state:', error);
+    }
+  };
 
   const updateSolicitudPresupuesto=async()=>{
     try {
@@ -90,12 +99,21 @@ function RequestManagement() {
     console.log('Next step');
     const stepIndex = steps.indexOf(currentStep);
     console.log('stepIndex:', stepIndex);
-    if (stepIndex < steps.length - 1 && steps[stepIndex + 1]!=='Presupuestada') {
+    if (stepIndex < steps.length - 1 && steps[stepIndex + 1]!=='Presupuestada'&& steps[stepIndex + 1]!=='Revisada') {
       const newStep = steps[stepIndex + 1];
       console.log('step viejo:', newStep);
       await updateSolicitudEstado(newStep, stepIndex);
       console.log('Updated step nuevo:', newStep);
     }
+    if (steps[stepIndex + 1]==='Revisada') {
+      const newStep = steps[stepIndex + 1];
+      console.log('step viejo:', newStep);
+      console.log('Solicitud: ', solicitud);
+      await updateSolicitudEnvio(solicitud);
+      await updateSolicitudEstado(newStep, stepIndex);
+      console.log('Updated step nuevo:', newStep);
+    }
+
     if (steps[stepIndex + 1]==='Presupuestada'){
       console.log('Solicitud: ', solicitud);
       await updateSolicitudPresupuesto();
@@ -130,7 +148,7 @@ function RequestManagement() {
   const renderContent = () => {
     switch (solicitud.estado) {
       case 'Iniciada':
-        return <StartedStep nextStep={nextStep} subcontractStep={subcontractStep} cancelStep={cancelStep} />;
+        return <StartedStep solicitud={solicitud} nextStep={nextStep} subcontractStep={subcontractStep} cancelStep={cancelStep} />;
       case 'Revisada':
         return <ReviewedStep solicitud={solicitud} nextStep={nextStep} cancelStep={cancelStep} handleChange={handleChange} />;
       case 'Presupuestada':

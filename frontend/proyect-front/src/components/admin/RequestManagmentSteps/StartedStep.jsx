@@ -8,15 +8,15 @@ import envioService from "../../../services/apiEnviosService.jsx";
 
 import "./StartedStep.css";
 
-function StartedStep({ nextStep, subcontractStep, cancelStep }) {
-  const [solicitud, setSolicitud] = useState(null);
+function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
+  // const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const [idCategoria, setIdCategoria] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
+ /*useEffect(() => {
     const fetchSolicitudDetails = async () => {
       try {
         console.log('Fetching solicitud details...', backendURL);
@@ -31,17 +31,22 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
       }
     }
     fetchSolicitudDetails();
-  }, [solicitudId]);
+  }, [solicitudId]);*/
 
   if (!solicitud) {
     return <div>Cargando...</div>;
   }
 
-  const handleNextStep= () => {
-    solicitarEnvio(solicitud.envio);
+  const handleNextStep= async () => {
+    if(solicitud.conLogistica) {
+      const nroSeguimiento = await solicitarEnvio(solicitud.envio);
+      solicitud.envio.nroSeguimiento= nroSeguimiento;
+    }
+    nextStep();
   }
 
   const solicitarEnvio = async (data) => {
+
     const uuid_admin='cda6ad47-e784-4b29-9b34-f680b21e1563';
     const envioData = {
       descripcion: "Envio de paquete",
@@ -71,7 +76,8 @@ function StartedStep({ nextStep, subcontractStep, cancelStep }) {
       console.log('Solicitando envio...' ,envioData);
       const response = await envioService.postEnvio(envioData);
       console.log('Envio solicitado:', response);
-      nextStep();
+      const nroSeguimiento = response.nroSeguimiento;
+      return nroSeguimiento;
     } catch (error) {
       console.error('Error solicitando envio:', error);
     }

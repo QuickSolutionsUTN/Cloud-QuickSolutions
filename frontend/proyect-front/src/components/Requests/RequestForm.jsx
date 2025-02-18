@@ -76,7 +76,7 @@ export const RequestForm = () => {
       DataToSend.envio = {
       calle: envioData.street,
       numero: envioData.number,
-      piso:envioData.floor,
+      piso:envioData?.floor || 0,
       departamento: envioData.apartment,
       idLocalidad: parseInt(envioData.cityId, 10),
     }

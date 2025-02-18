@@ -62,6 +62,8 @@ const apiService = {
   updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin`, data),
   updateRequestBudgetAdmin: (data) => api.put(`/solicitud/${data.id}/presupuesto`, data),
   updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario`, data),
+
+  updateRequestDeliverAdmin: (id, data) => api.put(`/solicitud/${id}/envio`, data),
 };
 
 export default apiService;

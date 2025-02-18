@@ -1,10 +1,12 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+
+const apiKey= "$2b$10$mipurcIo2A1T2Wyg.yt4oOufazXKOWMCZg8SqtmofhHOLhXZXolKu";
 
 const envioApi = axios.create({
   baseURL: "/api", // URL de la API de envíos
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${apiKey}`,
   },
   withCredentials: true, // Habilita el envío de cookies en las solicitudes
 });
@@ -51,6 +53,11 @@ const envioService = {
 
   postEnvio: async (envioData) => {
     const response = await envioApi.post("/envios/create", envioData, { withCredentials: true });
+    return response.data;
+  },
+
+  getEnvio: async (id) => {
+    const response = await envioApi.get(`/envios/nro-seguimiento/${id}`, { withCredentials: true });
     return response.data;
   },
 

@@ -83,6 +83,24 @@ namespace WebAPI.Controllers
             }
         }
 
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("{id}/envio")]
+        public async Task<IActionResult> ActualizarEstadoEnvioSolicitud(int id,[FromBody] EnvioDTO envioDTO)
+        {
+            try
+            {
+                var solicitudActualizada = await _solicitudServicio.ActualizarEnvioSolicitudAsync(id, envioDTO);
+                return Ok(solicitudActualizada);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al actualizar el estado de la solicitud");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+
         [HttpPut("cancelar")]
         public async Task<IActionResult> CancelarSolicitud([FromBody] SolicitudServicioCancelarDTO solicitudServicioCancelarDTO)
         {

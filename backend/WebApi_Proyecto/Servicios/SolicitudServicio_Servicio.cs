@@ -182,6 +182,35 @@ namespace Servicios
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudActualizada;
         }
+
+        public async Task<SolicitudRespuestaDTO> ActualizarEnvioSolicitudAsync(int id, EnvioDTO envioDTO)
+        {
+            var solicitud = await _context.SolicitudServicio
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            var envio = await _context.Envio
+                .FirstOrDefaultAsync(e => e.IdSolicitudServicio == id);
+
+            if (envio == null)
+            {
+                /*envio = new Envio();
+                _context.Envio.Add(envio);*/
+                throw new Exception("Envio no asociado");
+            }
+
+            envio.nroSeguimiento = envioDTO.nroSeguimiento;
+
+
+            await _context.SaveChangesAsync();
+
+            var solicitudActualizada = await ObtenerSolicitudPorIdAsync(id);
+            return solicitudActualizada;
+        }
     }
 }
 

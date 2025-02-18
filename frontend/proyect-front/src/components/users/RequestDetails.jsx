@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Modal, ToastContainer, Toast } from 'react-bootstrap';
+import { Form, Button, Modal, ToastContainer, Toast, Badge } from 'react-bootstrap';
 import axios from 'axios';
 import { useBackendURL } from '../../contexts/BackendURLContext.jsx';
 import AuthContext from '../../contexts/AuthContext.jsx';
@@ -19,6 +19,11 @@ export default function RequestDetails() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [badgeVariant, setBadgeVariant] = useState('primary');
+  const [mostrarDetalles, setMostrarDetalles] = useState(false);
+  const [envioDetails, setEnvioDetails] = useState({
+    estado: '', origen:null,fecha:null
+  });
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
@@ -28,12 +33,29 @@ export default function RequestDetails() {
         console.log('Solicitud details:', response.data);
         setSolicitud(response.data);
         const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
+        setBadgeVariant(getBadgeVariant(response.data.estado));
       } catch (error) {
         console.error('Error fetching solicitud details:', error);
       }
     }
+    const getBadgeVariant = (estado) => {
+      switch (estado) {
+        case 'Revisada':
+          return 'secondary';
+        case 'Presupuestada':
+          return 'warning';
+        case 'Aprobada':
+          return 'success';
+        case 'Cancelada':
+          return 'danger';
+        case 'Finalizada':
+          return 'secondary';
+        default:
+          return 'primary';
+      }
+    };
     fetchSolicitudDetails();
   }, [solicitudId]);
 
@@ -71,21 +93,40 @@ export default function RequestDetails() {
     setShowToast(true);
   };
 
+  // Función que cambia el estado al hacer clic
+  const handleToggleDeliverDetails = () => {
+    console.log('Solicitando detalles de envio a la API veloway...');
+    getEnvioDetails();
+    setMostrarDetalles(!mostrarDetalles);
+  };
+
+  const getEnvioDetails = async () => {
+    try {
+      const response = await envioService.getEnvio(solicitud.envio.nroSeguimiento);
+      console.log('Detalles del envio:', response);
+      setEnvioDetails({ estado: response.estado, origen: response.origen, fecha: response.fecha });
+      console.log('Detalles del envio:', envioDetails);
+    } catch (error) {
+      console.error('Error al obtener los detalles del envio:', error);
+    }
+  };
+
+
 
   if (!solicitud) {
     return <div>Cargando...</div>;
   }
 
-
   return (
     <>
-      <div className="title-container space-between mb-4">
-        <h2>Resumen solicitud #{solicitudId}</h2>
+      <div className="title-container space-between mb-">
+        <h3>Solicitud ID: {solicitudId}
+          <Badge className="m-2" bg={badgeVariant}>{solicitud.estado}</Badge>
+        </h3>
       </div>
 
       <div className="subtitle-container mb-4">
-        <h4>Estado: {solicitud.estado}</h4>
-        <h4>Fecha: {fechaFormateada}</h4>
+        <h5>{fechaFormateada}</h5>
       </div>
       {(solicitud.estado === 'Presupuestada' || solicitud.estado === 'Aprobada') && (
         <div className="d-flex justify-content-between align-items-center mb-4">
@@ -164,16 +205,34 @@ export default function RequestDetails() {
             </Form.Group>
           </div>
         </div>
-        <div className='row my-3'>
+        <hr />
+
+        {solicitud.conLogistica ? (
+          <>
+            <div className='row my-3'><div className='col-12'><h5>Con servicio de logistica</h5></div></div>
+            <div className="col-12 row my-3">
+              <div className="col-8">
+                <h5>Nro de seguimiento: {solicitud.envio.nroSeguimiento}</h5>
+              </div>
+
+              <div className="col-4 text-end">
+                <Button variant="outline-primary" onClick={handleToggleDeliverDetails}>
+                  {mostrarDetalles ? 'Ocultar detalles' : 'Consultar envío'}
+                </Button>
+              </div>
+              {mostrarDetalles && (
+                <div className="mt-3">
+                  <p><strong>Fecha de solicitud:</strong> {envioDetails.fecha}</p>
+                  <p><strong>Estado:</strong> {envioDetails.estado}</p>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
           <div className='col-4'>
-            <Form.Check
-              type='checkbox'
-              label='Con servicio de logistica'
-              checked={solicitud.conLogistica}
-              readOnly
-            />
+            <h5>Sin servicio de logistica</h5>
           </div>
-        </div>
+        )}
       </Form>
 
       <div className='d-flex justify-content-end mt-3'>
