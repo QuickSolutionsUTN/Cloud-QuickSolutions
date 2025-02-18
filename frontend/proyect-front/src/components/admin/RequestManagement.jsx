@@ -10,6 +10,8 @@ import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
 import CancelModalForm from './RequestManagmentSteps/cancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
+import apiReparacionExterna from '../../services/apiBolsaTrabajoService.jsx';
+
 import { Button } from 'react-bootstrap';
 
 function RequestManagement() {
@@ -120,9 +122,20 @@ function RequestManagement() {
     }
   };
 
-  const subcontractStep = async () => {
+  const handleSubcontractStep = async () => {
     console.log('Subcontratar');
+    getApiResponse();
   };
+
+  const getApiResponse = async () => { 
+    try {
+      const response = await apiReparacionExterna.getTrabajadores();
+      console.log('Response:', response);
+    } catch (error) {
+      console.error('Error fetching trabajadores:', error);
+    }
+  };
+
 
   const cancelStep = () => {
     setShowCancelModalForm(true);
@@ -148,7 +161,7 @@ function RequestManagement() {
   const renderContent = () => {
     switch (solicitud.estado) {
       case 'Iniciada':
-        return <StartedStep solicitud={solicitud} nextStep={nextStep} subcontractStep={subcontractStep} cancelStep={cancelStep} />;
+        return <StartedStep solicitud={solicitud} nextStep={nextStep} subcontractStep={handleSubcontractStep} cancelStep={cancelStep} />;
       case 'Revisada':
         return <ReviewedStep solicitud={solicitud} nextStep={nextStep} cancelStep={cancelStep} handleChange={handleChange} />;
       case 'Presupuestada':
