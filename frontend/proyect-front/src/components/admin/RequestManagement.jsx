@@ -182,7 +182,7 @@ function RequestManagement() {
       case 'Presupuestada':
         return <BudgetedStep />;
       case 'Aprobada':
-        return <ApprovedStep nextStep={nextStep} cancelStep={cancelStep} />;
+        return <ApprovedStep solicitud={solicitud} nextStep={nextStep} cancelStep={cancelStep} handleChange={handleChange} />;
       case 'Finalizada':
         return <FinishedStep />;
       default:
