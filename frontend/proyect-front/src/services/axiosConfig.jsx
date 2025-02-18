@@ -46,6 +46,7 @@ const apiService = {
   updateUser: (id, data) => api.put(`/users/${id}`, data),
   deleteUser: (id) => api.delete(`/users/${id}`),*/
 
+  getRequestsAdmin: () => api.get("/solicitud"),
   // Mantenimientos
   getMaintenanceArray: () => api.get("/mantenimiento"),
   createMaintenance: (data) => api.post("/mantenimiento", data),

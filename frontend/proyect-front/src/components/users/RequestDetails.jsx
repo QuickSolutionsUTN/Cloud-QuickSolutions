@@ -22,7 +22,7 @@ export default function RequestDetails() {
   const [badgeVariant, setBadgeVariant] = useState('primary');
   const [mostrarDetalles, setMostrarDetalles] = useState(false);
   const [envioDetails, setEnvioDetails] = useState({
-    estado: '', origen:null,fecha:null
+    estado: '', origen: null, fecha: null
   });
 
   useEffect(() => {
@@ -65,6 +65,7 @@ export default function RequestDetails() {
       idSolicitudServicioEstado: 4
     };
     updateRequest(dataToUpdate, 'Aprobada');
+    window.location.reload();
     setShowAcceptModal(false);
   };
 
@@ -81,7 +82,6 @@ export default function RequestDetails() {
     try {
       const response = await apiService.updateRequestUser(data);
       console.log('Solicitud actualizada', response.data);
-      setSolicitud(prevSolicitud => ({ ...prevSolicitud, estado: { estado } }));
     } catch (error) {
       console.error('Error al aceptar la solicitud:', error);
       handleError();
@@ -205,9 +205,28 @@ export default function RequestDetails() {
             </Form.Group>
           </div>
         </div>
+        {solicitud.diagnosticoTecnico? (
+          <div className="my-4">
+            <div className='row'>
+              <div className='col-12'>
+                <Form.Group controlId='descripcion'>
+                  <Form.Label>Diagnostico Tecnico</Form.Label>
+                  <Form.Control
+                    as='textarea'
+                    rows={3}
+                    type='text'
+                    value={solicitud.diagnosticoTecnico}
+                    readOnly
+                    style={{ resize: 'vertical' }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+          </div>
+        ) : null}
         <hr />
 
-        {solicitud.conLogistica && solicitud.envio!==null ? (
+        {solicitud.conLogistica && solicitud.envio !== null ? (
           <>
             <div className='row my-3'><div className='col-12'><h5>Con servicio de logistica</h5></div></div>
             <div className="col-12 row my-3">

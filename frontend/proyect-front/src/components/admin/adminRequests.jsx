@@ -1,27 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
-import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import AuthContext from '../../contexts/AuthContext.jsx';
-import { useBackendURL } from '../../contexts/BackendURLContext.jsx';
+import apiService from '../../services/axiosConfig.jsx';
 import './adminRequests.css'
 
 function AdminRequests() {
   const [userRequests, setUserRequests] = useState([]);
-  const { userToken } = useContext(AuthContext);
-  const backendURL = useBackendURL();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Buscando solicitudes con backendURL: ", backendURL);
-        const response = await axios.get(`${backendURL}/api/Solicitud`, {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        });
+        console.log("Buscando solicitudes con backendURL: ");
+        const response = await apiService.getRequestsAdmin();
+        console.log("Solicitudes... ", response.data);
         const mappedData = response.data.map(request => ({
           id: request.id,
           idSolicitud: request.id,
@@ -40,7 +34,7 @@ function AdminRequests() {
       }
     };
     fetchData();
-  }, [backendURL, userToken]);
+  }, []);
 
   const columns = [
     {
