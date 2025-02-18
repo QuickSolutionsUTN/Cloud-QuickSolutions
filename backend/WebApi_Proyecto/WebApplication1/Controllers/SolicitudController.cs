@@ -137,7 +137,7 @@ namespace WebAPI.Controllers
 
                 if (solicitud.Estado != "Iniciada" && solicitud.Estado != "Presupuestada")
                 {
-                    return BadRequest(new { message = "La solicitud no se encuentra en un estado válido para actualizar su estado." });
+                    return BadRequest(new { message = "La solicitud no se encuentra en un estado vï¿½lido para actualizar su estado." });
                 }
 
                 var solicitudEstados = await _solicitudEstadoServicio.ObtenerSolicitudEstadosAsync();
@@ -152,7 +152,7 @@ namespace WebAPI.Controllers
                 if (solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado != estadoAprobada.Id &&
                     solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado != estadoRechazada.Id)
                 {
-                    return Forbid("Id para cambio de estado inválido, debe ser 'Aprobada' o 'Rechazada'.");
+                    return Forbid("Id para cambio de estado invï¿½lido, debe ser 'Aprobada' o 'Rechazada'.");
                 }
                 // Actualizar estado de la solicitud
                 var solicitudActualizada = await _solicitudServicio.ActualizarEstadoSolicitudAsync(solicitudServicioEstadoUpdateDTO);
@@ -165,12 +165,27 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        [HttpPut("{solicitudId}/presupuesto")]
-        public async Task<IActionResult> ActualizarPresupuestoSolicitud([FromBody] SolicitudServicioPresupuestoUpdateDTO solicitudServicioPresupuestoUpdateDTO)
+        [HttpPut("{solicitudId}/presupuestar")]
+        public async Task<IActionResult> PresupuestarSolicitud([FromBody] SolicitudServicioPresupuestarDTO solicitudServicioPresupuestarDTO)
         {
             try
             {
-                var solicitudActualizada = await _solicitudServicio.ActualizarPresupuestoSolicitudAsync(solicitudServicioPresupuestoUpdateDTO);
+                var solicitudActualizada = await _solicitudServicio.PresupuestarSolicitudAsync(solicitudServicioPresupuestarDTO);
+                return Ok(solicitudActualizada);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("{solicitudId}/finalizar")]
+        public async Task<IActionResult> FinalizarSolicitud(int solicitudId, [FromBody] SolicitudServicioFinalizarDTO SolicitudServicioFinalizarDTO)
+        {
+            try
+            {
+                var solicitudActualizada = await _solicitudServicio.FinalizarSolicitudAsync(SolicitudServicioFinalizarDTO);
                 return Ok(solicitudActualizada);
             }
             catch (Exception ex)

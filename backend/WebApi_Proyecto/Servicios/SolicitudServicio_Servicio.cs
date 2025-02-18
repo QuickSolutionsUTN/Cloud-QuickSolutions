@@ -163,26 +163,6 @@ namespace Servicios
             var solicitudCancelada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudCancelada;
         }
-        public async Task<SolicitudRespuestaDTO> ActualizarPresupuestoSolicitudAsync(SolicitudServicioPresupuestoUpdateDTO solicitudServicioPresupuestoUpdateDTO)
-        {
-            var solicitud = await _context.SolicitudServicio
-                .FirstOrDefaultAsync(s => s.Id == solicitudServicioPresupuestoUpdateDTO.Id);
-
-            if (solicitud == null)
-            {
-                throw new Exception("Solicitud no encontrada");
-            }
-
-            solicitud.IdSolicitudServicioEstado = solicitudServicioPresupuestoUpdateDTO.IdSolicitudServicioEstado;
-            solicitud.DiagnosticoTecnico = solicitudServicioPresupuestoUpdateDTO.DiagnosticoTecnico;
-            solicitud.Monto = solicitudServicioPresupuestoUpdateDTO.Monto;
-            solicitud.FechaPresupuestada = DateTime.UtcNow;
-            solicitud.FechaEstimada= DateTime.SpecifyKind(solicitudServicioPresupuestoUpdateDTO.FechaEstimada, DateTimeKind.Utc); 
-            await _context.SaveChangesAsync();
-            var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
-            return solicitudActualizada;
-        }
-
         public async Task<SolicitudRespuestaDTO> ActualizarEnvioSolicitudAsync(int id, EnvioDTO envioDTO)
         {
             var solicitud = await _context.SolicitudServicio
@@ -209,6 +189,42 @@ namespace Servicios
             await _context.SaveChangesAsync();
 
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(id);
+            return solicitudActualizada;
+        }
+        public async Task<SolicitudRespuestaDTO> PresupuestarSolicitudAsync(SolicitudServicioPresupuestarDTO SolicitudServicioPresupuestarDTO)
+        {
+            var solicitud = await _context.SolicitudServicio
+                .FirstOrDefaultAsync(s => s.Id == SolicitudServicioPresupuestarDTO.Id);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            solicitud.IdSolicitudServicioEstado = SolicitudServicioPresupuestarDTO.IdSolicitudServicioEstado;
+            solicitud.DiagnosticoTecnico = SolicitudServicioPresupuestarDTO.DiagnosticoTecnico;
+            solicitud.Monto = SolicitudServicioPresupuestarDTO.Monto;
+            solicitud.FechaRevisada = DateTime.UtcNow;
+            solicitud.FechaEstimada= DateTime.SpecifyKind(SolicitudServicioPresupuestarDTO.FechaEstimada, DateTimeKind.Utc); 
+            await _context.SaveChangesAsync();
+            var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
+            return solicitudActualizada;
+        }
+        public async Task<SolicitudRespuestaDTO> FinalizarSolicitudAsync(SolicitudServicioFinalizarDTO SolicitudServicioFinalizarDTO)
+        {
+            var solicitud = await _context.SolicitudServicio
+                .FirstOrDefaultAsync(s => s.Id == SolicitudServicioFinalizarDTO.Id);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            solicitud.IdSolicitudServicioEstado = SolicitudServicioFinalizarDTO.IdSolicitudServicioEstado;
+            solicitud.FechaAprobada = DateTime.UtcNow;
+            solicitud.Resumen= SolicitudServicioFinalizarDTO.Resumen;
+            await _context.SaveChangesAsync();
+            var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudActualizada;
         }
     }
