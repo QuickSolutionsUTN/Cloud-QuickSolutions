@@ -20,13 +20,14 @@ namespace Core.DTOs
         public string TipoServicio { get; set; }
         public bool ConLogistica { get; set; }
         public EnvioDTO? Envio { get; set; }
-        // Campos que se usan a partir del estado "Presupuestada"
-        public string? DiagnosticoTecnico { get; set; }
-        public float? Monto { get; set; }
-        public string? TecnicoAsignado { get; set; }
-        public DateTime? FechaEstimada { get; set; }
         public bool? Tercearizado { get; set; }
-        public DateTime? FechaPresupuestada { get; set; }
+        public string? TecnicoAsignado { get; set; }
+        public DateTime? FechaRevisada { get; set; }
+        public string? DiagnosticoTecnico { get; set; }
+        public DateTime? FechaEstimada { get; set; }
+        public float? Monto { get; set; }
+        public DateTime? FechaPresupuestada { get; set; } 
+        public DateTime? FechaAprobada { get; set; }
         public string? Resumen { get; set; }
     }
 }

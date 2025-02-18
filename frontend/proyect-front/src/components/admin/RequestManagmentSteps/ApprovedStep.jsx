@@ -13,7 +13,7 @@ function ApprovedStep({ nextStep, cancelStep }) {
   const navigate = useNavigate();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const [idCategoria, setIdCategoria] = useState(null);
-  const [resumenTrabajo, setResumenTrabajo] = useState('');
+  const [Resumen, setResumen] = useState('');
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -35,8 +35,8 @@ function ApprovedStep({ nextStep, cancelStep }) {
   }, [solicitudId]);
 
   useEffect(() => {
-    setIsFormValid(!!resumenTrabajo);
-  }, [resumenTrabajo]);
+    setIsFormValid(!!Resumen);
+  }, [Resumen]);
 
   if (!solicitud) {
     return <div>Cargando...</div>;
@@ -45,14 +45,16 @@ function ApprovedStep({ nextStep, cancelStep }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const newErrors = {};
-    if (!resumenTrabajo) {
-      newErrors.resumenTrabajo = "El resumen del trabajo es obligatorio.";
+    if (!Resumen) {
+      newErrors.Resumen = "El resumen del trabajo es obligatorio.";
     }
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
     setErrors({});
+    console.log('Solicitud para finalizar:', solicitud);
+    console.log('Resumen del trabajo:', Resumen);
     nextStep();
   };
 
@@ -133,11 +135,11 @@ function ApprovedStep({ nextStep, cancelStep }) {
                 rows={3}
                 type='text'
                 placeholder='Ingrese el resumen'
-                value={resumenTrabajo}
-                onChange={(e) => setResumenTrabajo(e.target.value)}
+                value={Resumen}
+                onChange={handleChange}
                 required
               />
-              {errors.resumenTrabajo && <p className="error-text">{errors.resumenTrabajo}</p>}
+              {errors.Resumen && <p className="error-text">{errors.Resumen}</p>}
             </Form.Group>
           </div>
           <div className='button-group approvedStep'>

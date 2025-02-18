@@ -67,8 +67,7 @@ function RequestManagement() {
       console.error('Error updating request state:', error);
     }
   };
-
-  const updateSolicitudPresupuesto=async()=>{
+  const updateRequestBudgeted=async()=>{
     try {
       const stepIndex = steps.indexOf(currentStep);
       const newStep = steps[stepIndex + 1];
@@ -81,6 +80,31 @@ function RequestManagement() {
         fechaEstimada: solicitud.fechaEstimada
       };
       await apiService.updateRequestBudgetAdmin(requestData);
+      setCurrentStep(newStep);
+      setSolicitud(prevSolicitud => ({
+        ...prevSolicitud,
+        estado: newStep
+      }));
+      console.log('Updated solicitud:', {
+        ...solicitud,
+        estado: newStep
+      });
+    } catch (error) {
+      console.error('Error updating request state:', error);
+    }
+  };
+
+  const UpdateRequestFinished=async()=>{
+    try {
+      const stepIndex = steps.indexOf(currentStep);
+      const newStep = steps[stepIndex + 1];
+      console.log('Updating request state...', solicitud);
+      const requestData = {
+        id: solicitudId, 
+        Resumen: solicitud.Resumen,
+        idSolicitudServicioEstado: stepIndex + 2,
+      };
+      await apiService.updateRequestFinished(requestData);
       setCurrentStep(newStep);
       setSolicitud(prevSolicitud => ({
         ...prevSolicitud,
@@ -116,7 +140,11 @@ function RequestManagement() {
 
     if (steps[stepIndex + 1]==='Presupuestada'){
       console.log('Solicitud: ', solicitud);
-      await updateSolicitudPresupuesto();
+      await updateRequestBudgeted();
+    }
+    if (steps[stepIndex + 1]==='Finalizada'){
+      console.log('Solicitud: ', solicitud);
+      await UpdateRequestFinished();
     }
   };
 

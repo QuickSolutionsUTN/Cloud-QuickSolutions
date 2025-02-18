@@ -56,7 +56,7 @@ namespace DALCodeFirst.Modelos
         public bool Tercearizado { get; set; }
         [Required]
         public bool ConLogistica { get; set; }
-        public DateTime? FechaAceptada { get; set; }
+        public DateTime? FechaRevisada { get; set; }
         public DateTime? FechaPresupuestada { get; set; }
         public string? DiagnosticoTecnico { get; set; }
         public DateTime? FechaAprobada { get; set; }
