@@ -18,6 +18,10 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mui/icons-material": "^6.4.2",
     "@mui/material": "^6.4.2",
+    "@prisma/client": "^6.3.1",
     "js-cookie": "^3.0.5"
+  },
+  "devDependencies": {
+    "prisma": "^6.3.1"
   }
 }

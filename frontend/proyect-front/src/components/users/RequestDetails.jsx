@@ -207,7 +207,7 @@ export default function RequestDetails() {
         </div>
         <hr />
 
-        {solicitud.conLogistica ? (
+        {solicitud.conLogistica && solicitud.envio!==null ? (
           <>
             <div className='row my-3'><div className='col-12'><h5>Con servicio de logistica</h5></div></div>
             <div className="col-12 row my-3">
