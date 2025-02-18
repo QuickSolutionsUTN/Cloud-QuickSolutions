@@ -3,13 +3,15 @@ import axios from "axios";
 const apiKey= "mi_api_key";
 
 const bolsaTrabajoApi = axios.create({
-  baseURL: "http://127.0.0.1:8000", // URL de la API de envíos
+  baseURL: "http://127.0.0.1:8000/app", // URL de la API de
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${apiKey}`,
   },
   withCredentials: true, // Habilita el envío de cookies en las solicitudes
 });
+
+
+
 
 // Interceptor para agregar el token a cada solicitud
 
