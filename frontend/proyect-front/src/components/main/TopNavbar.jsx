@@ -16,7 +16,7 @@ export const TopNavbar = ({ onLoginClick, onJoinClick, onLogoutClick }) => {
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
-    navigate('/'); // Redirige a la HomePage
+    navigate('/');
   };
 
   const handleScrollToMaintenance = () => {

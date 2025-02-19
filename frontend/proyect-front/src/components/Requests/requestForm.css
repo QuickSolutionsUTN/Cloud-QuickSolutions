@@ -4,11 +4,15 @@
 
 .step.inactive{
   color: grey; 
+  min-height: 0px;
+  margin-bottom: 1%;
 }
 
 .step.active {
   background:transparent;
   color: #D55403; 
+  min-height: 0px;
+  margin-bottom: 1%;
 }
 
 .container-buttons {

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import logo from "../assets/logos/logo.png";
 import './adminLayout.css';
 import AuthContext from '../contexts/AuthContext.jsx';
@@ -9,17 +9,23 @@ import user from '../assets/logos/user-white.png';
 
 function AdminLayout() {
   const { userName, userSurName, logout, isAuthenticated, userRole } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const onLogoutClick = () => {
     logout();
     console.log("Clickeo cerrar sesion");
   };
+
+  const handleLogoClick = () => {
+    navigate('/admin');
+  };
+
   return (
     <>
       <div className="admin-layout">
         <header className="admin-header">
           <div className='admin-header-logo'>
-            <img src={logo} />
+            <img src={logo} onClick={handleLogoClick}/>
           </div>
           <div className="admin-user-menu-container">
 

@@ -7,7 +7,6 @@
     width: 80%;
 }
 
-/* Línea de fondo gris */
 .progress-line-background {
     position: absolute;
     top: 15px;
@@ -18,7 +17,6 @@
     z-index: 0;
 }
 
-/* Línea de progreso dinámica */
 .progress-line {
     position: absolute;
     top: 15px;
@@ -28,6 +26,16 @@
     transition: width 0.3s ease-in-out;
     z-index: 0;
 }
+.progress-line-cancelled {
+    position: absolute;
+    top: 15px;
+    left: 10%;
+    height: 4px;
+    background: red;
+    transition: width 0.3s ease-in-out;
+    z-index: 0;
+}
+
 
 .admin-progress-bar .step {
     text-align: center;
@@ -62,7 +70,7 @@
     visibility: visible;
 }
 
-.step .step-name {
+.step .step-name, .step .step-name-cancelled {
     margin-bottom: 1%;
     padding: 0;
     font-size: 15px;
@@ -70,7 +78,7 @@
 }
 
 /* Estilo de los puntos */
-.circle {
+.circle, .circle-cancelled {
     width: 30px;
     height: 30px;
     line-height: 30px;
@@ -85,32 +93,20 @@
 .active .circle {
     background: green;
 }
+.active .circle-cancelled{
+    background: rgb(235, 22, 22);
+}
 
 /* Cambiar color y estilo de los nombres de los pasos activos */
 .progress-container .active .step-name {
     color: green;
     font-weight: bold;
 }
-
+.progress-container .active .step-name-cancelled {
+    color: rgb(235, 22, 22);
+    font-weight: bold;
+}
 /* Ajustar la línea de progreso para que no se extienda más allá del último paso */
 .progress-container .progress-line {
     width: calc((100% - 30px) * var(--progress));
 }
-
-/* Cambiar el contenido del círculo y el color de la barra para el paso cancelado 
-.step.Cancelada .circle {
-    background: red;
-    content: "0";
-}
-
-.progress-container.Cancelada .progress-line {
-    background: red;
-}
-
-
-Cambiar el contenido del círculo para el paso cancelado 
-.step.cancelada .circle {
-    content: "6";
-}
-
-*/

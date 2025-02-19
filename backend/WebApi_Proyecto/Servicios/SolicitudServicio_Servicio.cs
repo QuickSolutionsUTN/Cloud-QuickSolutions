@@ -136,7 +136,10 @@ namespace Servicios
             {
                 throw new Exception("Solicitud no encontrada");
             }
-
+            if ( solicitud.SolicitudServicioEstado.Id == 3 )
+            {
+                solicitud.FechaPresupuestada = DateTime.UtcNow;
+            }
             solicitud.IdSolicitudServicioEstado = solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado;
             await _context.SaveChangesAsync();
 
@@ -156,6 +159,7 @@ namespace Servicios
 
             solicitud.IdSolicitudServicioEstado = 6; // Estado "Cancelada"
             solicitud.Resumen = solicitudServicioCancelarDTO.Resumen;
+            solicitud.FechaAprobada = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             var solicitudCancelada = await ObtenerSolicitudPorIdAsync(solicitud.Id);

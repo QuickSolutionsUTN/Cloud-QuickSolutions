@@ -58,9 +58,6 @@ const AdminSideBar = () => {
           <Nav.Item className="nav-item">
             <Nav.Link as={NavLink} to={`${currentPath}/users`}> Usuarios</Nav.Link>
           </Nav.Item>
-          <Nav.Item className="nav-item">
-            <Nav.Link as={NavLink} to={`${currentPath}/permisions`}> Roles y Permisos</Nav.Link>
-          </Nav.Item>
         </Nav>
       </div>
     </>
