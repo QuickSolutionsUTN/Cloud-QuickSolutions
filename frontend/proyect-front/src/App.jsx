@@ -37,7 +37,6 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
-            <Route path="maintenance" element={<ProtectedRoute roleRequired="maintenance"><MaintenancesPage /></ProtectedRoute>} />
             <Route path="requests" element={<RepairsRequest />} />
             <Route path="users">
               <Route path="profile" element={<UserProfilePage />} />
