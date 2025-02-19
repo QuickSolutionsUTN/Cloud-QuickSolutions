@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Form, Button, Modal, ListGroup, Row, Col } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { useNavigate } from "react-router-dom";
-
+import "react-datepicker/dist/react-datepicker.css";
 import envioService from "../../../services/apiEnviosService.jsx";
 import apiReparacionExterna from "../../../services/apiBolsaTrabajoService.jsx";
 
@@ -105,6 +105,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       getApiResponse();
     }
     setShow(true);
+    setShowDateSelection(true);
   }
 
   const mapProfessionsToItems = () => {
@@ -133,9 +134,8 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       setError('Debe seleccionar un trabajador');
       return;
     }
-    setShowDateSelection(true);
 
-    /*if (!startDate || !endDate) {
+    if (!startDate || !endDate) {
       setError('Debe seleccionar un rango de fechas');
       return;
     }
@@ -143,7 +143,15 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     console.log('Trabajador seleccionado:', selectedItem);
     console.log('Rango de fechas:', startDate, endDate);
 
-    subcontractStep();*/
+    const formattedStartDate = startDate.toISOString().split("T")[0];
+    const formattedEndDate = endDate.toISOString().split("T")[0];
+
+    console.log("Fecha de inicio:", formattedStartDate);
+    console.log("Fecha de fin:", formattedEndDate);
+
+    // subcontractStep();
+    // setShow(false);
+    
   }
 
 
@@ -288,27 +296,28 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
           )}
           {showDateSelection && (
             <div className="mt-3 p-3 border rounded">
-              <h5>Selecciona el período</h5>
-              <div className="d-flex gap-2">
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  placeholderText="Fecha inicio"
-                  className="form-control"
-                />
-                {/*
-                <DatePicker
-                  selected={new Date()}
-                  onChange={(date) => setEndDate(date)}
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  minDate={startDate}
-                  placeholderText="Fecha fin"
-                  className="form-control"
-                />*/}
-              </div>
+            <h5>Selecciona el período</h5>
+            <div className="d-flex gap-2">
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                placeholderText="Fecha inicio"
+                className="form-control"
+                dateFormat="yyyy-MM-dd"
+              />
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                placeholderText="Fecha fin"
+                className="form-control"
+                dateFormat="yyyy-MM-dd"
+              />
             </div>
+          </div>
           )}
         </Modal.Body>
         <Modal.Footer>
