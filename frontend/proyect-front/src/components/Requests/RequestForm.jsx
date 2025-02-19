@@ -54,17 +54,16 @@ export const RequestForm = () => {
 
   const handleSubmit = async (data) => {
     console.log("Enviando formulario:", data);
-    const envioData = watch('logisticsData');
+    const envioData = data.logisticsData;
     if (envioData.conLogistica) { data.logisticsData.conLogistica = true; }
 
     const DataToSend = {
-      userEmail: data.personalData.userEmail,
+      userEmail: data.personalData.email,
       descripcion: data.productData.problemDescription,
       idTipoServicio: parseInt(data.productData.serviceId, 10),
       idTipoProducto: parseInt(data.productData.productTypeId, 10),
       conLogistica: data.logisticsData.conLogistica,
     };
-
     if (envioData.conLogistica) {
       DataToSend.envio = {
         calle: envioData.street,
@@ -104,6 +103,7 @@ export const RequestForm = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prevStep) => Math.min(prevStep + 1, steps.length - 1));
     } else {
+      const formData = watch();
       handleSubmit(formData);
     }
   };
