@@ -226,7 +226,7 @@ function RequestManagement() {
   return (
     <div className='requestManagement'>
       <div className='requestManagement-header'>
-        <div className='d-flex align-items-center justify-content-between mb-3'>
+        <div className='d-flex align-items-center justify-content-between'>
           <Button
             variant="outline-dark"
             onClick={() => navigate('/admin/requests')}
@@ -234,9 +234,9 @@ function RequestManagement() {
             Volver
           </Button>
         </div>
-        <div className='d-flex align-items-center justify-content-center p-2'>
+        <div className='d-flex align-items-center justify-content-center'>
           <div className='text-center'>
-            <h3>Gestión de solicitud #{solicitudId}</h3>
+            <h1>Gestión de solicitud #{solicitudId}</h1>
             <div className='align-items-center'>
               <p style={{ color: 'gray' }}>Generada: {fechaFormateada} {new Date(solicitud.fechaGeneracion).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
             </div>
@@ -244,11 +244,8 @@ function RequestManagement() {
         </div>
       </div>
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
-      <div className='d-flex request-details p-3'>
-        <div className='flex-grow-1'>
-          {renderContent()}
-        </div>
-        <div className='aside-details'>
+      <hr style={{ borderTop: '1px solid lightgray', margin: '1%' }} />
+      <div className='details d-flex flex-row ' >
           <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
             <div className="d-flex flex-column">
               <span className="mb-2 fw-bold">Usuario</span>
@@ -270,6 +267,10 @@ function RequestManagement() {
               </span>
             </div>
           </div>
+        </div>
+      <div className='d-flex request-details p-3'>
+        <div className='flex-grow-1'>
+          {renderContent()}
         </div>
       </div>
 
