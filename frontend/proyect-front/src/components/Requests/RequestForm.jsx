@@ -141,7 +141,7 @@ return (
       <div className={`step ${currentStep >= 3 ? 'active' : 'inactive'}`}> <b>4. {steps[3].name}</b></div>
     </div>
     <ProgressBar now={(currentStep + 1) * (100 / steps.length)} className='custom-progress' />
-    <div className="mt-4">
+    <div className="mt-5">
       {currentStep !== 2 && <StepForm
         step={steps[currentStep]}
         formData={formData[steps[currentStep].section]}
