@@ -41,17 +41,17 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
 
   return (
     <div className="container text-center mt-4">
-     {/*  <h4>Progreso: {currentStep === "Cancelada" ? "Cancelada" : steps[stepIndex]}</h4>*/}
+     {/*  <h4>Progreso: {currentStep === "</div>Cancelada" ? "Cancelada" : steps[stepIndex]}</h4>*/}
       <div className="progress-container">
         <div className="progress-line-background"></div>
         <div className={`progress-line${isCancelled ? "-cancelled" : ""}`} style={{ width: `${((isCancelled ? lastCompletedStepIndex : stepIndex) / (steps.length - 1)) * 80}%` }}></div>
         {steps.map((step, index) => (
           <div key={index} className={`step ${index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "active" : ""}`}>
             <div className={`circle${isCancelled ? "-cancelled" : ""}`}>
-              {index === lastCompletedStepIndex ? "X" : (index === 4 ? <FontAwesomeIcon icon={faCheck} /> : index + 1)}
+              {isCancelled && index === lastCompletedStepIndex ? "X" : (index === 4 ? <FontAwesomeIcon icon={faCheck} /> : index + 1)}
             </div>
             <p className={`step-name${isCancelled ? "-cancelled" : ""}`}>{step}</p>
-            <p className={`date ${index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "visible" : ""}`}>
+            <p className={`date $</p>{index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "visible" : ""}`}>
               {step === "Iniciada" && solicitud.fechaIniciada && formatDate(solicitud.fechaIniciada)}
               {step === "Revisada" && solicitud.fechaRevisada && formatDate(solicitud.fechaRevisada)}
               {step === "Presupuestada" && solicitud.fechaPresupuestada && formatDate(solicitud.fechaPresupuestada)}
