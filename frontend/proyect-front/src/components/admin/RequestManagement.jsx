@@ -14,6 +14,7 @@ import apiReparacionExterna from '../../services/apiBolsaTrabajoService.jsx';
 
 import { Button } from 'react-bootstrap';
 import './RequestManagement.css';
+import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -169,7 +170,7 @@ function RequestManagement() {
   };
 
 
-  const cancelStep = () => {
+  const handleCancelButton = () => {
     setShowCancelModalForm(true);
   };
 
@@ -193,15 +194,17 @@ function RequestManagement() {
   const renderContent = () => {
     switch (solicitud.estado) {
       case 'Iniciada':
-        return <StartedStep solicitud={solicitud} nextStep={nextStep} subcontractStep={handleSubcontractStep} cancelStep={cancelStep} />;
+        return <StartedStep solicitud={solicitud} nextStep={nextStep} subcontractStep={handleSubcontractStep} cancelStep={handleCancelButton} />;
       case 'Revisada':
-        return <ReviewedStep solicitud={solicitud} nextStep={nextStep} cancelStep={cancelStep} handleChange={handleChange} />;
+        return <ReviewedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Presupuestada':
         return <BudgetedStep />;
       case 'Aprobada':
-        return <ApprovedStep solicitud={solicitud} nextStep={nextStep} cancelStep={cancelStep} handleChange={handleChange} />;
+        return <ApprovedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Finalizada':
         return <FinishedStep />;
+      case 'Cancelada':
+        return <CancelStep solicitud={solicitud}/>;
       default:
         return <div>Error al obtener el estado</div>;
     }

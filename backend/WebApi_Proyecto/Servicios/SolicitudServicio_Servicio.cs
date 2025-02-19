@@ -158,6 +158,7 @@ namespace Servicios
 
             solicitud.IdSolicitudServicioEstado = 6; // Estado "Cancelada"
             solicitud.Resumen = solicitudServicioCancelarDTO.Resumen;
+            solicitud.FechaAprobada = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             var solicitudCancelada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
