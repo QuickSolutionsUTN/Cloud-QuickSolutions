@@ -23,5 +23,8 @@ namespace DALCodeFirst.Modelos
 
         [ForeignKey("IdEmpresa")]
         public EmpresaExterna Empresa { get; set; }
+
+        [Required]
+        public int IdSolicitudExterna { get; set; }
     }
 }

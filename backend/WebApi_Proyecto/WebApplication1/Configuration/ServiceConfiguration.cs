@@ -115,6 +115,7 @@ public static class ServiceConfiguration
         builder.Services.AddScoped<ITipoProductoServicio, TipoProductoServicio>();
         builder.Services.AddScoped<ITipoServicio_Servicio, TipoServicio_Servicio>();
         builder.Services.AddScoped<IMantenimientoServicio, MantenimientoServicio>();
+        builder.Services.AddScoped<IEmpresaExternaServicio, EmpresaExternaServicio>();
         /*
         //Identity
         builder.Services.AddIdentity<Usuario, Rol>(options =>

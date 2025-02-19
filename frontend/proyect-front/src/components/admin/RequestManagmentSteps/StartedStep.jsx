@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Button, Modal, ListGroup, Row, Col } from "react-bootstrap";
+import { Form, Button, Modal, ListGroup, Row, Col, Alert } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
@@ -17,9 +17,10 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [trabajadoresFiltrados, setTrabajadoresFiltrados] = useState([]);
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [showDateSelection, setShowDateSelection] = useState(false);
+  const [postApiExito, setPostApiExito] = useState(false);
 
   if (!solicitud) { return <div>Cargando...</div>; }
 
@@ -97,6 +98,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     if (items.length > 0 && profesiones.length > 0) {
       mapProfessionsToItems();
     }
+    console.log(showDateSelection);
   }, [items, profesiones]);
 
 
@@ -105,7 +107,6 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       getApiResponse();
     }
     setShow(true);
-    setShowDateSelection(true);
   }
 
   const mapProfessionsToItems = () => {
@@ -127,69 +128,65 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     setSelectedItem(item);
   };
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setSelectedItem(null);
+    setError(null);
+    setShow(false);
+  }
 
-  const handleSubcrontractConfirmation = async () => {
+  const handleSubcrontractFinish = async () => {
+
     if (!selectedItem) {
+      console.log('Debe seleccionar un trabajador');
       setError('Debe seleccionar un trabajador');
       return;
     }
 
-    if (!startDate || !endDate) {
+    if (showDateSelection && (!startDate || !endDate)) {
       setError('Debe seleccionar un rango de fechas');
       return;
     }
+    setShowDateSelection(true);
+    setError(null);
 
-    console.log('Trabajador seleccionado:', selectedItem);
-    console.log('Rango de fechas:', startDate, endDate);
-
-    const formattedStartDate = startDate.toISOString().split("T")[0];
-    const formattedEndDate = endDate.toISOString().split("T")[0];
-
-    console.log("Fecha de inicio:", formattedStartDate);
-    console.log("Fecha de fin:", formattedEndDate);
-
-    // subcontractStep();
-    // setShow(false);
     
+    const solicitudData = {
+      empresa: "QuickSolutions",
+      fecha_inicio: startDate,
+      fecha_fin: endDate,
+      idtrabajadores: [selectedItem.idtrabajador],
+    };
+    console.log('Solicitud de trabajo:', solicitudData);
+    
+    const success = await postSolicitudTrabajo(solicitudData);
+    if (!success) {
+      console.log('Error al solicitar trabajo');
+      alert('Error al solicitar trabajo');
+      return;
+    }
+
+    solicitud.idTecnicoAsignado=selectedItem.idtrabajador;
+    subcontractStep();
+    setShow(false);
+
   }
 
-
-
+  const postSolicitudTrabajo = async (solicitudData) => {
+    try {
+      console.log('Solicitando trabajo...', solicitudData);
+      const response = await apiReparacionExterna.postSolicitud(solicitudData);
+      console.log('Trabajo solicitado:', response);
+      solicitud.IdSolicitudExterna=response.idsolicitud;
+      return true;
+    } catch (error) {
+      console.error('Error solicitando trabajo:', error);
+    }
+  }
 
 
   return (
     <>
       <Form className="data-container">
-        <div className="my-4"></div>
-        <div className="row my-3">
-          <div className="col-4">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="text"
-              defaultValue={solicitud.emailSolicitante}
-              readOnly
-            ></Form.Control>
-          </div>
-          {/* <div className='col-4'>
-              <Form.Label>Apellido</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.apellidoSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.nombreSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div> */}
-        </div>
         <div className="row my-3">
           <div className="col-4">
             <Form.Label>Servicio</Form.Label>
@@ -264,64 +261,67 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
           <Modal.Title>Lista de Items</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {error ? (
-            <div>{error}</div>
-          ) : (
-            <ListGroup>
-              {trabajadoresFiltrados.length > 0 ? (
-                trabajadoresFiltrados.map((item, index) => (
-                  <ListGroup.Item
-                    key={index}
-                    action
-                    active={selectedItem === item}
-                    onClick={() => handleSelectItem(item)}
-                  >
-                    <Row>
-                      <Col md={8}>
-                        <div><strong>{item.nombre} {item.apellido}</strong></div>
-                        <div>Email: {item.email}</div>
-                        <div>Edad: {item.edad}</div>
-                        <div>Profesión: {item.profesionNombre}</div>
-                      </Col>
-                      <Col md={2} className="d-flex align-items-center">
-                        <Button variant="link" size="sm">Ver más</Button>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                ))
-              ) : (
-                <div>Cargando...</div>
-              )}
-            </ListGroup>
-          )}
+          {error && <Alert variant="danger">{error}</Alert>}
+
+          <ListGroup>
+            {trabajadoresFiltrados.length > 0 ? (
+              trabajadoresFiltrados.map((item, index) => (
+                <ListGroup.Item
+                  key={index}
+                  action
+                  active={selectedItem === item}
+                  onClick={() => handleSelectItem(item)}
+                >
+                  <Row>
+                    <Col md={8}>
+                      <div><strong>{item.nombre} {item.apellido}</strong></div>
+                      <div>Email: {item.email}</div>
+                      <div>Edad: {item.edad}</div>
+                      <div>Profesión: {item.profesionNombre}</div>
+                    </Col>
+                    <Col md={2} className="d-flex align-items-center">
+                      <Button variant="link" size="sm">Ver más</Button>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))
+            ) : (
+              <div>Cargando...</div>
+            )}
+          </ListGroup>
+
           {showDateSelection && (
             <div className="mt-3 p-3 border rounded">
-            <h5>Selecciona el período</h5>
-            <div className="d-flex gap-2">
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                placeholderText="Fecha inicio"
-                className="form-control"
-                dateFormat="yyyy-MM-dd"
-              />
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate}
-                placeholderText="Fecha fin"
-                className="form-control"
-                dateFormat="yyyy-MM-dd"
-              />
+              <h5>Selecciona el período</h5>
+              <div className="d-flex gap-2">
+
+                <Form.Group controlId='startDate'>
+                  <Form.Label>Fecha inicio</Form.Label>
+                  <Form.Control
+                    type='date'
+                    name="fechaInicio"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group controlId='endDate'>
+                  <Form.Label>Fecha inicio</Form.Label>
+                  <Form.Control
+                    type='date'
+                    name="fechaFin"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+              </div>
             </div>
-          </div>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-primary" onClick={handleSubcrontractConfirmation}>
+          <Button variant="outline-primary" onClick={handleSubcrontractFinish}>
             Solicitar trabajador
           </Button>
           <Button variant="outline-danger" onClick={handleClose}>

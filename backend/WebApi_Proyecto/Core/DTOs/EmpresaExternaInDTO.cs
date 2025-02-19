@@ -6,14 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DALCodeFirst.Modelos
+namespace Core.DTOs
 {
-    [Table("EmpresaExterna")]
-    public class EmpresaExterna
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]//Autoincremental
-        public int Id { get; set; }
+    public class EmpresaExternaInDTO
+    {    
 
         [Required]
         [MaxLength(50)]
@@ -22,6 +18,7 @@ namespace DALCodeFirst.Modelos
         [Required]
         public long CUIL { get; set; }
 
+        [Required]
         public int Telefono { get; set; }
 
         [Required]
@@ -29,3 +26,4 @@ namespace DALCodeFirst.Modelos
         public string Email { get; set; }
     }
 }
+

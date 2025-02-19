@@ -20,7 +20,7 @@ const bolsaTrabajoApi = axios.create({
   async (error) => {
     if (error.response?.status === 401) {
       obtenerToken();
-    }
+    },
     return Promise.reject(error);
   }
 );
@@ -51,21 +51,13 @@ const apiReparacionExterna = {
   getProfesiones: async () => {
     const response = await bolsaTrabajoApi.get("/profesionlista/");
     return response.data;
-  }
+  },
 
-  /*
-  postEnvio: async (envioData) => {
-    const response = await envioApi.post("/envios/create", envioData, { withCredentials: true });
+  postSolicitud: async (solicitudData) => {
+    const response = await bolsaTrabajoApi.post("/interaccion/", solicitudData);
     return response.data;
   },
 
-  getEnvio: async (id) => {
-    const response = await envioApi.get(`/envios/nro-seguimiento/${id}`, { withCredentials: true });
-    return response.data;
-  },
-
-  getUuidAdmin: async () => {const response = await envioApi.post("/envios/create", envioData, { withCredentials: true });
-  return response.data;},*/
 
 };
 
