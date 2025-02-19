@@ -43,15 +43,6 @@ export const RequestForm = () => {
     if (serviceType === 'maintenance') { setValue('productData.serviceId', 2); }
   }, []);
 
-  useEffect(() => {
-    const subscription = watch((values) => {
-      console.log("Valores actuales del formulario:", values);
-      isStepComplete();
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
   const handleSubmit = async (data) => {
     console.log("Enviando formulario:", data);
     const envioData = data.logisticsData;

@@ -19,7 +19,7 @@ export default function StepProductData({ formData, control, errors, setValue })
     loadProducts();
     console.log("Service type:", formData?.productData.serviceId);
     if (formData?.productData.serviceId === 2) loadMaintenances();
-  }, [formData]);
+  }, []);
 
   useEffect(() => {
     if (categoryId && serviceType === 'repair') {
@@ -27,6 +27,11 @@ export default function StepProductData({ formData, control, errors, setValue })
       loadProductsByCatId(categoryId);
     }
   }, [categoryId]);
+
+  const resetProductTypeSelection = () => {
+    setValue('productData.productTypeId', null);
+  };
+
 
   const loadCategories = async () => {
     try {
@@ -65,7 +70,6 @@ export default function StepProductData({ formData, control, errors, setValue })
       console.error("Error al obtener los productos:", error);
     }
   };
-
 
   const getProductNameById = (id) => {
     const productType = productTypes.find(type => type.id === id);
@@ -113,7 +117,10 @@ export default function StepProductData({ formData, control, errors, setValue })
               aria-label="Seleccionar categoria"
               value={formData?.productData.categoryId || ''}
               disabled={!serviceType}
-              onChange={(e) => { field.onChange(e.target.value); }}
+              onChange={(e) => {
+                field.onChange(e.target.value);
+                resetProductTypeSelection();
+              }}
             >
               <option value="">Seleccione una categoría</option>
               {filteredCategories.map(category => (
