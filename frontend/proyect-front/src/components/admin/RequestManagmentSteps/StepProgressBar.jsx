@@ -51,7 +51,7 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
               {isCancelled && index === lastCompletedStepIndex ? "X" : (index === 4 ? <FontAwesomeIcon icon={faCheck} /> : index + 1)}
             </div>
             <p className={`step-name${isCancelled ? "-cancelled" : ""}`}>{step}</p>
-            <p className={`date $</p>{index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "visible" : ""}`}>
+            <p className={`date ${index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "visible" : ""}`}>
               {step === "Iniciada" && solicitud.fechaIniciada && formatDate(solicitud.fechaIniciada)}
               {step === "Revisada" && solicitud.fechaRevisada && formatDate(solicitud.fechaRevisada)}
               {step === "Presupuestada" && solicitud.fechaPresupuestada && formatDate(solicitud.fechaPresupuestada)}
