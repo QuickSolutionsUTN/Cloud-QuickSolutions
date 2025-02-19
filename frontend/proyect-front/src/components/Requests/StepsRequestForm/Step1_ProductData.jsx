@@ -11,27 +11,26 @@ export default function StepProductData({ formData, control, errors, setValue })
   const [categories, setCategories] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
   const serviceType = queryParams.get('type');
-  const categoryId = formData?.productData?.categoryId;
-  const productTypeId = Number(formData?.productData?.productTypeId);
+  const categoryId = parseInt(formData?.productData?.categoryId);
+  const productTypeId = parseInt(formData?.productData?.productTypeId);
 
   useEffect(() => {
     loadCategories();
     loadProducts();
     console.log("Service type:", formData?.productData.serviceId);
     if (formData?.productData.serviceId === 2) loadMaintenances();
-  }, []);
+  }, [formData?.productData.serviceId]);
 
   useEffect(() => {
     if (categoryId && serviceType === 'repair') {
-      console.log('Cargando productos por categoria:', categoryId);
       loadProductsByCatId(categoryId);
     }
   }, [categoryId]);
 
   const resetProductTypeSelection = () => {
     setValue('productData.productTypeId', null);
+    if (serviceType === 'maintenance') {setValue('productData.maintenanceTypeId', null);}
   };
-
 
   const loadCategories = async () => {
     try {
@@ -54,7 +53,6 @@ export default function StepProductData({ formData, control, errors, setValue })
   const loadMaintenances = async () => {
     try {
       const response = await apiService.getMaintenanceArray();
-      console.log("Mantenimientos obtenidos:", response.data);
       setMaintenanceArray(response.data);
     } catch (error) {
       console.error("Error al obtener los mantenimientos:", error);
@@ -64,7 +62,6 @@ export default function StepProductData({ formData, control, errors, setValue })
   const loadProductsByCatId = async (id) => {
     try {
       const response = await apiService.getProductByCatId(id);
-      console.log("Productos obtenidos:", response.data);
       setProductTypes(response.data);
     } catch (error) {
       console.error("Error al obtener los productos:", error);
@@ -83,7 +80,6 @@ export default function StepProductData({ formData, control, errors, setValue })
   const handleCardClick = async (maintenance) => {
     setValue('productData.maintenanceTypeId', maintenance.id);
     setValue('productData.productTypeId', maintenance.idTipoProducto);
-
     const category = getCategoryByProductTypeId(maintenance.idTipoProducto);
     setValue('productData.categoryId', category.id);
   };
@@ -100,12 +96,11 @@ export default function StepProductData({ formData, control, errors, setValue })
   ) : productTypes;
 
   const filteredMaintenanceArray = maintenanceArray.filter(maintenance => {
-    const productType = productTypes.find(type => type.id === maintenance.idTipoProducto);
-    const categoryMatch = categoryId ? productType?.idCategoria === categoryId : true;
-    const productMatch = productTypeId ? maintenance.idTipoProducto === productTypeId : true;
-
-    return categoryMatch && productMatch;
-  });
+      const productType = productTypes.find(type => type.id === maintenance.idTipoProducto);
+      const categoryMatch =  formData.productData.categoryId ? parseInt(productType?.idCategoria) === formData.productData.categoryId : true;
+      const productMatch = productTypeId ? maintenance.idTipoProducto === productTypeId : true;
+      return categoryMatch && productMatch;
+    });
 
   return (
     <>
@@ -118,7 +113,7 @@ export default function StepProductData({ formData, control, errors, setValue })
               value={formData?.productData.categoryId || ''}
               disabled={!serviceType}
               onChange={(e) => {
-                field.onChange(e.target.value);
+                field.onChange(parseInt(e.target.value));
                 resetProductTypeSelection();
               }}
             >
@@ -137,7 +132,7 @@ export default function StepProductData({ formData, control, errors, setValue })
               aria-label="Seleccionar tipo de producto"
               value={formData?.productData.productTypeId || ''}
               disabled={!categoryId}
-              onChange={(e) => { field.onChange(e.target.value); }}
+              onChange={(e) => { field.onChange(parseInt(e.target.value)); }}
             >
               <option value="">Seleccione un tipo de producto</option>
               {filteredProductTypes.length > 0 ? (

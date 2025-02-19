@@ -20,7 +20,6 @@ export default function FormSummary({ formData }) {
     loadProducts();
     if (formData.logisticsData.conLogistica) handlegetLocalidades();
     if (formData.productData.serviceId === 2) loadMaintenances();
-    console.log(formData);
   }, [formData]);
 
   const loadCategories = async () => {
