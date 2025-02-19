@@ -136,7 +136,10 @@ namespace Servicios
             {
                 throw new Exception("Solicitud no encontrada");
             }
-
+            if ( solicitud.SolicitudServicioEstado.Id == 3 )
+            {
+                solicitud.FechaPresupuestada = DateTime.UtcNow;
+            }
             solicitud.IdSolicitudServicioEstado = solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado;
             await _context.SaveChangesAsync();
 
