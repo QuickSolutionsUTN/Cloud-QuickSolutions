@@ -156,16 +156,6 @@ function RequestManagement() {
 
   const handleSubcontractStep = async () => {
     console.log('Subcontratar');
-    getApiResponse();
-  };
-
-  const getApiResponse = async () => { 
-    try {
-      const response = await apiReparacionExterna.getTrabajadores();
-      console.log('Response:', response);
-    } catch (error) {
-      console.error('Error fetching trabajadores:', error);
-    }
   };
 
 

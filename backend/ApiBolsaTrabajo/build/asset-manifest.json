@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/static/css/main.8d42e8c5.css",
+    "main.js": "/static/js/main.cf0b1fa4.js",
+    "static/media/medumedusin.mp4": "/static/media/medumedusin.df227bf903b76db2c915.mp4",
+    "static/media/jellyWall.jpeg": "/static/media/jellyWall.b8a53fd7e824502561f8.jpeg",
+    "static/media/jellyAccountant.jpeg": "/static/media/jellyAccountant.2a6d361879f297b09b82.jpeg",
+    "static/media/jellyStudy.jpeg": "/static/media/jellyStudy.ee5d7f869deb456396d2.jpeg",
+    "static/media/jellyTools.jpeg": "/static/media/jellyTools.d8f8c3ee450f5eaa1d10.jpeg",
+    "static/media/jellyWorking.jpeg": "/static/media/jellyWorking.c19d6b1bb9f848268ae3.jpeg",
+    "static/media/jellyChef.jpeg": "/static/media/jellyChef.c69782dbcd2cbd386934.jpeg",
+    "static/media/logo.png": "/static/media/logo.35aabd580ca8539ae8b4.png",
+    "index.html": "/index.html",
+    "main.8d42e8c5.css.map": "/static/css/main.8d42e8c5.css.map",
+    "main.cf0b1fa4.js.map": "/static/js/main.cf0b1fa4.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8d42e8c5.css",
+    "static/js/main.cf0b1fa4.js"
+  ]
+}

@@ -44,9 +44,14 @@ const obtenerToken = async () => {
 
 const apiReparacionExterna = {
   getTrabajadores: async () => {
-    const response = await bolsaTrabajoApi.get("/interaccion");
+    const response = await bolsaTrabajoApi.get("/interaccion/");
     return response.data;
   },
+
+  getProfesiones: async () => {
+    const response = await bolsaTrabajoApi.get("/profesionlista/");
+    return response.data;
+  }
 
   /*
   postEnvio: async (envioData) => {

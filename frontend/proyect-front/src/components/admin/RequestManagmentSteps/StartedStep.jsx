@@ -1,43 +1,30 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Modal, ListGroup, Row, Col } from "react-bootstrap";
+import DatePicker from "react-datepicker";
 import { useNavigate } from "react-router-dom";
-import { useBackendURL } from "../../../contexts/BackendURLContext.jsx";
-import { useParams } from "react-router-dom";
+
 import envioService from "../../../services/apiEnviosService.jsx";
+import apiReparacionExterna from "../../../services/apiBolsaTrabajoService.jsx";
 
 import "./StartedStep.css";
 
 function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
-  // const [solicitud, setSolicitud] = useState(null);
-  const { id: solicitudId } = useParams();
-  const backendURL = useBackendURL();
-  const [fechaFormateada, setFechaFormateada] = useState("");
-  const [idCategoria, setIdCategoria] = useState(null);
+
   const navigate = useNavigate();
+  const [show, setShow] = useState(false);
+  const [items, setItems] = useState([]);
+  const [profesiones, setProfesiones] = useState([]);
+  const [error, setError] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [trabajadoresFiltrados, setTrabajadoresFiltrados] = useState([]);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(null);
+  const [showDateSelection, setShowDateSelection] = useState(false);
 
-  /*useEffect(() => {
-    const fetchSolicitudDetails = async () => {
-      try {
-        console.log('Fetching solicitud details...', backendURL);
-        const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
-        console.log('Solicitud details:', response.data);
-        setSolicitud(response.data);
-        const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
-      } catch (error) {
-        console.error('Error fetching solicitud details:', error);
-      }
-    }
-    fetchSolicitudDetails();
-  }, [solicitudId]);*/
-
-  if (!solicitud) {
-    return <div>Cargando...</div>;
-  }
+  if (!solicitud) { return <div>Cargando...</div>; }
 
   const handleNextStep = async () => {
+    console.log("Solicitud:", solicitud);
     if (solicitud.conLogistica) {
       const nroSeguimiento = await solicitarEnvio(solicitud.envio);
       if (!nroSeguimiento) {
@@ -87,6 +74,81 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       console.error("Error solicitando envio:", error);
     }
   };
+
+  const getApiResponse = async () => {
+    try {
+      const [trabajadores, profesiones] = await Promise.all([
+        apiReparacionExterna.getTrabajadores(),
+        apiReparacionExterna.getProfesiones(),
+      ]);
+
+      console.log('Trabajadores obtenidos:', trabajadores);
+      console.log('Profesiones obtenidas:', profesiones);
+
+      setItems(trabajadores);
+      setProfesiones(profesiones);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // Llama a `mapProfessionsToItems` solo cuando ambos estados hayan cambiado
+  useEffect(() => {
+    if (items.length > 0 && profesiones.length > 0) {
+      mapProfessionsToItems();
+    }
+  }, [items, profesiones]);
+
+
+  const handleShow = () => {
+    if (items.length === 0) {
+      getApiResponse();
+    }
+    setShow(true);
+  }
+
+  const mapProfessionsToItems = () => {
+    console.log('Mapeando profesiones a items...');
+    const updatedItems = items.map(item => {
+      const profession = profesiones.find(prof => prof.idprofesion === item.idprofesion);
+      console.log('Profesion encontrada:', profession);
+      return {
+        ...item,
+        profesionNombre: profession ? profession.nombre : "Desconocido"
+      };
+    });
+
+    console.log('Items actualizados:', updatedItems);
+    setTrabajadoresFiltrados(updatedItems);
+  };
+
+  const handleSelectItem = (item) => {
+    setSelectedItem(item);
+  };
+
+  const handleClose = () => setShow(false);
+
+  const handleSubcrontractConfirmation = async () => {
+    if (!selectedItem) {
+      setError('Debe seleccionar un trabajador');
+      return;
+    }
+    setShowDateSelection(true);
+
+    /*if (!startDate || !endDate) {
+      setError('Debe seleccionar un rango de fechas');
+      return;
+    }
+
+    console.log('Trabajador seleccionado:', selectedItem);
+    console.log('Rango de fechas:', startDate, endDate);
+
+    subcontractStep();*/
+  }
+
+
+
+
 
   return (
     <>
@@ -182,17 +244,82 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
         <Button className="cancel" variant="danger" onClick={cancelStep}>
           Cancelar
         </Button>
-        <Button
-          className="subcontract"
-          variant="warning"
-          onClick={subcontractStep}
-        >
+        <Button className="subcontract" variant="warning" onClick={handleShow}>
           Subcontratar
         </Button>
         <Button variant="success" onClick={handleNextStep}>
           Aceptar servicio
         </Button>
       </div>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Lista de Items</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error ? (
+            <div>{error}</div>
+          ) : (
+            <ListGroup>
+              {trabajadoresFiltrados.length > 0 ? (
+                trabajadoresFiltrados.map((item, index) => (
+                  <ListGroup.Item
+                    key={index}
+                    action
+                    active={selectedItem === item}
+                    onClick={() => handleSelectItem(item)}
+                  >
+                    <Row>
+                      <Col md={8}>
+                        <div><strong>{item.nombre} {item.apellido}</strong></div>
+                        <div>Email: {item.email}</div>
+                        <div>Edad: {item.edad}</div>
+                        <div>Profesión: {item.profesionNombre}</div>
+                      </Col>
+                      <Col md={2} className="d-flex align-items-center">
+                        <Button variant="link" size="sm">Ver más</Button>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                ))
+              ) : (
+                <div>Cargando...</div>
+              )}
+            </ListGroup>
+          )}
+          {showDateSelection && (
+            <div className="mt-3 p-3 border rounded">
+              <h5>Selecciona el período</h5>
+              <div className="d-flex gap-2">
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                  placeholderText="Fecha inicio"
+                  className="form-control"
+                />
+                {/*
+                <DatePicker
+                  selected={new Date()}
+                  onChange={(date) => setEndDate(date)}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  placeholderText="Fecha fin"
+                  className="form-control"
+                />*/}
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-primary" onClick={handleSubcrontractConfirmation}>
+            Solicitar trabajador
+          </Button>
+          <Button variant="outline-danger" onClick={handleClose}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
