@@ -1,69 +1,58 @@
 import { useEffect, useState } from "react";
-import axios from 'axios';
-import { Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
-import { useParams } from 'react-router-dom';
+import { Form, Button, Modal, ListGroup, Row, Col, Alert } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import { useNavigate } from "react-router-dom";
+import "react-datepicker/dist/react-datepicker.css";
 import envioService from "../../../services/apiEnviosService.jsx";
+import apiReparacionExterna from "../../../services/apiBolsaTrabajoService.jsx";
 
 import "./StartedStep.css";
 
 function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
-  // const [solicitud, setSolicitud] = useState(null);
-  const { id: solicitudId } = useParams();
-  const backendURL = useBackendURL();
-  const [fechaFormateada, setFechaFormateada] = useState('');
-  const [idCategoria, setIdCategoria] = useState(null);
+
   const navigate = useNavigate();
+  const [show, setShow] = useState(false);
+  const [items, setItems] = useState([]);
+  const [profesiones, setProfesiones] = useState([]);
+  const [error, setError] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [trabajadoresFiltrados, setTrabajadoresFiltrados] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [showDateSelection, setShowDateSelection] = useState(false);
+  const [postApiExito, setPostApiExito] = useState(false);
 
- /*useEffect(() => {
-    const fetchSolicitudDetails = async () => {
-      try {
-        console.log('Fetching solicitud details...', backendURL);
-        const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
-        console.log('Solicitud details:', response.data);
-        setSolicitud(response.data);
-        const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
-      } catch (error) {
-        console.error('Error fetching solicitud details:', error);
-      }
-    }
-    fetchSolicitudDetails();
-  }, [solicitudId]);*/
+  if (!solicitud) { return <div>Cargando...</div>; }
 
-  if (!solicitud) {
-    return <div>Cargando...</div>;
-  }
-
-  const handleNextStep= async () => {
-    if(solicitud.conLogistica) {
+  const handleNextStep = async () => {
+    console.log("Solicitud:", solicitud);
+    if (solicitud.conLogistica) {
       const nroSeguimiento = await solicitarEnvio(solicitud.envio);
-      if (!nroSeguimiento){
-        alert('Error al conectarse con el servicio de envios. Intente nuevamente mas tarde');
+      if (!nroSeguimiento) {
+        alert(
+          "Error al conectarse con el servicio de envios. Intente nuevamente mas tarde"
+        );
         return;
       }
-      solicitud.envio.nroSeguimiento= nroSeguimiento;
+      solicitud.envio.nroSeguimiento = nroSeguimiento;
     }
     nextStep();
-  }
+  };
 
   const solicitarEnvio = async (data) => {
-
-    const uuid_admin='cda6ad47-e784-4b29-9b34-f680b21e1563';
+    const uuid_admin = "cda6ad47-e784-4b29-9b34-f680b21e1563";
     const envioData = {
       descripcion: "Envio de paquete",
       hora: "12:00",
       pesoGramos: 1000,
-      reserva:true,
+      reserva: true,
       origen: {
         calle: data.calle,
         numero: data.numero,
         piso: data?.piso || 0,
         depto: data?.departamento || null,
         descripcion: "Casa",
-        localidadID: data.idLocalidad
+        localidadID: data.idLocalidad,
       },
       destino: {
         calle: "Av del petroleo",
@@ -71,126 +60,275 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
         piso: 0,
         depto: null,
         descripcion: "UTN la mas grande",
-        localidadID: 68
+        localidadID: 68,
       },
-      cliente: uuid_admin
+      cliente: uuid_admin,
     };
 
     try {
-      console.log('Solicitando envio...' ,envioData);
+      console.log("Solicitando envio...", envioData);
       const response = await envioService.postEnvio(envioData);
-      console.log('Envio solicitado:', response);
+      console.log("Envio solicitado:", response);
       const nroSeguimiento = response.nroSeguimiento;
       return nroSeguimiento;
     } catch (error) {
-      console.error('Error solicitando envio:', error);
+      console.error("Error solicitando envio:", error);
+    }
+  };
+
+  const getApiResponse = async () => {
+    try {
+      const [trabajadores, profesiones] = await Promise.all([
+        apiReparacionExterna.getTrabajadores(),
+        apiReparacionExterna.getProfesiones(),
+      ]);
+
+      console.log('Trabajadores obtenidos:', trabajadores);
+      console.log('Profesiones obtenidas:', profesiones);
+
+      setItems(trabajadores);
+      setProfesiones(profesiones);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // Llama a `mapProfessionsToItems` solo cuando ambos estados hayan cambiado
+  useEffect(() => {
+    if (items.length > 0 && profesiones.length > 0) {
+      mapProfessionsToItems();
+    }
+    console.log(showDateSelection);
+  }, [items, profesiones]);
+
+
+  const handleShow = () => {
+    if (items.length === 0) {
+      getApiResponse();
+    }
+    setShow(true);
+  }
+
+  const mapProfessionsToItems = () => {
+    console.log('Mapeando profesiones a items...');
+    const updatedItems = items.map(item => {
+      const profession = profesiones.find(prof => prof.idprofesion === item.idprofesion);
+      console.log('Profesion encontrada:', profession);
+      return {
+        ...item,
+        profesionNombre: profession ? profession.nombre : "Desconocido"
+      };
+    });
+
+    console.log('Items actualizados:', updatedItems);
+    setTrabajadoresFiltrados(updatedItems);
+  };
+
+  const handleSelectItem = (item) => {
+    setSelectedItem(item);
+  };
+
+  const handleClose = () => {
+    setSelectedItem(null);
+    setError(null);
+    setShow(false);
+  }
+
+  const handleSubcrontractFinish = async () => {
+
+    if (!selectedItem) {
+      console.log('Debe seleccionar un trabajador');
+      setError('Debe seleccionar un trabajador');
+      return;
+    }
+
+    if (showDateSelection && (!startDate || !endDate)) {
+      setError('Debe seleccionar un rango de fechas');
+      return;
+    }
+    setShowDateSelection(true);
+    setError(null);
+
+    
+    const solicitudData = {
+      empresa: "QuickSolutions",
+      fecha_inicio: startDate,
+      fecha_fin: endDate,
+      idtrabajadores: [selectedItem.idtrabajador],
+    };
+    console.log('Solicitud de trabajo:', solicitudData);
+    
+    const success = await postSolicitudTrabajo(solicitudData);
+    if (!success) {
+      console.log('Error al solicitar trabajo');
+      alert('Error al solicitar trabajo');
+      return;
+    }
+
+    solicitud.idTecnicoAsignado=selectedItem.idtrabajador;
+    subcontractStep();
+    setShow(false);
+
+  }
+
+  const postSolicitudTrabajo = async (solicitudData) => {
+    try {
+      console.log('Solicitando trabajo...', solicitudData);
+      const response = await apiReparacionExterna.postSolicitud(solicitudData);
+      console.log('Trabajo solicitado:', response);
+      solicitud.IdSolicitudExterna=response.idsolicitud;
+      return true;
+    } catch (error) {
+      console.error('Error solicitando trabajo:', error);
     }
   }
 
 
-
-
   return (
     <>
-      <Form className='data-container'>
+      <Form className="data-container">
+        <div className="row my-3">
+          <div className="col-4">
+            <Form.Label>Servicio</Form.Label>
+            <Form.Control
+              type="text"
+              defaultValue={solicitud.tipoServicio}
+              readOnly
+            ></Form.Control>
+          </div>
+          <div className="col-4">
+            <Form.Label>Categoria</Form.Label>
+            <Form.Control
+              type="text"
+              value={solicitud.categoria}
+              readOnly
+            ></Form.Control>
+          </div>
+          <div className="col-4">
+            <Form.Label>Producto</Form.Label>
+            <Form.Control
+              type="text"
+              value={solicitud.tipoDeProducto}
+              readOnly
+            ></Form.Control>
+          </div>
+        </div>
         <div className="my-4"></div>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.emailSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Apellido</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.apellidoSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.nombreSolicitante}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-          </div>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Servicio</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.tipoServicio}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Categoria</Form.Label>
-              <Form.Control
-                type='text'
-                value={solicitud.categoria}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Producto</Form.Label>
-              <Form.Control
-                type='text'
-                value={solicitud.tipoDeProducto}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-          </div>
-          <div className="my-4"></div>
-          <div className='row'>
-            <div className='col-12'>
-              <Form.Group controlId='description'>
-                <Form.Label>Descripcion del problema</Form.Label>
-                <Form.Control
-                  as='textarea'
-                  rows={3}
-                  type='text'
-                  value={solicitud.descripcion}
-                  readOnly
-                  style={{ resize: 'vertical' }}
-                />
-              </Form.Group>
-            </div>
-            <div className='row my-3'>
-            <div className='col-4'>
+        <div className="row">
+          {solicitud.tipoServicio === "Reparacion" ? (
+            <>
+              <div className="col-12">
+                <Form.Group controlId="description">
+                  <Form.Label>Descripcion del problema</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    type="text"
+                    value={solicitud.descripcion}
+                    readOnly
+                    style={{ resize: "vertical" }}
+                  />
+                </Form.Group>
+              </div>
+            </>
+          ) : null}
+          <div className="row my-3">
+            <div className="col-4">
               <Form.Check
-                type='checkbox'
-                label='Con servicio de logistica'
+                type="checkbox"
+                label="Con servicio de logistica"
                 checked={solicitud.conLogistica}
                 readOnly
               />
             </div>
           </div>
-          </div>
-          <div className="my-4"></div>
+        </div>
+        <div className="my-4"></div>
       </Form>
       <div className="buttons-container">
         <Button className="cancel" variant="danger" onClick={cancelStep}>
           Cancelar
         </Button>
-        <Button className="subcontract" variant="warning" onClick={subcontractStep}>
+        <Button className="subcontract" variant="warning" onClick={handleShow}>
           Subcontratar
         </Button>
         <Button variant="success" onClick={handleNextStep}>
           Aceptar servicio
         </Button>
       </div>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Lista de Items</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && <Alert variant="danger">{error}</Alert>}
+
+          <ListGroup>
+            {trabajadoresFiltrados.length > 0 ? (
+              trabajadoresFiltrados.map((item, index) => (
+                <ListGroup.Item
+                  key={index}
+                  action
+                  active={selectedItem === item}
+                  onClick={() => handleSelectItem(item)}
+                >
+                  <Row>
+                    <Col md={8}>
+                      <div><strong>{item.nombre} {item.apellido}</strong></div>
+                      <div>Email: {item.email}</div>
+                      <div>Edad: {item.edad}</div>
+                      <div>Profesión: {item.profesionNombre}</div>
+                    </Col>
+                    <Col md={2} className="d-flex align-items-center">
+                      <Button variant="link" size="sm">Ver más</Button>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))
+            ) : (
+              <div>Cargando...</div>
+            )}
+          </ListGroup>
+
+          {showDateSelection && (
+            <div className="mt-3 p-3 border rounded">
+              <h5>Selecciona el período</h5>
+              <div className="d-flex gap-2">
+
+                <Form.Group controlId='startDate'>
+                  <Form.Label>Fecha inicio</Form.Label>
+                  <Form.Control
+                    type='date'
+                    name="fechaInicio"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group controlId='endDate'>
+                  <Form.Label>Fecha inicio</Form.Label>
+                  <Form.Control
+                    type='date'
+                    name="fechaFin"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-primary" onClick={handleSubcrontractFinish}>
+            Solicitar trabajador
+          </Button>
+          <Button variant="outline-danger" onClick={handleClose}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

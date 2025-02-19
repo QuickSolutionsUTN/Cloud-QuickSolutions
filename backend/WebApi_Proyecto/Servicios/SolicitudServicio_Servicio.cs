@@ -64,8 +64,8 @@ namespace Servicios
                 };
                 _context.Envio.Add(nuevoEnvio);
                 await _context.SaveChangesAsync();
-
             }
+
             await _context.SaveChangesAsync();
 
             var solicitudCreada = await ObtenerSolicitudPorIdAsync(nuevaSolicitud.Id);
@@ -122,9 +122,7 @@ namespace Servicios
                 .Where(es => es.Solicitante.Id == userId)
                 .ToListAsync();
 
-            
             var solicitudesDTO = _mapper.Map<List<SolicitudRespuestaDTO>>(solicitudes);
-
 
             return solicitudesDTO;
         }
@@ -164,6 +162,7 @@ namespace Servicios
             var solicitudCancelada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudCancelada;
         }
+
         public async Task<SolicitudRespuestaDTO> IniciarSolicitudAsync(int id)
         {
             var solicitud = await _context.SolicitudServicio
@@ -180,6 +179,7 @@ namespace Servicios
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(id);
             return solicitudActualizada;
         }
+
         public async Task<SolicitudRespuestaDTO> ActualizarEnvioSolicitudAsync(int id, EnvioDTO envioDTO)
         {
             var solicitud = await _context.SolicitudServicio
@@ -202,12 +202,12 @@ namespace Servicios
 
             envio.nroSeguimiento = envioDTO.nroSeguimiento;
 
-
             await _context.SaveChangesAsync();
 
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(id);
             return solicitudActualizada;
         }
+
         public async Task<SolicitudRespuestaDTO> PresupuestarSolicitudAsync(SolicitudServicioPresupuestarDTO SolicitudServicioPresupuestarDTO)
         {
             var solicitud = await _context.SolicitudServicio
@@ -222,11 +222,12 @@ namespace Servicios
             solicitud.DiagnosticoTecnico = SolicitudServicioPresupuestarDTO.DiagnosticoTecnico;
             solicitud.Monto = SolicitudServicioPresupuestarDTO.Monto;
             solicitud.FechaRevisada = DateTime.UtcNow;
-            solicitud.FechaEstimada= DateTime.SpecifyKind(SolicitudServicioPresupuestarDTO.FechaEstimada, DateTimeKind.Utc); 
+            solicitud.FechaEstimada = DateTime.SpecifyKind(SolicitudServicioPresupuestarDTO.FechaEstimada, DateTimeKind.Utc);
             await _context.SaveChangesAsync();
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudActualizada;
         }
+
         public async Task<SolicitudRespuestaDTO> FinalizarSolicitudAsync(SolicitudServicioFinalizarDTO SolicitudServicioFinalizarDTO)
         {
             var solicitud = await _context.SolicitudServicio
@@ -239,8 +240,36 @@ namespace Servicios
 
             solicitud.IdSolicitudServicioEstado = SolicitudServicioFinalizarDTO.IdSolicitudServicioEstado;
             solicitud.FechaAprobada = DateTime.UtcNow;
-            solicitud.Resumen= SolicitudServicioFinalizarDTO.Resumen;
+            solicitud.Resumen = SolicitudServicioFinalizarDTO.Resumen;
+            Console.WriteLine(SolicitudServicioFinalizarDTO.Resumen);
             await _context.SaveChangesAsync();
+            var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
+            return solicitudActualizada;
+        }
+
+        public async Task<SolicitudRespuestaDTO> SubcontratarSolicitudAsync(SolicitudServicioSubcontratarDTO solicitudServicioSubcontratarDTO)
+        {
+            var solicitud = await _context.SolicitudServicio
+                .FirstOrDefaultAsync(s => s.Id == solicitudServicioSubcontratarDTO.Id);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            solicitud.Tercearizado = true;
+            solicitud.FechaIniciada = DateTime.UtcNow;
+            solicitud.IdSolicitudServicioEstado = solicitudServicioSubcontratarDTO.IdSolicitudServicioEstado;
+
+            _context.ReparacionExterna.Add(new ReparacionExterna
+            {
+                IdSolicitud = solicitud.Id,
+                IdEmpresa = solicitudServicioSubcontratarDTO.IdEmpresa,
+                IdSolicitudExterna = solicitudServicioSubcontratarDTO.IdSolicitudExterna
+            });
+
+            await _context.SaveChangesAsync();
+
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudActualizada;
         }

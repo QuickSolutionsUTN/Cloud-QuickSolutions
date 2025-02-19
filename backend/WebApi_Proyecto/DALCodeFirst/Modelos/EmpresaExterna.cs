@@ -20,12 +20,12 @@ namespace DALCodeFirst.Modelos
         public string Nombre { get; set; }
 
         [Required]
-        public int CUIL { get; set; }
+        public long CUIL { get; set; }
 
         public int Telefono { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public char Email { get; set; }
+        public string Email { get; set; }
     }
 }

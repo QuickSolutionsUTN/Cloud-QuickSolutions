@@ -41,8 +41,7 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
 
   return (
     <div className="container text-center mt-4">
-      <h4>Progreso: {currentStep === "Cancelada" ? "Cancelada" : steps[stepIndex]}</h4>
-      {/* Contenedor de la barra de progreso */}
+     {/*  <h4>Progreso: {currentStep === "Cancelada" ? "Cancelada" : steps[stepIndex]}</h4>*/}
       <div className="progress-container">
         <div className="progress-line-background"></div>
         <div className={`progress-line${isCancelled ? "-cancelled" : ""}`} style={{ width: `${((isCancelled ? lastCompletedStepIndex : stepIndex) / (steps.length - 1)) * 80}%` }}></div>

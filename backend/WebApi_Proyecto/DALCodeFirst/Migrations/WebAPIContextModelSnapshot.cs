@@ -148,12 +148,13 @@ namespace DALCodeFIrst.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CUIL")
-                        .HasColumnType("integer");
+                    b.Property<long>("CUIL")
+                        .HasColumnType("bigint");
 
-                    b.Property<char>("Email")
+                    b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -219,6 +220,9 @@ namespace DALCodeFIrst.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("IdSolicitud")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IdSolicitudExterna")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

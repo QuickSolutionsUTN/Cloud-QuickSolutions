@@ -10,7 +10,6 @@ EMAIL_HOST_USER = "valenxity@gmail.com"  # Tu correo de Gmail
 EMAIL_HOST_PASSWORD = "gtid gsck exqq jpfc"  # La contraseña de aplicación que Google te dio
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Dirección predeterminada de "from"
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'django-insecure-g_5as3h&^(qq58yo7c!1(yjg$&nwhf4)vf8bfk=^nh$e2odohe'
@@ -22,7 +21,10 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # o el puerto en el que corre tu frontend
 ]
 CORS_ALLOW_CREDENTIALS = True  # Permitir cookies con credenciales
-
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:3004",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,7 +45,6 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -71,8 +72,6 @@ WSGI_APPLICATION = 'jellyjobs.wsgi.application'
 
 SESSION_COOKIE_SAMESITE = "None"  # Permite compartir entre sitios
 SESSION_COOKIE_SECURE = False  # ❌ No requiere HTTPS en desarrollo
-CSRF_COOKIE_SAMESITE = "None"  # Para CSRF en cookies
-CSRF_COOKIE_SECURE = False  # ❌ No requiere HTTPS en desarrollo
 
 DATABASES = {
     'default': {
@@ -112,22 +111,14 @@ AUTHENTICATION_BACKENDS = [
     'app.authentication_backend.AdminEmailBackend',
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'build', 'static'),
@@ -138,10 +129,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-
-
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

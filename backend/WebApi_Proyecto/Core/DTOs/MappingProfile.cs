@@ -38,6 +38,10 @@ namespace Core.DTOs
             CreateMap<MantenimientoInDTO, TipoMantenimiento>();
 
             CreateMap<TipoMantenimiento, MantenimientoOutDTO>();
+
+            CreateMap<EmpresaExterna,EmpresaExternaOutDTO>();
+            CreateMap<EmpresaExternaInDTO, EmpresaExterna>();
+
         }
     }
 }

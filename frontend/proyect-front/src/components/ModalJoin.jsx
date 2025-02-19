@@ -117,7 +117,13 @@ function ModalJoin({ show, onClose, onSwitchToLogin }) {
             <Form.Control
               type="password"
               placeholder="Ingrese su contraseña"
-              {...register('password', { required: '*Campo obligatorio' })}
+              {...register('password', {
+                required: '*Campo obligatorio',
+                minLength: {
+                  value: 8,
+                  message: '*La contraseña debe tener al menos 8 caracteres'
+                }
+              })}
             />
             {errors.password && <p className="error-message">{errors.password.message}</p>}
           </Form.Group>

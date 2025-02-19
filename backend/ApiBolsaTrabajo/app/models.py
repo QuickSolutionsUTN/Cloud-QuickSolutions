@@ -66,6 +66,7 @@ class Trabajador(models.Model):
     idlocalidad = models.ForeignKey(Localidad, db_column='idLocalidad', on_delete=models.CASCADE)
     imagenlink = models.ImageField(upload_to='photos/', blank=True)
     cvlink = models.FileField(upload_to='cv/', blank=True)
+    postId=models.IntegerField(unique=True,null=True)
 
     class Meta:
         db_table = 'Trabajador'
@@ -213,8 +214,8 @@ class DjangoSession(models.Model):
 
 class Pedido(models.Model):
     MANGA_CHOICES = [
-        ('largo','Largo'),
-        ('corto','Corto'),
+        ('Largo','largo'),
+        ('Corto','corto'),
     ]
     TALLE_CHOICES = [
         ('S', 'Small'),

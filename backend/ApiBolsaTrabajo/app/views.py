@@ -2,7 +2,7 @@ from rest_framework.decorators import APIView
 from rest_framework.response import Response
 from rest_framework import  status
 from .models import Trabajador, Profesion,Localidad, Solicitud,Admins
-from .serializers import TrabajadorSerializer,ProfesionSerializer,TrabajadorCardSerializer,LocalidadListSerializer, SolicitudSerializer,TrabajadorDetallesSerializer,AdminSerializer,AdminEmailSerializer,TrabajadoresSerializer,PedidoSerializer
+from .serializers import TrabajadorSerializer,ProfesionSerializer,TrabajadorCardSerializer,LocalidadListSerializer, SolicitudSerializer,TrabajadorDetallesSerializer,AdminSerializer,AdminEmailSerializer,TrabajadoresSerializer,PedidoSerializer,TrabajadorSinUniformeSerializer,TrabajadorPostSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from .serializers import SolicitudSerializer, TrabajadorSerializer
@@ -22,11 +22,13 @@ from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
 from django.utils.timezone import now, timedelta
 
+# 🔹 Cuenta la cantidad de solicitudes de trabajo creadas hoy
 class CountValidSolicitudes(APIView):
     def get(self, request):
         count = Solicitud.objects.filter(fecha_inicio=now().date()).count()
         return Response({"count": count}, status=200)
-
+    
+# 🔹 Cuenta la cantidad de trabajadores con contrato pendiente
 class CountPendingWorkers(APIView):
     def get(self, request):
         count = Trabajador.objects.filter(estadocontrato='pendiente').count()
@@ -417,13 +419,54 @@ class NotificacionesView(APIView):
 
         return Response(notificaciones)
     
-
 class PedidoCreateAPIView(APIView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = PedidoSerializer(data=request.data)
-        
+        talle = request.data.get("talle")
         if serializer.is_valid():
-            # Crear el pedido en la base de datos
-            pedido = serializer.save()
-            return Response(PedidoSerializer(pedido).data, status=status.HTTP_201_CREATED)
+            # Suponiendo que el ID del trabajador es parte del payload
+            idtrabajador = request.data.get("idtrabajador")
+
+            # Aquí buscas al trabajador por su ID
+            try:
+                trabajador = Trabajador.objects.get(idtrabajador=idtrabajador)
+
+                # Actualizas el campo uniforme a True
+                trabajador.talle=talle
+                trabajador.uniforme = True
+                trabajador.save()
+                serializer.save()
+
+                return Response({"message": "Pedido creado y uniforme actualizado"}, status=status.HTTP_200_OK)
+            except Trabajador.DoesNotExist:
+                return Response({"message": "Trabajador no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class TrabajadorSinUniformeAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        trabajadores = Trabajador.objects.filter(uniforme=False)  # Filtra los trabajadores sin uniforme
+        serializer = TrabajadorSinUniformeSerializer(trabajadores, many=True)  # Serializa los trabajadores
+        return Response(serializer.data)  # Devuelve los datos serializados en la respuesta
+    
+class UpdatePostIDAPIView(APIView):
+
+    def patch(self, request, pk, *args, **kwargs):
+        try:
+            # Obtener el trabajador por su ID
+            trabajador = Trabajador.objects.get(pk=pk)
+        except Trabajador.DoesNotExist:
+            return Response({'error': 'Trabajador no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Obtener el postID del cuerpo de la solicitud
+        post_id = request.data.get('postID')
+        
+        if post_id is not None:
+            # Asignar el postID al trabajador
+            trabajador.postID = post_id
+            trabajador.save()
+            return Response(TrabajadorSerializer(trabajador).data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'postID no proporcionado'}, status=status.HTTP_400_BAD_REQUEST)

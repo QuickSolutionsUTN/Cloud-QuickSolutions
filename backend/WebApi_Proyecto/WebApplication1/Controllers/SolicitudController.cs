@@ -196,6 +196,21 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "admin")]
+        [HttpPut("{solicitudId}/subcontratar")]
+        public async Task<IActionResult> SubcontratarSolicitud([FromBody] SolicitudServicioSubcontratarDTO solicitudServicioSubcontratarDTO)
+        {
+            try
+            {
+                var solicitudActualizada = await _solicitudServicio.SubcontratarSolicitudAsync(solicitudServicioSubcontratarDTO);
+                return Ok(solicitudActualizada);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [Authorize(Roles = "admin")]
         [HttpPut("{solicitudId}/finalizar")]
         public async Task<IActionResult> FinalizarSolicitud(int solicitudId, [FromBody] SolicitudServicioFinalizarDTO SolicitudServicioFinalizarDTO)
         {

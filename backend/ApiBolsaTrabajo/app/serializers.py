@@ -173,7 +173,7 @@ class LocalidadListSerializer(serializers.ModelSerializer):
 class TrabajadorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trabajador
-        fields = ['idtrabajador', 'nombre', 'apellido', 'dni', 'email', 'numtel', 'edad', 'idlocalidad', 'idprofesion', 'descripcion', 'cvlink', 'imagenlink']  # Incluye los datos que necesitas
+        fields = ['idtrabajador', 'nombre', 'apellido', 'dni', 'email', 'numtel', 'edad', 'idlocalidad', 'idprofesion', 'descripcion', 'cvlink', 'imagenlink','talle']  # Incluye los datos que necesitas
 
 class SolicitudSerializer(serializers.ModelSerializer):
     idtrabajadores = serializers.PrimaryKeyRelatedField(
@@ -198,8 +198,20 @@ class TrabajadoresSerializer(serializers.ModelSerializer):
 
 
 class PedidoSerializer(serializers.ModelSerializer):
+    talle = serializers.CharField(max_length=10)
+    manga = serializers.CharField(max_length=10)
     class Meta:
         model = Pedido
-        fields = ['id', 'manga', 'talle']
+        fields = ['manga', 'talle']
 
-    
+class TrabajadorSinUniformeSerializer(serializers.ModelSerializer):
+    profesion = serializers.CharField(source='idprofesion.nombre', read_only=True)
+    class Meta:
+        model = Trabajador
+        fields = ['idtrabajador', 'nombre', 'apellido', 'edad', 'dni', 'profesion', 'imagenlink', 'uniforme','talle']
+        
+
+class TrabajadorPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trabajador
+        fields = ['idtrabajador', 'nombre', 'apellido', 'postID'] 

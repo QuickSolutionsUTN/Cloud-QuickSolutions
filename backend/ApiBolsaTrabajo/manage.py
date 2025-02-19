@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+"""
+Este script es el punto de entrada para ejecutar comandos administrativos en Django.
+- Configura el entorno con la configuración del proyecto ('jellyjobs.settings').
+- Llama a 'execute_from_command_line' para ejecutar comandos como 'runserver', 'migrate', etc.
+- Si Django no está instalado o el entorno no está configurado correctamente, muestra un error.
+"""
 """Django's command-line utility for administrative tasks."""
 import os
 import sys

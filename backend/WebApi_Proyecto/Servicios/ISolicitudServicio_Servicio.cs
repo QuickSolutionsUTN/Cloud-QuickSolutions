@@ -15,6 +15,7 @@ namespace Servicios
         Task<SolicitudRespuestaDTO> ActualizarEstadoSolicitudAsync(SolicitudServicioEstadoUpdateDTO SolicitudServicioEstadoUpdateDTO);
         Task<SolicitudRespuestaDTO> CancelarSolicitudAsync(SolicitudServicioCancelarDTO solicitudServicioCancelarDTO);
         Task<SolicitudRespuestaDTO> IniciarSolicitudAsync(int id);
+        Task<SolicitudRespuestaDTO> SubcontratarSolicitudAsync(SolicitudServicioSubcontratarDTO solicitudServicioSubcontratarDTO);
         Task<SolicitudRespuestaDTO> PresupuestarSolicitudAsync(SolicitudServicioPresupuestarDTO SolicitudServicioPresupuestarDTO);
         Task<SolicitudRespuestaDTO> ActualizarEnvioSolicitudAsync(int id, EnvioDTO envioDTO);
         Task<SolicitudRespuestaDTO> FinalizarSolicitudAsync(SolicitudServicioFinalizarDTO SolicitudServicioFinalizarDTO);
