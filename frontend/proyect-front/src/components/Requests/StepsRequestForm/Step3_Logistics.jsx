@@ -20,10 +20,7 @@ export default function StepLogistics({ formData, control, errors }) {
               {...field}
               type="radio"
               value={field.value ? "logistica" : "particular"}
-              onChange={(value) => {
-                // Actualizamos el valor de 'conLogistica' en el formulario
-                field.onChange(value === "logistica" ? true : false);
-              }}
+              onChange={(value) => { field.onChange(value === "logistica" ? true : false); }}
             >
               <ToggleButton id="particular" value="particular" variant="outline-primary">
                 <FontAwesomeIcon icon={faPerson} className="me-2" />

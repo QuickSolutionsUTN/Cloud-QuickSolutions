@@ -5,7 +5,7 @@ import { faTruck, faPerson } from '@fortawesome/free-solid-svg-icons';
 import AuthContext from '../../contexts/AuthContext.jsx';
 import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
-import FormSummary from './FormSummary.jsx';
+import FormSummary from './StepsRequestForm/FormSummary.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 import ApiDeliveryForm from './StepsRequestForm/ApiDelivery.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -74,15 +74,6 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
     }
   }, [categoryId, setValue]);
 
-  const loadMaintenances = async () => {
-    try {
-      const response = await apiService.getMaintenanceArray();
-      console.log("Mantenimientos obtenidos:", response.data);
-      setMaintenanceArray(response.data);
-    } catch (error) {
-      console.error("Error al obtener los mantenimientos:", error);
-    }
-  };
 
   const loadCategories = async () => {
     try {
@@ -99,6 +90,16 @@ export default function StepForm({ step, formData, updateData, setIsStepComplete
       setProductTypes(response.data);
     } catch (error) {
       console.error("Error al obtener los productos:", error);
+    }
+  };
+
+  const loadMaintenances = async () => {
+    try {
+      const response = await apiService.getMaintenanceArray();
+      console.log("Mantenimientos obtenidos:", response.data);
+      setMaintenanceArray(response.data);
+    } catch (error) {
+      console.error("Error al obtener los mantenimientos:", error);
     }
   };
 

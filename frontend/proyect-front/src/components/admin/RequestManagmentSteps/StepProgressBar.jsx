@@ -18,7 +18,7 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
   };
 
   return (
-    <div className="container text-center mt-4">
+    <div className="admin-progress-bar container text-center mt-4">
      {/*  <h4>Progreso: {currentStep === "Cancelada" ? "Cancelada" : steps[stepIndex]}</h4>*/}
       <div className="progress-container">
         <div className="progress-line-background"></div>

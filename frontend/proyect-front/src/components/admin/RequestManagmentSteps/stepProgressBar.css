@@ -29,7 +29,7 @@
     z-index: 0;
 }
 
-.step {
+.admin-progress-bar .step {
     text-align: center;
     position: relative;
     flex: 1;
