@@ -42,6 +42,7 @@ function UserRequestsList({ userEmail }) {
           ),
           estado: request.estado,
         }));
+        mappedData.sort((a, b) => b.idSolicitud - a.idSolicitud);
         setRequests(mappedData);
       } catch (error) {
         console.error("Error fetching user requests:", error);
@@ -52,7 +53,7 @@ function UserRequestsList({ userEmail }) {
 
   const handleCancel = async () => {
     try {
-      await axios.put(`${backendURL}/api/Solicitud/actualizar-estado`, {
+      await axios.put(`${backendURL}/api/Solicitud/${selectedRequestId}/estado-usuario`, {
         id: selectedRequestId,
         idSolicitudServicioEstado: 6
       }, {
@@ -60,7 +61,6 @@ function UserRequestsList({ userEmail }) {
           Authorization: `Bearer ${userToken}`
         }
       });
-      // Actualizar el estado local para reflejar el cambio
       setRequests(prevRequests => prevRequests.map(request => 
         request.idSolicitud === selectedRequestId ? { ...request, estado: 'Cancelada' } : request
       ));
@@ -89,30 +89,30 @@ function UserRequestsList({ userEmail }) {
     {
       name: "Id",
       selector: (row) => row.idSolicitud,
-      sorteable: true,
+      sortable: true,
       width: "8%",
     },
     {
       name: "Fecha",
       selector: (row) => row.fechaGeneracion,
-      sorteable: true,
+      sortable: true,
       width: "8%",
     },
     {
       name: "Servicio",
       selector: (row) => row.tipoServicio,
-      sorteable: true,
+      sortable: true,
       width: "10%",
     },
     {
       name: "Producto",
       selector: (row) => row.tipoDeProducto,
-      sorteable: true,
+      sortable: true,
     },
     {
       name: "Estado",
       selector: (row) => row.estado,
-      sorteable: true,
+      sortable: true,
     },
     {
       name: "Detalle",
