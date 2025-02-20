@@ -101,11 +101,21 @@ namespace Servicios
                 throw new Exception("Solicitud no encontrada");
             }
 
+
             var tipoProductoDTO = _mapper.Map<TipoProductoDTO>(solicitud.TipoProducto);
 
             var categoriaDTO = await _categoriaServicio.ObtenerCategoriaPorTipoProducto(tipoProductoDTO);
 
             var solicitudDTO = _mapper.Map<SolicitudRespuestaDTO>(solicitud);
+
+            if (solicitud.IdTipoServicio == 2)
+            {
+                var mantenimiento = await _context.TipoMantenimiento
+                    .FirstOrDefaultAsync(m => m.Id == solicitud.IdTipoMantenimiento);
+
+                var mantenimientoDTO = _mapper.Map<MantenimientoOutDTO>(mantenimiento);
+                solicitudDTO.Mantenimiento = mantenimientoDTO;
+            }
 
             if (solicitud.Tercearizado)
             {
@@ -247,6 +257,7 @@ namespace Servicios
             solicitud.DiagnosticoTecnico = SolicitudServicioPresupuestarDTO.DiagnosticoTecnico;
             solicitud.Monto = SolicitudServicioPresupuestarDTO.Monto;
             solicitud.FechaRevisada = DateTime.UtcNow;
+            solicitud.FechaPresupuestada = DateTime.UtcNow;
             solicitud.FechaEstimada = DateTime.SpecifyKind(SolicitudServicioPresupuestarDTO.FechaEstimada, DateTimeKind.Utc);
             await _context.SaveChangesAsync();
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);

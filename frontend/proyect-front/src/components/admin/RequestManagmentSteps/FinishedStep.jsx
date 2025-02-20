@@ -22,6 +22,20 @@ function FinishedStep() {
     fetchSolicitudDetails();
   }, [solicitudId]);
 
+  const adjustTextareaHeight = (e) => {
+    e.target.style.height = 'auto';
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
+  useEffect(() => {
+    if (solicitud) {
+      const textarea = document.getElementById('summary');
+      if (textarea) {
+        adjustTextareaHeight({ target: textarea });
+      }
+    }
+  }, [solicitud]);
+
   if (!solicitud) {
     return <div>Cargando...</div>;
   }
@@ -61,10 +75,10 @@ function FinishedStep() {
               <Form.Label>Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
-                rows={4}
                 type='text'
                 value={solicitud.diagnosticoTecnico}
                 readOnly
+                style={{ resize: 'none' }}
               />
             </Form.Group>
           </div>
@@ -93,10 +107,11 @@ function FinishedStep() {
               <Form.Label>Resumen del trabajo</Form.Label>
               <Form.Control
                 as='textarea'
-                rows={3}
                 type='text'
                 value={solicitud.resumen}
                 readOnly
+                style={{ resize: 'none', overflow: 'hidden' }}
+                onInput={adjustTextareaHeight}
               />
             </Form.Group>
           </div>

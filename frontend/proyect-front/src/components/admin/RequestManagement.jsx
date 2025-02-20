@@ -194,7 +194,6 @@ function RequestManagement() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log('handleChange:', name, value);
     setSolicitud((prevSolicitud) => ({
       ...prevSolicitud,
       [name]: value,
@@ -247,6 +246,14 @@ function RequestManagement() {
           <div className="d-flex flex-column">
             <span className="mb-2 fw-bold">Usuario</span>
             <span>{solicitud.emailSolicitante}</span>
+          </div>
+        </div>
+        <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
+          <div className="d-flex flex-column">
+            <span className="mb-2 "><b>Servicio:</b>
+              <span className='ms-2'></span>{solicitud.tipoServicio}
+            </span>
+            <span className="mb-2">Nro seguimiento:<span className='ms-2'></span>{solicitud.envio ? solicitud.envio.nroSeguimiento : '-'}</span>
           </div>
         </div>
         <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">

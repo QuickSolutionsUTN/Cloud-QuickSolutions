@@ -56,12 +56,14 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
               {step === "Revisada" && solicitud.fechaRevisada && formatDate(solicitud.fechaRevisada)}
               {step === "Presupuestada" && solicitud.fechaPresupuestada && formatDate(solicitud.fechaPresupuestada)}
               {step === "Aprobada" && solicitud.fechaAprobada && formatDate(solicitud.fechaAprobada)}
+              {step === "Finalizada" && solicitud.fechaFinalizada && formatDate(solicitud.fechaFinalizada)}
             </p>
             <p className={`time ${index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "visible" : ""}`}>
               {step === "Iniciada" && solicitud.fechaIniciada && formatTime(solicitud.fechaIniciada)}
               {step === "Revisada" && solicitud.fechaRevisada && formatTime(solicitud.fechaRevisada)}
               {step === "Presupuestada" && solicitud.fechaPresupuestada && formatTime(solicitud.fechaPresupuestada)}
               {step === "Aprobada" && solicitud.fechaAprobada && formatTime(solicitud.fechaAprobada)}
+              {step === "Finalizada" && solicitud.fechaFinalizada && formatTime(solicitud.fechaFinalizada)}
             </p>
           </div>
         ))}
