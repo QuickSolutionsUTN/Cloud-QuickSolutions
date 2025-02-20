@@ -8,7 +8,7 @@ import { faCalendar, faDollarSign } from "@fortawesome/free-solid-svg-icons";
 
 import "./finishedStep.css";
 
-function FinishedStep({ solicitud}) {
+function FinishedStep({ solicitud }) {
 
   const adjustTextareaHeight = (e) => {
     e.target.style.height = 'auto';
@@ -23,6 +23,7 @@ function FinishedStep({ solicitud}) {
       }
     }
   }, [solicitud]);
+
 
   if (!solicitud) {
     return <div>Cargando...</div>;
@@ -40,7 +41,8 @@ function FinishedStep({ solicitud}) {
                 type='text'
                 value={solicitud.diagnosticoTecnico}
                 readOnly
-                style={{ resize: 'none' }}
+                style={{ resize: 'none', overflow: 'hidden' }}
+                onInput={adjustTextareaHeight}
               />
             </Form.Group>
           </div>

@@ -32,27 +32,6 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
   return (
     <>
       <Form className='data-container'>
-        <div className='row my-3'>
-          <div className='col-4'>
-            <Form.Label>Categoria</Form.Label>
-            <Form.Control
-              type='text'
-              value={solicitud.categoria || ""}
-              readOnly
-            >
-            </Form.Control>
-          </div>
-          <div className='col-4'>
-            <Form.Label>Producto</Form.Label>
-            <Form.Control
-              type='text'
-              value={solicitud.tipoDeProducto || ""}
-              readOnly
-            >
-            </Form.Control>
-          </div>
-        </div>
-        <div className="my-4"></div>
         <div className='row'>
           <div className='col-12'>
             {solicitud.tipoServicio === "Reparacion" ? (
@@ -71,7 +50,7 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
               </div>
             ) : <div className="col-12">
               <Form.Group controlId="description">
-                <Form.Label>Descripcion del mantenimiento</Form.Label>
+                <Form.Label className="mb-2 mt-2 fw-bold">Descripcion del mantenimiento</Form.Label>
                 <Form.Control
                   as="textarea"
                   type="text"
@@ -90,7 +69,7 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
         <div className='row'>
           <div className='col-diagnostic'>
             <Form.Group controlId='diagnostic'>
-              <Form.Label>Diagnostico</Form.Label>
+              <Form.Label className="fw-bold">Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
                 rows={5}
@@ -104,7 +83,7 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
           </div>
           <div className='col-amount'>
             <Form.Group controlId='estimated-date'>
-              <Form.Label>Fecha estimada</Form.Label>
+              <Form.Label className="fw-bold">Fecha estimada</Form.Label>
               <Form.Control
                 type='date'
                 name="fechaEstimada"
@@ -113,7 +92,7 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
               />
             </Form.Group>
             <Form.Group className='amount-form-label' controlId='amount'>
-              <Form.Label>Monto</Form.Label>
+              <Form.Label className="fw-bold">Monto</Form.Label>
               <Form.Control
                 type='number'
                 placeholder='Ingrese el monto'

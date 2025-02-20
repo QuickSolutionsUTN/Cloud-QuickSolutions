@@ -225,6 +225,22 @@ namespace WebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{solicitudId}/eliminar")]
+        public async Task<IActionResult> EliminarSolicitud(int solicitudId)
+        {
+
+            var result = await _solicitudServicio.EliminarSolicitudAsync(solicitudId);
+
+            if (!result)
+            {
+                return StatusCode(500, new { message = "Error al eliminar el usuario" });
+            }
+
+
+            return NoContent();
+            }
+
     }
 
 }

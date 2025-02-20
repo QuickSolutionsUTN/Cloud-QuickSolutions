@@ -7,6 +7,7 @@ import {
   ToastContainer,
   Toast,
   Badge,
+  ListGroup,
 } from "react-bootstrap";
 import axios from "axios";
 import { useBackendURL } from "../../contexts/BackendURLContext.jsx";
@@ -160,48 +161,48 @@ export default function RequestDetails() {
       {(solicitud.estado === "Presupuestada" ||
         solicitud.estado === "Aprobada" ||
         solicitud.estado === "Finalizada") && (
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h4>Monto: ${solicitud.monto}</h4>
-            {solicitud.estado === "Presupuestada" && (
-              <>
-                <Button
-                  variant="success"
-                  className="button-spacing"
-                  onClick={() => setShowAcceptModal(true)}
-                >
-                  Aceptar
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => setShowRejectModal(true)}
-                >
-                  Rechazar
-                </Button>
-              </>
-            )}
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4>Monto: ${solicitud.monto}</h4>
+              {solicitud.estado === "Presupuestada" && (
+                <>
+                  <Button
+                    variant="success"
+                    className="button-spacing"
+                    onClick={() => setShowAcceptModal(true)}
+                  >
+                    Aceptar
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => setShowRejectModal(true)}
+                  >
+                    Rechazar
+                  </Button>
+                </>
+              )}
+            </div>
+            <div>
+              {solicitud.estado !== "Finalizada" ? (
+                <h4>
+                  Fecha Estimada:{" "}
+                  {new Date(solicitud.fechaEstimada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
+                </h4>
+              ) : (
+                <h4>
+                  Fecha Finalizada:{" "}
+                  {new Date(solicitud.fechaFinalizada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
+                </h4>
+              )}
+            </div>
           </div>
-          <div>
-            {solicitud.estado !== "Finalizada" ? (
-              <h4>
-                Fecha Estimada:{" "}
-                {new Date(solicitud.fechaEstimada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
-              </h4>
-            ) : (
-              <h4>
-                Fecha Finalizada:{" "}
-                {new Date(solicitud.fechaFinalizada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
-              </h4>
-            )}
-          </div>
-        </div>
-      )}
+        )}
       <div className="my-4"></div>
 
       <Form className="data-container">
         <div className="row my-3">
           <div className="col-4">
-            <Form.Label>Email</Form.Label>
+            <Form.Label className="fw-bold">Email</Form.Label>
 
             <Form.Control
               type="text"
@@ -212,7 +213,7 @@ export default function RequestDetails() {
         </div>
         <div className="row my-3">
           <div className="col-4">
-            <Form.Label>Servicio</Form.Label>
+            <Form.Label className="fw-bold">Servicio</Form.Label>
             <Form.Control
               type="text"
               defaultValue={solicitud.tipoServicio}
@@ -220,7 +221,7 @@ export default function RequestDetails() {
             ></Form.Control>
           </div>
           <div className="col-4">
-            <Form.Label>Categoria</Form.Label>
+            <Form.Label className="fw-bold">Categoria</Form.Label>
             <Form.Control
               type="text"
               value={solicitud.categoria}
@@ -228,7 +229,7 @@ export default function RequestDetails() {
             ></Form.Control>
           </div>
           <div className="col-4">
-            <Form.Label>Producto</Form.Label>
+            <Form.Label className="fw-bold">Producto</Form.Label>
             <Form.Control
               type="text"
               value={solicitud.tipoDeProducto}
@@ -242,7 +243,7 @@ export default function RequestDetails() {
             <div className="row">
               <div className="col-12">
                 <Form.Group controlId="descripcion">
-                  <Form.Label>Descripcion del problema</Form.Label>
+                  <Form.Label className="fw-bold">Descripcion del problema</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -261,7 +262,7 @@ export default function RequestDetails() {
             <div className="row">
               <div className="col-12">
                 <Form.Group controlId="descripcion">
-                  <Form.Label>Diagnostico Tecnico</Form.Label>
+                  <Form.Label className="fw-bold">Diagnostico Tecnico</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -275,6 +276,19 @@ export default function RequestDetails() {
             </div>
           </div>
         ) : null}
+        {solicitud.mantenimiento?.checklist && (
+          <Form.Group className="mt-3" controlId="checklist">
+            <Form.Label className="fw-bold">Checklist de Mantenimiento</Form.Label>
+            <ListGroup>
+              {solicitud.mantenimiento?.checklist.map((item) => (
+                <ListGroup.Item key={item.id}>
+                  {item.descripcion}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </Form.Group>
+        )}
+
         <hr />
 
         {solicitud.conLogistica && solicitud.envio !== null ? (

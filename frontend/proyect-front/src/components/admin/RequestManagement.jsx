@@ -214,7 +214,7 @@ function RequestManagement() {
       case 'Aprobada':
         return <ApprovedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Finalizada':
-        return <FinishedStep solicitud={solicitud}/>;
+        return <FinishedStep solicitud={solicitud} />;
       case 'Cancelada':
         return <CancelStep solicitud={solicitud} />;
       default:
@@ -239,6 +239,12 @@ function RequestManagement() {
         </div>
       </div>
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
+      {(solicitud.estado === 'Cancelada' && !solicitud.fechaIniciada) && (
+      <div className="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>¡Atención!</strong> La solicitud ha sido <strong>cancelada</strong> por el usuario.
+        <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      )}
       <hr style={{ borderTop: '1px solid lightgray', margin: '1%' }} />
       <div className='details d-flex flex-row justify-content' >
         <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">

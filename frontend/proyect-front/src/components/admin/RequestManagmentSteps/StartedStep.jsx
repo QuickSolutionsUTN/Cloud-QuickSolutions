@@ -208,6 +208,18 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
                 onInput={adjustTextareaHeight}
               />
             </Form.Group>
+            <Form.Group className="mt-3" controlId="checklist">
+              <Form.Label className="fw-bold">Checklist de Mantenimiento Preventivo</Form.Label>
+              <ListGroup>
+                {solicitud.mantenimiento?.checklist.map((item) => (
+                  <ListGroup.Item key={item.id}>
+                    {item.descripcion}
+                    {item.obligatorio && " (Obligatorio)"}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Form.Group>
+
           </div>}
         </div>
         <div className="my-4"></div>

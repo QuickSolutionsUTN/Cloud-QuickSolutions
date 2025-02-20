@@ -114,6 +114,17 @@ namespace Servicios
                     .FirstOrDefaultAsync(m => m.Id == solicitud.IdTipoMantenimiento);
 
                 var mantenimientoDTO = _mapper.Map<MantenimientoOutDTO>(mantenimiento);
+
+                var tareas = await _context.CheckListMantenimiento
+                    .Where(c => c.IdTipoMantenimiento == mantenimiento.Id)
+                    .Select(c => new TareaMantenimientoDTO
+                    {
+                        Id = c.Id,
+                        Descripcion = c.Tarea,
+                        Obligatorio = c.Obligatorio
+                    })
+                    .ToListAsync();
+                mantenimientoDTO.Checklist = tareas;
                 solicitudDTO.Mantenimiento = mantenimientoDTO;
             }
 
@@ -308,6 +319,21 @@ namespace Servicios
 
             var solicitudActualizada = await ObtenerSolicitudPorIdAsync(solicitud.Id);
             return solicitudActualizada;
+        }
+
+        public async Task<bool> EliminarSolicitudAsync(int solicitudId)
+        {
+            var solicitud = await _context.SolicitudServicio.FindAsync(solicitudId);
+
+            if (solicitud == null)
+            {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            _context.SolicitudServicio.Remove(solicitud);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }
