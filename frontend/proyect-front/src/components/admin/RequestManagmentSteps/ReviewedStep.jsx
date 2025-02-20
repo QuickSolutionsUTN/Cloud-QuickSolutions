@@ -6,7 +6,7 @@ import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
 import "./reviewedStep.css"
 
-function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
+function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
   const { id: solicitudId } = useParams();
   const backendURL = useBackendURL();
   const navigate = useNavigate();
@@ -20,24 +20,10 @@ function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
     event.preventDefault();
     nextStep();
   };
-
-  /*
-  useEffect(() => {
-    const fetchSolicitudDetails = async () => {
-      try {
-        console.log('Fetching solicitud details...', backendURL);
-        const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
-        console.log('Solicitud details:', response.data);
-        setSolicitud(response.data);
-        const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
-      } catch (error) {
-        console.error('Error fetching solicitud details:', error);
-      }
-    }
-    fetchSolicitudDetails();
-  }, [solicitudId]);*/
+  const adjustTextareaHeight = (e) => {
+    e.target.style.height = 'auto';
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
 
   if (!solicitud) {
     return <div>Cargando...</div>;
@@ -46,52 +32,59 @@ function ReviewedStep({solicitud, nextStep, cancelStep, handleChange }) {
   return (
     <>
       <Form className='data-container'>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Servicio</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.tipoServicio || ""}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Categoria</Form.Label>
-              <Form.Control
-                type='text'
-                value={solicitud.categoria || ""}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Producto</Form.Label>
-              <Form.Control
-                type='text'
-                value={solicitud.tipoDeProducto || ""}
-                readOnly
-              >
-              </Form.Control>
-            </div>
+        <div className='row my-3'>
+          <div className='col-4'>
+            <Form.Label>Categoria</Form.Label>
+            <Form.Control
+              type='text'
+              value={solicitud.categoria || ""}
+              readOnly
+            >
+            </Form.Control>
           </div>
-          <div className="my-4"></div>
-          <div className='row'>
-            <div className='col-12'>
-              <Form.Group controlId='description'>
-                <Form.Label>Descripcion del problema</Form.Label>
+          <div className='col-4'>
+            <Form.Label>Producto</Form.Label>
+            <Form.Control
+              type='text'
+              value={solicitud.tipoDeProducto || ""}
+              readOnly
+            >
+            </Form.Control>
+          </div>
+        </div>
+        <div className="my-4"></div>
+        <div className='row'>
+          <div className='col-12'>
+            {solicitud.tipoServicio === "Reparacion" ? (
+              <div className="col-12">
+                <Form.Group controlId="description">
+                  <Form.Label>Descripcion del problema</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    type="text"
+                    value={solicitud.descripcion}
+                    readOnly
+                    style={{ resize: "vertical" }}
+                  />
+                </Form.Group>
+              </div>
+            ) : <div className="col-12">
+              <Form.Group controlId="description">
+                <Form.Label>Descripcion del mantenimiento</Form.Label>
                 <Form.Control
-                  as='textarea'
-                  rows={3}
-                  type='text'
-                  value={solicitud.descripcion || ""}
+                  as="textarea"
+                  type="text"
+                  value={solicitud.mantenimiento.descripcion}
                   readOnly
-                  style={{ resize: 'vertical' }}
+                  style={{ resize: 'none', overflow: 'hidden' }}
+                  onInput={adjustTextareaHeight}
                 />
               </Form.Group>
-            </div> 
+            </div>}
           </div>
-          <div className="my-4"></div>
+        </div>
+        <div className="my-4"></div>
       </Form>
       <Form className='reviewed-step-form'>
         <div className='row'>

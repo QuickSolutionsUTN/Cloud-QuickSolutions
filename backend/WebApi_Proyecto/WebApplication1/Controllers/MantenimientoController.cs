@@ -23,7 +23,13 @@ namespace WebAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    message = "Hay errores de validación en los datos enviados.",
+                    errors = ModelState.Values.SelectMany(v => v.Errors)
+                                      .Select(e => e.ErrorMessage)
+                });
+
             }
 
             var nuevoMantenimiento = await _mantenimientoServicio.CrearMantenimientoAsync(mantenimientoInDTO);

@@ -100,7 +100,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
 
 
   const handleShow = () => {
-    if (items.length === 0) {getApiResponse();}
+    if (items.length === 0) { getApiResponse(); }
     setShow(true);
   }
 
@@ -143,7 +143,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     }
     setError(null);
 
-    
+
     const solicitudData = {
       empresa: "QuickSolutions",
       fecha_inicio: startDate,
@@ -166,62 +166,49 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       console.log('Solicitando trabajo...', solicitudData);
       const response = await apiReparacionExterna.postSolicitud(solicitudData);
       console.log('Trabajo solicitado:', response);
-      solicitud.IdSolicitudExterna=response.solicitud.idsolicitud;
+      solicitud.IdSolicitudExterna = response.solicitud.idsolicitud;
       return true;
     } catch (error) {
       console.error('Error solicitando trabajo:', error);
     }
   }
 
+  const adjustTextareaHeight = (e) => {
+    e.target.style.height = 'auto';
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
 
   return (
     <>
       <Form className="data-container">
-        <div className="row my-3">
-          <div className="col-4">
-            <Form.Label>Servicio</Form.Label>
-            <Form.Control
-              type="text"
-              defaultValue={solicitud.tipoServicio}
-              readOnly
-            ></Form.Control>
-          </div>
-          <div className="col-4">
-            <Form.Label>Categoria</Form.Label>
-            <Form.Control
-              type="text"
-              value={solicitud.categoria}
-              readOnly
-            ></Form.Control>
-          </div>
-          <div className="col-4">
-            <Form.Label>Producto</Form.Label>
-            <Form.Control
-              type="text"
-              value={solicitud.tipoDeProducto}
-              readOnly
-            ></Form.Control>
-          </div>
-        </div>
-        <div className="my-4"></div>
         <div className="row">
           {solicitud.tipoServicio === "Reparacion" ? (
-            <>
-              <div className="col-12">
-                <Form.Group controlId="description">
-                  <Form.Label>Descripcion del problema</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    type="text"
-                    value={solicitud.descripcion}
-                    readOnly
-                    style={{ resize: "vertical" }}
-                  />
-                </Form.Group>
-              </div>
-            </>
-          ) : null}
+            <div className="col-12">
+              <Form.Group controlId="description">
+                <Form.Label>Descripcion del problema</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  type="text"
+                  value={solicitud.descripcion}
+                  readOnly
+                  style={{ resize: "vertical" }}
+                />
+              </Form.Group>
+            </div>
+          ) : <div className="col-12">
+            <Form.Group controlId="description">
+              <Form.Label className="fw-bold">Descripcion del mantenimiento</Form.Label>
+              <Form.Control
+                as="textarea"
+                type="text"
+                value={solicitud.mantenimiento?.descripcion}
+                readOnly
+                style={{ resize: 'none', overflow: 'hidden' }}
+                onInput={adjustTextareaHeight}
+              />
+            </Form.Group>
+          </div>}
         </div>
         <div className="my-4"></div>
       </Form>
@@ -269,33 +256,33 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
               <div>Cargando...</div>
             )}
           </ListGroup>
-            <div className="mt-3 p-3 border rounded">
-              <h5>Selecciona el período</h5>
-              <div className="d-flex gap-2">
+          <div className="mt-3 p-3 border rounded">
+            <h5>Selecciona el período</h5>
+            <div className="d-flex gap-2">
 
-                <Form.Group controlId='startDate'>
-                  <Form.Label>Fecha inicio</Form.Label>
-                  <Form.Control
-                    type='date'
-                    name="fechaInicio"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    required
-                  />
-                </Form.Group>
+              <Form.Group controlId='startDate'>
+                <Form.Label>Fecha inicio</Form.Label>
+                <Form.Control
+                  type='date'
+                  name="fechaInicio"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                <Form.Group controlId='endDate'>
-                  <Form.Label>Fecha inicio</Form.Label>
-                  <Form.Control
-                    type='date'
-                    name="fechaFin"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    required
-                  />
-                </Form.Group>
-              </div>
+              <Form.Group controlId='endDate'>
+                <Form.Label>Fecha inicio</Form.Label>
+                <Form.Control
+                  type='date'
+                  name="fechaFin"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  required
+                />
+              </Form.Group>
             </div>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-primary" onClick={handleSubcrontractFinish}>

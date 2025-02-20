@@ -44,9 +44,6 @@ export const RequestForm = () => {
   }, []);
 
   const handleSubmit = async (data) => {
-    console.log("Enviando formulario:", data);
-    const envioData = data.logisticsData;
-    if (envioData.conLogistica) { data.logisticsData.conLogistica = true; }
 
     const DataToSend = {
       userEmail: data.personalData.email,
@@ -55,6 +52,10 @@ export const RequestForm = () => {
       idTipoProducto: parseInt(data.productData.productTypeId, 10),
       conLogistica: data.logisticsData.conLogistica,
     };
+    if (data.productData.serviceId === 2) { DataToSend.idTipoMantenimiento = data.productData.maintenanceTypeId; }
+
+    const envioData = data.logisticsData;
+    if (envioData.conLogistica) { data.logisticsData.conLogistica = true; }
     if (envioData.conLogistica) {
       DataToSend.envio = {
         calle: envioData.street,

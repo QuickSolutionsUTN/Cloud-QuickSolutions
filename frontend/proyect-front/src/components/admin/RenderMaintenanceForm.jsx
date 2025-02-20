@@ -25,7 +25,7 @@ export default function RenderMaintenanceForm({ maintenance, products, handleCha
             <Form.Control
               as="select"
               name="idTipoProducto"
-              value={maintenance.idTipoProducto}
+              value={parseInt(maintenance.idTipoProducto)}
               onChange={handleChange}
             >
               <option value="">Seleccione un producto</option>

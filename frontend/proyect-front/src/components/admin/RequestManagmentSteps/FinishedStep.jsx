@@ -3,24 +3,12 @@ import axios from 'axios';
 import { Form } from 'react-bootstrap';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendar, faDollarSign } from "@fortawesome/free-solid-svg-icons";
+
 import "./finishedStep.css";
 
-function FinishedStep() {
-  const [solicitud, setSolicitud] = useState(null);
-  const { id: solicitudId } = useParams();
-  const backendURL = useBackendURL();
-
-  useEffect(() => {
-    const fetchSolicitudDetails = async () => {
-      try {
-        const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
-        setSolicitud(response.data);
-      } catch (error) {
-        console.error('Error fetching solicitud details:', error);
-      }
-    }
-    fetchSolicitudDetails();
-  }, [solicitudId]);
+function FinishedStep({ solicitud}) {
 
   const adjustTextareaHeight = (e) => {
     e.target.style.height = 'auto';
@@ -44,35 +32,9 @@ function FinishedStep() {
     <div className="data-container finished-step-container">
       <Form>
         <div className='row my-3'>
-          <div className='col-4'>
-            <Form.Label>Servicio</Form.Label>
-            <Form.Control
-              type='text'
-              defaultValue={solicitud.tipoServicio}
-              readOnly
-            />
-          </div>
-          <div className='col-4'>
-            <Form.Label>Categoria</Form.Label>
-            <Form.Control
-              type='text'
-              value={solicitud.categoria}
-              readOnly
-            />
-          </div>
-          <div className='col-4'>
-            <Form.Label>Producto</Form.Label>
-            <Form.Control
-              type='text'
-              value={solicitud.tipoDeProducto}
-              readOnly
-            />
-          </div>
-        </div>
-        <div className='row my-3'>
-          <div className='col-6 diagnostic-column'>
+          <div className='col-6 diagnostic-column '>
             <Form.Group controlId='diagnostic'>
-              <Form.Label>Diagnostico</Form.Label>
+              <Form.Label className="fw-bold">Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
                 type='text'
@@ -82,20 +44,28 @@ function FinishedStep() {
               />
             </Form.Group>
           </div>
-          <div className='col-6 amount-column'>
-            <Form.Group controlId='estimated-date'>
-              <Form.Label>Fecha estimada</Form.Label>
+        </div>
+        <div className="row my-3">
+          <div className="col-4 d-flex flex-column">
+            <Form.Group controlId="estimated-date">
+              <Form.Label className="fw-bold">
+                <FontAwesomeIcon icon={faCalendar} className="me-2" />
+                Fecha estimada</Form.Label>
               <Form.Control
-                type='date'
-                value={solicitud.fechaEstimada ? new Date(solicitud.fechaEstimada).toISOString().split('T')[0] : ''}
+                type="date"
+                value={solicitud.fechaEstimada ? new Date(solicitud.fechaEstimada).toISOString().split("T")[0] : ""}
                 readOnly
               />
             </Form.Group>
-            <Form.Group controlId='amount'>
-              <Form.Label>Monto</Form.Label>
+          </div>
+          <div className="col-4 d-flex flex-column">
+            <Form.Group controlId="amount">
+              <Form.Label className="fw-bold">
+                <FontAwesomeIcon icon={faDollarSign} className="me-2" />
+                Monto</Form.Label>
               <Form.Control
-                type='number'
-                value={solicitud.monto}
+                type="number"
+                value={solicitud.monto || ""}
                 readOnly
               />
             </Form.Group>
@@ -104,7 +74,7 @@ function FinishedStep() {
         <div className='row my-3'>
           <div className='col-12'>
             <Form.Group controlId='summary'>
-              <Form.Label>Resumen del trabajo</Form.Label>
+              <Form.Label className="fw-bold">Resumen del trabajo</Form.Label>
               <Form.Control
                 as='textarea'
                 type='text'

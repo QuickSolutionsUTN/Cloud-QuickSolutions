@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Accordion } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useBackendURL } from '../../contexts/BackendURLContext';
 import StepProgressBar from './RequestManagmentSteps/StepProgressBar.jsx';
@@ -11,6 +11,8 @@ import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
 import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTableCellsLarge, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
 import apiReparacionExterna from '../../services/apiBolsaTrabajoService.jsx';
 
 import { Button } from 'react-bootstrap';
@@ -155,7 +157,6 @@ function RequestManagement() {
       await UpdateRequestFinished();
     }
   };
-
   const handleSubcontractStep = async () => {
     const stepIndex = steps.indexOf(currentStep);
     const newStep = steps[stepIndex + 1];
@@ -182,8 +183,6 @@ function RequestManagement() {
     });
 
   };
-
-
   const handleCancelButton = () => {
     setShowCancelModalForm(true);
   };
@@ -211,11 +210,11 @@ function RequestManagement() {
       case 'Revisada':
         return <ReviewedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Presupuestada':
-        return <BudgetedStep />;
+        return <BudgetedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Aprobada':
         return <ApprovedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Finalizada':
-        return <FinishedStep />;
+        return <FinishedStep solicitud={solicitud}/>;
       case 'Cancelada':
         return <CancelStep solicitud={solicitud} />;
       default:
@@ -241,22 +240,20 @@ function RequestManagement() {
       </div>
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
       <hr style={{ borderTop: '1px solid lightgray', margin: '1%' }} />
-      <div className='details d-flex flex-row ' >
+      <div className='details d-flex flex-row justify-content' >
         <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
           <div className="d-flex flex-column">
             <span className="mb-2 fw-bold">Usuario</span>
             <span>{solicitud.emailSolicitante}</span>
           </div>
         </div>
-        <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
+        <div className="service-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
           <div className="d-flex flex-column">
-            <span className="mb-2 "><b>Servicio:</b>
-              <span className='ms-2'></span>{solicitud.tipoServicio}
-            </span>
-            <span className="mb-2">Nro seguimiento:<span className='ms-2'></span>{solicitud.envio ? solicitud.envio.nroSeguimiento : '-'}</span>
+            <span className="mb-2"><b>Servicio:</b><span className='ms-2'>{solicitud.tipoServicio}</span></span>
+            {solicitud.tipoServicio === 'mantenimiento' && (<span><b>Tipo: </b>{solicitud.mantenimiento?.nombre}</span>)}
           </div>
         </div>
-        <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
+        <div className="logistics-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
           <div className="d-flex flex-column">
             <span className="mb-2 "><b>Logistica:</b>
               <span className='ms-2'></span>{solicitud.conLogistica ? 'Si' : 'No'}
@@ -264,7 +261,7 @@ function RequestManagement() {
             <span className="mb-2">Nro seguimiento:<span className='ms-2'></span>{solicitud.envio ? solicitud.envio.nroSeguimiento : '-'}</span>
           </div>
         </div>
-        <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
+        <div className="subContract-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
           <div className="d-flex flex-column">
             <span className="mb-2 "><b>SubContratada:</b>
               {solicitud.tercearizado ? (
@@ -282,12 +279,38 @@ function RequestManagement() {
           </div>
         </div>
       </div>
-      <div className='d-flex request-details p-3'>
+      <div className='row d-flex request-basics p-3'>
+        <div className='col-4'>
+          <Form.Label className="fw-bold">
+            <FontAwesomeIcon icon={faTableCellsLarge} className="me-2" />
+            Categoria
+          </Form.Label>
+          <Form.Control
+            type='text'
+            value={solicitud.categoria || ""}
+            readOnly
+          >
+          </Form.Control>
+        </div>
+        <div className='col-4'>
+          <Form.Label className="fw-bold">
+            <FontAwesomeIcon icon={faScrewdriverWrench} className="me-2" />
+            Producto
+          </Form.Label>
+          <Form.Control
+            type='text'
+            value={solicitud.tipoDeProducto}
+            readOnly
+          >
+          </Form.Control>
+        </div>
+      </div>
+      <div className='d-flex request-details p-3 mb-4'>
         <div className='flex-grow-1'>
           {renderContent()}
         </div>
       </div>
-
+      <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
       <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm} />
     </div>
   );

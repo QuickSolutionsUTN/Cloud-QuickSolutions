@@ -7,31 +7,12 @@ import { useParams } from 'react-router-dom';
 import "./approvedStep.css";
 
 function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
-  const { id: solicitudId } = useParams();
-  const backendURL = useBackendURL();
-  const navigate = useNavigate();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const [idCategoria, setIdCategoria] = useState(null);
   const [Resumen, setResumen] = useState('');
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
 
-  useEffect(() => {
-    const fetchSolicitudDetails = async () => {
-      try {
-        console.log('Fetching solicitud details...', backendURL);
-        const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
-        console.log('Solicitud details:', response.data);
-        setSolicitud(response.data);
-        const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
-      } catch (error) {
-        console.error('Error fetching solicitud details:', error);
-      }
-    }
-    fetchSolicitudDetails();
-  }, [solicitudId]);
 
   useEffect(() => {
     setIsFormValid(!!solicitud.Resumen);
@@ -61,35 +42,6 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
     <>
       <div className="data-container budgeted-step-container">
         <Form className='reviewed-step-form'>
-          <div className='row my-3'>
-            <div className='col-4'>
-              <Form.Label>Servicio</Form.Label>
-              <Form.Control
-                type='text'
-                defaultValue={solicitud.tipoServicio}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Categoria</Form.Label>
-              <Form.Control
-                type='text'
-                value={solicitud.categoria}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-            <div className='col-4'>
-              <Form.Label>Producto</Form.Label>
-              <Form.Control
-                type='text'
-                value={solicitud.tipoDeProducto}
-                readOnly
-              >
-              </Form.Control>
-            </div>
-          </div>
           <div className='row reviewed-show'>
           <div className='col-diagnostic'>
             <Form.Group controlId='diagnostic'>

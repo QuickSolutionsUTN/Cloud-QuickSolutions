@@ -170,7 +170,7 @@ export default function StepProductData({ formData, control, errors, setValue })
               <p><b>Tipo de mantenimiento</b></p>
               <div className="row">
                 {filteredMaintenanceArray.map((maintenance) => (
-                  <div key={maintenance.id} className="col-md-4">
+                  <div key={maintenance.id} className="col-md-3">
                     <Card style={{
                       width: '18rem',
                       cursor: 'pointer',

@@ -13,7 +13,7 @@ function AdminMaintenancePage() {
   const [maintenance, setMaintenance] = useState({
     nombre: '',
     descripcion: '',
-    idTipoProducto: '',
+    idTipoProducto: 0,
     checklist: [],
   });
   const [maintenanceArray, setMaintenanceArray] = useState([]);
@@ -56,7 +56,7 @@ function AdminMaintenancePage() {
     setMaintenance({
       nombre: '',
       descripcion: '',
-      idTipoProducto: '',
+      idTipoProducto: 0,
       checklist: [],
     });
     setSelectedItem(null);
@@ -91,6 +91,7 @@ function AdminMaintenancePage() {
 
   const handleSave = async () => {
     const maintenanceToSave = { ...maintenance };
+    maintenanceToSave.idTipoProducto = parseInt(maintenance.idTipoProducto);
     console.log("guardando mantenimiento... ", maintenanceToSave);
     try {
       const response = await apiService.createMaintenance(maintenanceToSave);

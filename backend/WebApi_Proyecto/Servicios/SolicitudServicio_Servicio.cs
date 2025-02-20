@@ -107,7 +107,7 @@ namespace Servicios
             var categoriaDTO = await _categoriaServicio.ObtenerCategoriaPorTipoProducto(tipoProductoDTO);
 
             var solicitudDTO = _mapper.Map<SolicitudRespuestaDTO>(solicitud);
-
+            Console.WriteLine(solicitud.IdTipoServicio);
             if (solicitud.IdTipoServicio == 2)
             {
                 var mantenimiento = await _context.TipoMantenimiento
