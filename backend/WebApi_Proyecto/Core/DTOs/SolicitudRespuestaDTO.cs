@@ -32,5 +32,6 @@ namespace Core.DTOs
         public DateTime? FechaFinalizada { get; set; }
         public DateTime? FechaCancelada { get; set; }
         public string? Resumen { get; set; }
+        public ReparacionExternaDTO? ReparacionExterna { get; set; } 
     }
 }

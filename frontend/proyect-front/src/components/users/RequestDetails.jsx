@@ -185,14 +185,12 @@ export default function RequestDetails() {
             {solicitud.estado !== "Finalizada" ? (
               <h4>
                 Fecha Estimada:{" "}
-                {new Date(solicitud.fechaEstimada).toLocaleDateString("es-ES")}
+                {new Date(solicitud.fechaEstimada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
               </h4>
             ) : (
               <h4>
                 Fecha Finalizada:{" "}
-                {new Date(solicitud.fechaFinalizada).toLocaleDateString(
-                  "es-ES"
-                )}
+                {new Date(solicitud.fechaFinalizada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
               </h4>
             )}
           </div>

@@ -19,7 +19,6 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
   const [trabajadoresFiltrados, setTrabajadoresFiltrados] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [showDateSelection, setShowDateSelection] = useState(false);
   const [postApiExito, setPostApiExito] = useState(false);
 
   if (!solicitud) { return <div>Cargando...</div>; }
@@ -93,19 +92,15 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     }
   };
 
-  // Llama a `mapProfessionsToItems` solo cuando ambos estados hayan cambiado
   useEffect(() => {
     if (items.length > 0 && profesiones.length > 0) {
       mapProfessionsToItems();
     }
-    console.log(showDateSelection);
   }, [items, profesiones]);
 
 
   const handleShow = () => {
-    if (items.length === 0) {
-      getApiResponse();
-    }
+    if (items.length === 0) {getApiResponse();}
     setShow(true);
   }
 
@@ -142,11 +137,10 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       return;
     }
 
-    if (showDateSelection && (!startDate || !endDate)) {
+    if (!startDate || !endDate) {
       setError('Debe seleccionar un rango de fechas');
       return;
     }
-    setShowDateSelection(true);
     setError(null);
 
     
@@ -156,16 +150,12 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       fecha_fin: endDate,
       idtrabajadores: [selectedItem.idtrabajador],
     };
-    console.log('Solicitud de trabajo:', solicitudData);
-    
     const success = await postSolicitudTrabajo(solicitudData);
     if (!success) {
       console.log('Error al solicitar trabajo');
       alert('Error al solicitar trabajo');
       return;
     }
-
-    solicitud.idTecnicoAsignado=selectedItem.idtrabajador;
     subcontractStep();
     setShow(false);
 
@@ -176,7 +166,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       console.log('Solicitando trabajo...', solicitudData);
       const response = await apiReparacionExterna.postSolicitud(solicitudData);
       console.log('Trabajo solicitado:', response);
-      solicitud.IdSolicitudExterna=response.idsolicitud;
+      solicitud.IdSolicitudExterna=response.solicitud.idsolicitud;
       return true;
     } catch (error) {
       console.error('Error solicitando trabajo:', error);
@@ -232,16 +222,6 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
               </div>
             </>
           ) : null}
-          <div className="row my-3">
-            <div className="col-4">
-              <Form.Check
-                type="checkbox"
-                label="Con servicio de logistica"
-                checked={solicitud.conLogistica}
-                readOnly
-              />
-            </div>
-          </div>
         </div>
         <div className="my-4"></div>
       </Form>
@@ -289,8 +269,6 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
               <div>Cargando...</div>
             )}
           </ListGroup>
-
-          {showDateSelection && (
             <div className="mt-3 p-3 border rounded">
               <h5>Selecciona el período</h5>
               <div className="d-flex gap-2">
@@ -318,7 +296,6 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
                 </Form.Group>
               </div>
             </div>
-          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-primary" onClick={handleSubcrontractFinish}>

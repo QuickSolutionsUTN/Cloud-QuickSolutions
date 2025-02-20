@@ -129,7 +129,7 @@ function RequestManagement() {
     console.log('Next step');
     const stepIndex = steps.indexOf(currentStep);
     console.log('stepIndex:', stepIndex);
-    if (stepIndex < steps.length - 1 && steps[stepIndex + 1] !== 'Presupuestada' && steps[stepIndex + 1] !== 'Revisada') {
+    if (stepIndex < steps.length - 1 && steps[stepIndex + 1] !== 'Presupuestada' && steps[stepIndex + 1] !== 'Revisada' && steps[stepIndex + 1] !== 'Finalizada') {
       const newStep = steps[stepIndex + 1];
       console.log('step viejo:', newStep);
       await updateSolicitudEstado(newStep, stepIndex);
@@ -157,6 +157,7 @@ function RequestManagement() {
   };
 
   const handleSubcontractStep = async () => {
+    const stepIndex = steps.indexOf(currentStep);
     const newStep = steps[stepIndex + 1];
     const requestData = {
       id: solicitud.id,
@@ -217,7 +218,7 @@ function RequestManagement() {
       case 'Finalizada':
         return <FinishedStep />;
       case 'Cancelada':
-        return <CancelStep solicitud={solicitud}/>;
+        return <CancelStep solicitud={solicitud} />;
       default:
         return <div>Error al obtener el estado</div>;
     }
@@ -226,48 +227,54 @@ function RequestManagement() {
   return (
     <div className='requestManagement'>
       <div className='requestManagement-header'>
-        <div className='d-flex align-items-center justify-content-between'>
-          <Button
-            variant="outline-dark"
-            onClick={() => navigate('/admin/requests')}
-          >
+        <div className='d-flex align-items-start justify-content-between'>
+          <Button style={{ width: '80px' }} variant="outline-dark" onClick={() => navigate('/admin/requests')}>
             Volver
           </Button>
-        </div>
-        <div className='d-flex align-items-center justify-content-center'>
-          <div className='text-center'>
-            <h1>Gestión de solicitud #{solicitudId}</h1>
-            <div className='align-items-center'>
-              <p style={{ color: 'gray' }}>Generada: {fechaFormateada} {new Date(solicitud.fechaGeneracion).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
-            </div>
+          <div className='flex-grow-1 text-center'>
+            <h2>Gestión de solicitud #{solicitudId}</h2>
+            <p style={{ color: 'gray' }}>
+              Generada: {fechaFormateada} {new Date(solicitud.fechaGeneracion).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+            </p>
           </div>
+          <div style={{ width: '80px' }}></div>
         </div>
       </div>
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
       <hr style={{ borderTop: '1px solid lightgray', margin: '1%' }} />
       <div className='details d-flex flex-row ' >
-          <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
-            <div className="d-flex flex-column">
-              <span className="mb-2 fw-bold">Usuario</span>
-              <span>{solicitud.emailSolicitante}</span>
-            </div>
-          </div>
-          <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
-            <div className="d-flex flex-column">
-              <span className="mb-2 "><b>Logistica:</b>
-                <span className='ms-2'></span>{solicitud.conLogistica ? 'Si' : 'No'}
-              </span>
-              <span className="mb-2">Nro seguimiento:<span className='ms-2'></span>{solicitud.envio ? solicitud.envio.nroSeguimiento : '-'}</span>
-            </div>
-          </div>
-          <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
-            <div className="d-flex flex-column">
-              <span className="mb-2 "><b>SubContratada:</b>
-                <span className='ms-2'></span>{solicitud.tercearizado ? 'Si' : 'No'}
-              </span>
-            </div>
+        <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
+          <div className="d-flex flex-column">
+            <span className="mb-2 fw-bold">Usuario</span>
+            <span>{solicitud.emailSolicitante}</span>
           </div>
         </div>
+        <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
+          <div className="d-flex flex-column">
+            <span className="mb-2 "><b>Logistica:</b>
+              <span className='ms-2'></span>{solicitud.conLogistica ? 'Si' : 'No'}
+            </span>
+            <span className="mb-2">Nro seguimiento:<span className='ms-2'></span>{solicitud.envio ? solicitud.envio.nroSeguimiento : '-'}</span>
+          </div>
+        </div>
+        <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
+          <div className="d-flex flex-column">
+            <span className="mb-2 "><b>SubContratada:</b>
+              {solicitud.tercearizado ? (
+                <span className='ms-2'>Si</span>
+              ) : (
+                <span className='ms-2'>No</span>
+              )}
+            </span>
+            {solicitud.tercearizado && (
+              <>
+                <span className='mb-2'>Empresa Externa: {solicitud.reparacionExterna.empresa.nombre}</span>
+                <span className='mb-2'>ID Solicitud Externa: {solicitud.reparacionExterna.idSolicitudExterna}</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
       <div className='d-flex request-details p-3'>
         <div className='flex-grow-1'>
           {renderContent()}

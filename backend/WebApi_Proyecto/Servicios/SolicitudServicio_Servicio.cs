@@ -107,6 +107,22 @@ namespace Servicios
 
             var solicitudDTO = _mapper.Map<SolicitudRespuestaDTO>(solicitud);
 
+            if (solicitud.Tercearizado)
+            {
+                var reparacionExterna = await _context.ReparacionExterna
+                    .FirstOrDefaultAsync(re => re.IdSolicitud == solicitud.Id);
+
+                var empresa = await _context.EmpresaExterna
+                    .FirstOrDefaultAsync(e => e.Id == reparacionExterna.IdEmpresa);
+                var empresaDTO= _mapper.Map<EmpresaDTO>(empresa);
+                var reparacionExternaDTO = new ReparacionExternaDTO
+                {
+                    IdSolicitudExterna = reparacionExterna.IdSolicitudExterna,
+                    Empresa =empresaDTO
+                };
+                solicitudDTO.ReparacionExterna = reparacionExternaDTO;
+            }
+
             solicitudDTO.Categoria = categoriaDTO.Descripcion;
 
             return solicitudDTO;
@@ -136,10 +152,16 @@ namespace Servicios
             {
                 throw new Exception("Solicitud no encontrada");
             }
-            if ( solicitud.SolicitudServicioEstado.Id == 3 )
+            if (solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado == 3 )
             {
                 solicitud.FechaPresupuestada = DateTime.UtcNow;
             }
+
+            if (solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado == 4)
+            {
+                solicitud.FechaAprobada = DateTime.UtcNow;
+            }
+
             solicitud.IdSolicitudServicioEstado = solicitudServicioEstadoUpdateDTO.IdSolicitudServicioEstado;
             await _context.SaveChangesAsync();
 
@@ -242,7 +264,7 @@ namespace Servicios
             }
 
             solicitud.IdSolicitudServicioEstado = SolicitudServicioFinalizarDTO.IdSolicitudServicioEstado;
-            solicitud.FechaAprobada = DateTime.UtcNow;
+            solicitud.FechaFinalizada = DateTime.UtcNow;
             solicitud.Resumen = SolicitudServicioFinalizarDTO.Resumen;
             Console.WriteLine(SolicitudServicioFinalizarDTO.Resumen);
             await _context.SaveChangesAsync();
