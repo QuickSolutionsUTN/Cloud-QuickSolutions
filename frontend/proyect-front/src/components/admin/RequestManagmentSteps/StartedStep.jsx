@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Form, Button, Modal, ListGroup, Row, Col, Alert } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Modal,
+  ListGroup,
+  Row,
+  Col,
+  Alert,
+} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
@@ -9,7 +17,6 @@ import apiReparacionExterna from "../../../services/apiBolsaTrabajoService.jsx";
 import "./StartedStep.css";
 
 function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
-
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [items, setItems] = useState([]);
@@ -21,7 +28,9 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
   const [endDate, setEndDate] = useState(null);
   const [postApiExito, setPostApiExito] = useState(false);
 
-  if (!solicitud) { return <div>Cargando...</div>; }
+  if (!solicitud) {
+    return <div>Cargando...</div>;
+  }
 
   const handleNextStep = async () => {
     console.log("Solicitud:", solicitud);
@@ -82,13 +91,13 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
         apiReparacionExterna.getProfesiones(),
       ]);
 
-      console.log('Trabajadores obtenidos:', trabajadores);
-      console.log('Profesiones obtenidas:', profesiones);
+      console.log("Trabajadores obtenidos:", trabajadores);
+      console.log("Profesiones obtenidas:", profesiones);
 
       setItems(trabajadores);
       setProfesiones(profesiones);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -98,24 +107,27 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     }
   }, [items, profesiones]);
 
-
   const handleShow = () => {
-    if (items.length === 0) { getApiResponse(); }
+    if (items.length === 0) {
+      getApiResponse();
+    }
     setShow(true);
-  }
+  };
 
   const mapProfessionsToItems = () => {
-    console.log('Mapeando profesiones a items...');
-    const updatedItems = items.map(item => {
-      const profession = profesiones.find(prof => prof.idprofesion === item.idprofesion);
-      console.log('Profesion encontrada:', profession);
+    console.log("Mapeando profesiones a items...");
+    const updatedItems = items.map((item) => {
+      const profession = profesiones.find(
+        (prof) => prof.idprofesion === item.idprofesion
+      );
+      console.log("Profesion encontrada:", profession);
       return {
         ...item,
-        profesionNombre: profession ? profession.nombre : "Desconocido"
+        profesionNombre: profession ? profession.nombre : "Desconocido",
       };
     });
 
-    console.log('Items actualizados:', updatedItems);
+    console.log("Items actualizados:", updatedItems);
     setTrabajadoresFiltrados(updatedItems);
   };
 
@@ -127,22 +139,31 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     setSelectedItem(null);
     setError(null);
     setShow(false);
-  }
+  };
 
   const handleSubcrontractFinish = async () => {
-
     if (!selectedItem) {
-      console.log('Debe seleccionar un trabajador');
-      setError('Debe seleccionar un trabajador');
+      console.log("Debe seleccionar un trabajador");
+      setError("Debe seleccionar un trabajador");
       return;
     }
 
     if (!startDate || !endDate) {
-      setError('Debe seleccionar un rango de fechas');
+      setError("Debe seleccionar un rango de fechas");
       return;
     }
     setError(null);
 
+    if (solicitud.conLogistica) {
+      const nroSeguimiento = await solicitarEnvio(solicitud.envio);
+      if (!nroSeguimiento) {
+        alert(
+          "Error al conectarse con el servicio de envios. Intente nuevamente mas tarde"
+        );
+        return;
+      }
+      solicitud.envio.nroSeguimiento = nroSeguimiento;
+    }
 
     const solicitudData = {
       empresa: "QuickSolutions",
@@ -152,29 +173,28 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     };
     const success = await postSolicitudTrabajo(solicitudData);
     if (!success) {
-      console.log('Error al solicitar trabajo');
-      alert('Error al solicitar trabajo');
+      console.log("Error al solicitar trabajo");
+      alert("Error al solicitar trabajo");
       return;
     }
     subcontractStep();
     setShow(false);
-
-  }
+  };
 
   const postSolicitudTrabajo = async (solicitudData) => {
     try {
-      console.log('Solicitando trabajo...', solicitudData);
+      console.log("Solicitando trabajo...", solicitudData);
       const response = await apiReparacionExterna.postSolicitud(solicitudData);
-      console.log('Trabajo solicitado:', response);
+      console.log("Trabajo solicitado:", response);
       solicitud.IdSolicitudExterna = response.solicitud.idsolicitud;
       return true;
     } catch (error) {
-      console.error('Error solicitando trabajo:', error);
+      console.error("Error solicitando trabajo:", error);
     }
-  }
+  };
 
   const adjustTextareaHeight = (e) => {
-    e.target.style.height = 'auto';
+    e.target.style.height = "auto";
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
@@ -196,31 +216,36 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
                 />
               </Form.Group>
             </div>
-          ) : <div className="col-12">
-            <Form.Group controlId="description">
-              <Form.Label className="fw-bold">Descripcion del mantenimiento</Form.Label>
-              <Form.Control
-                as="textarea"
-                type="text"
-                value={solicitud.mantenimiento?.descripcion}
-                readOnly
-                style={{ resize: 'none', overflow: 'hidden' }}
-                onInput={adjustTextareaHeight}
-              />
-            </Form.Group>
-            <Form.Group className="mt-3" controlId="checklist">
-              <Form.Label className="fw-bold">Checklist de Mantenimiento Preventivo</Form.Label>
-              <ListGroup>
-                {solicitud.mantenimiento.checklist?.map((item) => (
-                  <ListGroup.Item key={item.id}>
-                    {item.descripcion}
-                    {item.obligatorio && " (Obligatorio)"}
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Form.Group>
-
-          </div>}
+          ) : (
+            <div className="col-12">
+              <Form.Group controlId="description">
+                <Form.Label className="fw-bold">
+                  Descripcion del mantenimiento
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  type="text"
+                  value={solicitud.mantenimiento?.descripcion}
+                  readOnly
+                  style={{ resize: "none", overflow: "hidden" }}
+                  onInput={adjustTextareaHeight}
+                />
+              </Form.Group>
+              <Form.Group className="mt-3" controlId="checklist">
+                <Form.Label className="fw-bold">
+                  Checklist de Mantenimiento Preventivo
+                </Form.Label>
+                <ListGroup>
+                  {solicitud.mantenimiento.checklist?.map((item) => (
+                    <ListGroup.Item key={item.id}>
+                      {item.descripcion}
+                      {item.obligatorio && " (Obligatorio)"}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Form.Group>
+            </div>
+          )}
         </div>
         <div className="my-4"></div>
       </Form>
@@ -253,13 +278,19 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
                 >
                   <Row>
                     <Col md={8}>
-                      <div><strong>{item.nombre} {item.apellido}</strong></div>
+                      <div>
+                        <strong>
+                          {item.nombre} {item.apellido}
+                        </strong>
+                      </div>
                       <div>Email: {item.email}</div>
                       <div>Edad: {item.edad}</div>
                       <div>Profesión: {item.profesionNombre}</div>
                     </Col>
                     <Col md={2} className="d-flex align-items-center">
-                      <Button variant="link" size="sm">Ver más</Button>
+                      <Button variant="link" size="sm">
+                        Ver más
+                      </Button>
                     </Col>
                   </Row>
                 </ListGroup.Item>
@@ -271,11 +302,10 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
           <div className="mt-3 p-3 border rounded">
             <h5>Selecciona el período</h5>
             <div className="d-flex gap-2">
-
-              <Form.Group controlId='startDate'>
+              <Form.Group controlId="startDate">
                 <Form.Label>Fecha inicio</Form.Label>
                 <Form.Control
-                  type='date'
+                  type="date"
                   name="fechaInicio"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
@@ -283,10 +313,10 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
                 />
               </Form.Group>
 
-              <Form.Group controlId='endDate'>
+              <Form.Group controlId="endDate">
                 <Form.Label>Fecha inicio</Form.Label>
                 <Form.Control
-                  type='date'
+                  type="date"
                   name="fechaFin"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}

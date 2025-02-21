@@ -22,6 +22,7 @@
 
 .admin-header-logo img {
   height: 70px;
+  cursor: pointer;
 }
 .admin-user-menu-container {
   display: flex;

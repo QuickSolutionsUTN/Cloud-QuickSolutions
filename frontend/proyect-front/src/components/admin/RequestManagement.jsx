@@ -140,12 +140,9 @@ function RequestManagement() {
     if (steps[stepIndex + 1] === 'Revisada') {
       const newStep = steps[stepIndex + 1];
       const id = solicitud.id;
-      console.log('step viejo:', newStep);
-      console.log('Solicitud: ', solicitud);
       if (solicitud.conLogistica) await updateSolicitudEnvio(solicitud);
       await updateSolicitudEstado(newStep, stepIndex);
       await apiService.updateRequestReviewed(id);
-      console.log('Updated step nuevo:', newStep);
     }
 
     if (steps[stepIndex + 1] === 'Presupuestada') {
@@ -170,8 +167,8 @@ function RequestManagement() {
 
     console.log('data to send:', requestData);
 
+    if (solicitud.conLogistica) await updateSolicitudEnvio(solicitud);
     await apiService.updateRequestSubcontractAdmin(requestData);
-
     setCurrentStep(newStep);
     setSolicitud(prevSolicitud => ({
       ...prevSolicitud,
@@ -241,7 +238,7 @@ function RequestManagement() {
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
       {(solicitud.estado === 'Cancelada' && !solicitud.fechaIniciada) && (
       <div className="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>¡Atención!</strong> La solicitud ha sido <strong>cancelada</strong> por el usuario.
+        <strong>¡Atención!</strong> La solicitud ha sido <strong>cancelada</strong>.
       </div>
       )}
       <hr style={{ borderTop: '1px solid lightgray', margin: '1%' }} />

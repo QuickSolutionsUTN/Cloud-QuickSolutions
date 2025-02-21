@@ -45,7 +45,7 @@ export default function RequestDetails() {
       case "Cancelada":
         return "danger";
       case "Finalizada":
-        return "secondary";
+        return "info";
       default:
         return "primary";
     }

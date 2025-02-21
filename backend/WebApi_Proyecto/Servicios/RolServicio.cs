@@ -58,7 +58,6 @@ namespace Servicios
         {
             try
             {
-                // Obtenemos todos los roles
                 var roles = await _roleManager.Roles.ToListAsync();
 
                 var rolesDto = roles.Select(r => new RolDTO
