@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 // react-bootstrap components
 import {
   Badge,
@@ -15,11 +15,20 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFile } from "@fortawesome/free-regular-svg-icons";
+import { faFile, faUser } from "@fortawesome/free-regular-svg-icons";
+import { faTableCellsLarge, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/axiosConfig";
+import { useBackendURL } from '../contexts/BackendURLContext';
+import AuthContext from '../contexts/AuthContext';
+import axios from 'axios';
 
 export default function AdminDashboardPage() {
   const [solicitudes, setSolicitudes] = useState([]);
+  const[categorias, setCategorias] = useState([]);
+  const[productos, setProductos] = useState([]);
+  const[usuarios, setUsuarios] = useState([]);
+  const backendURL = useBackendURL();
+  const { userToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,9 +44,51 @@ export default function AdminDashboardPage() {
         setLoading(false);
       }
     };
+    const getCategorias = async () => {
+      try {
+        const response = await apiService.getCategories();
+        console.log("Categorias obtenidas:", response.data);
+        setCategorias(response.data);
+        console.log("Categorias:", categorias);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al obtener las categorias:", error);
+        setLoading(false);
+      }
+    }
+    const getProductos = async () => {
+      try {
+        const response = await apiService.getProducts();
+        console.log("Productos obtenidos:", response.data);
+        setProductos(response.data);
+        console.log("Productos:", productos);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al obtener los productos:", error);
+        setLoading(false);
+      }
+    }
+    const getUsuarios = async () => {
+      try {
+        const response = await axios.get(`${backendURL}/api/users`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`
+          }
+        });
+        console.log("Usuarios obtenidos:", response.data);
+        setUsuarios(response.data);
+        console.log("Usuarios:", usuarios);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al obtener los usuarios:", error);
+        setLoading(false);
+      }
+    };
     getSolicitudes();
-  }
-    , []);
+    getCategorias();
+    getProductos();
+    getUsuarios();
+  }, []);
 
 
   return (
@@ -46,17 +97,16 @@ export default function AdminDashboardPage() {
         <Row>
           <Col lg="3" sm="6">
             <Card className="p-2 m-2 card-stats">
-
               <Card.Body className="text-center">
                 <div className="d-flex justify-content-around flex-row ">
                   <div className="icon-big text-center icon-warning mb-3">
                     <FontAwesomeIcon icon={faFile} size="3x" className="text-primary" />
                   </div>
                   <div className="numbers">
-                    <Card.Title as="h4" className="text-dark font-weight-bold">
+                    <Card.Title as="h5" className="text-dark font-weight-bold">
                       Solicitudes
                     </Card.Title>
-                    <h5>{solicitudes.length}</h5>
+                    <h6>{solicitudes.length}</h6>
                   </div>
                 </div>
               </Card.Body>
@@ -70,79 +120,73 @@ export default function AdminDashboardPage() {
             </Card>
           </Col>
           <Col lg="3" sm="6">
-            <Card className="card-stats">
-              <Card.Body>
-                <Row>
-                  <Col xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-light-3 text-success"></i>
-                    </div>
-                  </Col>
-                  <Col xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Revenue</p>
-                      <Card.Title as="h4">$ 1,345</Card.Title>
-                    </div>
-                  </Col>
-                </Row>
-              </Card.Body>
-              <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="far fa-calendar-alt mr-1"></i>
-                  Last day
+            <Card className="p-2 m-2 card-stats">
+              <Card.Body className="text-center">
+                <div className="d-flex justify-content-around flex-row ">
+                  <div className="icon-big text-center icon-warning mb-3">
+                    <FontAwesomeIcon icon={faTableCellsLarge} size="3x" className="text-primary" />
+                  </div>
+                  <div className="numbers">
+                    <Card.Title as="h5" className="text-dark font-weight-bold">
+                      Categorias
+                    </Card.Title>
+                    <h6>{categorias.length}</h6>
+                  </div>
                 </div>
-              </Card.Footer>
-            </Card>
-          </Col>
-          <Col lg="3" sm="6">
-            <Card className="card-stats">
-              <Card.Body>
-                <Row>
-                  <Col xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-vector text-danger"></i>
-                    </div>
-                  </Col>
-                  <Col xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Errors</p>
-                      <Card.Title as="h4">23</Card.Title>
-                    </div>
-                  </Col>
-                </Row>
-              </Card.Body>
-              <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="far fa-clock-o mr-1"></i>
-                  In the last hour
-                </div>
-              </Card.Footer>
-            </Card>
-          </Col>
-          <Col lg="3" sm="6">
-            <Card className="card-stats">
-              <Card.Body>
-                <Row>
-                  <Col xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-favourite-28 text-primary"></i>
-                    </div>
-                  </Col>
-                  <Col xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Followers</p>
-                      <Card.Title as="h4">+45K</Card.Title>
-                    </div>
-                  </Col>
-                </Row>
               </Card.Body>
               <Card.Footer>
                 <hr></hr>
                 <div className="stats">
                   <i className="fas fa-redo mr-1"></i>
-                  Update now
+                  Update Now
+                </div>
+              </Card.Footer>
+            </Card>
+          </Col>
+          <Col lg="3" sm="6">
+            <Card className="p-2 m-2 card-stats">
+              <Card.Body className="text-center">
+                <div className="d-flex justify-content-around flex-row ">
+                  <div className="icon-big text-center icon-warning mb-3">
+                    <FontAwesomeIcon icon={faScrewdriverWrench} size="3x" className="text-primary" />
+                  </div>
+                  <div className="numbers">
+                    <Card.Title as="h5" className="text-dark font-weight-bold">
+                      Productos
+                    </Card.Title>
+                    <h6>{productos.length}</h6>
+                  </div>
+                </div>
+              </Card.Body>
+              <Card.Footer>
+                <hr></hr>
+                <div className="stats">
+                  <i className="fas fa-redo mr-1"></i>
+                  Update Now
+                </div>
+              </Card.Footer>
+            </Card>
+          </Col>
+          <Col lg="3" sm="6">
+            <Card className="p-2 m-2 card-stats">
+              <Card.Body className="text-center">
+                <div className="d-flex justify-content-around flex-row ">
+                  <div className="icon-big text-center icon-warning mb-3">
+                    <FontAwesomeIcon icon={faUser} size="3x" className="text-primary" />
+                  </div>
+                  <div className="numbers">
+                    <Card.Title as="h5" className="text-dark font-weight-bold">
+                      Usuarios
+                    </Card.Title>
+                    <h6>{usuarios.length}</h6>
+                  </div>
+                </div>
+              </Card.Body>
+              <Card.Footer>
+                <hr></hr>
+                <div className="stats">
+                  <i className="fas fa-redo mr-1"></i>
+                  Update Now
                 </div>
               </Card.Footer>
             </Card>
