@@ -21,7 +21,7 @@ namespace Core.DTOs
         public bool ConLogistica { get; set; }
         public EnvioDTO? Envio { get; set; }
         public bool? Tercearizado { get; set; }
-        public string? TecnicoAsignado { get; set; }
+        //public string? TecnicoAsignado { get; set; }
         public DateTime? FechaRevisada { get; set; }
         public string? DiagnosticoTecnico { get; set; }
         public DateTime? FechaEstimada { get; set; }
@@ -32,7 +32,6 @@ namespace Core.DTOs
         public DateTime? FechaFinalizada { get; set; }
         public DateTime? FechaCancelada { get; set; }
         public string? Resumen { get; set; }
-
         public MantenimientoOutDTO? Mantenimiento { get; set; }
         public ReparacionExternaDTO? ReparacionExterna { get; set; } 
     }

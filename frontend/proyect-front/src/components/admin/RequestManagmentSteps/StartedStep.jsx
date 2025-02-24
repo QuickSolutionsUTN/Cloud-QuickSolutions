@@ -205,7 +205,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
           {solicitud.tipoServicio === "Reparacion" ? (
             <div className="col-12">
               <Form.Group controlId="description">
-                <Form.Label>Descripcion del problema</Form.Label>
+                <Form.Label className="fw-bold">Descripcion del problema</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}

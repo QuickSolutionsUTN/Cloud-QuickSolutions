@@ -1,32 +1,33 @@
 import React, { useEffect, useState, useContext } from "react";
 // react-bootstrap components
 import {
-  Badge,
   Button,
   Card,
-  Navbar,
-  Nav,
-  Table,
   Container,
   Row,
   Col,
-  Form,
-  OverlayTrigger,
-  Tooltip,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faUser } from "@fortawesome/free-regular-svg-icons";
-import { faTableCellsLarge, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
+import { faTableCellsLarge, faScrewdriverWrench, faSquare, faX, faCheck, faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/axiosConfig";
 import { useBackendURL } from '../contexts/BackendURLContext';
 import AuthContext from '../contexts/AuthContext';
 import axios from 'axios';
 
+import { Bar, Pie } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, ArcElement } from "chart.js";
+
+
 export default function AdminDashboardPage() {
   const [solicitudes, setSolicitudes] = useState([]);
-  const[categorias, setCategorias] = useState([]);
-  const[productos, setProductos] = useState([]);
-  const[usuarios, setUsuarios] = useState([]);
+  const [stateCount, setStateCount] = useState([0, 0, 0, 0, 0, 0]);
+  const [serviceTypeCount, setServiceTypeCount] = useState([0, 0]);
+  const [localRepairCount, setLocalRepairCount] = useState([0, 0]);
+  const [monthlyEarnings, setMonthlyEarnings] = useState(0);
+  const [categorias, setCategorias] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const backendURL = useBackendURL();
   const { userToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
@@ -90,65 +91,228 @@ export default function AdminDashboardPage() {
     getUsuarios();
   }, []);
 
+  useEffect(() => {
+    let count = [0, 0, 0, 0, 0, 0];
+    solicitudes.forEach((solicitud) => {
+      switch (solicitud.estado) {
+        case "Iniciada":
+          count[0]++;
+          break;
+        case "Revisada":
+          count[1]++;
+          break;
+        case "Presupuestada":
+          count[2]++;
+          break;
+        case "Aprobada":
+          count[3]++;
+          break;
+        case "Finalizada":
+          count[4]++;
+          break;
+        case "Cancelada":
+          count[5]++;
+          break;
+        default:
+          break;
+      }
+    });
+    setStateCount(count);
+
+    let typeCount = [0, 0];
+    solicitudes.forEach((solicitud) => {
+      switch (solicitud.tipoServicio) {
+        case "Reparacion":
+          typeCount[0]++;
+          break;
+        case "mantenimiento":
+          typeCount[1]++;
+          break;
+        default:
+          break;
+      }
+    });
+    setServiceTypeCount(typeCount);
+
+    let localCount = [0, 0];
+    solicitudes.forEach((solicitud) => {
+      switch (solicitud.tercearizado) {
+        case false:
+          localCount[0]++;
+          break;
+        case true:
+          localCount[1]++;
+          break;
+        default:
+          break;
+      }
+    });
+    console.log("Local Count:", localCount);
+    setLocalRepairCount(localCount);
+
+    let earnings = 0;
+    solicitudes.forEach((solicitud) => {
+      if (solicitud.fechaFinalizada) earnings += solicitud.monto;
+    }
+    );
+    setMonthlyEarnings(earnings);
+
+  }, [solicitudes]);
+
+
+  // Registrar los componentes necesarios
+  ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, ArcElement);
+
+
+  const dataBar1 = {
+    labels: ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada", "Cancelada"],
+    datasets: [
+      {
+        data: [stateCount[0], stateCount[1], stateCount[2], stateCount[3], stateCount[4], stateCount[5]],
+        backgroundColor: [
+          "#007BFF",
+          "#6F42C1",
+          "#D4AC0D",
+          "#28A745",
+          "#FD7E14",
+          "#DC3545",
+        ],
+        borderColor: [
+          "rgba(0, 86, 179, 1)",  // Iniciada - Azul oscuro
+          "rgba(88, 35, 127, 1)",  // Revisada - Morado intenso
+          "rgba(155, 111, 0, 1)",  // Finalizada - Amarillo oscuro
+          "rgba(20, 121, 45, 1)",  // Aprobada - Verde más oscuro
+          "rgba(199, 87, 0, 1)",   // Presupuestada - Naranja oscuro
+          "rgba(160, 28, 40, 1)"   // Cancelada - Rojo oscuro
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataBar2 = {
+    labels: ["Reparacion Local", "Subcontratadas"],
+    datasets: [
+      {
+        data: [localRepairCount[0], localRepairCount[1]],
+        backgroundColor: [
+          "#FD7E14",
+          "#007BFF",
+        ],
+        borderColor: [
+          "rgba(199, 87, 0, 1)",
+          "rgba(0, 86, 179, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataPie = {
+    labels: ["Reparaciones", "Mantenimiento"],
+    datasets: [
+      {
+        label: "Estado de Solicitudes",
+        data: [serviceTypeCount[0], serviceTypeCount[1]],
+        backgroundColor: [
+          "#FF6F61",
+          "#A7C7E7",
+        ],
+        borderColor: [
+          "#D04B3C  ",
+          "#5B8FA6  ",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const optionsBar1 = {
+    indexAxis: "x",
+    responsive: true,
+    plugins: {
+      legend: { position: "top" },
+      tooltip: { enabled: true },
+    },
+    scales: {
+      x: { ticks: { font: { size: 14, weight: 'bold', }, }, },
+      y: { ticks: { font: { size: 14, }, }, },
+    },
+  };
+
+  const optionsBar2 = {
+    indexAxis: "y",
+    responsive: true,
+    plugins: {
+      legend: { position: "top" },
+      tooltip: { enabled: true },
+    },
+    scales: {
+      x: { ticks: { font: { size: 14, weight: 'bold', }, }, },
+      y: { ticks: { font: { size: 14, }, }, },
+    },
+  };
+
+  const optionsPie = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",  // Posición de la leyenda
+      },
+      tooltip: {
+        enabled: true,  // Habilitar tooltips
+      },
+    },
+  };
 
   return (
     <>
       <Container fluid>
-        <Row>
+        <Row className="m-2 d-flex flex-row">
           <Col lg="3" sm="6">
-            <Card className="p-2 m-2 card-stats">
+            <Card className="p-2 card-stats">
               <Card.Body className="text-center">
                 <div className="d-flex justify-content-around flex-row ">
                   <div className="icon-big text-center icon-warning mb-3">
-                    <FontAwesomeIcon icon={faFile} size="3x" className="text-primary" />
+                    <FontAwesomeIcon icon={faFile} size="3x" className="custom-text-primary" />
                   </div>
                   <div className="numbers">
                     <Card.Title as="h5" className="text-dark font-weight-bold">
                       Solicitudes
                     </Card.Title>
-                    <h6>{solicitudes.length}</h6>
+                    <h5>{solicitudes.length}</h5>
                   </div>
                 </div>
               </Card.Body>
               <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-redo mr-1"></i>
-                  Update Now
-                </div>
               </Card.Footer>
             </Card>
           </Col>
           <Col lg="3" sm="6">
-            <Card className="p-2 m-2 card-stats">
+            <Card className="p-2 card-stats">
               <Card.Body className="text-center">
                 <div className="d-flex justify-content-around flex-row ">
                   <div className="icon-big text-center icon-warning mb-3">
-                    <FontAwesomeIcon icon={faTableCellsLarge} size="3x" className="text-primary" />
+                    <FontAwesomeIcon icon={faDollarSign} size="3x" className="text-success" />
                   </div>
                   <div className="numbers">
                     <Card.Title as="h5" className="text-dark font-weight-bold">
-                      Categorias
+                      Ganancias Mensuales
                     </Card.Title>
-                    <h6>{categorias.length}</h6>
+                    <h5>$ {monthlyEarnings}</h5>
                   </div>
                 </div>
               </Card.Body>
               <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-redo mr-1"></i>
-                  Update Now
-                </div>
               </Card.Footer>
             </Card>
           </Col>
           <Col lg="3" sm="6">
-            <Card className="p-2 m-2 card-stats">
+            <Card className="p-2 card-stats">
               <Card.Body className="text-center">
                 <div className="d-flex justify-content-around flex-row ">
                   <div className="icon-big text-center icon-warning mb-3">
-                    <FontAwesomeIcon icon={faScrewdriverWrench} size="3x" className="text-primary" />
+                    <FontAwesomeIcon icon={faScrewdriverWrench} size="3x" className="custom-text-primary" />
                   </div>
                   <div className="numbers">
                     <Card.Title as="h5" className="text-dark font-weight-bold">
@@ -159,546 +323,150 @@ export default function AdminDashboardPage() {
                 </div>
               </Card.Body>
               <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-redo mr-1"></i>
-                  Update Now
-                </div>
               </Card.Footer>
             </Card>
           </Col>
           <Col lg="3" sm="6">
-            <Card className="p-2 m-2 card-stats">
+            <Card className="p-2 card-stats">
               <Card.Body className="text-center">
                 <div className="d-flex justify-content-around flex-row ">
                   <div className="icon-big text-center icon-warning mb-3">
-                    <FontAwesomeIcon icon={faUser} size="3x" className="text-primary" />
+                    <FontAwesomeIcon icon={faUser} size="3x" className="custom-text-primary" />
                   </div>
                   <div className="numbers">
                     <Card.Title as="h5" className="text-dark font-weight-bold">
                       Usuarios
                     </Card.Title>
-                    <h6>{usuarios.length}</h6>
+                    <h5>{usuarios.length}</h5>
                   </div>
                 </div>
               </Card.Body>
               <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-redo mr-1"></i>
-                  Update Now
-                </div>
               </Card.Footer>
             </Card>
           </Col>
         </Row>
-        <Row>
-          <Col md="8">
-            <Card>
-              <Card.Header>
-                <Card.Title as="h4">Users Behavior</Card.Title>
-                <p className="card-category">24 Hours performance</p>
-              </Card.Header>
-              <Card.Body>
-                {/*<div className="ct-chart" id="chartHours">
-                  <ChartistGraph
-                    data={{
-                      labels: [
-                        "9:00AM",
-                        "12:00AM",
-                        "3:00PM",
-                        "6:00PM",
-                        "9:00PM",
-                        "12:00PM",
-                        "3:00AM",
-                        "6:00AM",
-                      ],
-                      series: [
-                        [287, 385, 490, 492, 554, 586, 698, 695],
-                        [67, 152, 143, 240, 287, 335, 435, 437],
-                        [23, 113, 67, 108, 190, 239, 307, 308],
-                      ],
-                    }}
-                    type="Line"
-                    options={{
-                      low: 0,
-                      high: 800,
-                      showArea: false,
-                      height: "245px",
-                      axisX: {
-                        showGrid: false,
-                      },
-                      lineSmooth: true,
-                      showLine: true,
-                      showPoint: true,
-                      fullWidth: true,
-                      chartPadding: {
-                        right: 50,
-                      },
-                    }}
-                    responsiveOptions={[
-                      [
-                        "screen and (max-width: 640px)",
-                        {
-                          axisX: {
-                            labelInterpolationFnc: function (value) {
-                              return value[0];
-                            },
-                          },
-                        },
-                      ],
-                    ]}
-                  />
-                </div>*/}
+        <Row className="m-2 d-flex flex-row">
+          <Col md="6" >
+            <Card className="m-2 card-stats">
+              <Card.Body className="text-center">
+                <div className="d-flex justify-content-around flex-column ">
+                  <Card.Title as="h5" className="d-flex flex-row text-dark justify-content-around align-items-center">
+                    <span style={{ color: "green" }}>
+                      <FontAwesomeIcon icon={faCheck} className="me-2" />
+                      Cantidad de presupuestos aprobados
+                    </span>
+                    <span>{solicitudes.length}</span>
+                  </Card.Title>
+                  <Card.Title as="h5" className="d-flex flex-row text-dark justify-content-around align-items-center">
+                    <span style={{ color: "red" }}>
+                      <FontAwesomeIcon icon={faX} className="me-2" />
+                      Cantidad de presupuestos rechazados
+                    </span>
+                    <span>{solicitudes.length}</span>
+                  </Card.Title>
+                </div>
               </Card.Body>
               <Card.Footer>
-                <div className="legend">
-                  <i className="fas fa-circle text-info"></i>
-                  Open <i className="fas fa-circle text-danger"></i>
-                  Click <i className="fas fa-circle text-warning"></i>
-                  Click Second Time
-                </div>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-history"></i>
-                  Updated 3 minutes ago
-                </div>
               </Card.Footer>
             </Card>
-          </Col>
-          <Col md="4">
-            <Card>
+            <Card className="m-2">
               <Card.Header>
-                <Card.Title as="h4">Email Statistics</Card.Title>
-                <p className="card-category">Last Campaign Performance</p>
+                <Card.Title as="h5" className="text-center">Estado solicitudes</Card.Title>
               </Card.Header>
               <Card.Body>
-                {/*<div
-                  className="ct-chart ct-perfect-fourth"
-                  id="chartPreferences"
-                >
-                  <ChartistGraph
-                    data={{
-                      labels: ["40%", "20%", "40%"],
-                      series: [40, 20, 40],
-                    }}
-                    type="Pie"
-                  />
-                </div>*/}
-                <div className="legend">
-                  <i className="fas fa-circle text-info"></i>
-                  Open <i className="fas fa-circle text-danger"></i>
-                  Bounce <i className="fas fa-circle text-warning"></i>
-                  Unsubscribe
-                </div>
-                <hr></hr>
-                <div className="stats">
-                  <i className="far fa-clock"></i>
-                  Campaign sent 2 days ago
-                </div>
+                <Bar data={dataBar1} options={optionsBar1} />
               </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col md="6">
-            <Card>
-              <Card.Header>
-                <Card.Title as="h4">2017 Sales</Card.Title>
-                <p className="card-category">All products including Taxes</p>
-              </Card.Header>
-              <Card.Body>
-                {/*<div className="ct-chart" id="chartActivity">
-                  <ChartistGraph
-                    data={{
-                      labels: [
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "Mai",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
-                      ],
-                      series: [
-                        [
-                          542,
-                          443,
-                          320,
-                          780,
-                          553,
-                          453,
-                          326,
-                          434,
-                          568,
-                          610,
-                          756,
-                          895,
-                        ],
-                        [
-                          412,
-                          243,
-                          280,
-                          580,
-                          453,
-                          353,
-                          300,
-                          364,
-                          368,
-                          410,
-                          636,
-                          695,
-                        ],
-                      ],
-                    }}
-                    type="Bar"
-                    options={{
-                      seriesBarDistance: 10,
-                      axisX: {
-                        showGrid: false,
-                      },
-                      height: "245px",
-                    }}
-                    responsiveOptions={[
-                      [
-                        "screen and (max-width: 640px)",
-                        {
-                          seriesBarDistance: 5,
-                          axisX: {
-                            labelInterpolationFnc: function (value) {
-                              return value[0];
-                            },
-                          },
-                        },
-                      ],
-                    ]}
-                  />
-                </div>*/}
-              </Card.Body>
-              <Card.Footer>
-                <div className="legend">
-                  <i className="fas fa-circle text-info"></i>
-                  Tesla Model S <i className="fas fa-circle text-danger"></i>
-                  BMW 5 Series
-                </div>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-check"></i>
-                  Data information certified
-                </div>
-              </Card.Footer>
             </Card>
           </Col>
           <Col md="6">
-            <Card className="card-tasks">
-              <Card.Header>
-                <Card.Title as="h4">Tasks</Card.Title>
-                <p className="card-category">Backend development</p>
-              </Card.Header>
-              <Card.Body>
-                <div className="table-full-width">
-                  <Table>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <Form.Check className="mb-1 pl-0">
-                            <Form.Check.Label>
-                              <Form.Check.Input
-                                defaultValue=""
-                                type="checkbox"
-                              ></Form.Check.Input>
-                              <span className="form-check-sign"></span>
-                            </Form.Check.Label>
-                          </Form.Check>
-                        </td>
-                        <td>
-                          Sign contract for "What are conference organizers
-                          afraid of?"
-                        </td>
-                        <td className="td-actions text-right">
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-488980961">
-                                Edit Task..
-                              </Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="info"
-                            >
-                              <i className="fas fa-edit"></i>
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-506045838">Remove..</Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="danger"
-                            >
-                              <i className="fas fa-times"></i>
-                            </Button>
-                          </OverlayTrigger>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check className="mb-1 pl-0">
-                            <Form.Check.Label>
-                              <Form.Check.Input
-                                defaultChecked
-                                defaultValue=""
-                                type="checkbox"
-                              ></Form.Check.Input>
-                              <span className="form-check-sign"></span>
-                            </Form.Check.Label>
-                          </Form.Check>
-                        </td>
-                        <td>
-                          Lines From Great Russian Literature? Or E-mails From
-                          My Boss?
-                        </td>
-                        <td className="td-actions text-right">
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-537440761">
-                                Edit Task..
-                              </Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="info"
-                            >
-                              <i className="fas fa-edit"></i>
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-21130535">Remove..</Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="danger"
-                            >
-                              <i className="fas fa-times"></i>
-                            </Button>
-                          </OverlayTrigger>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check className="mb-1 pl-0">
-                            <Form.Check.Label>
-                              <Form.Check.Input
-                                defaultChecked
-                                defaultValue=""
-                                type="checkbox"
-                              ></Form.Check.Input>
-                              <span className="form-check-sign"></span>
-                            </Form.Check.Label>
-                          </Form.Check>
-                        </td>
-                        <td>
-                          Flooded: One year later, assessing what was lost and
-                          what was found when a ravaging rain swept through
-                          metro Detroit
-                        </td>
-                        <td className="td-actions text-right">
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-577232198">
-                                Edit Task..
-                              </Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="info"
-                            >
-                              <i className="fas fa-edit"></i>
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-773861645">Remove..</Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="danger"
-                            >
-                              <i className="fas fa-times"></i>
-                            </Button>
-                          </OverlayTrigger>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check className="mb-1 pl-0">
-                            <Form.Check.Label>
-                              <Form.Check.Input
-                                defaultChecked
-                                type="checkbox"
-                              ></Form.Check.Input>
-                              <span className="form-check-sign"></span>
-                            </Form.Check.Label>
-                          </Form.Check>
-                        </td>
-                        <td>
-                          Create 4 Invisible User Experiences you Never Knew
-                          About
-                        </td>
-                        <td className="td-actions text-right">
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-422471719">
-                                Edit Task..
-                              </Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="info"
-                            >
-                              <i className="fas fa-edit"></i>
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-829164576">Remove..</Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="danger"
-                            >
-                              <i className="fas fa-times"></i>
-                            </Button>
-                          </OverlayTrigger>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check className="mb-1 pl-0">
-                            <Form.Check.Label>
-                              <Form.Check.Input
-                                defaultValue=""
-                                type="checkbox"
-                              ></Form.Check.Input>
-                              <span className="form-check-sign"></span>
-                            </Form.Check.Label>
-                          </Form.Check>
-                        </td>
-                        <td>Read "Following makes Medium better"</td>
-                        <td className="td-actions text-right">
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-160575228">
-                                Edit Task..
-                              </Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="info"
-                            >
-                              <i className="fas fa-edit"></i>
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-922981635">Remove..</Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="danger"
-                            >
-                              <i className="fas fa-times"></i>
-                            </Button>
-                          </OverlayTrigger>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check className="mb-1 pl-0">
-                            <Form.Check.Label>
-                              <Form.Check.Input
-                                defaultValue=""
-                                disabled
-                                type="checkbox"
-                              ></Form.Check.Input>
-                              <span className="form-check-sign"></span>
-                            </Form.Check.Label>
-                          </Form.Check>
-                        </td>
-                        <td>Unfollow 5 enemies from twitter</td>
-                        <td className="td-actions text-right">
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-938342127">
-                                Edit Task..
-                              </Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="info"
-                            >
-                              <i className="fas fa-edit"></i>
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip id="tooltip-119603706">Remove..</Tooltip>
-                            }
-                          >
-                            <Button
-                              className="btn-simple btn-link p-1"
-                              type="button"
-                              variant="danger"
-                            >
-                              <i className="fas fa-times"></i>
-                            </Button>
-                          </OverlayTrigger>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </div>
-              </Card.Body>
-              <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="now-ui-icons loader_refresh spin"></i>
-                  Updated 3 minutes ago
-                </div>
-              </Card.Footer>
-            </Card>
+            <Row>
+              <Col md="6" className="d-flex flex-column">
+                <Card className="m-2">
+                  <Card.Header className="d-flex justify-content-center">
+                    <Card.Title as="h5">Tipo de solicitud</Card.Title>
+                  </Card.Header>
+                  <Card.Body className="d-flex flex-column">
+                    <div className="d-flex flex-column">
+                      <div className="d-flex mb-2 justify-content-between">
+                        <span className="p-1 d-flex flex-row">
+                          <FontAwesomeIcon className="me-2 pt-1" size="lg" style={{ color: "#FF6F61" }} icon={faSquare} />
+                          <h5>Reparaciones</h5></span>
+                        <span><h5>{serviceTypeCount[0]}</h5></span>
+                      </div>
+                      <div className="d-flex flex-row justify-content-between align-items-center">
+                        <span className="p-1 d-flex flex-row">
+                          <FontAwesomeIcon className="me-2 pt-1" size="lg" style={{ color: "#A7C7E7" }} icon={faSquare} />
+                          <h5>Mantenimientos</h5></span >
+                        <span ><h5>{serviceTypeCount[1]}</h5></span>
+                      </div>
+                    </div>
+                    <Pie className="p-4" data={dataPie} options={optionsPie} />
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col md="6">
+                <Card className="m-2">
+                  <Card.Header>
+                    <Card.Title as="h5" className="text-center">Reparacion local vs externa</Card.Title>
+                  </Card.Header>
+                  <Card.Body>
+                    <Bar data={dataBar2} options={optionsBar2} />
+                  </Card.Body>
+                </Card>
+                <Card className="m-2">
+                  <Card.Header>
+                    <Card.Title as="h5" className="text-center">Con servicio de envios</Card.Title>
+                  </Card.Header>
+                  <Card.Body>
+                    <Bar data={dataBar2} options={optionsBar2} />
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg="6" sm="6">
+                <Card className="p-2 m-2 card-stats">
+                  <Card.Body className="text-center">
+                    <div className="d-flex justify-content-around flex-row ">
+                      <div className="icon-big text-center icon-warning mb-3">
+                        <FontAwesomeIcon icon={faTableCellsLarge} size="3x" className="custom-text-primary" />
+                      </div>
+                      <div className="numbers">
+                        <Card.Title as="h5" className="text-dark font-weight-bold">
+                          Categorias
+                        </Card.Title>
+                        <h6>{categorias.length}</h6>
+                      </div>
+                    </div>
+                  </Card.Body>
+                  <Card.Footer>
+                  </Card.Footer>
+                </Card>
+              </Col>
+              <Col lg="6" sm="6">
+                <Card className="p-2 m-2 card-stats">
+                  <Card.Body className="text-center">
+                    <div className="d-flex justify-content-around flex-row ">
+                      <div className="icon-big text-center icon-warning mb-3">
+                        <FontAwesomeIcon icon={faTableCellsLarge} size="3x" className="custom-text-primary" />
+                      </div>
+                      <div className="numbers">
+                        <Card.Title as="h5" className="text-dark font-weight-bold">
+                          Cantidad x
+                        </Card.Title>
+                        <h6>{categorias.length}</h6>
+                      </div>
+                    </div>
+                  </Card.Body>
+                  <Card.Footer>
+                  </Card.Footer>
+                </Card>
+              </Col>
+            </Row>
           </Col>
         </Row>
-      </Container>
+      </Container >
     </>
   );
 }
