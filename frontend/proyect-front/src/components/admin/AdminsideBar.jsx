@@ -28,16 +28,16 @@ const AdminSideBar = () => {
             <span className="title-section">Principal</span>
           </Nav.Item>
           <Nav.Item className="nav-item">
-            <Nav.Link as={NavLink} to={`${currentPath}/requests`}>
-              Solicitudes
-            </Nav.Link>
+            <Nav.Link as={NavLink} to={`${currentPath}/dashboard`}>Dashboard</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link as={NavLink} to={`${currentPath}/requests`}>Solicitudes</Nav.Link>
           </Nav.Item>
           <Nav.Item className="nav-item-section-title">
             <FontAwesomeIcon icon={faWrench} className="icon" />
             <span className="title-section">Servicios y Productos</span>
           </Nav.Item>
           <Nav.Item className="nav-item">
-
             <Nav.Item className="nav-item-section-collpase" onClick={() => setOpen(!open)}>
               <FontAwesomeIcon icon={faPlus} className="icon-expand" />
               Categorias y Equipos</Nav.Item>
@@ -58,8 +58,8 @@ const AdminSideBar = () => {
           <Nav.Item className="nav-item">
             <Nav.Link as={NavLink} to={`${currentPath}/users`}> Usuarios</Nav.Link>
           </Nav.Item>
-        </Nav>
-      </div>
+        </Nav >
+      </div >
     </>
   );
 };

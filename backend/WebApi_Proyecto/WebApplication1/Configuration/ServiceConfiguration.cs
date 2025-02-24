@@ -104,7 +104,6 @@ public static class ServiceConfiguration
 
         });
 
-
         //Servicios
         builder.Services.AddScoped<ITokenServicio, TokenServicio>();
         builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
@@ -116,15 +115,6 @@ public static class ServiceConfiguration
         builder.Services.AddScoped<ITipoServicio_Servicio, TipoServicio_Servicio>();
         builder.Services.AddScoped<IMantenimientoServicio, MantenimientoServicio>();
         builder.Services.AddScoped<IEmpresaExternaServicio, EmpresaExternaServicio>();
-        /*
-        //Identity
-        builder.Services.AddIdentity<Usuario, Rol>(options =>
-        {
-            // Configuración de opciones de Identity (opcional)
-            options.User.RequireUniqueEmail = true;
-        })
-        .AddEntityFrameworkStores<WebAPIContext>()
-        .AddDefaultTokenProviders();*/
 
         builder.Services.AddIdentityCore<Usuario>(options =>
         {

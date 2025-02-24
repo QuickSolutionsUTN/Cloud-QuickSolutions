@@ -5,7 +5,6 @@ import AdminLayout from './layout/AdminLayout.jsx';
 import RepairsRequest from './pages/RequestPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
-import MaintenancesPage from './pages/MaintenancesPage.jsx';
 import AdminRequests from '../src/components/admin/adminRequests.jsx';
 import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
 import UserRequestsPage from './pages/UserRequestsPage.jsx';
@@ -15,6 +14,7 @@ import AdminProductsPage from './pages/AdminProductsPage.jsx';
 import AdminCategoriesPage from './pages/AdminCategoriesPage.jsx';
 import AdminUsersPage from './pages/AdminUsersPage.jsx';
 import AdminMaintenancePage from './pages/AdminMaintenancePage.jsx';
+import AdminDashboardPage from './pages/AdminDashboardPage.jsx';
 
 function App() {
   const ProtectedRoute = ({ children, roleRequired }) => {
@@ -45,12 +45,13 @@ function App() {
             </Route>
           </Route>
           <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>}>
+            <Route path="dashboard" element={<AdminDashboardPage />} />
             <Route path="requests" element={<AdminRequests />} />
             <Route path="requests/:id" element={<RequestManagement />} />
             <Route path="products" element={<AdminProductsPage />} />
             <Route path="categories" element={<AdminCategoriesPage />} />
-            <Route path="maintenance" element={<AdminMaintenancePage /> } />
-            <Route path="users" element={<AdminUsersPage /> } />
+            <Route path="maintenance" element={<AdminMaintenancePage />} />
+            <Route path="users" element={<AdminUsersPage />} />
           </Route>
         </Routes>
       </Router>
