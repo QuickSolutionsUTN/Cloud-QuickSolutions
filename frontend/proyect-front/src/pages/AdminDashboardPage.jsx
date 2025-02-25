@@ -9,14 +9,15 @@ import {
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faUser } from "@fortawesome/free-regular-svg-icons";
-import { faTableCellsLarge, faScrewdriverWrench, faSquare, faX, faCheck, faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { faBolt, faScrewdriverWrench, faSquare, faX, faCheck, faDollarSign, faHourglass, faTruck, faPercent, faHelmetSafety, faBold } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/axiosConfig";
 import { useBackendURL } from '../contexts/BackendURLContext';
 import AuthContext from '../contexts/AuthContext';
 import axios from 'axios';
-
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, ArcElement } from "chart.js";
+import "./adminDashboardPage.css";
+import { set } from "react-hook-form";
 
 
 export default function AdminDashboardPage() {
@@ -25,7 +26,13 @@ export default function AdminDashboardPage() {
   const [serviceTypeCount, setServiceTypeCount] = useState([0, 0]);
   const [localRepairCount, setLocalRepairCount] = useState([0, 0]);
   const [monthlyEarnings, setMonthlyEarnings] = useState(0);
-  const [categorias, setCategorias] = useState([]);
+  const [aprobedBudgetsCount, setAprobedBudgetsCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [rejectedBudgetsCount, setRejectedBudgetsCount] = useState(0);
+  const [deliveryServiceCount, setDeliveryServiceCount] = useState(0);
+  const [successfullMaintenances, setSuccessfullMaintenances] = useState(0);
+  const [successfullRepairs, setSuccessfullRepairs] = useState(0);
+  const[maintenanceArray, setMaintenanceArray] = useState([]);
   const [productos, setProductos] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const backendURL = useBackendURL();
@@ -45,15 +52,15 @@ export default function AdminDashboardPage() {
         setLoading(false);
       }
     };
-    const getCategorias = async () => {
+    const getMaintenanceArray = async () => {
       try {
-        const response = await apiService.getCategories();
-        console.log("Categorias obtenidas:", response.data);
-        setCategorias(response.data);
-        console.log("Categorias:", categorias);
+        const response = await apiService.getMaintenanceArray();
+        console.log("Productos obtenidos:", response.data);
+        setMaintenanceArray(response.data);
+        console.log("Productos:", productos);
         setLoading(false);
       } catch (error) {
-        console.error("Error al obtener las categorias:", error);
+        console.error("Error al obtener los productos:", error);
         setLoading(false);
       }
     }
@@ -86,7 +93,7 @@ export default function AdminDashboardPage() {
       }
     };
     getSolicitudes();
-    getCategorias();
+    getMaintenanceArray();
     getProductos();
     getUsuarios();
   }, []);
@@ -135,21 +142,29 @@ export default function AdminDashboardPage() {
     setServiceTypeCount(typeCount);
 
     let localCount = [0, 0];
+    let aprobedBudget = 0;
+    let pendingCount = 0;
+    let rejectedCount = 0;
+    let deliverySCount = 0;
+    let successfullM = 0;
+    let successfullR = 0;
     solicitudes.forEach((solicitud) => {
-      switch (solicitud.tercearizado) {
-        case false:
-          localCount[0]++;
-          break;
-        case true:
-          localCount[1]++;
-          break;
-        default:
-          break;
-      }
+      if (!solicitud.tercearizado) localCount[0]++;
+      else localCount[1]++;
+      if (solicitud.fechaAprobada) aprobedBudget++;
+      if (!solicitud.fechaFinalizada && solicitud.fechaAprobada) pendingCount++;
+      if (solicitud.fechaPresupuestada && solicitud.estado == "Cancelada") rejectedCount++;
+      if (solicitud.conLogistica) deliverySCount++;
+      if (solicitud.fechaFinalizada && solicitud.tipoServicio == "mantenimiento") successfullM++;
+      if (solicitud.fechaFinalizada && solicitud.tipoServicio == "Reparacion") successfullR++;
     });
-    console.log("Local Count:", localCount);
     setLocalRepairCount(localCount);
-
+    setAprobedBudgetsCount(aprobedBudget);
+    setPendingCount(pendingCount);
+    setRejectedBudgetsCount(rejectedCount);
+    setDeliveryServiceCount(deliverySCount);
+    setSuccessfullMaintenances((successfullM * 100) / serviceTypeCount[1]);
+    setSuccessfullRepairs((successfullR * 100) / serviceTypeCount[0]);
     let earnings = 0;
     solicitudes.forEach((solicitud) => {
       if (solicitud.fechaFinalizada) earnings += solicitud.monto;
@@ -190,23 +205,7 @@ export default function AdminDashboardPage() {
     ],
   };
 
-  const dataBar2 = {
-    labels: ["Reparacion Local", "Subcontratadas"],
-    datasets: [
-      {
-        data: [localRepairCount[0], localRepairCount[1]],
-        backgroundColor: [
-          "#FD7E14",
-          "#007BFF",
-        ],
-        borderColor: [
-          "rgba(199, 87, 0, 1)",
-          "rgba(0, 86, 179, 1)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
+
 
   const dataPie = {
     labels: ["Reparaciones", "Mantenimiento"],
@@ -240,21 +239,10 @@ export default function AdminDashboardPage() {
     },
   };
 
-  const optionsBar2 = {
-    indexAxis: "y",
-    responsive: true,
-    plugins: {
-      legend: { position: "top" },
-      tooltip: { enabled: true },
-    },
-    scales: {
-      x: { ticks: { font: { size: 14, weight: 'bold', }, }, },
-      y: { ticks: { font: { size: 14, }, }, },
-    },
-  };
 
   const optionsPie = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top",  // Posición de la leyenda
@@ -267,110 +255,141 @@ export default function AdminDashboardPage() {
 
   return (
     <>
-      <Container fluid>
+      <Container fluid className="admin-dashboard">
         <Row className="m-2 d-flex flex-row">
-          <Col lg="3" sm="6">
-            <Card className="p-2 card-stats">
+          <div className="title"><h2>Dashboard</h2></div>
+        </Row>
+        <Row className="m-2 d-flex flex-row">
+          <Col lg="2" sm="6">
+            <Card className="p-2 card-stats h-100">
               <Card.Body className="text-center">
-                <div className="d-flex justify-content-around flex-row ">
-                  <div className="icon-big text-center icon-warning mb-3">
-                    <FontAwesomeIcon icon={faFile} size="3x" className="custom-text-primary" />
+                <div className="d-flex flex-column">
+                  <div className="icon-big d-flex justify-content-end">
+                    <FontAwesomeIcon icon={faFile} size="lg" className="custom-text-primary" />
                   </div>
-                  <div className="numbers">
-                    <Card.Title as="h5" className="text-dark font-weight-bold">
-                      Solicitudes
-                    </Card.Title>
-                    <h5>{solicitudes.length}</h5>
-                  </div>
+                  <div className="numbers"><h3>{solicitudes.length}</h3></div>
+                  <div className="title"><h6>Solicitudes</h6></div>
                 </div>
               </Card.Body>
-              <Card.Footer>
-              </Card.Footer>
             </Card>
           </Col>
-          <Col lg="3" sm="6">
-            <Card className="p-2 card-stats">
+          <Col lg="2" sm="6">
+            <Card className="p-2 card-stats h-100">
               <Card.Body className="text-center">
-                <div className="d-flex justify-content-around flex-row ">
-                  <div className="icon-big text-center icon-warning mb-3">
-                    <FontAwesomeIcon icon={faDollarSign} size="3x" className="text-success" />
+                <div className="d-flex flex-column">
+                  <div className="icon-big d-flex justify-content-end">
+                    <FontAwesomeIcon icon={faDollarSign} size="lg" className="text-success" />
                   </div>
-                  <div className="numbers">
-                    <Card.Title as="h5" className="text-dark font-weight-bold">
-                      Ganancias Mensuales
-                    </Card.Title>
-                    <h5>$ {monthlyEarnings}</h5>
-                  </div>
+                  <div className="numbers"><h3>$ {monthlyEarnings}</h3></div>
+                  <div className="title"><h6>Ganancias Mensuales</h6></div>
                 </div>
               </Card.Body>
-              <Card.Footer>
-              </Card.Footer>
             </Card>
           </Col>
-          <Col lg="3" sm="6">
-            <Card className="p-2 card-stats">
+          <Col lg="2" sm="6">
+            <Card className="p-2 card-stats h-100">
               <Card.Body className="text-center">
-                <div className="d-flex justify-content-around flex-row ">
-                  <div className="icon-big text-center icon-warning mb-3">
-                    <FontAwesomeIcon icon={faScrewdriverWrench} size="3x" className="custom-text-primary" />
+                <div className="d-flex flex-column">
+                  <div className="icon-big d-flex justify-content-end">
+                    <FontAwesomeIcon icon={faCheck} size="lg" className="text-success" />
                   </div>
-                  <div className="numbers">
-                    <Card.Title as="h5" className="text-dark font-weight-bold">
-                      Productos
-                    </Card.Title>
-                    <h6>{productos.length}</h6>
-                  </div>
+                  <div className="numbers"><h3>{aprobedBudgetsCount}</h3></div>
+                  <div className="subtitle"><h6>Presupuestos aprobados</h6></div>
                 </div>
               </Card.Body>
-              <Card.Footer>
-              </Card.Footer>
             </Card>
           </Col>
-          <Col lg="3" sm="6">
+          <Col lg="2" sm="6">
             <Card className="p-2 card-stats">
               <Card.Body className="text-center">
-                <div className="d-flex justify-content-around flex-row ">
-                  <div className="icon-big text-center icon-warning mb-3">
-                    <FontAwesomeIcon icon={faUser} size="3x" className="custom-text-primary" />
+                <div className="d-flex flex-column">
+                  <div className="icon-big d-flex justify-content-end">
+                    <FontAwesomeIcon icon={faX} size="lg" className="text-danger" />
                   </div>
-                  <div className="numbers">
-                    <Card.Title as="h5" className="text-dark font-weight-bold">
-                      Usuarios
-                    </Card.Title>
-                    <h5>{usuarios.length}</h5>
-                  </div>
+                  <div className="numbers"><h3>{rejectedBudgetsCount}</h3></div>
+                  <div className="subtitle"><h6>Presupuestos rechazados</h6></div>
                 </div>
               </Card.Body>
-              <Card.Footer>
-              </Card.Footer>
+            </Card>
+          </Col>
+          <Col lg="2" sm="6">
+            <Card className="p-2 card-stats h-100">
+              <Card.Body className="text-center">
+                <div className="d-flex flex-column">
+                  <div className="icon-big d-flex justify-content-end">
+                    <FontAwesomeIcon icon={faHourglass} size="lg" className="text-primary" />
+                  </div>
+                  <div className="numbers"><h3>{pendingCount}</h3></div>
+                  <div className="subtitle"><h6>Solicitudes pendientes de finalizacion</h6></div>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg="2" sm="6">
+            <Card className="p-2 card-stats h-100">
+              <Card.Body className="text-center">
+                <div className="d-flex flex-column">
+                  <div className="icon-big d-flex justify-content-end">
+                    <FontAwesomeIcon icon={faUser} size="lg" className="custom-text-primary" />
+                  </div>
+                  <div className="numbers"><h3>{usuarios.length}</h3></div>
+                  <div class="title"><h6>Usuarios</h6></div>
+                </div>
+              </Card.Body>
             </Card>
           </Col>
         </Row>
         <Row className="m-2 d-flex flex-row">
-          <Col md="6" >
-            <Card className="m-2 card-stats">
-              <Card.Body className="text-center">
-                <div className="d-flex justify-content-around flex-column ">
-                  <Card.Title as="h5" className="d-flex flex-row text-dark justify-content-around align-items-center">
-                    <span style={{ color: "green" }}>
-                      <FontAwesomeIcon icon={faCheck} className="me-2" />
-                      Cantidad de presupuestos aprobados
-                    </span>
-                    <span>{solicitudes.length}</span>
-                  </Card.Title>
-                  <Card.Title as="h5" className="d-flex flex-row text-dark justify-content-around align-items-center">
-                    <span style={{ color: "red" }}>
-                      <FontAwesomeIcon icon={faX} className="me-2" />
-                      Cantidad de presupuestos rechazados
-                    </span>
-                    <span>{solicitudes.length}</span>
-                  </Card.Title>
+          <Col md="6" sm="6" className="d-flex flex-column">
+            <Card className="maintenance-progress h-100 flex-grow-1">
+              <Card.Body>
+                <div className="d-flex flex-row justify-content-cetner title mb-2">
+                  <span><h5>Mantenimientos exitosos</h5></span>
+                </div>
+                <div className="d-flex flex-row justify-content-center w-100">
+                  <div className="progress w-100">
+                    <div
+                      className="progress-bar"
+                      role="progressbar"
+                      style={{ width: `${Math.round(successfullMaintenances)}%` }}
+                      aria-valuenow={Math.round(successfullMaintenances)}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    >
+                      {Math.round(successfullMaintenances)}%
+                    </div>
+                  </div>
                 </div>
               </Card.Body>
-              <Card.Footer>
-              </Card.Footer>
             </Card>
-            <Card className="m-2">
+          </Col>
+          <Col md="6" sm="6" className="d-flex flex-column">
+            <Card className="repair-progress h-100 flex-grow-1">
+              <Card.Body>
+                <div className="d-flex flex-row justify-content-cetner title mb-2">
+                  <span><h5>Reparaciones exitosas</h5></span>
+                </div>
+                <div className="d-flex flex-row justify-content-center w-100">
+                  <div className="progress w-100">
+                    <div
+                      className="progress-bar"
+                      role="progressbar"
+                      style={{ width: `${Math.round(successfullRepairs)}%` }}
+                      aria-valuenow={Math.round(successfullRepairs)}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    >
+                      {Math.round(successfullRepairs)}%
+                    </div>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        <Row className="m-2 d-flex flex-row">
+          <Col md="6" sm="6" className="d-flex flex-column" >
+            <Card className="mt-2 h-100 flex-grow-1">
               <Card.Header>
                 <Card.Title as="h5" className="text-center">Estado solicitudes</Card.Title>
               </Card.Header>
@@ -379,88 +398,99 @@ export default function AdminDashboardPage() {
               </Card.Body>
             </Card>
           </Col>
-          <Col md="6">
-            <Row>
-              <Col md="6" className="d-flex flex-column">
-                <Card className="m-2">
-                  <Card.Header className="d-flex justify-content-center">
+          <Col md="6" sm="6" className="d-flex flex-column">
+            <Row className="mt-2 d-flex flex-row">
+              <Col lg="8" sm="6">
+                <Card className="h-100 flex-grow-1">
+                  <Card.Header className="text-center">
                     <Card.Title as="h5">Tipo de solicitud</Card.Title>
                   </Card.Header>
-                  <Card.Body className="d-flex flex-column">
-                    <div className="d-flex flex-column">
-                      <div className="d-flex mb-2 justify-content-between">
+                  <Card.Body className="d-flex flex-row justify-content-center align-items-center">
+                    <div className="d-flex flex-column ms-3 align-items-center">
+                      <div className="d-flex mb-2 justify-content-between flex-column align-items-center">
                         <span className="p-1 d-flex flex-row">
-                          <FontAwesomeIcon className="me-2 pt-1" size="lg" style={{ color: "#FF6F61" }} icon={faSquare} />
-                          <h5>Reparaciones</h5></span>
+                          <FontAwesomeIcon className="me-1 pt-1" size="lg" style={{ color: "#FF6F61" }} icon={faSquare} />
+                          <h5>Reparaciones </h5></span>
                         <span><h5>{serviceTypeCount[0]}</h5></span>
                       </div>
-                      <div className="d-flex flex-row justify-content-between align-items-center">
+                      <div className="d-flex flex-row justify-content-between flex-column align-items-center">
                         <span className="p-1 d-flex flex-row">
-                          <FontAwesomeIcon className="me-2 pt-1" size="lg" style={{ color: "#A7C7E7" }} icon={faSquare} />
-                          <h5>Mantenimientos</h5></span >
+                          <FontAwesomeIcon className="me-1 pt-1" size="lg" style={{ color: "#A7C7E7" }} icon={faSquare} />
+                          <h5>Mantenimientos </h5></span >
                         <span ><h5>{serviceTypeCount[1]}</h5></span>
                       </div>
                     </div>
-                    <Pie className="p-4" data={dataPie} options={optionsPie} />
+                    <div className="d-flex flex-column align-items-center">
+                      <div className="w-80 h-auto mx-auto">
+                        <Pie data={dataPie} options={optionsPie} />
+                      </div>
+                    </div>
                   </Card.Body>
                 </Card>
               </Col>
-              <Col md="6">
-                <Card className="m-2">
-                  <Card.Header>
-                    <Card.Title as="h5" className="text-center">Reparacion local vs externa</Card.Title>
-                  </Card.Header>
-                  <Card.Body>
-                    <Bar data={dataBar2} options={optionsBar2} />
-                  </Card.Body>
-                </Card>
-                <Card className="m-2">
-                  <Card.Header>
-                    <Card.Title as="h5" className="text-center">Con servicio de envios</Card.Title>
-                  </Card.Header>
-                  <Card.Body>
-                    <Bar data={dataBar2} options={optionsBar2} />
+              <Col lg="4" sm="6">
+                <Card className="p-2 card-stats h-100">
+                  <Card.Body className="text-center">
+                    <div className="d-flex flex-column justify-content-center">
+                      <div className="icon-big d-flex justify-content-end">
+                        <FontAwesomeIcon icon={faScrewdriverWrench} size="lg" className="custom-text-primary" />
+                      </div>
+                      <div className="numbers"><h3>{productos.length}</h3></div>
+                      <div className="title"><h6>Productos en el catalogo</h6></div>
+                      <hr />
+                      <div className="icon-big d-flex justify-content-end">
+                        <FontAwesomeIcon icon={faBolt} size="lg" className="custom-text-primary" />
+                      </div>
+                      <div className="numbers"><h3>{maintenanceArray.length}</h3></div>
+                      <div className="title"><h6>Mantenimientos ofrecidos</h6></div>
+                    </div>
                   </Card.Body>
                 </Card>
               </Col>
             </Row>
-            <Row>
+            <Row className="mt-2 d-flex flex-row">
               <Col lg="6" sm="6">
-                <Card className="p-2 m-2 card-stats">
+                <Card className="p-2 card-stats h-100">
                   <Card.Body className="text-center">
-                    <div className="d-flex justify-content-around flex-row ">
-                      <div className="icon-big text-center icon-warning mb-3">
-                        <FontAwesomeIcon icon={faTableCellsLarge} size="3x" className="custom-text-primary" />
+                    <div className="d-flex flex-row justify-content-center">
+
+                      <div className="icon-big d-flex justify-content-end">
+                        <FontAwesomeIcon icon={faTruck} size="lg" className="custom-text-primary" />
                       </div>
-                      <div className="numbers">
-                        <Card.Title as="h5" className="text-dark font-weight-bold">
-                          Categorias
-                        </Card.Title>
-                        <h6>{categorias.length}</h6>
+                      <div className="d-flex flex-column">
+                        <div className="numbers"><h3>{deliveryServiceCount}</h3></div>
+                        <div className="title"><h6>Solicitudes con servicio de logistica</h6></div>
+                      </div>
+                      <div className="d-flex flex-column">
+                        <div className="numbers"><h3>
+                          {(deliveryServiceCount / solicitudes.length) * 100}
+                          <FontAwesomeIcon className="ms-2" size="sm" icon={faPercent} /></h3></div>
+                        <div className="title"><h6>Del total de solicitudes</h6></div>
                       </div>
                     </div>
                   </Card.Body>
-                  <Card.Footer>
-                  </Card.Footer>
                 </Card>
               </Col>
               <Col lg="6" sm="6">
-                <Card className="p-2 m-2 card-stats">
+                <Card className="p-2 card-stats h-100">
                   <Card.Body className="text-center">
-                    <div className="d-flex justify-content-around flex-row ">
-                      <div className="icon-big text-center icon-warning mb-3">
-                        <FontAwesomeIcon icon={faTableCellsLarge} size="3x" className="custom-text-primary" />
+                    <div className="d-flex flex-row justify-content-center">
+
+                      <div className="icon-big d-flex justify-content-end">
+                        <FontAwesomeIcon icon={faHelmetSafety} size="lg" className="custom-text-primary" />
                       </div>
-                      <div className="numbers">
-                        <Card.Title as="h5" className="text-dark font-weight-bold">
-                          Cantidad x
-                        </Card.Title>
-                        <h6>{categorias.length}</h6>
+                      <div className="d-flex flex-column">
+                        <div className="numbers"><h3>{(localRepairCount[1])}</h3></div>
+                        <div className="title"><h6>Solicitudes con personal subcontrado</h6></div>
+                      </div>
+                      <div className="d-flex flex-column">
+                        <div className="numbers"><h3>
+                          {(localRepairCount[1] / solicitudes.length) * 100}
+                          <FontAwesomeIcon className="ms-2" size="sm" icon={faPercent} /></h3></div>
+                        <div className="title"><h6>Del total de solicitudes</h6></div>
                       </div>
                     </div>
                   </Card.Body>
-                  <Card.Footer>
-                  </Card.Footer>
                 </Card>
               </Col>
             </Row>

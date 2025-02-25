@@ -1,3 +1,27 @@
-.icon-big{
-  color:aliceblue;
+.admin-dashboard .card {
+  border-radius: 10px;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.admin-dashboard .card .subtitle {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000;
+}
+
+.admin-dashboard .card.maintenance-progress {
+  border-radius: 10px;
+  border: 1px solid #3486E6;
+  box-shadow: 0 0 1px rgba(20, 79, 242, 0.3);
+}
+
+.admin-dashboard .card.repair-progress {
+  border-radius: 10px;
+  border: 1px solid #DC3545;
+  box-shadow: 0 0 1px rgba(213, 78, 16, 0.3);
+}
+
+.admin-dashboard .progress-bar{
+  background-color: #28A745;
 }
