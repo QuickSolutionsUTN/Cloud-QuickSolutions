@@ -45,7 +45,7 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
           <div className='row reviewed-show'>
           <div className='col-diagnostic'>
             <Form.Group controlId='diagnostic'>
-              <Form.Label>Diagnostico</Form.Label>
+              <Form.Label className="fw-bold">Diagnostico</Form.Label>
               <Form.Control
                 as='textarea'
                 rows={5}
@@ -57,7 +57,7 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
           </div>
           <div className='col-amount'>
             <Form.Group controlId='estimated-date'>
-              <Form.Label>Fecha estimada</Form.Label>
+              <Form.Label className="fw-bold">Fecha estimada</Form.Label>
               <Form.Control
                 type='date'
                 value={solicitud.fechaEstimada ? new Date(solicitud.fechaEstimada).toISOString().split('T')[0] : ''}
@@ -65,7 +65,7 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
               />
             </Form.Group>
             <Form.Group className="amount-form" controlId='amount'>
-              <Form.Label>Monto</Form.Label>
+              <Form.Label className="fw-bold">Monto</Form.Label>
               <Form.Control
                 type='number'
                 value={solicitud.monto || ''}
@@ -80,7 +80,7 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
         <div className='row'>
           <div className='col-diagnostic'>
             <Form.Group controlId='diagnostic'>
-              <Form.Label>Resumen del trabajo</Form.Label>
+              <Form.Label className="fw-bold">Resumen del trabajo</Form.Label>
               <Form.Control
                 as='textarea'
                 rows={3}
