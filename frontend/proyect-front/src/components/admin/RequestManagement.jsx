@@ -220,7 +220,7 @@ function RequestManagement() {
   };
 
   return (
-    <div className='requestManagement'>
+    <div className='requestManagement w-100'>
       <div className='requestManagement-header'>
         <div className='d-flex align-items-start justify-content-between'>
           <Button style={{ width: '80px' }} variant="outline-dark" onClick={() => navigate('/admin/requests')}>

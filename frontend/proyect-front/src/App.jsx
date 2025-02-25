@@ -5,7 +5,7 @@ import AdminLayout from './layout/AdminLayout.jsx';
 import RepairsRequest from './pages/RequestPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import AuthContext, { AuthProvider } from './contexts/AuthContext.jsx';
-import AdminRequests from '../src/components/admin/adminRequests.jsx';
+import AdminRequestsPage from './pages/AdminRequestsPage.jsx';
 import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
 import UserRequestsPage from './pages/UserRequestsPage.jsx';
 import UserProfilePage from './pages/UserProfilePage.jsx';
@@ -46,7 +46,7 @@ function App() {
           </Route>
           <Route path="admin/*" element={<ProtectedRoute roleRequired="admin"><AdminLayout /></ProtectedRoute>}>
             <Route path="dashboard" element={<AdminDashboardPage />} />
-            <Route path="requests" element={<AdminRequests />} />
+            <Route path="requests" element={<AdminRequestsPage />} />
             <Route path="requests/:id" element={<RequestManagement />} />
             <Route path="products" element={<AdminProductsPage />} />
             <Route path="categories" element={<AdminCategoriesPage />} />
