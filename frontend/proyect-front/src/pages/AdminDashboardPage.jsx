@@ -148,6 +148,7 @@ export default function AdminDashboardPage() {
     let deliverySCount = 0;
     let successfullM = 0;
     let successfullR = 0;
+    let earnings = 0;
     solicitudes.forEach((solicitud) => {
       if (!solicitud.tercearizado) localCount[0]++;
       else localCount[1]++;
@@ -157,6 +158,7 @@ export default function AdminDashboardPage() {
       if (solicitud.conLogistica) deliverySCount++;
       if (solicitud.fechaFinalizada && solicitud.tipoServicio == "mantenimiento") successfullM++;
       if (solicitud.fechaFinalizada && solicitud.tipoServicio == "Reparacion") successfullR++;
+      if (solicitud.fechaFinalizada) earnings += solicitud.monto;
     });
     setLocalRepairCount(localCount);
     setAprobedBudgetsCount(aprobedBudget);
@@ -165,11 +167,6 @@ export default function AdminDashboardPage() {
     setDeliveryServiceCount(deliverySCount);
     setSuccessfullMaintenances((successfullM * 100) / serviceTypeCount[1]);
     setSuccessfullRepairs((successfullR * 100) / serviceTypeCount[0]);
-    let earnings = 0;
-    solicitudes.forEach((solicitud) => {
-      if (solicitud.fechaFinalizada) earnings += solicitud.monto;
-    }
-    );
     setMonthlyEarnings(earnings);
 
   }, [solicitudes]);
@@ -463,7 +460,7 @@ export default function AdminDashboardPage() {
                       </div>
                       <div className="d-flex flex-column">
                         <div className="numbers"><h3>
-                          {(deliveryServiceCount / solicitudes.length) * 100}
+                          {Math.round((deliveryServiceCount / solicitudes.length) * 100)}
                           <FontAwesomeIcon className="ms-2" size="sm" icon={faPercent} /></h3></div>
                         <div className="title"><h6>Del total de solicitudes</h6></div>
                       </div>
@@ -485,7 +482,7 @@ export default function AdminDashboardPage() {
                       </div>
                       <div className="d-flex flex-column">
                         <div className="numbers"><h3>
-                          {(localRepairCount[1] / solicitudes.length) * 100}
+                          {Math.round((localRepairCount[1] / solicitudes.length) * 100)}
                           <FontAwesomeIcon className="ms-2" size="sm" icon={faPercent} /></h3></div>
                         <div className="title"><h6>Del total de solicitudes</h6></div>
                       </div>

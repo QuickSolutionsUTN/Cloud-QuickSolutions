@@ -44,6 +44,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       }
       solicitud.envio.nroSeguimiento = nroSeguimiento;
     }
+    solicitud.tercearizado=false;
     nextStep();
   };
 
@@ -236,7 +237,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
                   Checklist de Mantenimiento Preventivo
                 </Form.Label>
                 <ListGroup>
-                  {solicitud.mantenimiento.checklist?.map((item) => (
+                  {solicitud.mantenimiento?.checklist?.map((item) => (
                     <ListGroup.Item key={item.id}>
                       {item.descripcion}
                       {item.obligatorio && " (Obligatorio)"}

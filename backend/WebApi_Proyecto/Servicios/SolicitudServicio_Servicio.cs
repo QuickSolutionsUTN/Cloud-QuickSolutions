@@ -110,38 +110,47 @@ namespace Servicios
             Console.WriteLine(solicitud.IdTipoServicio);
             if (solicitud.IdTipoServicio == 2)
             {
+               
                 var mantenimiento = await _context.TipoMantenimiento
                     .FirstOrDefaultAsync(m => m.Id == solicitud.IdTipoMantenimiento);
 
-                var mantenimientoDTO = _mapper.Map<MantenimientoOutDTO>(mantenimiento);
+                if (mantenimiento != null)
+                {
+                    var mantenimientoDTO = _mapper.Map<MantenimientoOutDTO>(mantenimiento);
 
-                var tareas = await _context.CheckListMantenimiento
-                    .Where(c => c.IdTipoMantenimiento == mantenimiento.Id)
-                    .Select(c => new TareaMantenimientoDTO
-                    {
-                        Id = c.Id,
-                        Descripcion = c.Tarea,
-                        Obligatorio = c.Obligatorio
-                    })
-                    .ToListAsync();
-                mantenimientoDTO.Checklist = tareas;
-                solicitudDTO.Mantenimiento = mantenimientoDTO;
+                    var tareas = await _context.CheckListMantenimiento
+                        .Where(c => c.IdTipoMantenimiento == mantenimiento.Id)
+                        .Select(c => new TareaMantenimientoDTO
+                        {
+                            Id = c.Id,
+                            Descripcion = c.Tarea,
+                            Obligatorio = c.Obligatorio
+                        })
+                        .ToListAsync();
+                    mantenimientoDTO.Checklist = tareas;
+                    solicitudDTO.Mantenimiento = mantenimientoDTO;
+                }
             }
 
             if (solicitud.Tercearizado)
             {
                 var reparacionExterna = await _context.ReparacionExterna
                     .FirstOrDefaultAsync(re => re.IdSolicitud == solicitud.Id);
-
-                var empresa = await _context.EmpresaExterna
-                    .FirstOrDefaultAsync(e => e.Id == reparacionExterna.IdEmpresa);
-                var empresaDTO= _mapper.Map<EmpresaDTO>(empresa);
-                var reparacionExternaDTO = new ReparacionExternaDTO
+                if (reparacionExterna != null)
                 {
-                    IdSolicitudExterna = reparacionExterna.IdSolicitudExterna,
-                    Empresa =empresaDTO
-                };
-                solicitudDTO.ReparacionExterna = reparacionExternaDTO;
+                    var empresa = await _context.EmpresaExterna
+                        .FirstOrDefaultAsync(e => e.Id == reparacionExterna.IdEmpresa);
+                    if (empresa != null)
+                    {
+                        var empresaDTO = _mapper.Map<EmpresaDTO>(empresa);
+                        var reparacionExternaDTO = new ReparacionExternaDTO
+                        {
+                            IdSolicitudExterna = reparacionExterna.IdSolicitudExterna,
+                            Empresa = empresaDTO
+                        };
+                        solicitudDTO.ReparacionExterna = reparacionExternaDTO;
+                    }
+                }
             }
 
             solicitudDTO.Categoria = categoriaDTO.Descripcion;

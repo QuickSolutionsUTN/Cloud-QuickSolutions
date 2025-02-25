@@ -274,8 +274,8 @@ function RequestManagement() {
             </span>
             {solicitud.tercearizado && (
               <>
-                <span className='mb-2'>Empresa Externa: {solicitud.reparacionExterna.empresa.nombre}</span>
-                <span className='mb-2'>ID Solicitud Externa: {solicitud.reparacionExterna.idSolicitudExterna}</span>
+                <span className='mb-2'>Empresa Externa: {solicitud.reparacionExterna?.empresa.nombre}</span>
+                <span className='mb-2'>ID Solicitud Externa: {solicitud.reparacionExterna?.idSolicitudExterna}</span>
               </>
             )}
           </div>

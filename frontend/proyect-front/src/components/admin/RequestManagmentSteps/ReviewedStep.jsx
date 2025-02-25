@@ -37,7 +37,7 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
             {solicitud.tipoServicio === "Reparacion" ? (
               <div className="col-12">
                 <Form.Group controlId="description">
-                  <Form.Label>Descripcion del problema</Form.Label>
+                  <Form.Label className="fw-bold">Descripcion del problema</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -54,7 +54,7 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
                 <Form.Control
                   as="textarea"
                   type="text"
-                  value={solicitud.mantenimiento.descripcion}
+                  value={solicitud.mantenimiento?.descripcion}
                   readOnly
                   style={{ resize: 'none', overflow: 'hidden' }}
                   onInput={adjustTextareaHeight}
