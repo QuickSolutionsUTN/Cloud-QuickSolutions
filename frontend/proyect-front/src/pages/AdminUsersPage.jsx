@@ -44,7 +44,6 @@ function AdminCategoriesPage() {
         });
         console.log("Roles obtenidos:", response.data);
         setRoles(response.data);
-        setLoading(false);
       } catch (error) {
         console.error("Error al obtener los roles:", error);
         setLoading(false);

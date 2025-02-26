@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 // react-bootstrap components
 import {
-  Button,
+  Spinner,
   Card,
   Container,
   Row,
@@ -58,7 +58,6 @@ export default function AdminDashboardPage() {
         console.log("Productos obtenidos:", response.data);
         setMaintenanceArray(response.data);
         console.log("Productos:", productos);
-        setLoading(false);
       } catch (error) {
         console.error("Error al obtener los productos:", error);
         setLoading(false);
@@ -70,7 +69,6 @@ export default function AdminDashboardPage() {
         console.log("Productos obtenidos:", response.data);
         setProductos(response.data);
         console.log("Productos:", productos);
-        setLoading(false);
       } catch (error) {
         console.error("Error al obtener los productos:", error);
         setLoading(false);
@@ -86,7 +84,6 @@ export default function AdminDashboardPage() {
         console.log("Usuarios obtenidos:", response.data);
         setUsuarios(response.data);
         console.log("Usuarios:", usuarios);
-        setLoading(false);
       } catch (error) {
         console.error("Error al obtener los usuarios:", error);
         setLoading(false);
@@ -251,8 +248,11 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <>
       <Container fluid className="admin-dashboard">
+      {loading ? (
+          <Spinner animation="border" />
+        ) : (
+          <>
         <Row className="m-2 d-flex flex-row">
           <div className="title"><h2>Dashboard</h2></div>
         </Row>
@@ -493,7 +493,8 @@ export default function AdminDashboardPage() {
             </Row>
           </Col>
         </Row>
+        </>
+        )}
       </Container >
-    </>
   );
 }

@@ -4,8 +4,7 @@ import { useBackendURL } from "../../contexts/BackendURLContext.jsx";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import "./userRequestsList.css";
-import Button from "react-bootstrap/Button";
-import Modal from 'react-bootstrap/Modal';
+import {Button, Modal, Spinner} from "react-bootstrap";
 import AuthContext from "../../contexts/AuthContext.jsx";
 
 function UserRequestsList({ userEmail }) {
@@ -15,6 +14,7 @@ function UserRequestsList({ userEmail }) {
   const { userToken } = useContext(AuthContext);
   const backendURL = useBackendURL();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,8 +44,10 @@ function UserRequestsList({ userEmail }) {
         }));
         mappedData.sort((a, b) => b.idSolicitud - a.idSolicitud);
         setRequests(mappedData);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching user requests:", error);
+        setLoading(false);
       }
     };
     fetchData();
@@ -144,6 +146,10 @@ function UserRequestsList({ userEmail }) {
 
   return (
     <>
+    {loading ? (
+              <Spinner animation="border" />
+            ) : (
+              <>
       <DataTable columns={columns} data={userRequests} />
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
@@ -161,6 +167,8 @@ function UserRequestsList({ userEmail }) {
           </Button>
         </Modal.Footer>
       </Modal>
+      </>
+    )}
     </>
   );
 }

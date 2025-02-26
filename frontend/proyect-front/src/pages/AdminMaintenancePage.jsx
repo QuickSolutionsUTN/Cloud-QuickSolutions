@@ -45,7 +45,6 @@ function AdminMaintenancePage() {
       const response = await apiService.getProducts();
       console.log("productos obtenidos:", response.data);
       setProducts(response.data);
-      setLoading(false);
     } catch (error) {
       console.error("Error al obtener los productos:", error);
       setLoading(false);
