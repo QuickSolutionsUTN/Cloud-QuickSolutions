@@ -5,7 +5,7 @@ import "./userMenu.css";
 const UserMenu = ({ onLogoutClick, onMouseLeave, role }) => {
   const navigate = useNavigate();
   const handleAdminClick = () => {
-    navigate('/admin');
+    navigate('/admin/dashboard');
   };
   const handleHomeClick = () => {
     navigate('/');

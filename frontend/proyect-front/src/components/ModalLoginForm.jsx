@@ -41,7 +41,7 @@ function LoginForm({ show, onClose, onJoinClick }) {
           login(userData);
           // Redirigir al usuario la página correspondiente
           if (userRole === 'admin') {
-            navigate('/admin');
+            navigate('/admin/dashboard');
           } else if (userRole === 'maintenance') {
             navigate('/maintenance');
           }
