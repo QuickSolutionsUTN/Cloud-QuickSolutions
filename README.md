@@ -17,11 +17,14 @@ Los usuarios pueden registrar un problema (por ejemplo, lavarropas roto) y los t
 2. Django gestiona la lógica de negocio y coordina el envío de notificaciones a través de AWS.
 3. Los cambios de estado en las reparaciones se reflejan en tiempo real mediante Supabase Realtime.
 
-## 🚀 Próximos pasos
-- Crear la base de datos en Supabase (tablas: usuarios, reparaciones, técnicos).
-- Conectar React con Supabase Auth y CRUD.
-- Integrar AWS SNS o SES para notificaciones automáticas.
-- Desplegar la app en Vercel o Netlify.
+## 🛠️ Estado del Proyecto
+
+Actualmente solo está disponible el código base del proyecto anterior.  
+El equipo irá trabajando progresivamente en:
+- Migración del backend a Django
+- Conexión con Supabase (BD y autenticación)
+- Implementación de notificaciones en la nube
+- Frontend completo con React + Vite
 
 ## 👨‍💻 Equipo de Trabajo
 
