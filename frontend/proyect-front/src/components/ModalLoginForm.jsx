@@ -3,16 +3,11 @@ import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import './modalLoginForm.css';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../contexts/AuthContext';
-import { useBackendURL } from '../contexts/BackendURLContext';
-import axios from 'axios';
-import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 function LoginForm({ show, onClose, onJoinClick }) {
-  const backendURL = useBackendURL();
+  const {singInWithEmail}= useContext(AuthContext);
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -22,60 +17,11 @@ function LoginForm({ show, onClose, onJoinClick }) {
   const handleFormSubmit = async (formValues) => {
     setErrorMessage('');
     try {
+      const {role} = await singInWithEmail(formValues.email, formValues.password);
 
-      const { data: authData, error:authError } = await supabase.auth.signInWithPassword({
-        email: formValues.email,
-        password: formValues.password
-      });
-
-      if (authError) throw authError;
-
-      if (!authData.user || !authData.session) {
-        throw new Error("No se pudo obtener la sesión del usuario.");
-      }
-
-      const userId = authData.user?.id;
-      const userEmail = authData.user?.email;
-      const accessToken = authData?.session?.access_token;
-      const refreshToken = authData?.session?.refresh_token;
-      console.log("Usuario autenticado, obteniendo perfil...");
-
-      if (!accessToken) throw new Error('No se obtuvo token de acceso');
-
-      const { data: profileData, error: profileError } = await supabase
-        .from('perfiles')
-        .select('rol, nombre, apellido')
-        .eq('id', userId)
-        .single();
-
-      if (profileError) {
-        console.error("Error al obtener perfil:", profileError);
-        throw new Error("Error al cargar el perfil del usuario.");
-      }
-
-      if (!profileData) {
-        throw new Error("No se encontró un perfil para este usuario.");
-      }
-
-      const userRole = profileData.rol;
-      const userName = profileData.nombre;
-      const userSurname = profileData.apellido;
-
-      const userData = {
-        userId,
-        role: userRole,
-        email: userEmail,
-        token: accessToken,
-        refreshToken,
-        name: userName,
-        surName: userSurname
-      };
-
-      login(userData);
-
-      if (userRole === 'admin') {
+      if (role === 'admin') {
         navigate('/admin/dashboard');
-      } else if (userRole === 'maintenance') {
+      } else if (role === 'maintenance') {
         navigate('/maintenance');
       }
       onClose();
@@ -84,49 +30,7 @@ function LoginForm({ show, onClose, onJoinClick }) {
       setErrorMessage(error.message || 'Error de conexión. Intente más tarde.');
     }
   };
-  /*const handleFormSubmit = async (data) => {
-    setErrorMessage(''); // Clear error message on new submit attempt
-    try {
-      console.log("Clic en Iniciar Sesión");
-      const response = await axios.post(`${backendURL}/api/users/login`, data);
-      if (response.status === 200) {
-        const userToken = response.data.token;
-        const userRole = jwtDecode(userToken)['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        const userId = jwtDecode(userToken)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
-        const userName = jwtDecode(userToken)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-        const userSurname = jwtDecode(userToken)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'];
-        console.log("Usuario autenticado correctamente, token: ", userToken);
-        try {
-          const decodedToken = jwtDecode(userToken);
-          const userData = {
-            userId: userId,
-            role: userRole,
-            email: decodedToken.email,
-            token: userToken,
-            refreshToken: response.data.refreshToken,
-            name: userName,
-            surName: userSurname
-          }
-          login(userData);
-          // Redirigir al usuario la página correspondiente
-          if (userRole === 'admin') {
-            navigate('/admin/dashboard');
-          } else if (userRole === 'maintenance') {
-            navigate('/maintenance');
-          }
-          onClose();
-        } catch (error) {
-          console.error('Error al decodificar el token:', error);
-          setErrorMessage("Token inválido. Intente nuevamente.");
-        }
-      }
-    } catch (error) {
-      console.error('Error al hacer login:', error);
-      const errorMessage = error.response?.data?.message || "Error de conexión. Intente más tarde.";
-      setErrorMessage(errorMessage);
-    }
-  };*/
-
+  
   return (
     <Modal show={show} onHide={onClose} >
       <Modal.Header closeButton>

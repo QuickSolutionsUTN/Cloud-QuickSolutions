@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient.jsx';
+import { supabase } from '../services/supabaseClient.js';
 import axios from 'axios';
 import { set } from 'react-hook-form';
 
@@ -50,39 +50,43 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-
-      if (session) {
-        const { data: profileData } = await supabase
-          .from('perfiles')
-          .select('rol, nombre, apellido')
-          .eq('id', session.user.id)
-          .single();
-
-        setProfile(profileData);
-      }
-      setLoading(false);
-    });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
+
       async (_event, session) => {
-        setSession(session);
+
         if (session) {
-          setLoading(true);
-          const { data: profileData } = await supabase
-            .from('perfiles')
-            .select('rol, nombre, apellido')
-            .eq('id', session.user.id)
-            .single();
-          setProfile(profileData);
-          setLoading(false);
+          try {
+            const { data: profileData, error } = await supabase
+              .from('perfiles')
+              .select('rol, nombre, apellido')
+              .eq('id', session.user.id)
+              .single();
+
+            if (error) {
+              console.error("Error al buscar perfil, deslogueando:", error);
+              setProfile(null);
+              await supabase.auth.signOut();
+              setSession(null);
+            } else {
+              setProfile(profileData);
+              setSession(session);
+            }
+          } catch (e) {
+            console.error("Error grave al buscar perfil:", e);
+            setProfile(null);
+            setSession(null);
+          } finally {
+            setLoading(false);
+          }
         } else {
           setProfile(null);
+          setSession(null);
+          setLoading(false);
         }
       }
     );
+    
     return () => subscription.unsubscribe();
   }, []);
 
@@ -96,9 +100,9 @@ export const AuthProvider = ({ children }) => {
   const value = {
     session,
     user,
-    isAut,
     isAuthenticated: !!session, // Derivado, no un estado
     userRole: profile?.rol,
+    singInWithEmail,
     logout,
     loading
   };
