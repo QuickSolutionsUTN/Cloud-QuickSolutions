@@ -7,6 +7,9 @@ import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../contexts/AuthContext';
 import { useBackendURL } from '../contexts/BackendURLContext';
 import axios from 'axios';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 function LoginForm({ show, onClose, onJoinClick }) {
   const backendURL = useBackendURL();
@@ -15,7 +18,73 @@ function LoginForm({ show, onClose, onJoinClick }) {
   const { login } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleFormSubmit = async (data) => {
+
+  const handleFormSubmit = async (formValues) => {
+    setErrorMessage('');
+    try {
+
+      const { data: authData, error:authError } = await supabase.auth.signInWithPassword({
+        email: formValues.email,
+        password: formValues.password
+      });
+
+      if (authError) throw authError;
+
+      if (!authData.user || !authData.session) {
+        throw new Error("No se pudo obtener la sesión del usuario.");
+      }
+
+      const userId = authData.user?.id;
+      const userEmail = authData.user?.email;
+      const accessToken = authData?.session?.access_token;
+      const refreshToken = authData?.session?.refresh_token;
+      console.log("Usuario autenticado, obteniendo perfil...");
+
+      if (!accessToken) throw new Error('No se obtuvo token de acceso');
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('perfiles')
+        .select('rol, nombre, apellido')
+        .eq('id', userId)
+        .single();
+
+      if (profileError) {
+        console.error("Error al obtener perfil:", profileError);
+        throw new Error("Error al cargar el perfil del usuario.");
+      }
+
+      if (!profileData) {
+        throw new Error("No se encontró un perfil para este usuario.");
+      }
+
+      const userRole = profileData.rol;
+      const userName = profileData.nombre;
+      const userSurname = profileData.apellido;
+
+      const userData = {
+        userId,
+        role: userRole,
+        email: userEmail,
+        token: accessToken,
+        refreshToken,
+        name: userName,
+        surName: userSurname
+      };
+
+      login(userData);
+
+      if (userRole === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (userRole === 'maintenance') {
+        navigate('/maintenance');
+      }
+      onClose();
+    } catch (error) {
+      console.error('Error al hacer login con Supabase:', error);
+      setErrorMessage(error.message || 'Error de conexión. Intente más tarde.');
+    }
+  };
+  /*const handleFormSubmit = async (data) => {
     setErrorMessage(''); // Clear error message on new submit attempt
     try {
       console.log("Clic en Iniciar Sesión");
@@ -56,7 +125,7 @@ function LoginForm({ show, onClose, onJoinClick }) {
       const errorMessage = error.response?.data?.message || "Error de conexión. Intente más tarde.";
       setErrorMessage(errorMessage);
     }
-  };
+  };*/
 
   return (
     <Modal show={show} onHide={onClose} >
