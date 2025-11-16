@@ -7,17 +7,16 @@ import AuthContext from '../contexts/AuthContext';
 
 
 function LoginForm({ show, onClose, onJoinClick }) {
-  const {singInWithEmail}= useContext(AuthContext);
+  const {signInWithEmail}= useContext(AuthContext);
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState('');
 
 
   const handleFormSubmit = async (formValues) => {
     setErrorMessage('');
     try {
-      const {role} = await singInWithEmail(formValues.email, formValues.password);
+      const {role} = await signInWithEmail(formValues.email, formValues.password);
 
       if (role === 'admin') {
         navigate('/admin/dashboard');

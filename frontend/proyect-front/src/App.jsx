@@ -19,10 +19,6 @@ import AdminDashboardPage from './pages/AdminDashboardPage.jsx';
 function App() {
   const { loading, isAuthenticated, userRole } = useContext(AuthContext);
 
-  if (loading) {
-    return <div>Cargando sesión...</div>;
-  }
-
   const ProtectedRoute = ({ children, roleRequired }) => {
 
     if (!isAuthenticated) {

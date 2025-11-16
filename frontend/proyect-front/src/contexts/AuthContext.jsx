@@ -1,7 +1,6 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient.js';
-import axios from 'axios';
-import { set } from 'react-hook-form';
+
 
 const AuthContext = createContext();
 
@@ -9,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
 
   const singInWithEmail = async (email, password) => {
 
@@ -50,45 +50,51 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    setLoading(true);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
 
       async (_event, session) => {
-
-        if (session) {
-          try {
-            const { data: profileData, error } = await supabase
-              .from('perfiles')
-              .select('rol, nombre, apellido')
-              .eq('id', session.user.id)
-              .single();
-
-            if (error) {
-              console.error("Error al buscar perfil, deslogueando:", error);
-              setProfile(null);
-              await supabase.auth.signOut();
-              setSession(null);
-            } else {
-              setProfile(profileData);
-              setSession(session);
-            }
-          } catch (e) {
-            console.error("Error grave al buscar perfil:", e);
-            setProfile(null);
-            setSession(null);
-          } finally {
-            setLoading(false);
-          }
-        } else {
-          setProfile(null);
-          setSession(null);
-          setLoading(false);
-        }
+        setSession(session);
+        setLoading(false);
       }
     );
     
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+
+    if (!session) {
+      console.log("AuthContext: No hay sesión, perfil es null.");
+      setProfile(null);
+      return;
+    }
+    const fetchProfile = async () => {
+      setProfileLoading(true); 
+      
+      try {
+        const { data, error } = await supabase
+          .from('perfiles')
+          .select('rol, nombre, apellido')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error) throw error;
+        
+        console.log("AuthContext: Perfil encontrado:", data);
+        setProfile(data);
+
+      } catch (e) {
+        console.error("AuthContext: No se pudo buscar el perfil", e);
+        setProfile(null);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [session]);
 
   const user = session ? {
     id: session.user.id,
@@ -104,7 +110,8 @@ export const AuthProvider = ({ children }) => {
     userRole: profile?.rol,
     singInWithEmail,
     logout,
-    loading
+    loading,
+    profileLoading
   };
 
   return (
