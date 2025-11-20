@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
 
-  const singInWithEmail = async (email, password) => {
+  const signInWithEmail = async (email, password) => {
 
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email: email,
@@ -38,7 +38,8 @@ export const AuthProvider = ({ children }) => {
     if (!profileData) {
       throw new Error("No se encontró un perfil para este usuario.");
     }
-
+    setSession(authData.session);
+    setProfile(profileData);
     return { role: profileData.rol };
 
   };
@@ -59,7 +60,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     );
-    
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -71,8 +72,8 @@ export const AuthProvider = ({ children }) => {
       return;
     }
     const fetchProfile = async () => {
-      setProfileLoading(true); 
-      
+      setProfileLoading(true);
+
       try {
         const { data, error } = await supabase
           .from('perfiles')
@@ -81,7 +82,7 @@ export const AuthProvider = ({ children }) => {
           .single();
 
         if (error) throw error;
-        
+
         console.log("AuthContext: Perfil encontrado:", data);
         setProfile(data);
 
@@ -108,7 +109,7 @@ export const AuthProvider = ({ children }) => {
     user,
     isAuthenticated: !!session, // Derivado, no un estado
     userRole: profile?.rol,
-    singInWithEmail,
+    signInWithEmail,
     logout,
     loading,
     profileLoading
