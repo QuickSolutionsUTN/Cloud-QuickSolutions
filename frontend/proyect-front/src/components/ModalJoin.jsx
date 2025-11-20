@@ -3,13 +3,10 @@ import "./ModalJoin.css";
 import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import AuthContext from '../contexts/AuthContext';
-import { useBackendURL } from '../contexts/BackendURLContext';
-import axios from 'axios';
 
 function ModalJoin({ show, onClose, onSwitchToLogin }) {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const { login } = useContext(AuthContext);
-  const backendURL = useBackendURL();
+  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const { signUpWithEmail } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -19,30 +16,35 @@ function ModalJoin({ show, onClose, onSwitchToLogin }) {
   const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
 
   const handleFormSubmit = async (data) => {
-    const mappedUser = {
-      Nombre: data.name,
-      Apellido: data.lastName,
-      Email: data.email,
-      Password: data.password,
-      FechaDeNacimiento: `${data.year}-${data.month.padStart(2, '0')}-${data.day.padStart(2, '0')}`
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    if (data.password !== data.passwordRepeat) {
+      setErrorMessage('Las contraseñas no coinciden.');
+      return;
+    }
+
+    const fechaNacimiento = `${data.year}-${String(data.month).padStart(2, '0')}-${String(data.day).padStart(2, '0')}`;
+
+    const profilePayload = {
+      nombre: data.name,
+      apellido: data.lastName,
+      fechaNacimiento: fechaNacimiento,
+      rol: 'cliente'
     };
 
     setLoading(true);
-    setSuccessMessage('');
     try {
-      console.log('Datos del registro: ', mappedUser);
-      const response = await axios.post(`${backendURL}/api/users`, mappedUser);
-      console.log('Respuesta del registro: ', response);
-      if (response.status === 201) {
-        // Mensaje de éxito y redirección
-        setSuccessMessage('Registro exitoso, redireccionando a login...');
-        setTimeout(() => {
-          onSwitchToLogin();
-        }, 2000);
-      }
+      const result = await signUpWithEmail(data.email, data.password, profilePayload);
+      console.log('Registro Supabase OK:', result);
+      setSuccessMessage('Registro exitoso, por favor revise su correo para confirmar la cuenta. Redirigiendo a login...');
+      setTimeout(() => {
+        onSwitchToLogin();
+      }, 2000);
     } catch (error) {
-      setErrorMessage('Registration failed. Please try again.');
-      console.log('Registration failed. Please try again.', error);
+      console.error('Error en registro con Supabase:', error);
+      setErrorMessage(error?.message || 'Error en el registro. Intente nuevamente.');
+    } finally {
       setLoading(false);
     }
   };
@@ -131,9 +133,9 @@ function ModalJoin({ show, onClose, onSwitchToLogin }) {
             <Form.Control
               type="password"
               placeholder="Repita su contraseña"
-              {...register('password', { required: '*Campo obligatorio' })}
+              {...register('passwordRepeat', { required: '*Campo obligatorio' })}
             />
-            {errors.password && <p className="error-message">{errors.password.message}</p>}
+            {errors.passwordRepeat && <p className="error-message">{errors.passwordRepeat.message}</p>}
           </Form.Group>
           <Button variant="primary" type="submit" className='join' disabled={loading}>
             {loading ? (
