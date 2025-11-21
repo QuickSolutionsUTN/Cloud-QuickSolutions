@@ -2,10 +2,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Cuando alguien visite 'api/categorias/', usará la vista que creamos.
+    
     path('categorias/', views.CategoriaListCreateView.as_view(), name='categoria-lista-crear'),
-    #path('solicitudes/', views.SolicitudServicioListCreateView.as_view(), name='solicitud-lista-crear'),
+    path('categorias/<int:pk>/', views.CategoriaDetailView.as_view(), name='categoria-detalle'),
     
     path('productos/', views.ProductoListCreateView.as_view(), name='producto-lista-crear'),
+    path('productos/<int:pk>/', views.ProductoDetailView.as_view(), name='producto-detalle'),
 
 ]
