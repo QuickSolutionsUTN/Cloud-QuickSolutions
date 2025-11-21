@@ -44,6 +44,43 @@ export const AuthProvider = ({ children }) => {
 
   };
 
+  const signUpWithEmail = async (email, password, profile) => {
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password
+    });
+
+    if (signUpError) {
+      console.error('Error en signUp:', signUpError);
+      throw signUpError;
+    }
+
+    const userId = signUpData?.user?.id;
+    if (!userId) {
+      throw new Error('No se pudo crear el usuario en Supabase.');
+    }
+
+    const updatePayload = {
+      nombre: profile.nombre,
+      apellido: profile.apellido,
+      fecha_de_nacimiento: profile.fechaNacimiento,
+      rol: profile.rol || 'cliente'
+    };
+
+    const { data: updateData, error: updateError } = await supabase
+      .from('perfiles')
+      .update(updatePayload)
+      .eq('id', userId)
+      .select();
+
+    if (updateError) {
+      console.error('Error al actualizar perfil:', updateError);
+      throw updateError;
+    }
+
+    return { user: signUpData.user, profile: updateData?.[0] };
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
     setSession(null);
@@ -110,6 +147,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: !!session, // Derivado, no un estado
     userRole: profile?.rol,
     signInWithEmail,
+    signUpWithEmail,
     logout,
     loading,
     profileLoading
