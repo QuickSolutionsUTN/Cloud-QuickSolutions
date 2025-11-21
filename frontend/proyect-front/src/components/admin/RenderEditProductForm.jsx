@@ -17,8 +17,8 @@ export default function RenderEditProductForm({ selectedItem, handleEditChange, 
         <Form.Label>Categoría</Form.Label>
         <Form.Control
           as="select"
-          name="idCategoria"
-          value={selectedItem.idCategoria || ""}
+          name="id_categoria"
+          value={selectedItem.id_categoria || ""}
           onChange={handleEditChange}
         >
           {categories.map((category, index) => (
