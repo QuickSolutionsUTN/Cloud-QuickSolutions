@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'quicksolutions',
 ]
+AUTH_USER_MODEL = 'quicksolutions.Usuario'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
