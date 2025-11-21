@@ -1,9 +1,17 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import Categoria, Producto
-from .serializers import CategoriaSerializer, ProductoSerializer
+from .models import Perfiles, Categoria, Producto
+from .serializers import PerfilesSerializer, CategoriaSerializer, ProductoSerializer
 
-# Esta vista genérica de DRF maneja GET (listar) y POST (crear) por nosotros.
+class PerfilesListCreateView(generics.ListCreateAPIView):
+    queryset = Perfiles.objects.all()
+    serializer_class = PerfilesSerializer
+
+class PerfilesDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Perfiles.objects.all()
+    serializer_class = PerfilesSerializer
+
+
 class CategoriaListCreateView(generics.ListCreateAPIView):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
@@ -11,6 +19,7 @@ class CategoriaListCreateView(generics.ListCreateAPIView):
 class CategoriaDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+
 
 class ProductoListCreateView(generics.ListCreateAPIView):
     queryset = Producto.objects.all()
