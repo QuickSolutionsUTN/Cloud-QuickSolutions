@@ -79,7 +79,7 @@ class Localidad(models.Model):
         return f"{self.nombre}, {self.id_provincia.nombre}"
 
 
-class TipoProducto(models.Model):
+class Producto(models.Model):
     descripcion = models.CharField(max_length=50)
     id_categoria_producto = models.ForeignKey(
         CategoriaProducto, 
@@ -88,7 +88,7 @@ class TipoProducto(models.Model):
     )
 
     class Meta:
-        db_table = 'tipo_producto'
+        db_table = 'producto'
 
     def __str__(self):
         return f"{self.descripcion} (Cat: {self.id_categoria_producto.descripcion})"
@@ -166,10 +166,10 @@ class Domicilio(models.Model):
 
 
 class TipoMantenimiento(models.Model):
-    id_tipo_producto = models.ForeignKey(
-        TipoProducto, 
+    id_producto = models.ForeignKey(
+        Producto, 
         models.PROTECT, # Equivalente a ON DELETE RESTRICT
-        db_column='id_tipo_producto'
+        db_column='id_producto'
     )
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=250)
@@ -196,7 +196,7 @@ class ChecklistMantenimiento(models.Model):
 
 
 class SolicitudServicio(models.Model):
-    descripcion = models.TextField(blank=True, null=True)
+    descripcion = models.TextField(blank=True, null=True)f
     
     id_solicitante = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -210,10 +210,10 @@ class SolicitudServicio(models.Model):
         models.PROTECT, # Equivalente a ON DELETE RESTRICT
         db_column='id_tipo_servicio'
     )
-    id_tipo_producto = models.ForeignKey(
-        TipoProducto, 
+    id_producto = models.ForeignKey(
+        Producto, 
         models.PROTECT, # Equivalente a ON DELETE RESTRICT
-        db_column='id_tipo_producto'
+        db_column='id_producto'
     )
     id_tipo_mantenimiento = models.ForeignKey(
         TipoMantenimiento, 
@@ -255,7 +255,7 @@ class SolicitudServicio(models.Model):
         db_table = 'solicitud_servicio'
 
     def __str__(self):
-        return f"Solicitud #{self.id} - {self.id_tipo_producto.descripcion}"
+        return f"Solicitud #{self.id} - {self.id_producto.descripcion}"
 
 # --- Modelos Dependientes (Nivel 4 / Final) ---
 
