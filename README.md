@@ -3,6 +3,30 @@
 **QuickSolutions** es una aplicación web para solicitar y gestionar reparaciones de electrodomésticos del hogar.  
 Los usuarios pueden registrar un problema (por ejemplo, lavarropas roto) y los técnicos pueden aceptar o rechazar las solicitudes, recibiendo notificaciones cuando cambia el estado.
 
+## 🚀 Cómo ejecutar el proyecto
+
+Para levantar el entorno de desarrollo localmente, necesitarás abrir dos terminales.
+
+### 🐍 Backend
+
+Desde la carpeta raíz del proyecto, navega al backend, instala las dependencias y corre el servidor:
+
+``` bash
+cd backend
+python -m pip install -r requirements.txt
+python manage.py runserver
+```
+
+### ⚛️ Frontend
+
+Navega a la carpeta del cliente, instala las dependencias y levanta el entorno de desarrollo:
+
+``` bash
+cd frontend/proyect-front
+npm install
+npm run dev
+```
+
 ## 🏗️ Tecnologías
 
 - **Frontend:** React + Vite
