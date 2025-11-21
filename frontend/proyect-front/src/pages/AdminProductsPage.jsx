@@ -12,7 +12,7 @@ function AdminProductsPage() {
   const [showModal, setShowModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
     descripcion: '',
-    idCategoria: '',
+    id_categoria: '', 
   });
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -23,7 +23,7 @@ function AdminProductsPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/categoria`);
+        const response = await axios.get(`${backendURL}/api/categorias/`);
         console.log("Categorías obtenidas:", response.data);
         setCategories(response.data);
       } catch (error) {
@@ -37,7 +37,7 @@ function AdminProductsPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/tipoproducto`);
+        const response = await axios.get(`${backendURL}/api/productos/`);
         console.log("productos obtenidos:", response.data);
         setProducts(response.data);
         setLoading(false);
@@ -68,7 +68,7 @@ function AdminProductsPage() {
   const handleSave = async () => {
     try {
       console.log("guardando producto... ", newProduct);
-      const response = await axios.post(`${backendURL}/api/tipoproducto`, newProduct, {
+      const response = await axios.post(`${backendURL}/api/productos/`, newProduct, {
         headers: {
           Authorization: `Bearer ${userToken}`
         }
@@ -91,30 +91,29 @@ function AdminProductsPage() {
     { accessorKey: "id", header: "ID", enableSorting: true },
     { accessorKey: "descripcion", header: "Nombre" },
     {
-      accessorKey: "idCategoria",
+      accessorKey: "id_categoria", 
       header: "Categoría",
       cell: ({ row, table }) => {
-        // map category id to category name
-        const category = categories.find((c) => c.id === row.original.idCategoria);
+        const category = categories.find((c) => c.id === row.original.id_categoria);
         return category ? category.descripcion : "Sin categoría";
       },
     },
   ];
+
   const onEditSave = (editedProduct) => {
     return axios
-      .put(`${backendURL}/api/tipoproducto/${editedProduct.id}`, editedProduct, {
+      .put(`${backendURL}/api/productos/${editedProduct.id}/`, editedProduct, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then((res) => {
         console.log("Producto actualizado correctamente");
-        return res.data; // Se espera que devuelva el producto actualizado
+        return res.data; 
       });
   };
 
-  // Callback para confirmar la eliminación del producto
   const onDeleteConfirm = (id) => {
     return axios
-      .delete(`${backendURL}/api/tipoproducto/${id}`, {
+      .delete(`${backendURL}/api/productos/${id}/`, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then(() => {
@@ -137,7 +136,7 @@ function AdminProductsPage() {
             <Form.Control
               type="text"
               name="descripcion"
-              value={newProduct.nombre}
+              value={newProduct.descripcion} 
               onChange={handleChange}
               placeholder="Nombre del producto"
             />
@@ -147,8 +146,8 @@ function AdminProductsPage() {
             <Form.Label>Categoría</Form.Label>
             <Form.Control
               as="select"
-              name="idCategoria"
-              value={newProduct.categoria}
+              name="id_categoria"
+              value={newProduct.id_categoria}
               onChange={handleChange}
             >
               <option value="">Selecciona una categoría</option>

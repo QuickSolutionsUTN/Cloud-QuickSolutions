@@ -12,7 +12,7 @@ function AdminCategoriesPage() {
   const [showModal, setShowModal] = useState(false);
   const [newCategory, setnewCategory] = useState({
     descripcion: '',
-    idCategoria: '',
+    id_categoria: '',
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ function AdminCategoriesPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/categoria`);
+        const response = await axios.get(`${backendURL}/api/categorias/`);
         console.log("Categorías obtenidas:", response.data);
         setCategories(response.data);
         setLoading(false);
@@ -53,7 +53,7 @@ function AdminCategoriesPage() {
   const handleSave = async () => {
     try {
       console.log("guardando categoria... ", newCategory);
-      const response = await axios.post(`${backendURL}/api/categoria`, newCategory, {
+      const response = await axios.post(`${backendURL}/api/categorias/`, newCategory, {
         headers: {
           Authorization: `Bearer ${userToken}`
         }
@@ -79,19 +79,19 @@ function AdminCategoriesPage() {
 
   const onEditSave = (editedCategory) => {
     return axios
-      .put(`${backendURL}/api/categoria/${editedCategory.id}`, editedCategory, {
+      .put(`${backendURL}/api/categorias/${editedCategory.id}/`, editedCategory, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then((res) => {
         console.log("Categoria actualizada correctamente");
-        return res.data; // Se espera que devuelva el categoria actualizado
+        return res.data;
       });
   };
 
-  // Callback para confirmar la eliminación del categoria
+
   const onDeleteConfirm = (id) => {
     return axios
-      .delete(`${backendURL}/api/categoria/${id}`, {
+      .delete(`${backendURL}/api/categorias/${id}`, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then(() => {
@@ -114,7 +114,7 @@ function AdminCategoriesPage() {
             <Form.Control
               type="text"
               name="descripcion"
-              value={newCategory.nombre}
+              value={newCategory.descripcion}
               onChange={handleChange}
               placeholder="Nombre del categoria"
             />
