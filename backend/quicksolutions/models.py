@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
-
-# --- Modelos Base (No dependen de otros) ---
+from django.contrib.auth.models import AbstractUser
+import uuid
 
 class Provincia(models.Model):
     nombre = models.CharField(max_length=50)
@@ -108,6 +108,11 @@ class EmpresaCategoria(models.Model):
     class Meta:
         db_table = 'empresa_categoria'
 
+
+class Usuario(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    class Meta:
+        db_table = 'auth_user'
 
 class Perfiles(models.Model):
     
