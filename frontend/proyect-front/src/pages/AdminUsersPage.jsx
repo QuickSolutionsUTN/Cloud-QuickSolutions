@@ -6,11 +6,10 @@ import { useBackendURL } from '../contexts/BackendURLContext';
 import AuthContext from '../contexts/AuthContext';
 import AdminHeaderWithModal from '../components/admin/AdminHeaderWithModal';
 import AdminTable from '../components/admin/AdminTable';
-import RenderEditCategoryForm from '../components/admin/RenderEditCategoryForm';
 
-function AdminCategoriesPage() {
+function AdminUsersPage() {
   const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState([]);
+  const roles = ['admin', 'empleado', 'cliente']; 
   const [loading, setLoading] = useState(true);
   const backendURL = useBackendURL();
   const { userToken } = useContext(AuthContext);
@@ -18,7 +17,7 @@ function AdminCategoriesPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/users`, {
+        const response = await axios.get(`${backendURL}/api/perfiles/`, {
           headers: {
             Authorization: `Bearer ${userToken}`
           }
@@ -32,32 +31,7 @@ function AdminCategoriesPage() {
       }
     };
     fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await axios.get(`${backendURL}/api/rol`, {
-          headers: {
-            Authorization: `Bearer ${userToken}`
-          }
-        });
-        console.log("Roles obtenidos:", response.data);
-        setRoles(response.data);
-      } catch (error) {
-        console.error("Error al obtener los roles:", error);
-        setLoading(false);
-      }
-    };
-    fetchRoles();
-  }, []);
-
-  const handleChange = (e) => {
-    setnewUser({
-      ...newUser,
-      [e.target.name]: e.target.value,
-    });
-  };
+  }, [backendURL, userToken]);
 
   const columnsUsers = [
     { accessorKey: "id", header: "ID", enableSorting: true },
@@ -69,8 +43,7 @@ function AdminCategoriesPage() {
 
   const onEditSave = (editedUser) => {
     return axios
-      .put(`${backendURL}/api/users/${editedUser.id}/role`, {
-        rol:editedUser.rol}, {
+      .put(`${backendURL}/api/perfiles/${editedUser.id}/`, editedUser, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then((res) => {
@@ -79,14 +52,13 @@ function AdminCategoriesPage() {
       });
   };
 
-  // Callback para confirmar la eliminación del categoria
   const onDeleteConfirm = (id) => {
     return axios
-      .delete(`${backendURL}/api/users/${id}`, {
+      .delete(`${backendURL}/api/perfiles/${id}/`, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then(() => {
-        console.log("USuario eliminado correctamente");
+        console.log("Usuario eliminado correctamente");
         setUsers(users.filter((user) => user.id !== id));
       });
   };
@@ -120,10 +92,31 @@ function AdminCategoriesPage() {
                   <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
-                      type="text"
+                      type="email"
                       name="email"
-                      value={selectedItem.email || ""}
+                      value={selectedItem.email || (selectedItem.id && selectedItem.id.email) || ""}
                       readOnly
+                      disabled
+                    />
+                  </Form.Group>
+                  
+                  <Form.Group className="mb-3">
+                    <Form.Label>Nombre</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="nombre"
+                      value={selectedItem.nombre || ""}
+                      onChange={handleEditChange}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>Apellido</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="apellido"
+                      value={selectedItem.apellido || ""}
+                      onChange={handleEditChange}
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
@@ -131,12 +124,12 @@ function AdminCategoriesPage() {
                     <Form.Control
                       as="select"
                       name="rol"
-                      value={selectedItem.rol || ""}
+                      value={selectedItem.rol || "cliente"}
                       onChange={handleEditChange}
                     >
                       {roles.map((role) => (
-                        <option key={role.id} value={role.descripcion}>
-                          {role.descripcion}
+                        <option key={role} value={role}>
+                          {role.charAt(0).toUpperCase() + role.slice(1)}
                         </option>
                       ))}
                     </Form.Control>
@@ -153,4 +146,4 @@ function AdminCategoriesPage() {
   );
 }
 
-export default AdminCategoriesPage;
+export default AdminUsersPage;
