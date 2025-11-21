@@ -44,3 +44,4 @@ Para mantener un orden claro en el repositorio, seguimos estas convenciones para
 | `infra/`   | Cambios en infraestructura y configuraciones técnicas   | `infra/configurar_dockerfile`|
 | `refactor/`| Cambios en código para mejorar estructura o legibilidad sin agregar ni arreglar funcionalidad | `refactor/limpieza_codigo`  |
 | `docs/`    | Cambios o mejoras en la documentación                    | `docs/actualizar_readme`    |
+| `migration/`| Cambio de tecnología, framework o esquema de BD | `migration/dotnet-to-django`|
