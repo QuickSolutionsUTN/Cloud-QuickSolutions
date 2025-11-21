@@ -13,11 +13,11 @@ class Provincia(models.Model):
         return self.nombre
 
 
-class CategoriaProducto(models.Model):
+class Categoria(models.Model):
     descripcion = models.CharField(max_length=50)
 
     class Meta:
-        db_table = 'categoria_producto'
+        db_table = 'categoria'
 
     def __str__(self):
         return self.descripcion
@@ -32,7 +32,7 @@ class EmpresaExterna(models.Model):
     # Django puede manejar la tabla de unión por vos
     # si definís la relación ManyToMany explícitamente.
     categorias = models.ManyToManyField(
-        CategoriaProducto,
+        Categoria,
         through='EmpresaCategoria' # Usamos la tabla de unión que creaste
     )
 
@@ -81,17 +81,16 @@ class Localidad(models.Model):
 
 class Producto(models.Model):
     descripcion = models.CharField(max_length=50)
-    id_categoria_producto = models.ForeignKey(
-        CategoriaProducto, 
+    id_categoria = models.ForeignKey(
+        Categoria, 
         models.PROTECT, # Equivalente a ON DELETE RESTRICT
-        db_column='id_categoria_producto'
+        db_column='id_categoria'
     )
-
     class Meta:
         db_table = 'producto'
 
     def __str__(self):
-        return f"{self.descripcion} (Cat: {self.id_categoria_producto.descripcion})"
+        return f"{self.descripcion} (Cat: {self.id_categoria.descripcion})"
 
 
 class EmpresaCategoria(models.Model):
@@ -101,7 +100,7 @@ class EmpresaCategoria(models.Model):
         db_column='id_empresa'
     )
     id_categoria = models.ForeignKey(
-        CategoriaProducto, 
+        Categoria, 
         models.CASCADE, # ON DELETE CASCADE
         db_column='id_categoria'
     )
@@ -196,7 +195,7 @@ class ChecklistMantenimiento(models.Model):
 
 
 class SolicitudServicio(models.Model):
-    descripcion = models.TextField(blank=True, null=True)f
+    descripcion = models.TextField(blank=True, null=True)
     
     id_solicitante = models.ForeignKey(
         settings.AUTH_USER_MODEL,
