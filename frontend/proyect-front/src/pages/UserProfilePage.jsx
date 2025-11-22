@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useBackendURL } from '../contexts/BackendURLContext';
 import AddressCard from '../components/users/UserAddressCard.jsx';
 import UserCard from '../components/users/UserProfileCard.jsx';
+import UserAddressModal from '../components/users/UserAddressModal.jsx';
 import AuthContext from '../contexts/AuthContext.jsx';
 import axios from 'axios';
 
@@ -13,6 +14,9 @@ export default function UserProfile() {
     const { user, userToken } = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showAddressModal, setShowAddressModal] = useState(false);
+    const [editingAddress, setEditingAddress] = useState(false);
+    const [modalInitialData, setModalInitialData] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -51,19 +55,66 @@ export default function UserProfile() {
     return (
         <div className='p-userprofile p-userprofile-container'>
             <div className='container-fluid p-userprofile card-container w-75'>
-                    <UserCard user={userData} />
-                    {domicilio == null ? (
-                        <div className="alert alert-info mt-3 w-100 text-center">El usuario aun no tiene un domicilio registrado.</div>
-                    ) : (
-                    <AddressCard
-                        street={calleCompleta}
-                        city={domicilio.ciudad || 'No especificado'}
-                        state={domicilio.provincia || 'No especificado'}
-                        zipCode={domicilio.codigo_postal || 'No especificado'}
-                        floor={domicilio.piso || 'No especificado'}
-                        department={domicilio.departamento || 'No especificado'}
-                    />
-                    )}
+                <UserCard user={userData} />
+                {domicilio == null ? (
+                    <div className="alert alert-info mt-3 w-100 text-center">
+                        <div>El usuario aun no tiene un domicilio registrado.</div>
+                        <div className="mt-2">
+                            <button className="btn btn-sm btn-primary" onClick={() => { setModalInitialData(null); setEditingAddress(false); setShowAddressModal(true); }}>
+                                Registrar domicilio
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div>
+                        <div className="d-flex justify-content-between align-items-start">
+                            <AddressCard
+                                street={calleCompleta}
+                                province={domicilio.provincia || 'No especificado'}
+                                locality={domicilio.localidad_nombre || 'No especificado'}
+                                zipCode={domicilio.codigo_postal || 'No especificado'}
+                                floor={domicilio.piso || 'No especificado'}
+                                department={domicilio.departamento || 'No especificado'}
+                            />
+                            <div className="ms-3">
+                                <button className="btn btn-outline-secondary btn-sm" onClick={() => { setModalInitialData(domicilio); setEditingAddress(true); setShowAddressModal(true); }}>
+                                    Modificar domicilio
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <UserAddressModal
+                    show={showAddressModal}
+                    onClose={() => setShowAddressModal(false)}
+                    initialData={modalInitialData}
+                    onSubmit={async (formData) => {
+                        try {
+                            const payload = { ...formData };
+                            if (payload.id_localidad) {
+                                payload.localidad = payload.id_localidad;
+                                delete payload.id_localidad;
+                            }
+                            delete payload.provincia; 
+                            if (payload.departamento === "") payload.departamento = null;
+                            if (payload.piso === "") payload.piso = null;
+                            console.log('Guardando domicilio con payload:', payload);
+                            console.log("Token actual:", userToken);
+                            await axios.put(`${backendURL}/api/perfiles/${user.id}/domicilio`, payload, {
+                                headers: { Authorization: `Bearer ${userToken}` }
+                            });
+                            const resp = await axios.get(`${backendURL}/api/perfiles/${user.id}/`, {
+                                headers: { Authorization: `Bearer ${userToken}` }
+                            });
+                            setUserData(resp.data);
+                            setShowAddressModal(false);
+                        } catch (err) {
+                            console.error('Error saving domicilio:', err);
+                            alert('Error al guardar el domicilio. Ver consola para más detalles.');
+                        }
+                    }}
+                />
             </div>
         </div>
     );

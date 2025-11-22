@@ -12,4 +12,8 @@ urlpatterns = [
     path('productos/', views.ProductoListCreateView.as_view(), name='producto-lista-crear'),
     path('productos/<int:pk>/', views.ProductoDetailView.as_view(), name='producto-detalle'),
 
+    path('provincias/', views.ProvinciaListView.as_view(), name='provincia-lista'),
+    path('localidades/', views.LocalidadListView.as_view(), name='localidad-lista'),
+    path('perfiles/<uuid:pk>/domicilio', views.PerfilesDomicilioView.as_view(), name='perfiles-direccion'),
+
 ]
