@@ -53,12 +53,12 @@ const apiService = {
   updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}`, data),
   deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}`),
 
-  getCategories: () => api.get("/categoria"),
-  
+  getCategories: () => api.get("/categorias"),
+
   getProducts: () => api.get("/tipoProducto"),
   getProductByCatId: (id) => api.get(`/tipoProducto/${id}`),
 
-  createRequest: (data) => api.post("/solicitud", data),
+  createRequest: (data) => api.post("/solicitud/", data),
 
   updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin`, data),
   updateRequestReviewed: (id) => api.put(`/solicitud/${id}/iniciar`),

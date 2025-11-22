@@ -148,7 +148,8 @@ export default function RequestDetails() {
     <>
       <div className="title-container space-between mb-">
         <h3>
-          Solicitud ID: {solicitudId}
+
+          Codigo de solicitud: {solicitudId}
           <Badge className="m-2" bg={badgeVariant}>
             {solicitud.estado}
           </Badge>
