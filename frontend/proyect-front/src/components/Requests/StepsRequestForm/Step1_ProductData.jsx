@@ -17,9 +17,10 @@ export default function StepProductData({ formData, control, errors, setValue })
   useEffect(() => {
     loadCategories();
     loadProducts();
-    console.log("Service type:", formData?.productData.serviceId);
-    if (formData?.productData.serviceId === 2) loadMaintenances();
-  }, [formData?.productData.serviceId]);
+    if (serviceType === 'maintenance') {
+      loadMaintenances();
+    }
+  }, [serviceType]);
 
   useEffect(() => {
     if (categoryId && serviceType === 'repair') {
@@ -29,7 +30,7 @@ export default function StepProductData({ formData, control, errors, setValue })
 
   const resetProductTypeSelection = () => {
     setValue('productData.productTypeId', null);
-    if (serviceType === 'maintenance') {setValue('productData.maintenanceTypeId', null);}
+    if (serviceType === 'maintenance') { setValue('productData.maintenanceTypeId', null); }
   };
 
   const loadCategories = async () => {
@@ -84,6 +85,7 @@ export default function StepProductData({ formData, control, errors, setValue })
     setValue('productData.categoryId', category.id);
   };
 
+
   const filteredCategories = serviceType === 'maintenance' ? categories.filter(category =>
     maintenanceArray.some(maintenance => {
       const productType = productTypes.find(type => type.id === maintenance.idTipoProducto);
@@ -96,11 +98,11 @@ export default function StepProductData({ formData, control, errors, setValue })
   ) : productTypes;
 
   const filteredMaintenanceArray = maintenanceArray.filter(maintenance => {
-      const productType = productTypes.find(type => type.id === maintenance.idTipoProducto);
-      const categoryMatch =  formData.productData.categoryId ? parseInt(productType?.idCategoria) === formData.productData.categoryId : true;
-      const productMatch = productTypeId ? maintenance.idTipoProducto === productTypeId : true;
-      return categoryMatch && productMatch;
-    });
+    const productType = productTypes.find(type => type.id === maintenance.idTipoProducto);
+    const categoryMatch = formData.productData.categoryId ? parseInt(productType?.idCategoria) === formData.productData.categoryId : true;
+    const productMatch = productTypeId ? maintenance.idTipoProducto === productTypeId : true;
+    return categoryMatch && productMatch;
+  });
 
   return (
     <>
