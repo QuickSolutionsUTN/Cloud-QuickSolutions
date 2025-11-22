@@ -20,7 +20,7 @@
 
 .profile-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .profile-card-img {
