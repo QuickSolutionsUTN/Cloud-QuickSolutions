@@ -70,7 +70,7 @@ export default function UserProfile() {
     };
 
     return (
-        <div className='p-userprofile p-userprofile-container'>
+        <div className='d-flex flex-column '>
             <div className='container-fluid p-userprofile card-container w-75'>
                 <UserCard user={userData} />
                 {domicilio == null ? (
@@ -93,7 +93,8 @@ export default function UserProfile() {
                                 floor={domicilio.piso || 'No especificado'}
                                 department={domicilio.departamento || 'No especificado'}
                             />
-                            <div className="ms-3 d-flex flex-column">
+                        </div>
+                        <div className=" d-flex flex-column">
                                 <button className="btn btn-outline-secondary btn-sm mb-2" onClick={() => { setModalInitialData(domicilio); setEditingAddress(true); setShowAddressModal(true); }}>
                                     Modificar domicilio
                                 </button>
@@ -101,7 +102,6 @@ export default function UserProfile() {
                                     Eliminar domicilio
                                 </button>
                             </div>
-                        </div>
                     </div>
                 )}
 
