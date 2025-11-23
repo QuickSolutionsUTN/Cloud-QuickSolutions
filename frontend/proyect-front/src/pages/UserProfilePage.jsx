@@ -52,6 +52,23 @@ export default function UserProfile() {
         ? `${domicilio.calle} ${domicilio.numero || ''} ${domicilio.piso || ''} ${domicilio.departamento || ''}`.trim()
         : 'No especificado';
 
+    const handleDeleteDomicilio = async () => {
+        if (!window.confirm('¿Confirma que desea eliminar su domicilio?')) return;
+        try {
+            await axios.delete(`${backendURL}/api/perfiles/${user.id}/domicilio`, {
+                headers: { Authorization: `Bearer ${userToken}` }
+            });
+            const resp = await axios.get(`${backendURL}/api/perfiles/${user.id}/`, {
+                headers: { Authorization: `Bearer ${userToken}` }
+            });
+            setUserData(resp.data);
+            alert('Domicilio eliminado correctamente.');
+        } catch (err) {
+            console.error('Error deleting domicilio:', err);
+            alert('No se pudo eliminar el domicilio. Ver consola para más detalles.');
+        }
+    };
+
     return (
         <div className='p-userprofile p-userprofile-container'>
             <div className='container-fluid p-userprofile card-container w-75'>
@@ -69,16 +86,19 @@ export default function UserProfile() {
                     <div>
                         <div className="d-flex justify-content-between align-items-start">
                             <AddressCard
-                                street={calleCompleta}
+                                street={domicilio.calle || 'No especificado'}
                                 province={domicilio.provincia || 'No especificado'}
                                 locality={domicilio.localidad_nombre || 'No especificado'}
                                 zipCode={domicilio.codigo_postal || 'No especificado'}
                                 floor={domicilio.piso || 'No especificado'}
                                 department={domicilio.departamento || 'No especificado'}
                             />
-                            <div className="ms-3">
-                                <button className="btn btn-outline-secondary btn-sm" onClick={() => { setModalInitialData(domicilio); setEditingAddress(true); setShowAddressModal(true); }}>
+                            <div className="ms-3 d-flex flex-column">
+                                <button className="btn btn-outline-secondary btn-sm mb-2" onClick={() => { setModalInitialData(domicilio); setEditingAddress(true); setShowAddressModal(true); }}>
                                     Modificar domicilio
+                                </button>
+                                <button className="btn btn-outline-danger btn-sm" onClick={handleDeleteDomicilio}>
+                                    Eliminar domicilio
                                 </button>
                             </div>
                         </div>

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from .models import Perfiles, Categoria, Producto, Provincia, Localidad
 from .serializers import PerfilesSerializer, CategoriaSerializer, ProductoSerializer, ProvinciaSerializer, LocalidadSerializer, DomicilioSerializer
 
@@ -17,19 +17,22 @@ class PerfilesDetailView(generics.RetrieveUpdateDestroyAPIView):
 class CategoriaListCreateView(generics.ListCreateAPIView):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class CategoriaDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
-
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class ProductoListCreateView(generics.ListCreateAPIView):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class ProductoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class ProvinciaListView(generics.ListAPIView):
@@ -46,7 +49,7 @@ class LocalidadListView(generics.ListAPIView):
             return Localidad.objects.filter(id_provincia=provincia_id).order_by('nombre')
         return Localidad.objects.none()
 
-class PerfilesDomicilioView(generics.RetrieveUpdateAPIView):
+class PerfilesDomicilioView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DomicilioSerializer
     permission_classes = [IsAuthenticated]
 
@@ -62,32 +65,28 @@ class PerfilesDomicilioView(generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-
-        # CASO 1: CREAR (POST encubierto en un PUT)
         if instance is None:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            
-            # 1. Guardamos la instancia
             nuevo_domicilio = serializer.save(id_usuario=request.user)
-            
-            # 2. FIX: Forzamos la recarga desde BD para traer Localidad y Provincia
             nuevo_domicilio.refresh_from_db()
-            
-            # 3. Serializamos usando el objeto con datos frescos
             respuesta = self.get_serializer(nuevo_domicilio)
             return Response(respuesta.data, status=status.HTTP_201_CREATED)
 
-        # CASO 2: ACTUALIZAR (PUT normal)
         else:
-            # Usamos partial=True para ser más flexibles en la edición
             serializer = self.get_serializer(instance, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             
             domicilio_actualizado = serializer.save()
             
-            # FIX: También refrescamos aquí por si cambió la localidad
             domicilio_actualizado.refresh_from_db()
             
             respuesta = self.get_serializer(domicilio_actualizado)
             return Response(respuesta.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
