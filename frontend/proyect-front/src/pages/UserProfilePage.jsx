@@ -147,7 +147,7 @@ export default function UserProfile() {
                             setShowToast(true);
                         } catch (err) {
                             console.error('Error saving domicilio:', err);
-                            setToastMessage('Error al guardar el domicilio. Ver consola para más detalles.');
+                            setToastMessage('Error al guardar el domicilio. Por favor, intente nuevamente más tarde.');
                             setToastBg('danger');
                             setShowToast(true);
                         }
