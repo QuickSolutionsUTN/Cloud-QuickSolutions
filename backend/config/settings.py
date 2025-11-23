@@ -147,3 +147,5 @@ REST_FRAMEWORK = {
 }
 
 SUPABASE_JWT_SECRET = os.getenv('SUPABASE_JWT_SECRET')
+if not SUPABASE_JWT_SECRET:
+    raise RuntimeError("The SUPABASE_JWT_SECRET environment variable is not set. Please set it to enable authentication.")
