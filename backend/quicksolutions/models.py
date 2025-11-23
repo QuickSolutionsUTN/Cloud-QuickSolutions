@@ -147,6 +147,7 @@ class Perfiles(models.Model):
 class Domicilio(models.Model):
     calle = models.CharField(max_length=50)
     numero = models.IntegerField()
+    piso = models.CharField(max_length=50, blank=True, null=True)
     departamento = models.CharField(max_length=50, blank=True, null=True)
     id_localidad = models.ForeignKey(
         Localidad, 
@@ -154,7 +155,6 @@ class Domicilio(models.Model):
         db_column='id_localidad'
     )
     codigo_postal = models.CharField(max_length=50)
-    pais = models.CharField(max_length=50)
     
     id_usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,

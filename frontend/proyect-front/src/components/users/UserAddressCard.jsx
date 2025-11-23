@@ -2,7 +2,7 @@ import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './userCardsStyles.css';
 
-const AddressCard = ({ street, city, state, zipCode, country }) => {
+const AddressCard = ({ street, province, locality, zipCode, floor, department }) => {
   return (
     <Card className='text-center address-card'>
       <Card.Body>
@@ -11,20 +11,23 @@ const AddressCard = ({ street, city, state, zipCode, country }) => {
           <strong>Direccion:</strong> {street}
         </Card.Text>
         <Card.Text className="address-card-text text-start">
-          <strong>Ciudad:</strong> {city}
+          <strong>Provincia:</strong> {province}
         </Card.Text>
         <Card.Text className="address-card-text text-start">
-          <strong>Provincia:</strong> {state}
+          <strong>Localidad:</strong> {locality}
         </Card.Text>
         <Card.Text className="address-card-text text-start">
           <strong>CP:</strong> {zipCode}
         </Card.Text>
         <Card.Text className="address-card-text text-start">
-          <strong>Pais:</strong> {country}
+          <strong>Piso:</strong> {floor}
+        </Card.Text>
+        <Card.Text className="address-card-text text-start">
+          <strong>Departamento:</strong> {department}
         </Card.Text>
       </Card.Body>
     </Card>
-  ); F
+  );
 }
 
 export default AddressCard;
