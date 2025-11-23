@@ -67,7 +67,7 @@ export default function UserAddressModal({ show, onClose, onSubmit, initialData 
 
         fetchProvinciasAndMaybeLocalidades();
         return () => { mounted = false; };
-    }, [show, initialData, setValue, backendURL, userToken]);
+    }, [show, initialData, backendURL, userToken]);
 
     useEffect(() => {
         if (initialData) {
