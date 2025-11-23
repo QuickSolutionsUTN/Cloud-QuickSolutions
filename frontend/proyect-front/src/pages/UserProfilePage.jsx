@@ -76,7 +76,7 @@ export default function UserProfile() {
             setShowToast(true);
         } catch (err) {
             console.error('Error deleting domicilio:', err);
-            setToastMessage('No se pudo eliminar el domicilio. Ver consola para más detalles.');
+            setToastMessage('No se pudo eliminar el domicilio. Por favor, inténtelo de nuevo más tarde.');
             setToastBg('danger');
             setShowToast(true);
         }
