@@ -5,6 +5,7 @@ import UserCard from '../components/users/UserProfileCard.jsx';
 import UserAddressModal from '../components/users/UserAddressModal.jsx';
 import AuthContext from '../contexts/AuthContext.jsx';
 import axios from 'axios';
+import { Modal, Button, ToastContainer, Toast } from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './userProfilePage.css';
@@ -17,6 +18,10 @@ export default function UserProfile() {
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [editingAddress, setEditingAddress] = useState(false);
     const [modalInitialData, setModalInitialData] = useState(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastBg, setToastBg] = useState('success');
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -52,8 +57,12 @@ export default function UserProfile() {
         ? `${domicilio.calle} ${domicilio.numero || ''} ${domicilio.piso || ''} ${domicilio.departamento || ''}`.trim()
         : 'No especificado';
 
-    const handleDeleteDomicilio = async () => {
-        if (!window.confirm('¿Confirma que desea eliminar su domicilio?')) return;
+    const handleDeleteDomicilio = () => {
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDeleteDomicilio = async () => {
+        setShowDeleteConfirm(false);
         try {
             await axios.delete(`${backendURL}/api/perfiles/${user.id}/domicilio`, {
                 headers: { Authorization: `Bearer ${userToken}` }
@@ -62,10 +71,14 @@ export default function UserProfile() {
                 headers: { Authorization: `Bearer ${userToken}` }
             });
             setUserData(resp.data);
-            alert('Domicilio eliminado correctamente.');
+            setToastMessage('Domicilio eliminado correctamente.');
+            setToastBg('success');
+            setShowToast(true);
         } catch (err) {
             console.error('Error deleting domicilio:', err);
-            alert('No se pudo eliminar el domicilio. Ver consola para más detalles.');
+            setToastMessage('No se pudo eliminar el domicilio. Ver consola para más detalles.');
+            setToastBg('danger');
+            setShowToast(true);
         }
     };
 
@@ -76,9 +89,9 @@ export default function UserProfile() {
                 {domicilio == null ? (
                     <div className="alert alert-info mt-3 w-100 text-center">
                         <div>El usuario aun no tiene un domicilio registrado.</div>
-                        <div className="mt-2">
-                            <button className="btn btn-sm btn-primary" onClick={() => { setModalInitialData(null); setEditingAddress(false); setShowAddressModal(true); }}>
-                                Registrar domicilio
+                        <div className="containerbutton">
+                            <button className="btn btn-link p-0" onClick={() => { setModalInitialData(null); setEditingAddress(false); setShowAddressModal(true); }}>
+                                registralo aquí
                             </button>
                         </div>
                     </div>
@@ -129,12 +142,35 @@ export default function UserProfile() {
                             });
                             setUserData(resp.data);
                             setShowAddressModal(false);
+                            setToastMessage('Domicilio actualizado correctamente.');
+                            setToastBg('success');
+                            setShowToast(true);
                         } catch (err) {
                             console.error('Error saving domicilio:', err);
-                            alert('Error al guardar el domicilio. Ver consola para más detalles.');
+                            setToastMessage('Error al guardar el domicilio. Ver consola para más detalles.');
+                            setToastBg('danger');
+                            setShowToast(true);
                         }
                     }}
                 />
+                
+                <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmar eliminación</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>¿Confirma que desea eliminar su domicilio?</Modal.Body>
+                        <Button variant="secondary" className='mb-1 p-1' onClick={() => setShowDeleteConfirm(false)}>Cancelar</Button>
+                        <Button variant="danger" className='mb-1 p-1' onClick={confirmDeleteDomicilio}>Eliminar</Button>
+                </Modal>
+
+                <ToastContainer position="bottom-center" className="p-3">
+                    <Toast bg={toastBg} onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide>
+                        <Toast.Header>
+                            <strong className="me-auto text-white">{toastBg === 'danger' ? 'Error' : 'Éxito'}</strong>
+                        </Toast.Header>
+                        <Toast.Body className="text-white">{toastMessage}</Toast.Body>
+                    </Toast>
+                </ToastContainer>
             </div>
         </div>
     );
