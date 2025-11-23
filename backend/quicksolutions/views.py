@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Perfiles, Categoria, Producto, Provincia, Localidad
 from .serializers import PerfilesSerializer, CategoriaSerializer, ProductoSerializer, ProvinciaSerializer, LocalidadSerializer, DomicilioSerializer
@@ -48,20 +49,45 @@ class LocalidadListView(generics.ListAPIView):
 class PerfilesDomicilioView(generics.RetrieveUpdateAPIView):
     serializer_class = DomicilioSerializer
     permission_classes = [IsAuthenticated]
+
     def get_object(self):
         return self.request.user.domicilio_set.first()
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance is None:
             return Response(None, status=status.HTTP_200_OK)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+
+        # CASO 1: CREAR (POST encubierto en un PUT)
         if instance is None:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(id_usuario=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+            # 1. Guardamos la instancia
+            nuevo_domicilio = serializer.save(id_usuario=request.user)
+            
+            # 2. FIX: Forzamos la recarga desde BD para traer Localidad y Provincia
+            nuevo_domicilio.refresh_from_db()
+            
+            # 3. Serializamos usando el objeto con datos frescos
+            respuesta = self.get_serializer(nuevo_domicilio)
+            return Response(respuesta.data, status=status.HTTP_201_CREATED)
+
+        # CASO 2: ACTUALIZAR (PUT normal)
         else:
-            return super().update(request, *args, **kwargs)
+            # Usamos partial=True para ser más flexibles en la edición
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            
+            domicilio_actualizado = serializer.save()
+            
+            # FIX: También refrescamos aquí por si cambió la localidad
+            domicilio_actualizado.refresh_from_db()
+            
+            respuesta = self.get_serializer(domicilio_actualizado)
+            return Response(respuesta.data, status=status.HTTP_200_OK)
