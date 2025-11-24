@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
-from .models import Perfiles, Categoria, Producto, Usuario, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Envio, Localidad
+from .models import Perfiles, Categoria, Usuario, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Envio, Localidad
 from .serializers import (
     PerfilesSerializer, 
     CategoriaSerializer, 
