@@ -58,11 +58,9 @@ class CrearSolicitudView(APIView):
         
         usuario = Usuario.objects.filter(email=data['userEmail']).first()
         
-        # CORRECCIÓN: Este bloque if debe estar alineado con la variable usuario
         if not usuario:
             return Response({"error": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-        # CORRECCIÓN: Este try también debe estar alineado al mismo nivel
         try:
             producto = Producto.objects.get(id=data['idTipoProducto'])
         except Producto.DoesNotExist:
@@ -82,6 +80,9 @@ class CrearSolicitudView(APIView):
         
         estado_inicial = SolicitudServicioEstado.objects.first()
         
+        if not estado_inicial:
+            return Response({"error": "Estado inicial no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
         solicitud = SolicitudServicio.objects.create(
             descripcion=data.get('descripcion', ''),
             id_solicitante=usuario,
@@ -112,10 +113,6 @@ class CrearSolicitudView(APIView):
         
         response_serializer = SolicitudServicioSerializer(solicitud)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-
-class SolicitudDetailView(generics.RetrieveAPIView):
-    queryset = SolicitudServicio.objects.all()
-    serializer_class = SolicitudServicioSerializer
 
 
 class SolicitudDetailView(generics.RetrieveAPIView):
