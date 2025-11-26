@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly 
-from .models import Perfiles, Categoria, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Provincia, Localidad, #Usuario, Envio,
+from .models import Perfiles, Usuario, Categoria, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Provincia, Localidad
 from .serializers import (
     PerfilesSerializer, 
     CategoriaSerializer, 
@@ -48,6 +48,7 @@ class ProductoDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class ProductoPorCategoriaView(generics.ListAPIView):
     serializer_class = ProductoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
         categoria_id = self.kwargs['categoria_id']
@@ -55,6 +56,7 @@ class ProductoPorCategoriaView(generics.ListAPIView):
 
 ##############
 class CrearSolicitudView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = CrearSolicitudSerializer(data=request.data)
         if not serializer.is_valid():
@@ -62,13 +64,10 @@ class CrearSolicitudView(APIView):
         
         data = serializer.validated_data
         
-        usuario = Usuario.objects.filter(email=data['userEmail']).first()
-        
-        if not usuario:
-            return Response({"error": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        usuario = request.user
 
         try:
-            producto = Producto.objects.get(id=data['idTipoProducto'])
+            producto = Producto.objects.get(id=data['idProducto'])
         except Producto.DoesNotExist:
             return Response({"error": "Producto no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -96,7 +95,6 @@ class CrearSolicitudView(APIView):
             id_producto=producto,
             id_tipo_mantenimiento=tipo_mantenimiento,
             id_solicitud_servicio_estado=estado_inicial,
-            tercearizado=False,
             con_logistica=data['conLogistica']
         )
         
