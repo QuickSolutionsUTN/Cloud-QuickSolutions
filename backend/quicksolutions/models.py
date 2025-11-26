@@ -244,7 +244,6 @@ class SolicitudServicio(models.Model):
     
     fecha_estimada = models.DateTimeField(blank=True, null=True)
     monto = models.FloatField(blank=True, null=True)
-    tercearizado = models.BooleanField()
     con_logistica = models.BooleanField()
     fecha_iniciada = models.DateTimeField(blank=True, null=True)
     fecha_revisada = models.DateTimeField(blank=True, null=True)
