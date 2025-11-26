@@ -120,6 +120,7 @@ class CrearSolicitudView(APIView):
 
 
 class SolicitudDetailView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = SolicitudServicio.objects.all()
     serializer_class = SolicitudDetailSerializer  
 

@@ -55,9 +55,7 @@ export default function RequestDetails() {
     const fetchSolicitudDetails = async () => {
       try {
         console.log("Fetching solicitud details...", backendURL);
-        const response = await axios.get(
-          `${backendURL}/api/solicitud/${solicitudId}`
-        );
+        const response = await apiService.getRequestById(solicitudId);
         console.log("Solicitud details:", response.data);
         setSolicitud(response.data);
         const fechaGeneracion = new Date(response.data.fechaGeneracion);
