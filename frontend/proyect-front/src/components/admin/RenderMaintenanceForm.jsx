@@ -12,7 +12,8 @@ export default function RenderMaintenanceForm({ maintenance = { nombre: '', desc
   };
 
   const addTask = () => {
-    const updatedChecklist = [...maintenance.checklist, { descripcion: '', obligatorio: false }];
+    const currentChecklist = maintenance.checklist || [];
+    const updatedChecklist = [...currentChecklist, { descripcion: '', obligatorio: false }];
     handleChange({ target: { name: 'checklist', value: updatedChecklist } });
   };
 
