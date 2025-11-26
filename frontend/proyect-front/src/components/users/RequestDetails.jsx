@@ -230,7 +230,7 @@ export default function RequestDetails() {
             <Form.Label className="fw-bold">Producto</Form.Label>
             <Form.Control
               type="text"
-              value={solicitud.Producto}
+              value={solicitud.producto}
               readOnly
             ></Form.Control>
           </div>

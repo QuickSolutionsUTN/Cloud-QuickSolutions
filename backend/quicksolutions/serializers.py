@@ -48,7 +48,7 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
     emailSolicitante = serializers.CharField(source='id_solicitante.email', read_only=True)
     tipoServicio = serializers.CharField(source='id_tipo_servicio.descripcion', read_only=True)
     categoria = serializers.CharField(source='id_producto.id_categoria.descripcion', read_only=True)
-    Producto = serializers.CharField(source='id_producto.descripcion', read_only=True)
+    producto = serializers.CharField(source='id_producto.descripcion', read_only=True)
     estado = serializers.CharField(source='id_solicitud_servicio_estado.descripcion', read_only=True)
     fechaGeneracion = serializers.DateTimeField(source='fecha_generacion', read_only=True)
     fechaEstimada = serializers.DateTimeField(source='fecha_estimada', read_only=True)
@@ -61,9 +61,9 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolicitudServicio
         fields = [
-            'id', 'emailSolicitante', 'tipoServicio', 'categoria', 'Producto', 
+            'id', 'emailSolicitante', 'tipoServicio', 'categoria', 'producto', 
             'descripcion', 'estado', 'fechaGeneracion', 'monto', 'fechaEstimada', 
-            'fechaFinalizada', 'diagnosticoTecnico', 'con_logistica', 'envio', 'mantenimiento'
+            'fechaFinalizada', 'diagnosticoTecnico', 'con_logistica', 'mantenimiento'
         ]
 
 #   def get_envio(self, obj):
