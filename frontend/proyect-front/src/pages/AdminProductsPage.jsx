@@ -1,7 +1,6 @@
-import React from 'react';
 import { useState, useEffect, useContext } from 'react';
-import { Modal, Form, Button, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import { Form, Spinner } from 'react-bootstrap';
+import apiService from '../services/axiosConfig';
 import { useBackendURL } from '../contexts/BackendURLContext';
 import AuthContext from '../contexts/AuthContext';
 import AdminHeaderWithModal from '../components/admin/AdminHeaderWithModal';
@@ -23,7 +22,7 @@ function AdminProductsPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/categorias/`);
+        const response = await apiService.getCategories();
         console.log("Categorías obtenidas:", response.data);
         setCategories(response.data);
       } catch (error) {
@@ -37,7 +36,7 @@ function AdminProductsPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/productos/`);
+        const response = await apiService.getProducts();
         console.log("productos obtenidos:", response.data);
         setProducts(response.data);
         setLoading(false);
@@ -68,7 +67,7 @@ function AdminProductsPage() {
   const handleSave = async () => {
     try {
       console.log("guardando producto... ", newProduct);
-      const response = await axios.post(`${backendURL}/api/productos/`, newProduct, {
+      const response = await apiService.createProduct(newProduct, {
         headers: {
           Authorization: `Bearer ${userToken}`
         }
@@ -91,18 +90,18 @@ function AdminProductsPage() {
     { accessorKey: "id", header: "ID", enableSorting: true },
     { accessorKey: "descripcion", header: "Nombre" },
     {
-      accessorKey: "id_categoria", 
+      accessorKey: "id_categoria",
       header: "Categoría",
-      cell: ({ row, table }) => {
-        const category = categories.find((c) => c.id === row.original.id_categoria);
+      cell: ({ row }) => {
+        const prodCatId = row.original.id_categoria ?? row.original.idCategoria ?? row.original.idCategoria;
+        const category = categories.find((cat) => String(cat.id) === String(prodCatId));
         return category ? category.descripcion : "Sin categoría";
       },
     },
   ];
 
   const onEditSave = (editedProduct) => {
-    return axios
-      .put(`${backendURL}/api/productos/${editedProduct.id}/`, editedProduct, {
+    return apiService.updateProduct(editedProduct, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then((res) => {
@@ -112,8 +111,7 @@ function AdminProductsPage() {
   };
 
   const onDeleteConfirm = (id) => {
-    return axios
-      .delete(`${backendURL}/api/productos/${id}/`, {
+    return apiService.deleteProduct(id, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then(() => {

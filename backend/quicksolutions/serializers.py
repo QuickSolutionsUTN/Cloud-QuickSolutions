@@ -20,11 +20,9 @@ class CategoriaSerializer(serializers.ModelSerializer):
         fields = '__all__' # Incluye 'id' y 'descripcion'
 
 class ProductoSerializer(serializers.ModelSerializer):
-    idCategoria = serializers.PrimaryKeyRelatedField(source='id_categoria', read_only=True)
-    
     class Meta:
         model = Producto
-        fields = ['id', 'descripcion', 'idCategoria']
+        fields = ['id', 'descripcion', 'id_categoria']
 
 class SolicitudServicioSerializer(serializers.ModelSerializer):
     class Meta:

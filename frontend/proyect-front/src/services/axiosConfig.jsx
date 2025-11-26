@@ -67,14 +67,18 @@ const apiService = {
   updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}`, data),
   deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}`),
 
-
+  //Categorias
   getCategories: () => api.get("/categorias"),
   createCategory: (data) => api.post("/categorias/", data),
   updateCategory: (data) => api.put(`/categorias/${data.id}/`, data),
   deleteCategory: (id) => api.delete(`/categorias/${id}/`),
 
+  //Productos
   getProducts: () => api.get("/productos"),
   getProductByCatId: (id) => api.get(`/productos/categoria/${id}`),
+  createProduct: (data) => api.post("/productos/", data),
+  updateProduct: (data) => api.put(`/productos/${data.id}/`, data),
+  deleteProduct: (id) => api.delete(`/productos/${id}/`),
 
   createRequest: (data) => api.post("/solicitud/", data),
 
