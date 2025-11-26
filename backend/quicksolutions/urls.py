@@ -13,7 +13,6 @@ urlpatterns = [
     path('productos/', views.ProductoListCreateView.as_view(), name='producto-lista-crear'),
     path('productos/<int:pk>/', views.ProductoDetailView.as_view(), name='producto-detalle'),
     path('productos/categoria/<int:categoria_id>/', views.ProductoPorCategoriaView.as_view(), name='producto-por-categoria'),
-#    path('tipoProducto/', views.ProductoListCreateView.as_view(), name='producto-alias'),
 
     
     path('solicitud/', views.CrearSolicitudView.as_view(), name='crear-solicitud'),
