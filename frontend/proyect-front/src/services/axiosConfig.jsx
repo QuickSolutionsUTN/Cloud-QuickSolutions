@@ -8,13 +8,35 @@ const api = axios.create({
   },
 });
 
+const getUserToken = () => {
+  try {
+    // Buscar la clave de sesión de Supabase (ej. 'sb-abc-123-auth-token')
+    const supabaseKey = Object.keys(localStorage).find(key => key.includes('sb-') && key.endsWith('-auth-token'));
+
+    if (supabaseKey) {
+      const sessionData = localStorage.getItem(supabaseKey);
+      if (sessionData) {
+        // Parsear y devolver el access_token del objeto de sesión
+        const session = JSON.parse(sessionData);
+        // Supabase guarda el token bajo el campo 'access_token' en el objeto JSON
+        return session.access_token || null;
+      }
+    }
+    // Si no encuentra la clave con el formato de Supabase, regresa a la clave simple (menos común)
+    return localStorage.getItem("access_token") || null;
+
+  } catch (e) {
+    console.error("Error al obtener token de localStorage:", e);
+    return null;
+  }
+};
 
 // Interceptor para agregar el token en cada petición
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const userToken = getUserToken();
+    if (userToken) {
+      config.headers.Authorization = `Bearer ${userToken}`;
     }
     return config;
   },
@@ -47,18 +69,20 @@ const apiService = {
   deleteUser: (id) => api.delete(`/users/${id}`),*/
 
   getRequestsAdmin: () => api.get("/solicitud"),
+  getRequestById: (id) => api.get(`/solicitud/${id}`),
   // Mantenimientos
   getMaintenanceArray: () => api.get("/mantenimiento"),
   createMaintenance: (data) => api.post("/mantenimiento", data),
   updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}`, data),
   deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}`),
 
-  getCategories: () => api.get("/categoria"),
-  
-  getProducts: () => api.get("/tipoProducto"),
-  getProductByCatId: (id) => api.get(`/tipoProducto/${id}`),
 
-  createRequest: (data) => api.post("/solicitud", data),
+  getCategories: () => api.get("/categorias"),
+
+  getProducts: () => api.get("/productos"),
+  getProductByCatId: (id) => api.get(`/productos/categoria/${id}`),
+
+  createRequest: (data) => api.post("/solicitud/", data),
 
   updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin`, data),
   updateRequestReviewed: (id) => api.put(`/solicitud/${id}/iniciar`),

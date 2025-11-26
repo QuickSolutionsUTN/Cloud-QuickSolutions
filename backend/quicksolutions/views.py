@@ -1,9 +1,22 @@
+from rest_framework.views import APIView
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
-from .models import Perfiles, Categoria, Producto, Provincia, Localidad
-from .serializers import PerfilesSerializer, CategoriaSerializer, ProductoSerializer, ProvinciaSerializer, LocalidadSerializer, DomicilioSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly 
+from .models import Perfiles, Categoria, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Provincia, Localidad
+from .serializers import (
+    PerfilesSerializer, 
+    CategoriaSerializer, 
+    ProductoSerializer,
+    CrearSolicitudSerializer,
+    SolicitudServicioSerializer,
+#    EnvioSerializer,
+    SolicitudDetailSerializer,
+    TipoMantenimientoSerializer, 
+    ProvinciaSerializer, 
+    LocalidadSerializer, 
+    DomicilioSerializer
+)
 
 class PerfilesListCreateView(generics.ListCreateAPIView):
     queryset = Perfiles.objects.all()
@@ -32,6 +45,88 @@ class ProductoListCreateView(generics.ListCreateAPIView):
 class ProductoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
+
+class ProductoPorCategoriaView(generics.ListAPIView):
+    serializer_class = ProductoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    def get_queryset(self):
+        categoria_id = self.kwargs['categoria_id']
+        return Producto.objects.filter(id_categoria=categoria_id)
+
+##############
+class CrearSolicitudView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        serializer = CrearSolicitudSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        data = serializer.validated_data
+        
+        usuario = request.user
+
+        try:
+            producto = Producto.objects.get(id=data['idProducto'])
+        except Producto.DoesNotExist:
+            return Response({"error": "Producto no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            tipo_servicio = TipoServicio.objects.get(id=data['idTipoServicio'])
+        except TipoServicio.DoesNotExist:
+            return Response({"error": "Tipo de servicio no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+        tipo_mantenimiento = None
+        if data.get('idTipoMantenimiento'):
+            try:
+                tipo_mantenimiento = TipoMantenimiento.objects.get(id=data['idTipoMantenimiento'])
+            except TipoMantenimiento.DoesNotExist:
+                return Response({"error": "Tipo de mantenimiento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+        estado_inicial = SolicitudServicioEstado.objects.first()
+        
+        if not estado_inicial:
+            return Response({"error": "Estado inicial no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+        solicitud = SolicitudServicio.objects.create(
+            descripcion=data.get('descripcion', ''),
+            id_solicitante=usuario,
+            id_tipo_servicio=tipo_servicio,
+            id_producto=producto,
+            id_tipo_mantenimiento=tipo_mantenimiento,
+            id_solicitud_servicio_estado=estado_inicial,
+            con_logistica=data['conLogistica']
+        )
+        
+        # if data['conLogistica'] and data.get('envio'):
+        #     envio_data = data['envio']
+        #     try:
+        #         localidad = Localidad.objects.get(id=envio_data['id_localidad'])
+        #     except Localidad.DoesNotExist:
+        #         solicitud.delete() # Importante: borrar la solicitud si falla el envío
+        #         return Response({"error": "Localidad no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        #     
+        #     Envio.objects.create(
+        #         id_solicitud_servicio=solicitud,
+        #         calle=envio_data['calle'],
+        #         numero=envio_data['numero'],
+        #         piso=envio_data.get('piso'),
+        #         departamento=envio_data.get('departamento', ''),
+        #         id_localidad=localidad
+        #     )
+        
+        response_serializer = SolicitudServicioSerializer(solicitud)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class SolicitudDetailView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = SolicitudServicio.objects.all()
+    serializer_class = SolicitudDetailSerializer  
+
+class TipoMantenimientoListCreateView(generics.ListCreateAPIView):
+    queryset = TipoMantenimiento.objects.all()
+    serializer_class = TipoMantenimientoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 

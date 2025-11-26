@@ -9,7 +9,6 @@ import {
   Badge,
   ListGroup,
 } from "react-bootstrap";
-import axios from "axios";
 import { useBackendURL } from "../../contexts/BackendURLContext.jsx";
 import AuthContext from "../../contexts/AuthContext.jsx";
 import { useParams } from "react-router-dom";
@@ -55,9 +54,7 @@ export default function RequestDetails() {
     const fetchSolicitudDetails = async () => {
       try {
         console.log("Fetching solicitud details...", backendURL);
-        const response = await axios.get(
-          `${backendURL}/api/solicitud/${solicitudId}`
-        );
+        const response = await apiService.getRequestById(solicitudId);
         console.log("Solicitud details:", response.data);
         setSolicitud(response.data);
         const fechaGeneracion = new Date(response.data.fechaGeneracion);
@@ -148,7 +145,8 @@ export default function RequestDetails() {
     <>
       <div className="title-container space-between mb-">
         <h3>
-          Solicitud ID: {solicitudId}
+
+          Codigo de solicitud: {solicitudId}
           <Badge className="m-2" bg={badgeVariant}>
             {solicitud.estado}
           </Badge>
@@ -232,12 +230,12 @@ export default function RequestDetails() {
             <Form.Label className="fw-bold">Producto</Form.Label>
             <Form.Control
               type="text"
-              value={solicitud.tipoDeProducto}
+              value={solicitud.producto}
               readOnly
             ></Form.Control>
           </div>
         </div>
-        {solicitud.tipoServicio === "Reparacion" ? (
+        {solicitud.tipoServicio === "Reparacion" || solicitud.tipoServicio === "Reparación" ? (
           <>
             <div className="my-4"></div>
             <div className="row">
