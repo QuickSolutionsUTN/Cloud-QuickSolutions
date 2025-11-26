@@ -37,7 +37,6 @@ class SolicitudServicioSerializer(serializers.ModelSerializer):
 #        fields = ['calle', 'numero', 'piso', 'departamento', 'id_localidad']
 
 class CrearSolicitudSerializer(serializers.Serializer):
-    userEmail = serializers.EmailField()
     descripcion = serializers.CharField(required=False, allow_blank=True)
     idTipoServicio = serializers.IntegerField()
     idProducto = serializers.IntegerField()
