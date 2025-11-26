@@ -129,6 +129,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     session,
     user,
+    userToken: session?.access_token,
     isAuthenticated: !!session, // Derivado, no un estado
     userRole: profile?.rol,
     signInWithEmail,

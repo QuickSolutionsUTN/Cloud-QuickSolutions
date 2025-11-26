@@ -13,12 +13,16 @@ urlpatterns = [
     path('productos/', views.ProductoListCreateView.as_view(), name='producto-lista-crear'),
     path('productos/<int:pk>/', views.ProductoDetailView.as_view(), name='producto-detalle'),
 
-    path('tipoProducto/', views.ProductoListCreateView.as_view(), name='producto-alias'),
-    path('tipoProducto/<int:categoria_id>/', views.ProductoPorCategoriaView.as_view(), name='producto-por-categoria'),
+#    path('tipoProducto/', views.ProductoListCreateView.as_view(), name='producto-alias'),
+#    path('tipoProducto/<int:categoria_id>/', views.ProductoPorCategoriaView.as_view(), name='producto-por-categoria'),
 
     
     path('solicitud/', views.CrearSolicitudView.as_view(), name='crear-solicitud'),
     path('solicitud/<int:pk>/', views.SolicitudDetailView.as_view(), name='solicitud-detalle'),
 
     path('mantenimiento/', views.TipoMantenimientoListCreateView.as_view(), name='mantenimiento-lista-crear'),
+    path('provincias/', views.ProvinciaListView.as_view(), name='provincia-lista'),
+    path('localidades/', views.LocalidadListView.as_view(), name='localidad-lista'),
+    path('perfiles/<uuid:pk>/domicilio', views.PerfilesDomicilioView.as_view(), name='perfiles-direccion'),
+
 ]
