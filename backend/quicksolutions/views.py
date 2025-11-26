@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly 
-from .models import Perfiles, Usuario, Categoria, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Provincia, Localidad
+from .models import Perfiles, Categoria, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Provincia, Localidad
 from .serializers import (
     PerfilesSerializer, 
     CategoriaSerializer, 
@@ -98,22 +98,22 @@ class CrearSolicitudView(APIView):
             con_logistica=data['conLogistica']
         )
         
-        if data['conLogistica'] and data.get('envio'):
-            envio_data = data['envio']
-            try:
-                localidad = Localidad.objects.get(id=envio_data['id_localidad'])
-            except Localidad.DoesNotExist:
-                solicitud.delete() # Importante: borrar la solicitud si falla el envío
-                return Response({"error": "Localidad no encontrada"}, status=status.HTTP_404_NOT_FOUND)
-            
-            Envio.objects.create(
-                id_solicitud_servicio=solicitud,
-                calle=envio_data['calle'],
-                numero=envio_data['numero'],
-                piso=envio_data.get('piso'),
-                departamento=envio_data.get('departamento', ''),
-                id_localidad=localidad
-            )
+        # if data['conLogistica'] and data.get('envio'):
+        #     envio_data = data['envio']
+        #     try:
+        #         localidad = Localidad.objects.get(id=envio_data['id_localidad'])
+        #     except Localidad.DoesNotExist:
+        #         solicitud.delete() # Importante: borrar la solicitud si falla el envío
+        #         return Response({"error": "Localidad no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        #     
+        #     Envio.objects.create(
+        #         id_solicitud_servicio=solicitud,
+        #         calle=envio_data['calle'],
+        #         numero=envio_data['numero'],
+        #         piso=envio_data.get('piso'),
+        #         departamento=envio_data.get('departamento', ''),
+        #         id_localidad=localidad
+        #     )
         
         response_serializer = SolicitudServicioSerializer(solicitud)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
