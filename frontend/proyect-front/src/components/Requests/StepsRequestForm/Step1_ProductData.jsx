@@ -69,10 +69,19 @@ export default function StepProductData({ formData, control, errors, setValue })
     }
   };
 
-  const getProductNameById = (id) => {
-    const productType = productTypes.find(type => type.id === id);
-    return productType.descripcion;
-  };
+  const getProductNameById = (products, id) => {
+
+    if (!products || !Array.isArray(products)) return '';
+    if (id === null || id === undefined) return '';
+    const pid = Number(id);
+    if (!Number.isFinite(pid) || pid === 0) return '';
+    const product = products.find(p =>
+      p.id === pid ||
+      p.productTypeId === pid ||
+      p.idProducto === pid
+    );
+    return product?.descripcion || product?.name || '';
+  }
   const getCategoryByProductTypeId = (id) => {
     const productType = productTypes.find(type => type.id === id);
     return categories.find(category => category.id === productType.idCategoria);
