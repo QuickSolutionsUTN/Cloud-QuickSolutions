@@ -1,8 +1,7 @@
-import React from 'react';
 import { useState, useEffect, useContext } from 'react';
-import { Modal, Form, Button, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import { Form, Spinner } from 'react-bootstrap';
 import { useBackendURL } from '../contexts/BackendURLContext';
+import apiService from "../services/axiosConfig.jsx"; 
 import AuthContext from '../contexts/AuthContext';
 import AdminHeaderWithModal from '../components/admin/AdminHeaderWithModal';
 import AdminTable from '../components/admin/AdminTable';
@@ -22,7 +21,7 @@ function AdminCategoriesPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/categorias/`);
+        const response = await apiService.getCategories();
         console.log("Categorías obtenidas:", response.data);
         setCategories(response.data);
         setLoading(false);
@@ -53,7 +52,7 @@ function AdminCategoriesPage() {
   const handleSave = async () => {
     try {
       console.log("guardando categoria... ", newCategory);
-      const response = await axios.post(`${backendURL}/api/categorias/`, newCategory, {
+      const response = await apiService.createCategory(newCategory, {
         headers: {
           Authorization: `Bearer ${userToken}`
         }
@@ -78,8 +77,7 @@ function AdminCategoriesPage() {
   ];
 
   const onEditSave = (editedCategory) => {
-    return axios
-      .put(`${backendURL}/api/categorias/${editedCategory.id}/`, editedCategory, {
+    return apiService.updateCategory(editedCategory, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then((res) => {
@@ -90,8 +88,7 @@ function AdminCategoriesPage() {
 
 
   const onDeleteConfirm = (id) => {
-    return axios
-      .delete(`${backendURL}/api/categorias/${id}`, {
+    return apiService.deleteCategory(id, {
         headers: { Authorization: `Bearer ${userToken}` },
       })
       .then(() => {
