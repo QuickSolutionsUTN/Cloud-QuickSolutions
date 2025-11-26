@@ -46,7 +46,6 @@ export const RequestForm = () => {
   const handleSubmit = async (data) => {
 
     const DataToSend = {
-      userEmail: data.personalData.email,
       descripcion: data.productData.problemDescription,
       idTipoServicio: parseInt(data.productData.serviceId, 10),
       idProducto: parseInt(data.productData.productTypeId, 10),
