@@ -9,7 +9,6 @@ import {
   Badge,
   ListGroup,
 } from "react-bootstrap";
-import axios from "axios";
 import { useBackendURL } from "../../contexts/BackendURLContext.jsx";
 import AuthContext from "../../contexts/AuthContext.jsx";
 import { useParams } from "react-router-dom";
@@ -231,12 +230,12 @@ export default function RequestDetails() {
             <Form.Label className="fw-bold">Producto</Form.Label>
             <Form.Control
               type="text"
-              value={solicitud.tipoDeProducto}
+              value={solicitud.Producto}
               readOnly
             ></Form.Control>
           </div>
         </div>
-        {solicitud.tipoServicio === "Reparacion" ? (
+        {solicitud.tipoServicio === "Reparacion" || solicitud.tipoServicio === "Reparación" ? (
           <>
             <div className="my-4"></div>
             <div className="row">
