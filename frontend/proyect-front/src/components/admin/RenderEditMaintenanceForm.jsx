@@ -21,22 +21,6 @@ export default function RenderEditMaintenanceForm({ maintenance, products, handl
       <Form.Group className="mb-3">
         <Row>
           <Col>
-            <Form.Label>Producto</Form.Label>
-            <Form.Control
-              as="select"
-              name="idTipoProducto"
-              value={maintenance.idTipoProducto}
-              onChange={handleEditChange}
-            >
-              <option value="">Seleccione un producto</option>
-              {products.map((product, index) => (
-                <option key={index} value={product.id}>
-                  {product.descripcion}
-                </option>
-              ))}
-            </Form.Control>
-          </Col>
-          <Col>
             <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"

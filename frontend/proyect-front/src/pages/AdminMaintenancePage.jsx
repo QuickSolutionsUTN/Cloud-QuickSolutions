@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Spinner } from 'react-bootstrap';
-import { useBackendURL } from '../contexts/BackendURLContext';
-import AuthContext from '../contexts/AuthContext';
 import AdminHeaderWithModal from '../components/admin/AdminHeaderWithModal';
 import AdminTable from '../components/admin/AdminTable';
 import RenderMaintenanceForm from '../components/admin/RenderMaintenanceForm';
@@ -13,19 +11,14 @@ function AdminMaintenancePage() {
   const [maintenance, setMaintenance] = useState({
     nombre: '',
     descripcion: '',
-    idTipoProducto: 0,
     checklist: [],
   });
   const [maintenanceArray, setMaintenanceArray] = useState([]);
-  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const backendURL = useBackendURL();
   const [selectedItem, setSelectedItem] = useState(null);
-  const { userToken } = useContext(AuthContext);
 
   useEffect(() => {
     loadMaintenances();
-    loadProducts();
   }, []);
 
   const loadMaintenances = async () => {
@@ -40,22 +33,10 @@ function AdminMaintenancePage() {
     }
   };
 
-  const loadProducts = async () => {
-    try {
-      const response = await apiService.getProducts();
-      console.log("productos obtenidos:", response.data);
-      setProducts(response.data);
-    } catch (error) {
-      console.error("Error al obtener los productos:", error);
-      setLoading(false);
-    }
-  };
-
   const handleAdd = () => {
     setMaintenance({
       nombre: '',
       descripcion: '',
-      idTipoProducto: 0,
       checklist: [],
     });
     setSelectedItem(null);
@@ -90,7 +71,6 @@ function AdminMaintenancePage() {
 
   const handleSave = async () => {
     const maintenanceToSave = { ...maintenance };
-    maintenanceToSave.idTipoProducto = parseInt(maintenance.idTipoProducto);
     console.log("guardando mantenimiento... ", maintenanceToSave);
     try {
       const response = await apiService.createMaintenance(maintenanceToSave);
@@ -114,13 +94,6 @@ function AdminMaintenancePage() {
 
   const columnsMaintenance = [
     { accessorKey: "id", header: "ID", enableSorting: true },
-    {
-      accessorKey: "idTipoProducto", header: "Producto",
-      cell: ({ row }) => {
-        const product = products.find((p) => p.id === row.original.idTipoProducto);
-        return product ? product.descripcion : "Sin Producto";
-      }
-    },
     { accessorKey: "nombre", header: "Nombre" },
   ];
 
@@ -135,7 +108,6 @@ function AdminMaintenancePage() {
         handleSave={handleSave}>
         <RenderMaintenanceForm
           maintenance={maintenance}
-          products={products}
           handleChange={handleChange}
         />
       </AdminHeaderWithModal>
@@ -152,7 +124,6 @@ function AdminMaintenancePage() {
               <RenderEditMaintenanceForm
                 maintenance={selectedItem}
                 handleEditChange={handleEditChange}
-                products={products}
               />
             )}
             editModalTitle="Editar Mantenimiento"

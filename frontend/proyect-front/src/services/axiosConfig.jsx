@@ -70,10 +70,11 @@ const apiService = {
 
   getRequestsAdmin: () => api.get("/solicitud"),
   getRequestById: (id) => api.get(`/solicitud/${id}`),
+  
   // Mantenimientos
   getMaintenanceArray: () => api.get("/mantenimiento"),
-  createMaintenance: (data) => api.post("/mantenimiento", data),
-  updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}`, data),
+  createMaintenance: (data) => api.post("/mantenimiento/", data),
+  updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}/`, data),
   deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}`),
 
 

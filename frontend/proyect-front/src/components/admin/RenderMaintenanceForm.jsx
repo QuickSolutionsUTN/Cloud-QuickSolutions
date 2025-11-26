@@ -3,7 +3,7 @@ import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-export default function RenderMaintenanceForm({ maintenance, products, handleChange }) {
+export default function RenderMaintenanceForm({ maintenance = { nombre: '', descripcion: '', checklist: [] },  handleChange }) {
 
   const handleChecklistChange = (index, field, value) => {
     const updatedChecklist = [...maintenance.checklist];
@@ -20,22 +20,6 @@ export default function RenderMaintenanceForm({ maintenance, products, handleCha
     <Form>
       <Form.Group className="mb-3">
         <Row>
-          <Col>
-            <Form.Label>Producto</Form.Label>
-            <Form.Control
-              as="select"
-              name="idTipoProducto"
-              value={parseInt(maintenance.idTipoProducto)}
-              onChange={handleChange}
-            >
-              <option value="">Seleccione un producto</option>
-              {products.map((product, index) => (
-                <option key={index} value={product.id}>
-                  {product.descripcion}
-                </option>
-              ))}
-            </Form.Control>
-          </Col>
           <Col>
             <Form.Label>Nombre</Form.Label>
             <Form.Control
