@@ -170,11 +170,6 @@ class Domicilio(models.Model):
 
 
 class TipoMantenimiento(models.Model):
-    id_producto = models.ForeignKey(
-        Producto, 
-        models.PROTECT, # Equivalente a ON DELETE RESTRICT
-        db_column='id_producto'
-    )
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=250)
 
