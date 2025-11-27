@@ -66,7 +66,7 @@ const apiService = {
   getMaintenanceArray: () => api.get("/mantenimiento"),
   createMaintenance: (data) => api.post("/mantenimiento/", data),
   updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}/`, data),
-  deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}`),
+  deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}/`),
  
   //Categorias
   getCategories: () => api.get("/categorias"),
