@@ -12,7 +12,7 @@ export default function RenderEditMaintenanceForm({ maintenance, handleEditChang
   };
 
   const addTask = () => {
-    const currentChecklist = maintenance.checklist ||  [];
+    const currentChecklist = maintenance.checklist || [];
     const updatedChecklist = [...currentChecklist, { tarea: '', obligatorio: false }];
     handleEditChange({ target: { name: 'checklist', value: updatedChecklist } });
   };
