@@ -51,7 +51,7 @@ export default function RenderMaintenanceForm({ maintenance = { nombre: '', desc
         <Row>
           <Col> <Form.Label>Tareas</Form.Label> </Col>
           <Col xs="auto" className="mb-3">
-              <Button variant="outline-primary" size="sm" onClick={addTask}>
+            <Button variant="outline-primary" size="sm" onClick={addTask}>
               <FontAwesomeIcon icon={faPlus} />
             </Button>
           </Col>
