@@ -21,7 +21,6 @@ urlpatterns = [
     path('mantenimiento/', views.TipoMantenimientoListCreateView.as_view(), name='mantenimiento-lista-crear'),
     path('mantenimiento/<int:pk>/', views.TipoMantenimientoDetailView.as_view(), name='mantenimiento-detalle'),
 
-
     path('provincias/', views.ProvinciaListView.as_view(), name='provincia-lista'),
     path('localidades/', views.LocalidadListView.as_view(), name='localidad-lista'),
     path('perfiles/<uuid:pk>/domicilio', views.PerfilesDomicilioView.as_view(), name='perfiles-direccion'),
