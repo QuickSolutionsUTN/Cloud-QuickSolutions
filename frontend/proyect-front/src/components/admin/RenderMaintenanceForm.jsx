@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function RenderMaintenanceForm({ maintenance = { nombre: '', descripcion: '', checklist: [] },  handleChange }) {
 
@@ -14,6 +14,12 @@ export default function RenderMaintenanceForm({ maintenance = { nombre: '', desc
   const addTask = () => {
     const currentChecklist = maintenance.checklist || [];
     const updatedChecklist = [...currentChecklist, { tarea: '', obligatorio: false }];
+    handleChange({ target: { name: 'checklist', value: updatedChecklist } });
+  };
+
+  const removeTask = (index) => {
+    const currentChecklist = maintenance.checklist || [];
+    const updatedChecklist = currentChecklist.filter((_, i) => i !== index);
     handleChange({ target: { name: 'checklist', value: updatedChecklist } });
   };
 
@@ -41,17 +47,17 @@ export default function RenderMaintenanceForm({ maintenance = { nombre: '', desc
           onChange={handleChange}
         />
       </Form.Group>
-      <Form.Group className="mb-3">
+      <Form.Group className="mb-1">
         <Row>
           <Col> <Form.Label>Tareas</Form.Label> </Col>
-          <Col xs="auto">
-            <Button variant="outline-primary" onClick={addTask}>
+          <Col xs="auto" className="mb-3">
+              <Button variant="outline-primary" size="sm" onClick={addTask}>
               <FontAwesomeIcon icon={faPlus} />
             </Button>
           </Col>
         </Row>
         {(maintenance.checklist ? maintenance.checklist : []).map((task, index) => (
-          <Row key={index} className="mb-2">
+          <Row key={index} className="mb-3">
             <Col>
               <Form.Control
                 type="text"
@@ -69,6 +75,11 @@ export default function RenderMaintenanceForm({ maintenance = { nombre: '', desc
                 onChange={(e) => handleChecklistChange(index, "obligatorio", e.target.checked)}
                 label="Obligatoria"
               />
+            </Col>
+            <Col xs="auto">
+              <Button variant="outline-danger" size="sm" onClick={() => removeTask(index)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </Button>
             </Col>
           </Row>
         ))}
