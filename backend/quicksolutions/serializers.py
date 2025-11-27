@@ -87,14 +87,53 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
             }
         return None
 
+
+class ChecklistMantenimientoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChecklistMantenimiento
+        fields = ['id', 'tarea', 'obligatorio']
+
 class TipoMantenimientoSerializer(serializers.ModelSerializer):
-    # Renombramos el campo para que coincida con el frontend
-    idProducto = serializers.PrimaryKeyRelatedField(source='id_producto', read_only=True)
+    checklist = ChecklistMantenimientoSerializer(many=True, required=False, allow_null=True, source='checklistmantenimiento_set')
 
     class Meta:
         model = TipoMantenimiento
-        # Excluimos 'id_producto' original para no enviar duplicados
-        fields = ['id', 'nombre', 'descripcion', 'idProducto']
+        fields = ['id', 'nombre', 'descripcion', 'checklist']
+    
+    def create(self, validated_data):
+        checklist_data = validated_data.pop('checklistmantenimiento_set', [])
+        tipo_mantenimiento = TipoMantenimiento.objects.create(**validated_data)
+        for item_data in checklist_data:
+            ChecklistMantenimiento.objects.create(id_tipo_mantenimiento=tipo_mantenimiento, **item_data)
+            
+        return tipo_mantenimiento
+
+    def update(self, instance, validated_data):
+        checklist_data = validated_data.pop('checklistmantenimiento_set', None)
+        instance.nombre = validated_data.get('nombre', instance.nombre)
+        instance.descripcion = validated_data.get('descripcion', instance.descripcion)
+        instance.save()
+        if checklist_data is not None:
+            incoming_ids = set([item.get('id') for item in checklist_data if item.get('id')])
+            existing_items_ids = set(instance.checklistmantenimiento_set.values_list('id', flat=True))
+            items_to_delete = existing_items_ids - incoming_ids
+            instance.checklistmantenimiento_set.filter(id__in=items_to_delete).delete()
+            for item_data in checklist_data:
+                item_id = item_data.get('id')
+                
+                if item_id:
+                    try:
+                        checklist_item = ChecklistMantenimiento.objects.get(id=item_id, id_tipo_mantenimiento=instance)
+                        checklist_item.tarea = item_data.get('tarea', checklist_item.tarea)
+                        checklist_item.obligatorio = item_data.get('obligatorio', checklist_item.obligatorio)
+                        checklist_item.save()
+                    except ChecklistMantenimiento.DoesNotExist:
+                        pass 
+                else:
+                    ChecklistMantenimiento.objects.create(id_tipo_mantenimiento=instance, **item_data)
+        return instance
+
+
 class ProvinciaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Provincia

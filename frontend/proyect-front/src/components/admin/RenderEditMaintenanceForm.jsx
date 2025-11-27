@@ -13,7 +13,7 @@ export default function RenderEditMaintenanceForm({ maintenance, products, handl
 
   const addTask = () => {
     const currentChecklist = maintenance.checklist ||  [];
-    const updatedChecklist = [...currentChecklist, { descripcion: '', obligatorio: false }];
+    const updatedChecklist = [...currentChecklist, { tarea: '', obligatorio: false }];
     handleEditChange({ target: { name: 'checklist', value: updatedChecklist } });
   };
 
@@ -56,8 +56,8 @@ export default function RenderEditMaintenanceForm({ maintenance, products, handl
               <Form.Control
                 type="text"
                 name={`task-${index}`}
-                value={task.descripcion}
-                onChange={(e) => handleChecklistChange(index, "descripcion", e.target.value)}
+                value={task.tarea}
+                onChange={(e) => handleChecklistChange(index, "tarea", e.target.value)}
                 placeholder="Descripción de la tarea"
               />
             </Col>
