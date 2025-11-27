@@ -114,7 +114,7 @@ class TipoMantenimientoSerializer(serializers.ModelSerializer):
         instance.descripcion = validated_data.get('descripcion', instance.descripcion)
         instance.save()
         if checklist_data is not None:
-            incoming_ids = set([item.get('id') for item in checklist_data if item.get('id')])
+            incoming_ids = {item['id'] for item in checklist_data if 'id' in item}
             existing_items_ids = set(instance.checklistmantenimiento_set.values_list('id', flat=True))
             items_to_delete = existing_items_ids - incoming_ids
             instance.checklistmantenimiento_set.filter(id__in=items_to_delete).delete()
