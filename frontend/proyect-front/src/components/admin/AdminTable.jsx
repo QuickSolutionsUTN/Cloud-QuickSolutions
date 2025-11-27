@@ -12,6 +12,7 @@ export default function AdminTable({
   onEditSave, 
   onDeleteConfirm, 
   renderEditForm, 
+  validateEdit,
   editModalTitle = "Editar Elemento",
   deleteModalTitle = "Confirmar Eliminación",
   deleteModalMessage = "¿Estás seguro de que quieres eliminar este elemento?",
@@ -22,6 +23,7 @@ export default function AdminTable({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [editErrors, setEditErrors] = useState({});
 
   useEffect(() => {
     setData(initialData);
@@ -29,6 +31,7 @@ export default function AdminTable({
 
   const handleEdit = (item) => {
     setSelectedItem(item);
+    setEditErrors({});
     setShowEditModal(true);
   };
   const handleDelete = (id) => {
@@ -45,9 +48,22 @@ export default function AdminTable({
     setData(data.map(item => (item.id === updatedItem.id ? updatedItem : item)));
   };
 
-  // Guarda los cambios en la edición (llama al callback externo)
   const handleSave = () => {
-    if (onEditSave && selectedItem) {
+    if (!selectedItem) return;
+    if (validateEdit) {
+      try {
+        const errors = validateEdit(selectedItem) || {};
+        if (errors && Object.keys(errors).length > 0) {
+          setEditErrors(errors);
+          return;
+        }
+      } catch (err) {
+        console.error('Validation function threw an error', err);
+      }
+    }
+    setEditErrors({});
+
+    if (onEditSave) {
       onEditSave(selectedItem)
         .then((updatedItem) => {
           setData(data.map(item => (item.id === updatedItem.id ? updatedItem : item)));
@@ -152,7 +168,7 @@ export default function AdminTable({
           </Modal.Header>
           <Modal.Body>
             {selectedItem && renderEditForm
-              ? renderEditForm(selectedItem, handleEditChange)
+              ? renderEditForm(selectedItem, handleEditChange, editErrors)
               : null}
           </Modal.Body>
           <Modal.Footer>

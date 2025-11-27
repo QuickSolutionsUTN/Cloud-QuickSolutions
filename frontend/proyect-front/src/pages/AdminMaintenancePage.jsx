@@ -16,6 +16,7 @@ function AdminMaintenancePage() {
   const [maintenanceArray, setMaintenanceArray] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [createErrors, setCreateErrors] = useState({});
 
   useEffect(() => {
     loadMaintenances();
@@ -55,6 +56,28 @@ function AdminMaintenancePage() {
     }));
   };
 
+  const validateMaintenance = (obj) => {
+    const errors = {};
+    if (!obj.nombre || String(obj.nombre).trim() === '') {
+      errors.nombre = 'Nombre es obligatorio';
+    }
+    if (!obj.descripcion || String(obj.descripcion).trim() === '') {
+      errors.descripcion = 'Descripción es obligatoria';
+    }
+    const checklistErrors = [];
+    (obj.checklist || []).forEach((task, idx) => {
+      const taskErrors = {};
+      if (!task || !task.tarea || String(task.tarea).trim() === '') {
+        taskErrors.tarea = 'Descripción de la tarea es obligatoria';
+      }
+      checklistErrors[idx] = taskErrors;
+    });
+    if (checklistErrors.some(e => e && Object.keys(e).length > 0)) {
+      errors.checklist = checklistErrors;
+    }
+    return errors;
+  };
+
   const handleEditSave = async (updatedItem) => {
     console.log("Guardando cambios en el mantenimiento...", updatedItem);
     try {
@@ -72,6 +95,12 @@ function AdminMaintenancePage() {
   const handleSave = async () => {
     const maintenanceToSave = { ...maintenance };
     console.log("guardando mantenimiento... ", maintenanceToSave);
+    const errors = validateMaintenance(maintenanceToSave);
+    if (errors && Object.keys(errors).length > 0) {
+      setCreateErrors(errors);
+      return;
+    }
+    setCreateErrors({});
     try {
       const response = await apiService.createMaintenance(maintenanceToSave);
       console.log("Mantenimiento guardado correctamente:", response.data);
@@ -109,6 +138,7 @@ function AdminMaintenancePage() {
         <RenderMaintenanceForm
           maintenance={maintenance}
           handleChange={handleChange}
+          errors={createErrors}
         />
       </AdminHeaderWithModal>
       <div className='admin-products-content flex-fill w-100'>
@@ -119,11 +149,13 @@ function AdminMaintenancePage() {
             initialData={maintenanceArray}
             columns={columnsMaintenance}
             onEditSave={handleEditSave}
+            validateEdit={validateMaintenance}
             onDeleteConfirm={onDeleteConfirm}
-            renderEditForm={(selectedItem, handleEditChange) => (
+            renderEditForm={(selectedItem, handleEditChange, editErrors) => (
               <RenderEditMaintenanceForm
                 maintenance={selectedItem}
                 handleEditChange={handleEditChange}
+                errors={editErrors}
               />
             )}
             editModalTitle="Editar Mantenimiento"

@@ -3,7 +3,7 @@ import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-export default function RenderEditMaintenanceForm({ maintenance, handleEditChange }) {
+export default function RenderEditMaintenanceForm({ maintenance, handleEditChange, errors = {} }) {
 
   const handleChecklistChange = (index, field, value) => {
     const updatedChecklist = [...maintenance.checklist];
@@ -34,7 +34,11 @@ export default function RenderEditMaintenanceForm({ maintenance, handleEditChang
               name="nombre"
               value={maintenance.nombre}
               onChange={handleEditChange}
+              isInvalid={!!errors?.nombre}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors?.nombre}
+            </Form.Control.Feedback>
           </Col>
         </Row>
       </Form.Group>
@@ -45,7 +49,11 @@ export default function RenderEditMaintenanceForm({ maintenance, handleEditChang
           name="descripcion"
           value={maintenance.descripcion}
           onChange={handleEditChange}
+          isInvalid={!!errors?.descripcion}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors?.descripcion}
+        </Form.Control.Feedback>
       </Form.Group>
       <Form.Group className="mb-1">
         <Row>
@@ -65,7 +73,11 @@ export default function RenderEditMaintenanceForm({ maintenance, handleEditChang
                 value={task.tarea}
                 onChange={(e) => handleChecklistChange(index, "tarea", e.target.value)}
                 placeholder="Descripción de la tarea"
+                isInvalid={!!errors?.checklist?.[index]?.tarea}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors?.checklist?.[index]?.tarea}
+              </Form.Control.Feedback>
             </Col>
             <Col xs="auto">
               <Form.Check
