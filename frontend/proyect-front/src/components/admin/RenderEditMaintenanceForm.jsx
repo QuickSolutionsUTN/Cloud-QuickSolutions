@@ -3,7 +3,7 @@ import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-export default function RenderEditMaintenanceForm({ maintenance, products, handleEditChange }) {
+export default function RenderEditMaintenanceForm({ maintenance, handleEditChange }) {
 
   const handleChecklistChange = (index, field, value) => {
     const updatedChecklist = [...maintenance.checklist];
