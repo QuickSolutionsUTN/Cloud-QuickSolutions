@@ -184,7 +184,7 @@ class TipoMantenimiento(models.Model):
 class ChecklistMantenimiento(models.Model):
     id_tipo_mantenimiento = models.ForeignKey(
         TipoMantenimiento, 
-        models.PROTECT, # Equivalente a ON DELETE RESTRICT
+        models.CASCADE, # Equivalente a ON DELETE RESTRICT
         db_column='id_tipo_mantenimiento'
     )
     tarea = models.CharField(max_length=150)
