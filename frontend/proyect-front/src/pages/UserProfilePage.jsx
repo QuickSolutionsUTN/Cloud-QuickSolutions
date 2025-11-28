@@ -4,11 +4,12 @@ import AddressCard from '../components/users/UserAddressCard.jsx';
 import UserCard from '../components/users/UserProfileCard.jsx';
 import UserAddressModal from '../components/users/UserAddressModal.jsx';
 import AuthContext from '../contexts/AuthContext.jsx';
-import axios from 'axios';
+import apiService from '../services/axiosConfig.jsx';
 import { Modal, Button, ToastContainer, Toast } from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './userProfilePage.css';
+import { get } from 'react-hook-form';
 
 export default function UserProfile() {
     const backendURL = useBackendURL();
@@ -27,11 +28,7 @@ export default function UserProfile() {
         const fetchUserData = async () => {
             try {
                 console.log('Obteniendo datos del usuario...', user.id);
-                const response = await axios.get(`${backendURL}/api/perfiles/${user.id}/`, {
-                    headers: {
-                        Authorization: `Bearer ${userToken}`,
-                    },
-                });
+                const response = await apiService.getUserProfile(user.id);
                 console.log('Datos recibidos:', response.data);
                 setUserData(response.data);
             } catch (error) {
@@ -64,12 +61,8 @@ export default function UserProfile() {
     const confirmDeleteDomicilio = async () => {
         setShowDeleteConfirm(false);
         try {
-            await axios.delete(`${backendURL}/api/perfiles/${user.id}/domicilio`, {
-                headers: { Authorization: `Bearer ${userToken}` }
-            });
-            const resp = await axios.get(`${backendURL}/api/perfiles/${user.id}/`, {
-                headers: { Authorization: `Bearer ${userToken}` }
-            });
+            await apiService.deleteDomicilio(user.id);
+            const resp = await apiService.getUserProfile(user.id);
             setUserData(resp.data);
             setToastMessage('Domicilio eliminado correctamente.');
             setToastBg('success');
@@ -134,12 +127,8 @@ export default function UserProfile() {
                             if (payload.piso === "") payload.piso = null;
                             console.log('Guardando domicilio con payload:', payload);
                             console.log("Token actual:", userToken);
-                            await axios.put(`${backendURL}/api/perfiles/${user.id}/domicilio`, payload, {
-                                headers: { Authorization: `Bearer ${userToken}` }
-                            });
-                            const resp = await axios.get(`${backendURL}/api/perfiles/${user.id}/`, {
-                                headers: { Authorization: `Bearer ${userToken}` }
-                            });
+                            await apiService.updateDomicilio(user.id, payload);
+                            const resp = await apiService.getUserProfile(user.id);
                             setUserData(resp.data);
                             setShowAddressModal(false);
                             setToastMessage('Domicilio actualizado correctamente.');
