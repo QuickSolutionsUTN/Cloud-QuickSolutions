@@ -129,6 +129,11 @@ class TipoMantenimientoListCreateView(generics.ListCreateAPIView):
     serializer_class = TipoMantenimientoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+class TipoMantenimientoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TipoMantenimiento.objects.all()
+    serializer_class = TipoMantenimientoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
 
 class ProvinciaListView(generics.ListAPIView):
     queryset = Provincia.objects.all().order_by('nombre')

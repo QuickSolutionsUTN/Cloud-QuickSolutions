@@ -1,9 +1,9 @@
 import React from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-export default function RenderEditMaintenanceForm({ maintenance, products, handleEditChange }) {
+export default function RenderEditMaintenanceForm({ maintenance, handleEditChange, errors = {} }) {
 
   const handleChecklistChange = (index, field, value) => {
     const updatedChecklist = [...maintenance.checklist];
@@ -12,7 +12,14 @@ export default function RenderEditMaintenanceForm({ maintenance, products, handl
   };
 
   const addTask = () => {
-    const updatedChecklist = [...maintenance.checklist, { descripcion: '', obligatorio: false }];
+    const currentChecklist = maintenance.checklist || [];
+    const updatedChecklist = [...currentChecklist, { tarea: '', obligatorio: false }];
+    handleEditChange({ target: { name: 'checklist', value: updatedChecklist } });
+  };
+
+  const removeTask = (index) => {
+    const currentChecklist = maintenance.checklist || [];
+    const updatedChecklist = currentChecklist.filter((_, i) => i !== index);
     handleEditChange({ target: { name: 'checklist', value: updatedChecklist } });
   };
 
@@ -21,29 +28,17 @@ export default function RenderEditMaintenanceForm({ maintenance, products, handl
       <Form.Group className="mb-3">
         <Row>
           <Col>
-            <Form.Label>Producto</Form.Label>
-            <Form.Control
-              as="select"
-              name="idTipoProducto"
-              value={maintenance.idTipoProducto}
-              onChange={handleEditChange}
-            >
-              <option value="">Seleccione un producto</option>
-              {products.map((product, index) => (
-                <option key={index} value={product.id}>
-                  {product.descripcion}
-                </option>
-              ))}
-            </Form.Control>
-          </Col>
-          <Col>
             <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"
               name="nombre"
               value={maintenance.nombre}
               onChange={handleEditChange}
+              isInvalid={!!errors?.nombre}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors?.nombre}
+            </Form.Control.Feedback>
           </Col>
         </Row>
       </Form.Group>
@@ -54,27 +49,35 @@ export default function RenderEditMaintenanceForm({ maintenance, products, handl
           name="descripcion"
           value={maintenance.descripcion}
           onChange={handleEditChange}
+          isInvalid={!!errors?.descripcion}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors?.descripcion}
+        </Form.Control.Feedback>
       </Form.Group>
-      <Form.Group className="mb-3">
+      <Form.Group className="mb-1">
         <Row>
           <Col> <Form.Label>Tareas</Form.Label> </Col>
-          <Col xs="auto">
-            <Button variant="outline-primary" onClick={addTask}>
+          <Col xs="auto" className="mb-3">
+            <Button variant="outline-primary" size="sm" onClick={addTask}>
               <FontAwesomeIcon icon={faPlus} />
             </Button>
           </Col>
         </Row>
         {(maintenance.checklist ? maintenance.checklist : []).map((task, index) => (
-          <Row key={index} className="mb-2">
+          <Row key={index} className="mb-3">
             <Col>
               <Form.Control
                 type="text"
                 name={`task-${index}`}
-                value={task.descripcion}
-                onChange={(e) => handleChecklistChange(index, "descripcion", e.target.value)}
+                value={task.tarea}
+                onChange={(e) => handleChecklistChange(index, "tarea", e.target.value)}
                 placeholder="Descripción de la tarea"
+                isInvalid={!!errors?.checklist?.[index]?.tarea}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors?.checklist?.[index]?.tarea}
+              </Form.Control.Feedback>
             </Col>
             <Col xs="auto">
               <Form.Check
@@ -84,6 +87,11 @@ export default function RenderEditMaintenanceForm({ maintenance, products, handl
                 onChange={(e) => handleChecklistChange(index, "obligatorio", e.target.checked)}
                 label="Obligatoria"
               />
+            </Col>
+            <Col xs="auto">
+              <Button variant="outline-danger" size="sm" onClick={() => removeTask(index)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </Button>
             </Col>
           </Row>
         ))}
