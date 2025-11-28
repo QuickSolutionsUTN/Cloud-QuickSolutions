@@ -16,14 +16,13 @@ export default function StepProductData({ formData, control, errors, setValue })
 
   useEffect(() => {
     loadCategories();
-    loadProducts();
     if (serviceType === 'maintenance') {
       loadMaintenances();
     }
   }, [serviceType]);
 
   useEffect(() => {
-    if (categoryId && serviceType === 'repair') {
+    if (categoryId) {
       loadProductsByCatId(categoryId);
     }
   }, [categoryId]);
@@ -32,22 +31,12 @@ export default function StepProductData({ formData, control, errors, setValue })
     setValue('productData.productTypeId', null);
     if (serviceType === 'maintenance') { setValue('productData.maintenanceTypeId', null); }
   };
-
   const loadCategories = async () => {
     try {
       const response = await apiService.getCategories();
       setCategories(response.data);
     } catch (error) {
       console.error("Error al obtener las categorias:", error);
-    }
-  };
-
-  const loadProducts = async () => {
-    try {
-      const response = await apiService.getProducts();
-      setProductTypes(response.data);
-    } catch (error) {
-      console.error("Error al obtener los productos:", error);
     }
   };
 
@@ -87,15 +76,17 @@ export default function StepProductData({ formData, control, errors, setValue })
     return categories.find(category => category.id === productType.idCategoria);
   };
 
-  const handleCardClick = async (maintenance) => {
+/*  const handleCardClick = async (maintenance) => {
     setValue('productData.maintenanceTypeId', maintenance.id);
     setValue('productData.productTypeId', maintenance.idTipoProducto);
     const category = getCategoryByProductTypeId(maintenance.idTipoProducto);
     setValue('productData.categoryId', category.id);
   };
+*/  const handleCardClick = (maintenance) => {
+    setValue('productData.maintenanceTypeId', maintenance.id);
+  }
 
-
-  const filteredCategories = serviceType === 'maintenance' ? categories.filter(category =>
+/*  const filteredCategories = serviceType === 'maintenance' ? categories.filter(category =>
     maintenanceArray.some(maintenance => {
       const productType = productTypes.find(type => type.id === maintenance.idTipoProducto);
       return productType && productType.idCategoria === category.id;
@@ -112,7 +103,7 @@ export default function StepProductData({ formData, control, errors, setValue })
     const productMatch = productTypeId ? maintenance.idTipoProducto === productTypeId : true;
     return categoryMatch && productMatch;
   });
-
+*/
   return (
     <>
       <div className='row mb-3'>
@@ -129,7 +120,7 @@ export default function StepProductData({ formData, control, errors, setValue })
               }}
             >
               <option value="">Seleccione una categoría</option>
-              {filteredCategories.map(category => (
+              {categories.map(category => (
                 <option key={category.id} value={category.id}>
                   {category.descripcion}
                 </option>
@@ -146,8 +137,8 @@ export default function StepProductData({ formData, control, errors, setValue })
               onChange={(e) => { field.onChange(parseInt(e.target.value)); }}
             >
               <option value="">Seleccione un tipo de producto</option>
-              {filteredProductTypes.length > 0 ? (
-                filteredProductTypes.map(type => (
+              {productTypes.length > 0 ? (
+                productTypes.map(type => (
                   <option key={type.id} value={type.id}>
                     {type.descripcion}
                   </option>
@@ -180,7 +171,7 @@ export default function StepProductData({ formData, control, errors, setValue })
             <div className='col-12'>
               <p><b>Tipo de mantenimiento</b></p>
               <div className="row">
-                {filteredMaintenanceArray.map((maintenance) => (
+                {maintenanceArray.map((maintenance) => (
                   <div key={maintenance.id} className="col-md-3">
                     <Card style={{
                       width: '18rem',
