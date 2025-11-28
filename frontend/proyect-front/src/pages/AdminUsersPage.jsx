@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { Modal, Form, Button, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import apiService from '../services/axiosConfig';
 import { useBackendURL } from '../contexts/BackendURLContext';
 import AuthContext from '../contexts/AuthContext';
 import AdminHeaderWithModal from '../components/admin/AdminHeaderWithModal';
@@ -17,11 +17,7 @@ function AdminUsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/perfiles/`, {
-          headers: {
-            Authorization: `Bearer ${userToken}`
-          }
-        });
+        const response = await apiService.getProfiles();
         console.log("Usuarios obtenidos:", response.data);
         setUsers(response.data);
         setLoading(false);
@@ -42,10 +38,7 @@ function AdminUsersPage() {
   ];
 
   const onEditSave = (editedUser) => {
-    return axios
-      .put(`${backendURL}/api/perfiles/${editedUser.id}/`, editedUser, {
-        headers: { Authorization: `Bearer ${userToken}` },
-      })
+    return apiService.updateUserProfile(editedUser.id, editedUser)
       .then((res) => {
         console.log("Usuario actualizado correctamente");
         return res.data;
@@ -53,10 +46,7 @@ function AdminUsersPage() {
   };
 
   const onDeleteConfirm = (id) => {
-    return axios
-      .delete(`${backendURL}/api/perfiles/${id}/`, {
-        headers: { Authorization: `Bearer ${userToken}` },
-      })
+    return apiService.deleteUserProfile(id)
       .then(() => {
         console.log("Usuario eliminado correctamente");
         setUsers(users.filter((user) => user.id !== id));
