@@ -12,7 +12,6 @@ export default function StepProductData({ formData, control, errors, setValue })
   const [productTypes, setProductTypes] = useState([]);
   const serviceType = queryParams.get('type');
   const categoryId = parseInt(formData?.productData?.categoryId);
-  const productTypeId = parseInt(formData?.productData?.productTypeId);
 
   useEffect(() => {
     loadCategories();
@@ -71,12 +70,12 @@ export default function StepProductData({ formData, control, errors, setValue })
     );
     return product?.descripcion || product?.name || '';
   }
-  const getCategoryByProductTypeId = (id) => {
+/*  const getCategoryByProductTypeId = (id) => {
     const productType = productTypes.find(type => type.id === id);
     return categories.find(category => category.id === productType.idCategoria);
   };
 
-/*  const handleCardClick = async (maintenance) => {
+  const handleCardClick = async (maintenance) => {
     setValue('productData.maintenanceTypeId', maintenance.id);
     setValue('productData.productTypeId', maintenance.idTipoProducto);
     const category = getCategoryByProductTypeId(maintenance.idTipoProducto);
