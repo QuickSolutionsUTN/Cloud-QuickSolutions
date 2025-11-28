@@ -1,14 +1,25 @@
-import React from "react";
-import RequestDetails from "../components/users/RequestDetails";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../components/users/requestDetails.css';
+import { useParams, Link } from 'react-router-dom';
+import { useContext } from 'react';
+import RequestDetails from '../components/users/RequestDetails';
+import AuthContext from '../contexts/AuthContext';
+import './userRequestsPage.css';
 
 export default function RequestDetailsPage() {
-  return (
-    <div className="container-fluid my-5">
-      <div className="container request-data p-3">
-        <RequestDetails/>
-      </div>
-    </div>
-  );
+    const { id } = useParams();
+    const { isAuthenticated } = useContext(AuthContext);
+
+    if (!isAuthenticated) {
+        return (
+            <div className="container py-5 text-center">
+                <h3>Debes iniciar sesión para ver esta solicitud</h3>
+                <Link to="/" className="btn btn-primary mt-3">Ir al inicio</Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="container-fluid py-4">
+            <RequestDetails solicitudId={id} />
+        </div>
+    );
 }

@@ -1,391 +1,307 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Form,
-  Button,
-  Modal,
-  ToastContainer,
-  Toast,
-  Badge,
-  ListGroup,
-} from "react-bootstrap";
-import { useBackendURL } from "../../contexts/BackendURLContext.jsx";
-import AuthContext from "../../contexts/AuthContext.jsx";
-import { useParams } from "react-router-dom";
-import apiService from "../../services/axiosConfig.jsx";
-import envioService from "../../services/apiEnviosService.jsx";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import apiService from '../../services/axiosConfig';
+import './requestDetails.css';
 
-export default function RequestDetails() {
-  const { userToken } = useContext(AuthContext);
-  const [solicitud, setSolicitud] = useState(null);
-  const { id: solicitudId } = useParams();
-  const backendURL = useBackendURL();
-  const [fechaFormateada, setFechaFormateada] = useState("");
-  const navigate = useNavigate();
-  const [showAcceptModal, setShowAcceptModal] = useState(false);
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [badgeVariant, setBadgeVariant] = useState("primary");
-  const [mostrarDetalles, setMostrarDetalles] = useState(false);
-  const [envioDetails, setEnvioDetails] = useState({
-    estado: "",
-    origen: null,
-    fecha: null,
-  });
-  const getBadgeVariant = (estado) => {
-    switch (estado) {
-      case "Revisada":
-        return "secondary";
-      case "Presupuestada":
-        return "warning";
-      case "Aprobada":
-        return "success";
-      case "Cancelada":
-        return "danger";
-      case "Finalizada":
-        return "info";
-      default:
-        return "primary";
-    }
-  };
+export default function RequestDetails({ solicitudId }) {
+    const [solicitud, setSolicitud] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchSolicitudDetails = async () => {
-      try {
-        console.log("Fetching solicitud details...", backendURL);
-        const response = await apiService.getRequestById(solicitudId);
-        console.log("Solicitud details:", response.data);
-        setSolicitud(response.data);
-        const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        const opciones = {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
+    useEffect(() => {
+        if (solicitudId) {
+            fetchSolicitud();
+        }
+    }, [solicitudId]);
+
+    const fetchSolicitud = async () => {
+        try {
+            setLoading(true);
+            const response = await apiService.getRequestById(solicitudId);
+            setSolicitud(response.data);
+        } catch (err) {
+            setError('Error al cargar los detalles de la solicitud');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getEstadoBadge = (estado) => {
+        const estados = {
+            'pendiente': 'bg-warning text-dark',
+            'presupuestada': 'bg-info text-dark',
+            'aprobada': 'bg-success',
+            'rechazada': 'bg-danger',
+            'en proceso': 'bg-primary',
+            'finalizada': 'bg-secondary',
+            'cancelada': 'bg-dark'
         };
-        setFechaFormateada(
-          fechaGeneracion.toLocaleDateString("es-ES", opciones)
-        );
-        setBadgeVariant(getBadgeVariant(response.data.estado));
-      } catch (error) {
-        console.error("Error fetching solicitud details:", error);
-      }
+        return estados[estado?.toLowerCase()] || 'bg-secondary';
     };
-    fetchSolicitudDetails();
-  }, [solicitudId, backendURL]);
 
-  const handleAccept = async () => {
-    const dataToUpdate = {
-      id: solicitud.id,
-      idSolicitudServicioEstado: 4,
+    const getEstadoTexto = (estado) => {
+        return estado || 'Sin estado';
     };
-    await updateRequest(dataToUpdate, "Aprobada");
-    setShowAcceptModal(false);
-  };
 
-  const handleReject = async () => {
-    const dataToUpdate = {
-      id: solicitud.id,
-      idSolicitudServicioEstado: 6,
+    const handleCancelar = async () => {
+        if (window.confirm('¿Estás seguro de que deseas cancelar esta solicitud?')) {
+            try {
+                await apiService.cancelRequest(solicitudId);
+                fetchSolicitud();
+            } catch (err) {
+                console.error('Error al cancelar:', err);
+                alert(err.response?.data?.error || 'Error al cancelar la solicitud');
+            }
+        }
     };
-    await updateRequest(dataToUpdate, "Cancelada");
-    setShowRejectModal(false);
-  };
 
-  const updateRequest = async (data, estado) => {
-    try {
-      const response = await apiService.updateRequestUser(data);
-      console.log("Solicitud actualizada", response.data);
-      setSolicitud((prevSolicitud) => ({
-        ...prevSolicitud,
-        estado: estado,
-      }));
-      setBadgeVariant(getBadgeVariant(estado));
-    } catch (error) {
-      console.error("Error al aceptar la solicitud:", error);
-      handleError();
-    }
-  };
+    const handleAprobar = async () => {
+        if (window.confirm('¿Deseas aprobar el presupuesto de esta solicitud?')) {
+            try {
+                await apiService.updateRequestUser({ id: solicitudId, accion: 'aprobar' });
+                fetchSolicitud();
+            } catch (err) {
+                console.error('Error al aprobar:', err);
+                alert(err.response?.data?.error || 'Error al aprobar la solicitud');
+            }
+        }
+    };
 
-  const handleError = () => {
-    setErrorMessage("Hubo un problema al actualizar la solicitud.");
-    setShowToast(true);
-  };
+    const handleRechazar = async () => {
+        if (window.confirm('¿Deseas rechazar el presupuesto de esta solicitud?')) {
+            try {
+                await apiService.updateRequestUser({ id: solicitudId, accion: 'rechazar' });
+                fetchSolicitud();
+            } catch (err) {
+                console.error('Error al rechazar:', err);
+                alert(err.response?.data?.error || 'Error al rechazar la solicitud');
+            }
+        }
+    };
 
-  // Función que cambia el estado al hacer clic
-  const handleToggleDeliverDetails = () => {
-    console.log("Solicitando detalles de envio a la API veloway...");
-    getEnvioDetails();
-    setMostrarDetalles(!mostrarDetalles);
-  };
+    // Determinar qué pasos están activos según el estado
+    const getTimelineStatus = (estado) => {
+        const estadoLower = estado?.toLowerCase() || '';
+        return {
+            pendiente: ['pendiente', 'presupuestada', 'aprobada', 'en proceso', 'finalizada'].includes(estadoLower),
+            presupuestada: ['presupuestada', 'aprobada', 'en proceso', 'finalizada'].includes(estadoLower),
+            aprobada: ['aprobada', 'en proceso', 'finalizada'].includes(estadoLower),
+            enProceso: ['en proceso', 'finalizada'].includes(estadoLower),
+            finalizada: estadoLower === 'finalizada'
+        };
+    };
 
-  const getEnvioDetails = async () => {
-    try {
-      const response = await envioService.getEnvio(
-        solicitud.envio.nroSeguimiento
-      );
-      console.log("Detalles del envio:", response);
-      setEnvioDetails({
-        estado: response.estado,
-        origen: response.origen,
-        fecha: response.fecha,
-      });
-      console.log("Detalles del envio:", envioDetails);
-    } catch (error) {
-      console.error("Error al obtener los detalles del envio:", error);
-    }
-  };
-
-  if (!solicitud) {
-    return <div>Cargando...</div>;
-  }
-
-  return (
-    <>
-      <div className="title-container space-between mb-">
-        <h3>
-
-          Codigo de solicitud: {solicitudId}
-          <Badge className="m-2" bg={badgeVariant}>
-            {solicitud.estado}
-          </Badge>
-        </h3>
-      </div>
-
-      <div className="subtitle-container mb-4">
-        <h5>{fechaFormateada}</h5>
-      </div>
-      {(solicitud.estado === "Presupuestada" ||
-        solicitud.estado === "Aprobada" ||
-        solicitud.estado === "Finalizada") && (
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <h4>Monto: ${solicitud.monto}</h4>
-              {solicitud.estado === "Presupuestada" && (
-                <>
-                  <Button
-                    variant="success"
-                    className="button-spacing"
-                    onClick={() => setShowAcceptModal(true)}
-                  >
-                    Aceptar
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => setShowRejectModal(true)}
-                  >
-                    Rechazar
-                  </Button>
-                </>
-              )}
-            </div>
-            <div>
-              {solicitud.estado !== "Finalizada" ? (
-                <h4>
-                  Fecha Estimada:{" "}
-                  {new Date(solicitud.fechaEstimada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
-                </h4>
-              ) : (
-                <h4>
-                  Fecha Finalizada:{" "}
-                  {new Date(solicitud.fechaFinalizada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
-                </h4>
-              )}
-            </div>
-          </div>
-        )}
-      <div className="my-4"></div>
-
-      <Form className="data-container">
-        <div className="row my-3">
-          <div className="col-4">
-            <Form.Label className="fw-bold">Email</Form.Label>
-
-            <Form.Control
-              type="text"
-              defaultValue={solicitud.emailSolicitante}
-              readOnly
-            ></Form.Control>
-          </div>
-        </div>
-        <div className="row my-3">
-          <div className="col-4">
-            <Form.Label className="fw-bold">Servicio</Form.Label>
-            <Form.Control
-              type="text"
-              defaultValue={solicitud.tipoServicio}
-              readOnly
-            ></Form.Control>
-          </div>
-          <div className="col-4">
-            <Form.Label className="fw-bold">Categoria</Form.Label>
-            <Form.Control
-              type="text"
-              value={solicitud.categoria}
-              readOnly
-            ></Form.Control>
-          </div>
-          <div className="col-4">
-            <Form.Label className="fw-bold">Producto</Form.Label>
-            <Form.Control
-              type="text"
-              value={solicitud.producto}
-              readOnly
-            ></Form.Control>
-          </div>
-        </div>
-        {solicitud.tipoServicio === "Reparacion" || solicitud.tipoServicio === "Reparación" ? (
-          <>
-            <div className="my-4"></div>
-            <div className="row">
-              <div className="col-12">
-                <Form.Group controlId="descripcion">
-                  <Form.Label className="fw-bold">Descripcion del problema</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    type="text"
-                    value={solicitud.descripcion}
-                    readOnly
-                    style={{ resize: "vertical" }}
-                  />
-                </Form.Group>
-              </div>
-            </div>
-          </>
-        ) : null}
-        {solicitud.diagnosticoTecnico ? (
-          <div className="my-4">
-            <div className="row">
-              <div className="col-12">
-                <Form.Group controlId="descripcion">
-                  <Form.Label className="fw-bold">Diagnostico Tecnico</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    type="text"
-                    value={solicitud.diagnosticoTecnico}
-                    readOnly
-                    style={{ resize: "vertical" }}
-                  />
-                </Form.Group>
-              </div>
-            </div>
-          </div>
-        ) : null}
-        {solicitud.mantenimiento?.checklist && (
-          <Form.Group className="mt-3" controlId="checklist">
-            <Form.Label className="fw-bold">Checklist de Mantenimiento</Form.Label>
-            <ListGroup>
-              {solicitud.mantenimiento?.checklist.map((item) => (
-                <ListGroup.Item key={item.id}>
-                  {item.descripcion}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Form.Group>
-        )}
-
-        <hr />
-
-        {solicitud.conLogistica && solicitud.envio !== null ? (
-          <>
-            <div className="row my-3">
-              <div className="col-12">
-                <h5>Con servicio de logistica</h5>
-              </div>
-            </div>
-            <div className="col-12 row my-3">
-              <div className="col-8">
-                <h5>Nro de seguimiento: {solicitud.envio.nroSeguimiento}</h5>
-              </div>
-
-              <div className="col-4 text-end">
-                <Button
-                  variant="outline-primary"
-                  onClick={handleToggleDeliverDetails}
-                >
-                  {mostrarDetalles ? "Ocultar detalles" : "Consultar envío"}
-                </Button>
-              </div>
-              {mostrarDetalles && (
-                <div className="mt-3">
-                  <p>
-                    <strong>Fecha de solicitud:</strong> {envioDetails.fecha}
-                  </p>
-                  <p>
-                    <strong>Estado:</strong> {envioDetails.estado}
-                  </p>
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
                 </div>
-              )}
             </div>
-          </>
-        ) : (
-          <div className="col-4">
-            <h5>Sin servicio de logistica</h5>
-          </div>
-        )}
-      </Form>
+        );
+    }
 
-      <div className="d-flex justify-content-end mt-3">
-        <Button
-          variant="secondary"
-          className="custom-button"
-          onClick={() => navigate("../requests")}
-        >
-          Volver
-        </Button>
-      </div>
+    if (error || !solicitud) {
+        return (
+            <div className="alert alert-danger">
+                {error || 'Solicitud no encontrada'}
+            </div>
+        );
+    }
 
-      <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmar Aceptación</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          ¿Estás seguro de que deseas aceptar esta solicitud?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAcceptModal(false)}>
-            Atrás
-          </Button>
-          <Button variant="success" onClick={handleAccept}>
-            Confirmar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+    const timeline = getTimelineStatus(solicitud.estado);
+    const estadoActual = solicitud.estado?.toLowerCase();
 
-      <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmar Rechazo</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          ¿Estás seguro de que deseas rechazar esta solicitud?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
-            Atrás
-          </Button>
-          <Button variant="danger" onClick={handleReject}>
-            Confirmar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+    return (
+        <div className="request-details-container">
+            {/* Header con estado */}
+            <div className="card mb-4">
+                <div className="card-header d-flex justify-content-between align-items-center">
+                    <h4 className="mb-0">Solicitud #{solicitud.id}</h4>
+                    <span className={`badge ${getEstadoBadge(solicitud.estado)} fs-6`}>
+                        {getEstadoTexto(solicitud.estado)}
+                    </span>
+                </div>
+                <div className="card-body">
+                    {/* Timeline de estados */}
+                    {estadoActual !== 'cancelada' && estadoActual !== 'rechazada' && (
+                        <div className="status-timeline mb-4">
+                            <div className={`timeline-step ${timeline.pendiente ? 'active' : ''}`}>
+                                <div className="step-icon">1</div>
+                                <span>Pendiente</span>
+                            </div>
+                            <div className={`timeline-step ${timeline.presupuestada ? 'active' : ''}`}>
+                                <div className="step-icon">2</div>
+                                <span>Presupuestada</span>
+                            </div>
+                            <div className={`timeline-step ${timeline.aprobada ? 'active' : ''}`}>
+                                <div className="step-icon">3</div>
+                                <span>Aprobada</span>
+                            </div>
+                            <div className={`timeline-step ${timeline.enProceso ? 'active' : ''}`}>
+                                <div className="step-icon">4</div>
+                                <span>En Proceso</span>
+                            </div>
+                            <div className={`timeline-step ${timeline.finalizada ? 'active' : ''}`}>
+                                <div className="step-icon">5</div>
+                                <span>Finalizada</span>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Mensaje para estados cancelada/rechazada */}
+                    {(estadoActual === 'cancelada' || estadoActual === 'rechazada') && (
+                        <div className={`alert ${estadoActual === 'cancelada' ? 'alert-dark' : 'alert-danger'}`}>
+                            <i className={`bi ${estadoActual === 'cancelada' ? 'bi-x-circle' : 'bi-exclamation-triangle'} me-2`}></i>
+                            Esta solicitud ha sido {estadoActual}.
+                        </div>
+                    )}
+                </div>
+            </div>
 
-      <ToastContainer position="top-end" className="p-3">
-        <Toast
-          bg="danger"
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
-        >
-          <Toast.Header>
-            <strong className="me-auto text-white">Error</strong>
-          </Toast.Header>
-          <Toast.Body className="text-white">{errorMessage}</Toast.Body>
-        </Toast>
-      </ToastContainer>
-    </>
-  );
+            {/* Información general */}
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="card mb-4">
+                        <div className="card-header">
+                            <h5 className="mb-0"><i className="bi bi-info-circle me-2"></i>Información General</h5>
+                        </div>
+                        <div className="card-body">
+                            <dl className="row mb-0">
+                                <dt className="col-sm-5">Tipo de Servicio:</dt>
+                                <dd className="col-sm-7">{solicitud.tipoServicio || 'N/A'}</dd>
+
+                                <dt className="col-sm-5">Fecha Solicitud:</dt>
+                                <dd className="col-sm-7">
+                                    {solicitud.fechaGeneracion ? new Date(solicitud.fechaGeneracion).toLocaleDateString('es-AR', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    }) : 'N/A'}
+                                </dd>
+
+                                <dt className="col-sm-5">Categoría:</dt>
+                                <dd className="col-sm-7">{solicitud.categoria || 'N/A'}</dd>
+
+                                <dt className="col-sm-5">Producto:</dt>
+                                <dd className="col-sm-7">{solicitud.producto || 'N/A'}</dd>
+
+                                <dt className="col-sm-5">Con Logística:</dt>
+                                <dd className="col-sm-7">{solicitud.con_logistica ? 'Sí' : 'No'}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-md-6">
+                    <div className="card mb-4">
+                        <div className="card-header">
+                            <h5 className="mb-0"><i className="bi bi-currency-dollar me-2"></i>Información del Servicio</h5>
+                        </div>
+                        <div className="card-body">
+                            <dl className="row mb-0">
+                                <dt className="col-sm-5">Monto:</dt>
+                                <dd className="col-sm-7 fw-bold text-success">
+                                    {solicitud.monto ? `$${solicitud.monto}` : 'Pendiente de presupuesto'}
+                                </dd>
+
+                                <dt className="col-sm-5">Fecha Estimada:</dt>
+                                <dd className="col-sm-7">
+                                    {solicitud.fechaEstimada ? new Date(solicitud.fechaEstimada).toLocaleDateString('es-AR') : 'Por definir'}
+                                </dd>
+
+                                <dt className="col-sm-5">Fecha Finalizada:</dt>
+                                <dd className="col-sm-7">
+                                    {solicitud.fechaFinalizada ? new Date(solicitud.fechaFinalizada).toLocaleDateString('es-AR') : '-'}
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Descripción */}
+            {solicitud.descripcion && (
+                <div className="card mb-4">
+                    <div className="card-header">
+                        <h5 className="mb-0"><i className="bi bi-card-text me-2"></i>Descripción del Problema</h5>
+                    </div>
+                    <div className="card-body">
+                        <p className="mb-0">{solicitud.descripcion}</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Diagnóstico Técnico */}
+            {solicitud.diagnosticoTecnico && (
+                <div className="card mb-4">
+                    <div className="card-header">
+                        <h5 className="mb-0"><i className="bi bi-tools me-2"></i>Diagnóstico Técnico</h5>
+                    </div>
+                    <div className="card-body">
+                        <p className="mb-0">{solicitud.diagnosticoTecnico}</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Checklist de mantenimiento */}
+            {solicitud.mantenimiento?.checklist && solicitud.mantenimiento.checklist.length > 0 && (
+                <div className="card mb-4">
+                    <div className="card-header">
+                        <h5 className="mb-0"><i className="bi bi-list-check me-2"></i>Tareas de Mantenimiento</h5>
+                    </div>
+                    <div className="card-body">
+                        <ul className="list-group list-group-flush">
+                            {solicitud.mantenimiento.checklist.map((item) => (
+                                <li key={item.id} className="list-group-item">
+                                    <i className="bi bi-check-circle text-success me-2"></i>
+                                    {item.descripcion}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )}
+
+            {/* Acciones */}
+            <div className="buttons-container">
+                <button 
+                    className="btn btn-secondary custom-button secondary"
+                    onClick={() => navigate('/users/requests')}
+                >
+                    <i className="bi bi-arrow-left me-2"></i>Volver
+                </button>
+                
+                {/* Botones para aprobar/rechazar presupuesto */}
+                {estadoActual === 'presupuestada' && (
+                    <>
+                        <button 
+                            className="btn btn-success custom-button"
+                            onClick={handleAprobar}
+                        >
+                            <i className="bi bi-check-circle me-2"></i>Aprobar Presupuesto
+                        </button>
+                        <button 
+                            className="btn btn-danger custom-button"
+                            onClick={handleRechazar}
+                        >
+                            <i className="bi bi-x-circle me-2"></i>Rechazar Presupuesto
+                        </button>
+                    </>
+                )}
+                
+                {/* Botón cancelar solo para estados pendiente/presupuestada */}
+                {['pendiente', 'presupuestada'].includes(estadoActual) && (
+                    <button 
+                        className="btn btn-outline-danger custom-button"
+                        onClick={handleCancelar}
+                    >
+                        <i className="bi bi-x-circle me-2"></i>Cancelar Solicitud
+                    </button>
+                )}
+            </div>
+        </div>
+    );
 }
