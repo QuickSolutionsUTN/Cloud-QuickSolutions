@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import '../ModalJoin.css';
-import axios from 'axios';
+import apiService from '../../services/axiosConfig.jsx';
 import { useBackendURL } from '../../contexts/BackendURLContext';
 import AuthContext from '../../contexts/AuthContext.jsx';
 
@@ -32,9 +32,7 @@ export default function UserAddressModal({ show, onClose, onSubmit, initialData 
 
         const fetchProvinciasAndMaybeLocalidades = async () => {
             try {
-                const resp = await axios.get(`${backendURL}/api/provincias/`, {
-                    headers: { Authorization: `Bearer ${userToken}` }
-                });
+                const resp = await apiService.getStates();
                 if (!mounted) return;
                 setProvincias(resp.data);
 
@@ -46,9 +44,7 @@ export default function UserAddressModal({ show, onClose, onSubmit, initialData 
                         setValue('provincia', provId.toString());
 
                         try {
-                            const locResp = await axios.get(`${backendURL}/api/localidades/?provincia_id=${provId}`, {
-                                headers: { Authorization: `Bearer ${userToken}` }
-                            });
+                            const locResp = await apiService.getLocalityByStateId(provId);
                             if (!mounted) return;
                             setLocalidadesFiltradas(locResp.data);
                             if (initialData.localidad) {
@@ -102,9 +98,7 @@ export default function UserAddressModal({ show, onClose, onSubmit, initialData 
             return;
         }
         try {
-            const resp = await axios.get(`${backendURL}/api/localidades/?provincia_id=${val}`, {
-                headers: { Authorization: `Bearer ${userToken}` }
-            });
+            const resp = await apiService.getLocalityByStateId(Number(val));
             setLocalidadesFiltradas(resp.data);
             setValue('id_localidad', '');
         } catch (err) {
