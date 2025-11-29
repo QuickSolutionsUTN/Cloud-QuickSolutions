@@ -135,6 +135,13 @@ class MisSolicitudesView(generics.ListAPIView):
             id_solicitante=self.request.user
         ).order_by('-fecha_generacion')
 
+class solicitudesAdminListView(generics.ListAPIView):
+    """Obtiene todas las solicitudes (para admin)"""
+    permission_classes = [IsAuthenticated]
+    serializer_class = SolicitudDetailSerializer
+
+    def get_queryset(self):
+        return SolicitudServicio.objects.all().order_by('-fecha_generacion')
 
 class CancelarSolicitudView(APIView):
     """Permite al usuario cancelar su propia solicitud si está pendiente"""

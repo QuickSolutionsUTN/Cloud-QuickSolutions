@@ -20,6 +20,8 @@ urlpatterns = [
     path('solicitud/mis-solicitudes/', views.MisSolicitudesView.as_view(), name='mis-solicitudes'),
     path('solicitud/<int:pk>/cancelar/', views.CancelarSolicitudView.as_view(), name='cancelar-solicitud'),
 
+    path('solicitudes/', views.solicitudesAdminListView.as_view(), name='solicitud-lista'),
+
     path('mantenimiento/', views.TipoMantenimientoListCreateView.as_view(), name='mantenimiento-lista-crear'),
     path('mantenimiento/<int:pk>/', views.TipoMantenimientoDetailView.as_view(), name='mantenimiento-detalle'),
 

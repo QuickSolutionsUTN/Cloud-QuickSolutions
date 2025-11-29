@@ -91,6 +91,7 @@ const apiService = {
 
   // Solicitudes
   createRequest: (data) => api.post("/solicitud/", data),
+  getRequestsAdmin: () => api.get("/solicitudes/"),
   updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin`, data),
   updateRequestReviewed: (id) => api.put(`/solicitud/${id}/iniciar`),
   updateRequestBudgetAdmin: (data) => api.put(`/solicitud/${data.id}/presupuestar`, data),
