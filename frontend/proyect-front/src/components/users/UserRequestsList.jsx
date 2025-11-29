@@ -35,8 +35,8 @@ export default function UserRequestsList() {
             'aprobada': 'bg-success',
             'rechazada': 'bg-danger',
             'en proceso': 'bg-primary',
-            'finalizada': 'bg-secondary',
-            'cancelada': 'bg-dark'
+            'finalizada': 'bg-dark',
+            'cancelada': 'bg-danger'
         };
         return estados[estado?.toLowerCase()] || 'bg-secondary';
     };

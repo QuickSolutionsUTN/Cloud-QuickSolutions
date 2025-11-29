@@ -21,17 +21,17 @@ export default function RequestDetails() {
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const getBadgeVariant = (estado) => {
-    const variantes = {
-      "Pendiente": "primary",
+    const estados = {
+      "Pendiente": "warning",
       "Revisada": "secondary",
-      "Presupuestada": "warning",
+      "Presupuestada": "info",
       "Aprobada": "success",
-      "En Proceso": "info",
+      "En Proceso": "primary",
       "Finalizada": "dark",
       "Cancelada": "danger",
       "Rechazada": "danger",
     };
-    return variantes[estado] || "primary";
+    return estados[estado] || "primary";
   };
 
   useEffect(() => {
