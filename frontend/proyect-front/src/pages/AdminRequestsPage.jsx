@@ -100,10 +100,12 @@ export default function AdminRequestsPage() {
               <FontAwesomeIcon icon={faArrowDown} />
             </Button>
           </div>
-          <AdminRequestsTable
-            initialData={requests}
-            handleDownload={handleDownloadItem}
-          />
+          <div className="p-2 flex-grow-1 overflow-auto">
+            <AdminRequestsTable
+              initialData={requests}
+              handleDownload={handleDownloadItem}
+            />
+          </div>
         </>
       )}
     </div>
