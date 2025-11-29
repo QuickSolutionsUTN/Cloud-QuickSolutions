@@ -129,7 +129,7 @@ export default function FormSummary({ formData }) {
       ],
       extraData: formData.logisticsData.conLogistica
         ? [
-          { label: "Calle", value: domicilio?.calle ?? "No especificado" },
+          { label: "Dirección", value: domicilio?.calle + " N° " + (domicilio?.numero || domicilio?.numero_calle) ?? "No especificado" },
           { label: "Piso", value: domicilio?.piso ?? "No especificado" },
           { label: "Departamento", value: domicilio?.departamento ?? "No especificado" },
           { label: "Provincia", value: domicilio?.provincia ?? "No especificado" },
