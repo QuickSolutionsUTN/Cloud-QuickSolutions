@@ -1,7 +1,5 @@
-import React from "react";
 import { Accordion } from "react-bootstrap";
-import { useEffect, useState } from "react";
-import { useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import AuthContext from "../../../contexts/AuthContext.jsx";
 import apiService from "../../../services/axiosConfig";
 
@@ -14,8 +12,8 @@ export default function FormSummary({ formData }) {
   const [localidades, setLocalidades] = useState([]);
   const [maintenanceArray, setMaintenanceArray] = useState(null);
   const { user } = useContext(AuthContext);
-  const [userData, setUserData] = React.useState({});
-  const [loading, setLoading] = React.useState(true);
+  const [userData, setUserData] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadCategories();
@@ -131,12 +129,12 @@ export default function FormSummary({ formData }) {
       ],
       extraData: formData.logisticsData.conLogistica
         ? [
-          { label: "Calle", value: domicilio?.calle },
-          { label: "Piso", value: domicilio?.piso },
-          { label: "Departamento", value: domicilio?.departamento },
-          { label: "Provincia", value: domicilio?.provincia },
-          { label: "Localidad", value: domicilio?.localidad_nombre },
-          { label: "Código Postal", value: domicilio?.codigo_postal }
+          { label: "Calle", value: domicilio?.calle ?? "No especificado" },
+          { label: "Piso", value: domicilio?.piso ?? "No especificado" },
+          { label: "Departamento", value: domicilio?.departamento ?? "No especificado" },
+          { label: "Provincia", value: domicilio?.provincia ?? "No especificado" },
+          { label: "Localidad", value: domicilio?.localidad_nombre ?? "No especificado" },
+          { label: "Código Postal", value: domicilio?.codigo_postal ?? "No especificado" }
         ]
         : []
     } 

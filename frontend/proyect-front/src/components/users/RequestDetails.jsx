@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
@@ -25,9 +25,8 @@ export default function RequestDetails() {
   const [showToast, setShowToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [badgeVariant, setBadgeVariant] = useState("primary");
-  const [mostrarDetalles, setMostrarDetalles] = useState(false);
   const { user } = useContext(AuthContext);
-  const [userData, setUserData] = React.useState({});
+  const [userData, setUserData] = useState({});
   const getBadgeVariant = (estado) => {
     switch (estado) {
       case "Revisada":
@@ -123,12 +122,7 @@ export default function RequestDetails() {
     setShowToast(true);
   };
 
-  // Función que cambia el estado al hacer clic
-  const handleToggleDeliverDetails = () => {
-    console.log("Solicitando detalles de envio a la API veloway...");
-    getEnvioDetails();
-    setMostrarDetalles(!mostrarDetalles);
-  };
+  
 
   const getEnvioDetails = async () => {
     try {
@@ -316,7 +310,7 @@ export default function RequestDetails() {
           </div>
         ) : (
           <div className="col-4">
-            <h5>Sin servicio de logistica</h5>
+            <h5>Sin servicio a domicilio</h5>
           </div>
         )}
       </Form>
