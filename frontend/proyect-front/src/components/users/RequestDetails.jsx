@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
@@ -9,17 +9,15 @@ import {
   Badge,
   ListGroup,
 } from "react-bootstrap";
-import { useBackendURL } from "../../contexts/BackendURLContext.jsx";
 import AuthContext from "../../contexts/AuthContext.jsx";
 import { useParams } from "react-router-dom";
 import apiService from "../../services/axiosConfig.jsx";
 import envioService from "../../services/apiEnviosService.jsx";
+import AddressCard from "./UserAddressCard.jsx";
 
 export default function RequestDetails() {
-  const { userToken } = useContext(AuthContext);
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
-  const backendURL = useBackendURL();
   const [fechaFormateada, setFechaFormateada] = useState("");
   const navigate = useNavigate();
   const [showAcceptModal, setShowAcceptModal] = useState(false);
@@ -27,12 +25,8 @@ export default function RequestDetails() {
   const [showToast, setShowToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [badgeVariant, setBadgeVariant] = useState("primary");
-  const [mostrarDetalles, setMostrarDetalles] = useState(false);
-  const [envioDetails, setEnvioDetails] = useState({
-    estado: "",
-    origen: null,
-    fecha: null,
-  });
+  const { user } = useContext(AuthContext);
+  const [userData, setUserData] = useState({});
   const getBadgeVariant = (estado) => {
     switch (estado) {
       case "Revisada":
@@ -53,7 +47,6 @@ export default function RequestDetails() {
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
       try {
-        console.log("Fetching solicitud details...", backendURL);
         const response = await apiService.getRequestById(solicitudId);
         console.log("Solicitud details:", response.data);
         setSolicitud(response.data);
@@ -73,7 +66,23 @@ export default function RequestDetails() {
       }
     };
     fetchSolicitudDetails();
-  }, [solicitudId, backendURL]);
+  }, [solicitudId]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        console.log('Obteniendo datos del usuario...', user.id);
+        const response = await apiService.getUserProfile(user.id);
+        console.log('Datos recibidos:', response.data);
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [ user, ]);
+  const domicilio = userData.domicilio ?? null;
 
   const handleAccept = async () => {
     const dataToUpdate = {
@@ -113,12 +122,7 @@ export default function RequestDetails() {
     setShowToast(true);
   };
 
-  // Función que cambia el estado al hacer clic
-  const handleToggleDeliverDetails = () => {
-    console.log("Solicitando detalles de envio a la API veloway...");
-    getEnvioDetails();
-    setMostrarDetalles(!mostrarDetalles);
-  };
+  
 
   const getEnvioDetails = async () => {
     try {
@@ -289,41 +293,24 @@ export default function RequestDetails() {
 
         <hr />
 
-        {solicitud.conLogistica && solicitud.envio !== null ? (
-          <>
-            <div className="row my-3">
-              <div className="col-12">
-                <h5>Con servicio de logistica</h5>
-              </div>
+        {solicitud.con_logistica ? (
+          <div className="mb-3">
+            <div className="col-4 mb-3">
+              <h5>Con servicio a domicilio</h5>
             </div>
-            <div className="col-12 row my-3">
-              <div className="col-8">
-                <h5>Nro de seguimiento: {solicitud.envio.nroSeguimiento}</h5>
-              </div>
-
-              <div className="col-4 text-end">
-                <Button
-                  variant="outline-primary"
-                  onClick={handleToggleDeliverDetails}
-                >
-                  {mostrarDetalles ? "Ocultar detalles" : "Consultar envío"}
-                </Button>
-              </div>
-              {mostrarDetalles && (
-                <div className="mt-3">
-                  <p>
-                    <strong>Fecha de solicitud:</strong> {envioDetails.fecha}
-                  </p>
-                  <p>
-                    <strong>Estado:</strong> {envioDetails.estado}
-                  </p>
-                </div>
-              )}
-            </div>
-          </>
+            <AddressCard
+            street={domicilio?.calle || 'No especificado'}
+            province={domicilio?.provincia || 'No especificado'}
+            locality={domicilio?.localidad_nombre || 'No especificado'}
+            zipCode={domicilio?.codigo_postal || 'No especificado'}
+            floor={domicilio?.piso || 'No especificado'}
+              department={domicilio?.departamento || 'No especificado'}
+              noHover={true}
+          />
+          </div>
         ) : (
           <div className="col-4">
-            <h5>Sin servicio de logistica</h5>
+            <h5>Sin servicio a domicilio</h5>
           </div>
         )}
       </Form>
