@@ -3,13 +3,15 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly 
-from .models import Perfiles, Categoria, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Provincia, Localidad
+from django.db.models import Count
+from .models import Perfiles, Categoria, Producto, TipoServicio, TipoMantenimiento, SolicitudServicio, SolicitudServicioEstado, Provincia, Localidad, Usuario
 from .serializers import (
     PerfilesSerializer, 
     CategoriaSerializer, 
     ProductoSerializer,
     CrearSolicitudSerializer,
     SolicitudServicioSerializer,
+    SolicitudListAdminSerializer,
 #    EnvioSerializer,
     SolicitudDetailSerializer,
     TipoMantenimientoSerializer, 
@@ -19,11 +21,11 @@ from .serializers import (
 )
 
 class PerfilesListCreateView(generics.ListCreateAPIView):
-    queryset = Perfiles.objects.all()
+    queryset = Perfiles.objects.select_related('id').prefetch_related('id__domicilio_set__id_localidad__id_provincia')
     serializer_class = PerfilesSerializer
 
 class PerfilesDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Perfiles.objects.all()
+    queryset = Perfiles.objects.select_related('id').prefetch_related('id__domicilio_set__id_localidad__id_provincia')
     serializer_class = PerfilesSerializer
 
 
@@ -57,6 +59,19 @@ class ProductoPorCategoriaView(generics.ListAPIView):
 ##############
 class CrearSolicitudView(APIView):
     permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        """Lista todas las solicitudes (para admin dashboard)"""
+        solicitudes = SolicitudServicio.objects.select_related(
+            'id_solicitante',
+            'id_tipo_servicio',
+            'id_producto',
+            'id_producto__id_categoria',
+            'id_solicitud_servicio_estado'
+        ).order_by('-fecha_generacion')
+        serializer = SolicitudListAdminSerializer(solicitudes, many=True)
+        return Response(serializer.data)
+    
     def post(self, request):
         serializer = CrearSolicitudSerializer(data=request.data)
         if not serializer.is_valid():
@@ -121,7 +136,14 @@ class CrearSolicitudView(APIView):
 
 class SolicitudDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = SolicitudServicio.objects.all()
+    queryset = SolicitudServicio.objects.select_related(
+        'id_solicitante',
+        'id_tipo_servicio',
+        'id_producto',
+        'id_producto__id_categoria',
+        'id_solicitud_servicio_estado',
+        'id_tipo_mantenimiento'
+    )
     serializer_class = SolicitudDetailSerializer  
 
 
@@ -131,7 +153,14 @@ class MisSolicitudesView(generics.ListAPIView):
     serializer_class = SolicitudDetailSerializer
 
     def get_queryset(self):
-        return SolicitudServicio.objects.filter(
+        return SolicitudServicio.objects.select_related(
+            'id_solicitante',
+            'id_tipo_servicio',
+            'id_producto',
+            'id_producto__id_categoria',
+            'id_solicitud_servicio_estado',
+            'id_tipo_mantenimiento'
+        ).filter(
             id_solicitante=self.request.user
         ).order_by('-fecha_generacion')
 
@@ -237,3 +266,67 @@ class PerfilesDomicilioView(generics.RetrieveUpdateDestroyAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class DashboardStatsView(APIView):
+    """
+    Endpoint optimizado para el dashboard admin.
+    Devuelve todas las estadísticas en una sola llamada con queries optimizadas.
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        # Query optimizada para solicitudes con todas las relaciones necesarias
+        solicitudes = SolicitudServicio.objects.select_related(
+            'id_solicitante',
+            'id_tipo_servicio',
+            'id_producto',
+            'id_producto__id_categoria',
+            'id_solicitud_servicio_estado'
+        ).values(
+            'id',
+            'monto',
+            'con_logistica',
+            'fecha_generacion',
+            'fecha_aprobada',
+            'fecha_finalizada',
+            'fecha_presupuestada',
+            'fecha_cancelada',
+            'id_solicitante__email',
+            'id_tipo_servicio__descripcion',
+            'id_producto__descripcion',
+            'id_producto__id_categoria__descripcion',
+            'id_solicitud_servicio_estado__descripcion',
+        ).order_by('-fecha_generacion')
+        
+        # Formatear solicitudes para el frontend
+        solicitudes_data = [
+            {
+                'id': s['id'],
+                'emailSolicitante': s['id_solicitante__email'],
+                'tipoServicio': s['id_tipo_servicio__descripcion'],
+                'categoria': s['id_producto__id_categoria__descripcion'],
+                'producto': s['id_producto__descripcion'],
+                'estado': s['id_solicitud_servicio_estado__descripcion'],
+                'fechaGeneracion': s['fecha_generacion'],
+                'monto': s['monto'],
+                'fechaAprobada': s['fecha_aprobada'],
+                'fechaFinalizada': s['fecha_finalizada'],
+                'fechaPresupuestada': s['fecha_presupuestada'],
+                'fechaCancelada': s['fecha_cancelada'],
+                'conLogistica': s['con_logistica'],
+            }
+            for s in solicitudes
+        ]
+        
+        # Conteos simples (1 query cada uno)
+        usuarios_count = Perfiles.objects.count() 
+        productos_count = Producto.objects.count()
+        mantenimientos_count = TipoMantenimiento.objects.count()
+        
+        return Response({
+            'solicitudes': solicitudes_data,
+            'usuariosCount': usuarios_count,
+            'productosCount': productos_count,
+            'mantenimientosCount': mantenimientos_count,
+        })

@@ -25,6 +25,8 @@ urlpatterns = [
 
     path('provincias/', views.ProvinciaListView.as_view(), name='provincia-lista'),
     path('localidades/', views.LocalidadListView.as_view(), name='localidad-lista'),
-    path('perfiles/<uuid:pk>/domicilio', views.PerfilesDomicilioView.as_view(), name='perfiles-direccion'),
+    path('perfiles/<uuid:pk>/domicilio/', views.PerfilesDomicilioView.as_view(), name='perfiles-direccion'),
+
+    path('dashboard/stats/', views.DashboardStatsView.as_view(), name='dashboard-stats'),
 
 ]
