@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 // react-bootstrap components
 import {
   Spinner,
@@ -9,22 +9,17 @@ import {
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faUser } from "@fortawesome/free-regular-svg-icons";
-import { faBolt, faScrewdriverWrench, faSquare, faX, faCheck, faDollarSign, faHourglass, faTruck, faPercent, faHelmetSafety, faBold } from "@fortawesome/free-solid-svg-icons";
+import { faBolt, faScrewdriverWrench, faSquare, faX, faCheck, faDollarSign, faHourglass, faTruck, faPercent } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/axiosConfig";
-import { useBackendURL } from '../contexts/BackendURLContext';
-import AuthContext from '../contexts/AuthContext';
-import axios from 'axios';
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, ArcElement } from "chart.js";
 import "./adminDashboardPage.css";
-import { set } from "react-hook-form";
 
 
 export default function AdminDashboardPage() {
   const [solicitudes, setSolicitudes] = useState([]);
   const [stateCount, setStateCount] = useState([0, 0, 0, 0, 0, 0]);
   const [serviceTypeCount, setServiceTypeCount] = useState([0, 0]);
-  const [localRepairCount, setLocalRepairCount] = useState([0, 0]);
   const [monthlyEarnings, setMonthlyEarnings] = useState(0);
   const [aprobedBudgetsCount, setAprobedBudgetsCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
@@ -32,74 +27,44 @@ export default function AdminDashboardPage() {
   const [deliveryServiceCount, setDeliveryServiceCount] = useState(0);
   const [successfullMaintenances, setSuccessfullMaintenances] = useState(0);
   const [successfullRepairs, setSuccessfullRepairs] = useState(0);
-  const[maintenanceArray, setMaintenanceArray] = useState([]);
-  const [productos, setProductos] = useState([]);
-  const [usuarios, setUsuarios] = useState([]);
-  const backendURL = useBackendURL();
-  const { userToken } = useContext(AuthContext);
+  const [productosCount, setProductosCount] = useState(0);
+  const [usuariosCount, setUsuariosCount] = useState(0);
+  const [mantenimientosCount, setMantenimientosCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getSolicitudes = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiService.getRequestsAdmin();
-        console.log("Solicitudes obtenidas:", response.data);
-        setSolicitudes(response.data);
-        console.log("Solicitudes:", solicitudes);
-        setLoading(false);
+        setLoading(true);
+        
+        // Una sola llamada optimizada al backend
+        const response = await apiService.getDashboardStats();
+        const { solicitudes, usuariosCount, productosCount, mantenimientosCount } = response.data;
+        
+        setSolicitudes(solicitudes);
+        setUsuariosCount(usuariosCount);
+        setProductosCount(productosCount);
+        setMantenimientosCount(mantenimientosCount);
+        
       } catch (error) {
-        console.error("Error al obtener las solicitudes:", error);
+        console.error("Error al obtener datos del dashboard:", error);
+      } finally {
         setLoading(false);
       }
     };
-    const getMaintenanceArray = async () => {
-      try {
-        const response = await apiService.getMaintenanceArray();
-        console.log("Productos obtenidos:", response.data);
-        setMaintenanceArray(response.data);
-        console.log("Productos:", productos);
-      } catch (error) {
-        console.error("Error al obtener los productos:", error);
-        setLoading(false);
-      }
-    }
-    const getProductos = async () => {
-      try {
-        const response = await apiService.getProducts();
-        console.log("Productos obtenidos:", response.data);
-        setProductos(response.data);
-        console.log("Productos:", productos);
-      } catch (error) {
-        console.error("Error al obtener los productos:", error);
-        setLoading(false);
-      }
-    }
-    const getUsuarios = async () => {
-      try {
-        const response = await axios.get(`${backendURL}/api/users`, {
-          headers: {
-            Authorization: `Bearer ${userToken}`
-          }
-        });
-        console.log("Usuarios obtenidos:", response.data);
-        setUsuarios(response.data);
-        console.log("Usuarios:", usuarios);
-      } catch (error) {
-        console.error("Error al obtener los usuarios:", error);
-        setLoading(false);
-      }
-    };
-    getSolicitudes();
-    getMaintenanceArray();
-    getProductos();
-    getUsuarios();
+    
+    fetchData();
   }, []);
 
   useEffect(() => {
-    let count = [0, 0, 0, 0, 0, 0];
+    if (solicitudes.length === 0) return;
+
+    // Conteo por estado
+    const count = [0, 0, 0, 0, 0, 0]; // Pendiente, Revisada, Presupuestada, Aprobada, Finalizada, Cancelada
     solicitudes.forEach((solicitud) => {
-      switch (solicitud.estado) {
-        case "Iniciada":
+      const estado = solicitud.estado;
+      switch (estado) {
+        case "Pendiente":
           count[0]++;
           break;
         case "Revisada":
@@ -123,47 +88,61 @@ export default function AdminDashboardPage() {
     });
     setStateCount(count);
 
-    let typeCount = [0, 0];
+    // Conteo por tipo de servicio
+    const typeCount = [0, 0]; // Reparación, Mantenimiento
     solicitudes.forEach((solicitud) => {
-      switch (solicitud.tipoServicio) {
-        case "Reparacion":
-          typeCount[0]++;
-          break;
-        case "mantenimiento":
-          typeCount[1]++;
-          break;
-        default:
-          break;
+      const tipo = solicitud.tipoServicio?.toLowerCase();
+      if (tipo === "reparacion" || tipo === "reparación") {
+        typeCount[0]++;
+      } else if (tipo === "mantenimiento") {
+        typeCount[1]++;
       }
     });
     setServiceTypeCount(typeCount);
 
-    let localCount = [0, 0];
+    // Otras métricas
     let aprobedBudget = 0;
-    let pendingCount = 0;
+    let pending = 0;
     let rejectedCount = 0;
     let deliverySCount = 0;
     let successfullM = 0;
     let successfullR = 0;
     let earnings = 0;
+
     solicitudes.forEach((solicitud) => {
-      if (!solicitud.tercearizado) localCount[0]++;
-      else localCount[1]++;
+      // Presupuestos aprobados
       if (solicitud.fechaAprobada) aprobedBudget++;
-      if (!solicitud.fechaFinalizada && solicitud.fechaAprobada) pendingCount++;
-      if (solicitud.fechaPresupuestada && solicitud.estado == "Cancelada") rejectedCount++;
+      
+      // Pendientes de finalización (aprobadas pero no finalizadas)
+      if (solicitud.fechaAprobada && !solicitud.fechaFinalizada && solicitud.estado !== "Cancelada") {
+        pending++;
+      }
+      
+      // Presupuestos rechazados (canceladas después de presupuestar)
+      if (solicitud.fechaPresupuestada && solicitud.estado === "Cancelada") {
+        rejectedCount++;
+      }
+      
+      // Con servicio a domicilio
       if (solicitud.conLogistica) deliverySCount++;
-      if (solicitud.fechaFinalizada && solicitud.tipoServicio == "mantenimiento") successfullM++;
-      if (solicitud.fechaFinalizada && solicitud.tipoServicio == "Reparacion") successfullR++;
-      if (solicitud.fechaFinalizada) earnings += solicitud.monto;
+      
+      // Finalizados por tipo
+      const tipoServicio = solicitud.tipoServicio?.toLowerCase();
+      if (solicitud.fechaFinalizada) {
+        if (tipoServicio === "mantenimiento") successfullM++;
+        if (tipoServicio === "reparacion" || tipoServicio === "reparación") successfullR++;
+        earnings += solicitud.monto || 0;
+      }
     });
-    setLocalRepairCount(localCount);
+
     setAprobedBudgetsCount(aprobedBudget);
-    setPendingCount(pendingCount);
+    setPendingCount(pending);
     setRejectedBudgetsCount(rejectedCount);
     setDeliveryServiceCount(deliverySCount);
-    setSuccessfullMaintenances((successfullM * 100) / serviceTypeCount[1]);
-    setSuccessfullRepairs((successfullR * 100) / serviceTypeCount[0]);
+    
+    // Calcular porcentajes (evitar división por cero)
+    setSuccessfullMaintenances(typeCount[1] > 0 ? (successfullM * 100) / typeCount[1] : 0);
+    setSuccessfullRepairs(typeCount[0] > 0 ? (successfullR * 100) / typeCount[0] : 0);
     setMonthlyEarnings(earnings);
 
   }, [solicitudes]);
@@ -174,7 +153,7 @@ export default function AdminDashboardPage() {
 
 
   const dataBar1 = {
-    labels: ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada", "Cancelada"],
+    labels: ["Pendiente", "Revisada", "Presupuestada", "Aprobada", "Finalizada", "Cancelada"],
     datasets: [
       {
         data: [stateCount[0], stateCount[1], stateCount[2], stateCount[3], stateCount[4], stateCount[5]],
@@ -236,13 +215,13 @@ export default function AdminDashboardPage() {
 
   const optionsPie = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     plugins: {
       legend: {
-        position: "top",  // Posición de la leyenda
+        display: false, // Ocultamos la leyenda porque ya mostramos los datos a la izquierda
       },
       tooltip: {
-        enabled: true,  // Habilitar tooltips
+        enabled: true,
       },
     },
   };
@@ -329,8 +308,8 @@ export default function AdminDashboardPage() {
                   <div className="icon-big d-flex justify-content-end">
                     <FontAwesomeIcon icon={faUser} size="lg" className="custom-text-primary" />
                   </div>
-                  <div className="numbers"><h3>{usuarios.length}</h3></div>
-                  <div class="title"><h6>Usuarios</h6></div>
+                  <div className="numbers"><h3>{usuariosCount}</h3></div>
+                  <div className="title"><h6>Usuarios</h6></div>
                 </div>
               </Card.Body>
             </Card>
@@ -402,25 +381,21 @@ export default function AdminDashboardPage() {
                   <Card.Header className="text-center">
                     <Card.Title as="h5">Tipo de solicitud</Card.Title>
                   </Card.Header>
-                  <Card.Body className="d-flex flex-row justify-content-center align-items-center">
-                    <div className="d-flex flex-column ms-3 align-items-center">
-                      <div className="d-flex mb-2 justify-content-between flex-column align-items-center">
-                        <span className="p-1 d-flex flex-row">
-                          <FontAwesomeIcon className="me-1 pt-1" size="lg" style={{ color: "#FF6F61" }} icon={faSquare} />
-                          <h5>Reparaciones </h5></span>
-                        <span><h5>{serviceTypeCount[0]}</h5></span>
+                  <Card.Body className="d-flex flex-row justify-content-around align-items-center">
+                    <div className="d-flex flex-column align-items-start">
+                      <div className="d-flex align-items-center mb-2">
+                        <FontAwesomeIcon className="me-2" size="lg" style={{ color: "#FF6F61" }} icon={faSquare} />
+                        <span className="me-2">Reparaciones:</span>
+                        <strong>{serviceTypeCount[0]}</strong>
                       </div>
-                      <div className="d-flex flex-row justify-content-between flex-column align-items-center">
-                        <span className="p-1 d-flex flex-row">
-                          <FontAwesomeIcon className="me-1 pt-1" size="lg" style={{ color: "#A7C7E7" }} icon={faSquare} />
-                          <h5>Mantenimientos </h5></span >
-                        <span ><h5>{serviceTypeCount[1]}</h5></span>
+                      <div className="d-flex align-items-center">
+                        <FontAwesomeIcon className="me-2" size="lg" style={{ color: "#A7C7E7" }} icon={faSquare} />
+                        <span className="me-2">Mantenimientos:</span>
+                        <strong>{serviceTypeCount[1]}</strong>
                       </div>
                     </div>
-                    <div className="d-flex flex-column align-items-center">
-                      <div className="w-80 h-auto mx-auto">
-                        <Pie data={dataPie} options={optionsPie} />
-                      </div>
+                    <div style={{ width: "150px", height: "150px" }}>
+                      <Pie data={dataPie} options={optionsPie} />
                     </div>
                   </Card.Body>
                 </Card>
@@ -432,13 +407,13 @@ export default function AdminDashboardPage() {
                       <div className="icon-big d-flex justify-content-end">
                         <FontAwesomeIcon icon={faScrewdriverWrench} size="lg" className="custom-text-primary" />
                       </div>
-                      <div className="numbers"><h3>{productos.length}</h3></div>
+                      <div className="numbers"><h3>{productosCount}</h3></div>
                       <div className="title"><h6>Productos en el catalogo</h6></div>
                       <hr />
                       <div className="icon-big d-flex justify-content-end">
                         <FontAwesomeIcon icon={faBolt} size="lg" className="custom-text-primary" />
                       </div>
-                      <div className="numbers"><h3>{maintenanceArray.length}</h3></div>
+                      <div className="numbers"><h3>{mantenimientosCount}</h3></div>
                       <div className="title"><h6>Mantenimientos ofrecidos</h6></div>
                     </div>
                   </Card.Body>
@@ -446,44 +421,25 @@ export default function AdminDashboardPage() {
               </Col>
             </Row>
             <Row className="mt-2 d-flex flex-row">
-              <Col lg="6" sm="6">
+              <Col lg="12" sm="12">
                 <Card className="p-2 card-stats h-100">
                   <Card.Body className="text-center">
-                    <div className="d-flex flex-row justify-content-center">
-
-                      <div className="icon-big d-flex justify-content-end">
-                        <FontAwesomeIcon icon={faTruck} size="lg" className="custom-text-primary" />
+                    <div className="d-flex flex-row justify-content-center align-items-center gap-4">
+                      <div className="icon-big">
+                        <FontAwesomeIcon icon={faTruck} size="2x" className="custom-text-primary" />
                       </div>
-                      <div className="d-flex flex-column">
+                      <div className="d-flex flex-column align-items-center">
                         <div className="numbers"><h3>{deliveryServiceCount}</h3></div>
-                        <div className="title"><h6>Solicitudes con servicio de logistica</h6></div>
+                        <div className="title"><h6>Solicitudes con servicio a domicilio</h6></div>
                       </div>
-                      <div className="d-flex flex-column">
-                        <div className="numbers"><h3>
-                          {Math.round((deliveryServiceCount / solicitudes.length) * 100)}
-                          <FontAwesomeIcon className="ms-2" size="sm" icon={faPercent} /></h3></div>
-                        <div className="title"><h6>Del total de solicitudes</h6></div>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-              <Col lg="6" sm="6">
-                <Card className="p-2 card-stats h-100">
-                  <Card.Body className="text-center">
-                    <div className="d-flex flex-row justify-content-center">
-
-                      <div className="icon-big d-flex justify-content-end">
-                        <FontAwesomeIcon icon={faHelmetSafety} size="lg" className="custom-text-primary" />
-                      </div>
-                      <div className="d-flex flex-column">
-                        <div className="numbers"><h3>{(localRepairCount[1])}</h3></div>
-                        <div className="title"><h6>Solicitudes con personal subcontrado</h6></div>
-                      </div>
-                      <div className="d-flex flex-column">
-                        <div className="numbers"><h3>
-                          {Math.round((localRepairCount[1] / solicitudes.length) * 100)}
-                          <FontAwesomeIcon className="ms-2" size="sm" icon={faPercent} /></h3></div>
+                      <div className="vr"></div>
+                      <div className="d-flex flex-column align-items-center">
+                        <div className="numbers">
+                          <h3>
+                            {solicitudes.length > 0 ? Math.round((deliveryServiceCount / solicitudes.length) * 100) : 0}
+                            <FontAwesomeIcon className="ms-1" size="sm" icon={faPercent} />
+                          </h3>
+                        </div>
                         <div className="title"><h6>Del total de solicitudes</h6></div>
                       </div>
                     </div>
