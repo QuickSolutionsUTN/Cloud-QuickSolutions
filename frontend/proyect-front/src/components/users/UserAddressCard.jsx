@@ -2,10 +2,11 @@ import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './userCardsStyles.css';
 
-const AddressCard = ({ street, province, locality, zipCode, floor, department, onClick, selected }) => {
+const AddressCard = ({ street, province, locality, zipCode, floor, department, onClick, selected, noHover }) => {
   const classNames = ['text-center', 'address-card'];
   if (selected) classNames.push('selected');
   if (onClick) classNames.push('clickable');
+  if (noHover) classNames.push('no-hover');
 
   return (
     <Card className={classNames.join(' ')} onClick={onClick} role={onClick ? 'button' : undefined}>
