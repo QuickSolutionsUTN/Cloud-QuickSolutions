@@ -1,176 +1,226 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { useBackendURL } from "../../contexts/BackendURLContext.jsx";
-import DataTable from "react-data-table-component";
-import axios from "axios";
-import "./userRequestsList.css";
-import {Button, Modal, Spinner} from "react-bootstrap";
-import AuthContext from "../../contexts/AuthContext.jsx";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import apiService from '../../services/axiosConfig';
+import './userRequestsList.css';
 
-function UserRequestsList({ userEmail }) {
-  const [userRequests, setRequests] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedRequestId, setSelectedRequestId] = useState(null);
-  const { userToken } = useContext(AuthContext);
-  const backendURL = useBackendURL();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+export default function UserRequestsList() {
+    const [solicitudes, setSolicitudes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [filtroEstado, setFiltroEstado] = useState('todos');
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log("Fetching user requests...", backendURL, " from user ", {
-          userEmail,
-        });
-        const response = await axios.get(
-          `${backendURL}/api/users/solicitudes`,
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          }
-        );
-        console.log("User requests:", response.data);
-        const mappedData = response.data.map((request) => ({
-          id: request.id,
-          idSolicitud: request.id,
-          tipoServicio: request.tipoServicio,
-          tipoDeProducto: request.tipoDeProducto,
-          fechaGeneracion: new Date(request.fechaGeneracion).toLocaleDateString(
-            "es-ES",
-            { day: "2-digit", month: "2-digit", year: "numeric" }
-          ),
-          estado: request.estado,
-        }));
-        mappedData.sort((a, b) => b.idSolicitud - a.idSolicitud);
-        setRequests(mappedData);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching user requests:", error);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+    useEffect(() => {
+        fetchSolicitudes();
+    }, []);
 
-  const handleCancel = async () => {
-    try {
-      await axios.put(`${backendURL}/api/Solicitud/${selectedRequestId}/estado-usuario`, {
-        id: selectedRequestId,
-        idSolicitudServicioEstado: 6
-      }, {
-        headers: {
-          Authorization: `Bearer ${userToken}`
+    const fetchSolicitudes = async () => {
+        try {
+            setLoading(true);
+            const response = await apiService.getUserRequests();
+            setSolicitudes(response.data);
+        } catch (err) {
+            setError('Error al cargar las solicitudes');
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-      });
-      setRequests(prevRequests => prevRequests.map(request => 
-        request.idSolicitud === selectedRequestId ? { ...request, estado: 'Cancelada' } : request
-      ));
-      setShowModal(false);
-    } catch (error) {
-      console.error('Error al cancelar la solicitud:', error);
+    };
+
+    const getEstadoBadge = (estado) => {
+        const estados = {
+            'pendiente': 'bg-warning text-dark',
+            'presupuestada': 'bg-info text-dark',
+            'aprobada': 'bg-success',
+            'rechazada': 'bg-danger',
+            'en proceso': 'bg-primary',
+            'finalizada': 'bg-dark',
+            'cancelada': 'bg-danger'
+        };
+        return estados[estado?.toLowerCase()] || 'bg-secondary';
+    };
+
+    const getEstadoTexto = (estado) => {
+        return estado || 'Sin estado';
+    };
+
+    const handleVerDetalle = (solicitudId) => {
+        navigate(`/users/requests/${solicitudId}`);
+    };
+
+    const handleCancelarSolicitud = (solicitudId) => {
+        toast.warn(
+            <div className="toast-confirm">
+                <p className="mb-2">¿Estás seguro de que deseas cancelar esta solicitud?</p>
+                <div className="d-flex gap-2 justify-content-end">
+                    <button 
+                        className="btn btn-sm btn-outline-secondary"
+                        onClick={() => toast.dismiss()}
+                    >
+                        No
+                    </button>
+                    <button 
+                        className="btn btn-sm btn-danger"
+                        onClick={() => confirmarCancelacion(solicitudId)}
+                    >
+                        Sí, cancelar
+                    </button>
+                </div>
+            </div>,
+            {
+                autoClose: false,
+                closeOnClick: false,
+                draggable: false,
+                closeButton: false,
+            }
+        );
+    };
+
+    const confirmarCancelacion = async (solicitudId) => {
+        toast.dismiss();
+        
+        try {
+            await apiService.cancelRequest(solicitudId);
+            toast.success('Solicitud cancelada exitosamente');
+            fetchSolicitudes();
+        } catch (err) {
+            console.error('Error al cancelar solicitud:', err);
+            toast.error(err.response?.data?.error || 'Error al cancelar la solicitud');
+        }
+    };
+
+    const solicitudesFiltradas = solicitudes.filter(sol => {
+        if (filtroEstado === 'todos') return true;
+        return sol.estado?.toLowerCase() === filtroEstado.toLowerCase();
+    });
+
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center align-items-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
     }
-  };
 
-  const getButtonClass = (estado) => {
-    switch (estado) {
-      case 'Cancelada':
-        return 'detail-button cancelada';
-      case 'Presupuestada':
-        return 'detail-button presupuestada';
-      case 'Aprobada':
-        return 'detail-button aprobada';
-      case 'Finalizada':
-        return 'detail-button finalizada';
-      default:
-        return 'detail-button';
+    if (error) {
+        return (
+            <div className="alert alert-danger" role="alert">
+                {error}
+            </div>
+        );
     }
-  };
 
-  const columns = [
-    {
-      name: "Id",
-      selector: (row) => row.idSolicitud,
-      sortable: true,
-      width: "8%",
-    },
-    {
-      name: "Fecha",
-      selector: (row) => row.fechaGeneracion,
-      sortable: true,
-      width: "8%",
-    },
-    {
-      name: "Servicio",
-      selector: (row) => row.tipoServicio,
-      sortable: true,
-      width: "10%",
-    },
-    {
-      name: "Producto",
-      selector: (row) => row.tipoDeProducto,
-      sortable: true,
-    },
-    {
-      name: "Estado",
-      selector: (row) => row.estado,
-      sortable: true,
-    },
-    {
-      name: "Detalle",
-      cell: (row) => (
-        <>
-          <Button
-            variant="outline-secondary"
-            className={getButtonClass(row.estado)}
-            onClick={() => navigate(`./${row.idSolicitud}`)}
-          >
-            Detalle
-          </Button>
-          {row.estado === 'Iniciada' && (
-            <Button
-              variant="danger"
-              className="cancel-button"
-              onClick={() => {
-                setSelectedRequestId(row.idSolicitud);
-                setShowModal(true);
-              }}
-            >
-              Cancelar
-            </Button>
-          )}
-        </>
-      ),
-    },
-  ];
+    return (
+        <div className="user-requests-container">
+            {/* Filtros */}
+            <div className="filtros-container mb-4">
+                <div className="filter-pills" role="group">
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'todos' ? 'active' : ''}`}
+                        onClick={() => setFiltroEstado('todos')}
+                    >
+                        Todas
+                    </button>
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'pendiente' ? 'active pending' : ''}`}
+                        onClick={() => setFiltroEstado('pendiente')}
+                    >
+                        Pendientes
+                    </button>
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'presupuestada' ? 'active quoted' : ''}`}
+                        onClick={() => setFiltroEstado('presupuestada')}
+                    >
+                        Presupuestadas
+                    </button>
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'aprobada' ? 'active approved' : ''}`}
+                        onClick={() => setFiltroEstado('aprobada')}
+                    >
+                        Aprobadas
+                    </button>
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'en proceso' ? 'active in-progress' : ''}`}
+                        onClick={() => setFiltroEstado('en proceso')}
+                    >
+                        En Proceso
+                    </button>
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'finalizada' ? 'active finished' : ''}`}
+                        onClick={() => setFiltroEstado('finalizada')}
+                    >
+                        Finalizadas
+                    </button>
+                </div>
+            </div>
 
-  return (
-    <>
-    {loading ? (
-              <Spinner animation="border" />
+            {/* Lista de solicitudes */}
+            {solicitudesFiltradas.length === 0 ? (
+                <div className="text-center py-5">
+                    <i className="bi bi-inbox fs-1 text-muted"></i>
+                    <p className="text-muted mt-3">No tienes solicitudes {filtroEstado !== 'todos' ? `con estado "${getEstadoTexto(filtroEstado)}"` : ''}</p>
+                </div>
             ) : (
-              <>
-      <DataTable columns={columns} data={userRequests} />
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmar Cancelación</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          ¿Estás seguro de que deseas cancelar la solicitud?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Atrás
-          </Button>
-          <Button variant="danger" onClick={handleCancel}>
-            Confirmar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      </>
-    )}
-    </>
-  );
+                <div className="table-responsive">
+                    <table className="table table-hover">
+                        <thead className="table-dark">
+                            <tr>
+                                <th>Código</th>
+                                <th>Tipo de Servicio</th>
+                                <th>Producto</th>
+                                <th>Fecha Solicitud</th>
+                                <th>Estado</th>
+                                <th>Monto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {solicitudesFiltradas.map((solicitud) => (
+                                <tr key={solicitud.id}>
+                                    <td>{solicitud.id}</td>
+                                    <td>{solicitud.tipoServicio || 'N/A'}</td>
+                                    <td>{solicitud.producto || 'N/A'}</td>
+                                    <td>{new Date(solicitud.fechaGeneracion).toLocaleDateString('es-AR')}</td>
+                                    <td>
+                                        <span className={`badge ${getEstadoBadge(solicitud.estado)}`}>
+                                            {getEstadoTexto(solicitud.estado)}
+                                        </span>
+                                    </td>
+                                    <td>{solicitud.monto ? `$${solicitud.monto}` : '-'}</td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <button 
+                                                className="action-btn view-btn"
+                                                onClick={() => handleVerDetalle(solicitud.id)}
+                                                title="Ver detalle"
+                                            >
+                                                <i className="bi bi-eye"></i>
+                                                <span>Ver</span>
+                                            </button>
+                                            {['pendiente', 'presupuestada'].includes(solicitud.estado?.toLowerCase()) && (
+                                                <button 
+                                                    className="action-btn cancel-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleCancelarSolicitud(solicitud.id);
+                                                    }}
+                                                    title="Cancelar solicitud"
+                                                >
+                                                    <i className="bi bi-x-circle"></i>
+                                                    <span>Cancelar</span>
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </div>
+    );
 }
-
-export default UserRequestsList;

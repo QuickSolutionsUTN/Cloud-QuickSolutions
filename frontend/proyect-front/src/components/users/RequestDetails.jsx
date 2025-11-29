@@ -1,289 +1,276 @@
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Form,
-  Button,
-  Modal,
-  ToastContainer,
-  Toast,
-  Badge,
-  ListGroup,
-} from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import { Form, Button, Modal, Badge, ListGroup } from "react-bootstrap";
+import { toast } from "react-toastify";
 import AuthContext from "../../contexts/AuthContext.jsx";
-import { useParams } from "react-router-dom";
 import apiService from "../../services/axiosConfig.jsx";
-import envioService from "../../services/apiEnviosService.jsx";
 import AddressCard from "./UserAddressCard.jsx";
+import "./requestDetails.css";
 
 export default function RequestDetails() {
   const [solicitud, setSolicitud] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { id: solicitudId } = useParams();
-  const [fechaFormateada, setFechaFormateada] = useState("");
   const navigate = useNavigate();
-  const [showAcceptModal, setShowAcceptModal] = useState(false);
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [badgeVariant, setBadgeVariant] = useState("primary");
   const { user } = useContext(AuthContext);
   const [userData, setUserData] = useState({});
+  
+  // Modales de confirmación
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+
   const getBadgeVariant = (estado) => {
-    switch (estado) {
-      case "Revisada":
-        return "secondary";
-      case "Presupuestada":
-        return "warning";
-      case "Aprobada":
-        return "success";
-      case "Cancelada":
-        return "danger";
-      case "Finalizada":
-        return "info";
-      default:
-        return "primary";
-    }
+    const estados = {
+      "Pendiente": "warning",
+      "Revisada": "secondary",
+      "Presupuestada": "info",
+      "Aprobada": "success",
+      "En Proceso": "primary",
+      "Finalizada": "dark",
+      "Cancelada": "danger",
+      "Rechazada": "danger",
+    };
+    return estados[estado] || "primary";
   };
 
   useEffect(() => {
-    const fetchSolicitudDetails = async () => {
+    const fetchSolicitud = async () => {
       try {
+        setLoading(true);
         const response = await apiService.getRequestById(solicitudId);
-        console.log("Solicitud details:", response.data);
         setSolicitud(response.data);
-        const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        const opciones = {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        };
-        setFechaFormateada(
-          fechaGeneracion.toLocaleDateString("es-ES", opciones)
-        );
-        setBadgeVariant(getBadgeVariant(response.data.estado));
-      } catch (error) {
-        console.error("Error fetching solicitud details:", error);
+      } catch (err) {
+        console.error("Error al cargar solicitud:", err);
+        toast.error("Error al cargar los detalles de la solicitud");
+      } finally {
+        setLoading(false);
       }
     };
-    fetchSolicitudDetails();
+    fetchSolicitud();
   }, [solicitudId]);
+
+  const refetchSolicitud = async () => {
+    try {
+      const response = await apiService.getRequestById(solicitudId);
+      setSolicitud(response.data);
+    } catch (err) {
+      console.error("Error al recargar solicitud:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!user?.id) return;
       try {
-        console.log('Obteniendo datos del usuario...', user.id);
         const response = await apiService.getUserProfile(user.id);
-        console.log('Datos recibidos:', response.data);
         setUserData(response.data);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       }
     };
-
     fetchUserData();
-  }, [ user, ]);
+  }, [user]);
+
   const domicilio = userData.domicilio ?? null;
 
-  const handleAccept = async () => {
-    const dataToUpdate = {
-      id: solicitud.id,
-      idSolicitudServicioEstado: 4,
-    };
-    await updateRequest(dataToUpdate, "Aprobada");
+  const handleCancelar = async () => {
+    setShowCancelModal(false);
+    try {
+      await apiService.cancelRequest(solicitudId);
+      toast.success("Solicitud cancelada exitosamente");
+      refetchSolicitud();
+    } catch (err) {
+      console.error("Error al cancelar:", err);
+      toast.error(err.response?.data?.error || "Error al cancelar la solicitud");
+    }
+  };
+
+  const handleAprobar = async () => {
     setShowAcceptModal(false);
+    try {
+      await apiService.updateRequestUser({ id: solicitudId, accion: "aprobar" });
+      toast.success("Presupuesto aprobado exitosamente");
+      refetchSolicitud();
+    } catch (err) {
+      console.error("Error al aprobar:", err);
+      toast.error(err.response?.data?.error || "Error al aprobar la solicitud");
+    }
   };
 
-  const handleReject = async () => {
-    const dataToUpdate = {
-      id: solicitud.id,
-      idSolicitudServicioEstado: 6,
-    };
-    await updateRequest(dataToUpdate, "Cancelada");
+  const handleRechazar = async () => {
     setShowRejectModal(false);
-  };
-
-  const updateRequest = async (data, estado) => {
     try {
-      const response = await apiService.updateRequestUser(data);
-      console.log("Solicitud actualizada", response.data);
-      setSolicitud((prevSolicitud) => ({
-        ...prevSolicitud,
-        estado: estado,
-      }));
-      setBadgeVariant(getBadgeVariant(estado));
-    } catch (error) {
-      console.error("Error al aceptar la solicitud:", error);
-      handleError();
+      await apiService.updateRequestUser({ id: solicitudId, accion: "rechazar" });
+      toast.success("Presupuesto rechazado");
+      refetchSolicitud();
+    } catch (err) {
+      console.error("Error al rechazar:", err);
+      toast.error(err.response?.data?.error || "Error al rechazar la solicitud");
     }
   };
 
-  const handleError = () => {
-    setErrorMessage("Hubo un problema al actualizar la solicitud.");
-    setShowToast(true);
+  const formatDate = (dateString) => {
+    if (!dateString) return "No especificada";
+    return new Date(dateString).toLocaleDateString("es-AR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
-  
-
-  const getEnvioDetails = async () => {
-    try {
-      const response = await envioService.getEnvio(
-        solicitud.envio.nroSeguimiento
-      );
-      console.log("Detalles del envio:", response);
-      setEnvioDetails({
-        estado: response.estado,
-        origen: response.origen,
-        fecha: response.fecha,
-      });
-      console.log("Detalles del envio:", envioDetails);
-    } catch (error) {
-      console.error("Error al obtener los detalles del envio:", error);
-    }
-  };
-
-  if (!solicitud) {
-    return <div>Cargando...</div>;
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
   }
 
-  return (
-    <>
-      <div className="title-container space-between mb-">
-        <h3>
+  if (!solicitud) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        Solicitud no encontrada
+      </div>
+    );
+  }
 
-          Codigo de solicitud: {solicitudId}
-          <Badge className="m-2" bg={badgeVariant}>
-            {solicitud.estado}
+  const estadoActual = solicitud.estado;
+  const puedeAprobarRechazar = estadoActual === "Presupuestada";
+  const puedeCancelar = ["Pendiente", "Presupuestada"].includes(estadoActual);
+
+  return (
+    <div className="request-details-container">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h3>
+          Solicitud #{solicitudId}
+          <Badge className="ms-3" bg={getBadgeVariant(estadoActual)}>
+            {estadoActual}
           </Badge>
         </h3>
+        <Button variant="outline-secondary" onClick={() => navigate("/users/requests")}>
+          <i className="bi bi-arrow-left me-2"></i>Volver
+        </Button>
       </div>
 
-      <div className="subtitle-container mb-4">
-        <h5>{fechaFormateada}</h5>
-      </div>
-      {(solicitud.estado === "Presupuestada" ||
-        solicitud.estado === "Aprobada" ||
-        solicitud.estado === "Finalizada") && (
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <h4>Monto: ${solicitud.monto}</h4>
-              {solicitud.estado === "Presupuestada" && (
-                <>
-                  <Button
-                    variant="success"
-                    className="button-spacing"
-                    onClick={() => setShowAcceptModal(true)}
-                  >
-                    Aceptar
+      {/* Información de presupuesto si aplica */}
+      {(["Presupuestada", "Aprobada", "Finalizada", "En Proceso"].includes(estadoActual)) && (
+        <div className="card mb-4 border-success">
+          <div className="card-body">
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+              <div>
+                <h4 className="text-success mb-0">
+                  <i className="bi bi-currency-dollar me-2"></i>
+                  Monto: ${solicitud.monto}
+                </h4>
+              </div>
+              <div className="text-end">
+                {estadoActual === "Finalizada" ? (
+                  <span className="text-muted">
+                    <i className="bi bi-calendar-check me-2"></i>
+                    Finalizada: {formatDate(solicitud.fechaFinalizada)}
+                  </span>
+                ) : solicitud.fechaEstimada && (
+                  <span className="text-muted">
+                    <i className="bi bi-calendar me-2"></i>
+                    Fecha Estimada: {formatDate(solicitud.fechaEstimada)}
+                  </span>
+                )}
+              </div>
+              {puedeAprobarRechazar && (
+                <div className="d-flex gap-2">
+                  <Button variant="success" onClick={() => setShowAcceptModal(true)}>
+                    <i className="bi bi-check-circle me-2"></i>Aprobar
                   </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => setShowRejectModal(true)}
-                  >
-                    Rechazar
+                  <Button variant="danger" onClick={() => setShowRejectModal(true)}>
+                    <i className="bi bi-x-circle me-2"></i>Rechazar
                   </Button>
-                </>
+                </div>
               )}
             </div>
-            <div>
-              {solicitud.estado !== "Finalizada" ? (
-                <h4>
-                  Fecha Estimada:{" "}
-                  {new Date(solicitud.fechaEstimada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
-                </h4>
-              ) : (
-                <h4>
-                  Fecha Finalizada:{" "}
-                  {new Date(solicitud.fechaFinalizada).toLocaleDateString("es-ES", { timeZone: "UTC" })}
-                </h4>
-              )}
+          </div>
+        </div>
+      )}
+
+      {/* Datos de la solicitud */}
+      <Form className="data-container">
+        <div className="row my-3">
+          <div className="col-md-6 col-lg-4">
+            <Form.Label className="fw-bold">Email</Form.Label>
+            <Form.Control type="text" value={solicitud.emailSolicitante || ""} readOnly />
+          </div>
+          <div className="col-md-6 col-lg-4">
+            <Form.Label className="fw-bold">Fecha de Solicitud</Form.Label>
+            <Form.Control type="text" value={formatDate(solicitud.fechaGeneracion)} readOnly />
+          </div>
+        </div>
+
+        <div className="row my-3">
+          <div className="col-md-4">
+            <Form.Label className="fw-bold">Servicio</Form.Label>
+            <Form.Control type="text" value={solicitud.tipoServicio || ""} readOnly />
+          </div>
+          <div className="col-md-4">
+            <Form.Label className="fw-bold">Categoría</Form.Label>
+            <Form.Control type="text" value={solicitud.categoria || ""} readOnly />
+          </div>
+          <div className="col-md-4">
+            <Form.Label className="fw-bold">Producto</Form.Label>
+            <Form.Control type="text" value={solicitud.producto || ""} readOnly />
+          </div>
+        </div>
+
+        {/* Descripción del problema (solo para reparación) */}
+        {(solicitud.tipoServicio === "Reparacion" || solicitud.tipoServicio === "Reparación") && solicitud.descripcion && (
+          <div className="row my-3">
+            <div className="col-12">
+              <Form.Group controlId="descripcion">
+                <Form.Label className="fw-bold">Descripción del problema</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={solicitud.descripcion}
+                  readOnly
+                  style={{ resize: "vertical" }}
+                />
+              </Form.Group>
             </div>
           </div>
         )}
-      <div className="my-4"></div>
 
-      <Form className="data-container">
-        <div className="row my-3">
-          <div className="col-4">
-            <Form.Label className="fw-bold">Email</Form.Label>
-
-            <Form.Control
-              type="text"
-              defaultValue={solicitud.emailSolicitante}
-              readOnly
-            ></Form.Control>
-          </div>
-        </div>
-        <div className="row my-3">
-          <div className="col-4">
-            <Form.Label className="fw-bold">Servicio</Form.Label>
-            <Form.Control
-              type="text"
-              defaultValue={solicitud.tipoServicio}
-              readOnly
-            ></Form.Control>
-          </div>
-          <div className="col-4">
-            <Form.Label className="fw-bold">Categoria</Form.Label>
-            <Form.Control
-              type="text"
-              value={solicitud.categoria}
-              readOnly
-            ></Form.Control>
-          </div>
-          <div className="col-4">
-            <Form.Label className="fw-bold">Producto</Form.Label>
-            <Form.Control
-              type="text"
-              value={solicitud.producto}
-              readOnly
-            ></Form.Control>
-          </div>
-        </div>
-        {solicitud.tipoServicio === "Reparacion" || solicitud.tipoServicio === "Reparación" ? (
-          <>
-            <div className="my-4"></div>
-            <div className="row">
-              <div className="col-12">
-                <Form.Group controlId="descripcion">
-                  <Form.Label className="fw-bold">Descripcion del problema</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    type="text"
-                    value={solicitud.descripcion}
-                    readOnly
-                    style={{ resize: "vertical" }}
-                  />
-                </Form.Group>
-              </div>
-            </div>
-          </>
-        ) : null}
-        {solicitud.diagnosticoTecnico ? (
-          <div className="my-4">
-            <div className="row">
-              <div className="col-12">
-                <Form.Group controlId="descripcion">
-                  <Form.Label className="fw-bold">Diagnostico Tecnico</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    type="text"
-                    value={solicitud.diagnosticoTecnico}
-                    readOnly
-                    style={{ resize: "vertical" }}
-                  />
-                </Form.Group>
-              </div>
+        {/* Diagnóstico técnico */}
+        {solicitud.diagnosticoTecnico && (
+          <div className="row my-3">
+            <div className="col-12">
+              <Form.Group controlId="diagnostico">
+                <Form.Label className="fw-bold">
+                  <i className="bi bi-tools me-2"></i>Diagnóstico Técnico
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={solicitud.diagnosticoTecnico}
+                  readOnly
+                  style={{ resize: "vertical" }}
+                />
+              </Form.Group>
             </div>
           </div>
-        ) : null}
-        {solicitud.mantenimiento?.checklist && (
-          <Form.Group className="mt-3" controlId="checklist">
-            <Form.Label className="fw-bold">Checklist de Mantenimiento</Form.Label>
+        )}
+
+        {/* Checklist de mantenimiento */}
+        {solicitud.mantenimiento?.checklist && solicitud.mantenimiento.checklist.length > 0 && (
+          <Form.Group className="my-3" controlId="checklist">
+            <Form.Label className="fw-bold">
+              <i className="bi bi-list-check me-2"></i>Checklist de Mantenimiento
+            </Form.Label>
             <ListGroup>
-              {solicitud.mantenimiento?.checklist.map((item) => (
+              {solicitud.mantenimiento.checklist.map((item) => (
                 <ListGroup.Item key={item.id}>
+                  <i className="bi bi-check-circle text-success me-2"></i>
                   {item.descripcion}
                 </ListGroup.Item>
               ))}
@@ -293,86 +280,102 @@ export default function RequestDetails() {
 
         <hr />
 
+        {/* Logística */}
         {solicitud.con_logistica ? (
           <div className="mb-3">
-            <div className="col-4 mb-3">
-              <h5>Con servicio a domicilio</h5>
-            </div>
+            <h5 className="mb-3">
+              <i className="bi bi-truck me-2"></i>Con servicio a domicilio
+            </h5>
             <AddressCard
-            street={domicilio?.calle || 'No especificado'}
-            province={domicilio?.provincia || 'No especificado'}
-            locality={domicilio?.localidad_nombre || 'No especificado'}
-            zipCode={domicilio?.codigo_postal || 'No especificado'}
-            floor={domicilio?.piso || 'No especificado'}
-              department={domicilio?.departamento || 'No especificado'}
+              street={domicilio?.calle || "No especificado"}
+              number={domicilio?.numero || ""}
+              province={domicilio?.provincia || "No especificado"}
+              locality={domicilio?.localidad_nombre || "No especificado"}
+              zipCode={domicilio?.codigo_postal || "No especificado"}
+              floor={domicilio?.piso || ""}
+              department={domicilio?.departamento || ""}
               noHover={true}
-          />
+            />
           </div>
         ) : (
-          <div className="col-4">
-            <h5>Sin servicio a domicilio</h5>
+          <div className="mb-3">
+            <h5>
+              <i className="bi bi-shop me-2"></i>Sin servicio a domicilio
+            </h5>
+            <p className="text-muted">El cliente llevará el producto al local.</p>
           </div>
         )}
       </Form>
 
-      <div className="d-flex justify-content-end mt-3">
-        <Button
-          variant="secondary"
-          className="custom-button"
-          onClick={() => navigate("../requests")}
-        >
-          Volver
-        </Button>
-      </div>
+      {/* Botón de cancelar */}
+      {puedeCancelar && (
+        <div className="d-flex justify-content-end mt-4">
+          <Button variant="outline-danger" onClick={() => setShowCancelModal(true)}>
+            <i className="bi bi-x-circle me-2"></i>Cancelar Solicitud
+          </Button>
+        </div>
+      )}
 
-      <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)}>
+      {/* Modal Aprobar */}
+      <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmar Aceptación</Modal.Title>
+          <Modal.Title>Confirmar Aprobación</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          ¿Estás seguro de que deseas aceptar esta solicitud?
+          <p>¿Estás seguro de que deseas aprobar el presupuesto de <strong>${solicitud.monto}</strong>?</p>
+          {solicitud.fechaEstimada && (
+            <p className="text-muted">
+              Fecha estimada de entrega: {formatDate(solicitud.fechaEstimada)}
+            </p>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowAcceptModal(false)}>
-            Atrás
+            Cancelar
           </Button>
-          <Button variant="success" onClick={handleAccept}>
-            Confirmar
+          <Button variant="success" onClick={handleAprobar}>
+            <i className="bi bi-check-circle me-2"></i>Sí, aprobar
           </Button>
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)}>
+      {/* Modal Rechazar */}
+      <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Rechazo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          ¿Estás seguro de que deseas rechazar esta solicitud?
+          <p>¿Estás seguro de que deseas rechazar el presupuesto?</p>
+          <p className="text-muted">Esta acción no se puede deshacer.</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
-            Atrás
+            Cancelar
           </Button>
-          <Button variant="danger" onClick={handleReject}>
-            Confirmar
+          <Button variant="danger" onClick={handleRechazar}>
+            <i className="bi bi-x-circle me-2"></i>Sí, rechazar
           </Button>
         </Modal.Footer>
       </Modal>
 
-      <ToastContainer position="top-end" className="p-3">
-        <Toast
-          bg="danger"
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
-        >
-          <Toast.Header>
-            <strong className="me-auto text-white">Error</strong>
-          </Toast.Header>
-          <Toast.Body className="text-white">{errorMessage}</Toast.Body>
-        </Toast>
-      </ToastContainer>
-    </>
+      {/* Modal Cancelar Solicitud */}
+      <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Cancelar Solicitud</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>¿Estás seguro de que deseas cancelar esta solicitud?</p>
+          <p className="text-muted">Esta acción no se puede deshacer.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowCancelModal(false)}>
+            No, volver
+          </Button>
+          <Button variant="danger" onClick={handleCancelar}>
+            <i className="bi bi-x-circle me-2"></i>Sí, cancelar solicitud
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 }

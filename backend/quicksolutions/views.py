@@ -124,6 +124,53 @@ class SolicitudDetailView(generics.RetrieveAPIView):
     queryset = SolicitudServicio.objects.all()
     serializer_class = SolicitudDetailSerializer  
 
+
+class MisSolicitudesView(generics.ListAPIView):
+    """Obtiene todas las solicitudes del usuario autenticado"""
+    permission_classes = [IsAuthenticated]
+    serializer_class = SolicitudDetailSerializer
+
+    def get_queryset(self):
+        return SolicitudServicio.objects.filter(
+            id_solicitante=self.request.user
+        ).order_by('-fecha_generacion')
+
+
+class CancelarSolicitudView(APIView):
+    """Permite al usuario cancelar su propia solicitud si está pendiente"""
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        try:
+            solicitud = SolicitudServicio.objects.get(pk=pk)
+        except SolicitudServicio.DoesNotExist:
+            return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Verificar que la solicitud pertenece al usuario
+        if solicitud.id_solicitante != request.user:
+            return Response({"error": "No tienes permiso para cancelar esta solicitud"}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Verificar que la solicitud esté en estado pendiente (id=1 generalmente)
+        estado_actual = solicitud.id_solicitud_servicio_estado.descripcion.lower()
+        if estado_actual not in ['pendiente', 'presupuestada']:
+            return Response(
+                {"error": f"No se puede cancelar una solicitud en estado '{estado_actual}'"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Buscar el estado "Cancelada"
+        try:
+            estado_cancelada = SolicitudServicioEstado.objects.get(descripcion__iexact='Cancelada')
+        except SolicitudServicioEstado.DoesNotExist:
+            return Response({"error": "Estado 'Cancelada' no encontrado en el sistema"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        solicitud.id_solicitud_servicio_estado = estado_cancelada
+        solicitud.save()
+        
+        serializer = SolicitudDetailSerializer(solicitud)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class TipoMantenimientoListCreateView(generics.ListCreateAPIView):
     queryset = TipoMantenimiento.objects.all()
     serializer_class = TipoMantenimientoSerializer

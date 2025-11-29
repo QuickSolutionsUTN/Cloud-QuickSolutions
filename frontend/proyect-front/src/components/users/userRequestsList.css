@@ -1,42 +1,128 @@
-.detail-button {
-  transition: background-color 0.3s ease;
+.user-requests-container {
+  padding: 1rem;
 }
 
-.detail-button:hover {
-  background-color: #464d55;
+.filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.detail-button:active {
-  background-color: #444a51;
+/* Filtros minimalistas estilo pills */
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.detail-button.cancelada:hover {
-  background-color: rgb(253, 65, 65);
+.filter-pill {
+  background: transparent;
+  border: none;
+  padding: 6px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6c757d;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.detail-button.presupuestada:hover {
-  background-color: rgb(250, 237, 54);
+.filter-pill:hover {
+  color: #495057;
+  background-color: #f8f9fa;
 }
 
-.detail-button.aprobada:hover {
-  background-color: rgb(19, 182, 19);
+.filter-pill.active {
+  color: #0d6efd;
+  background-color: #e7f1ff;
 }
 
-.detail-button.finalizada:hover {
-  background-color: #ea7f32;
+.filter-pill.active.pending {
+  color: #856404;
+  background-color: #fff3cd;
 }
 
-.cancel-button {
+.filter-pill.active.quoted {
+  color: #0c5460;
+  background-color: #d1ecf1;
+}
+
+.filter-pill.active.approved {
+  color: #155724;
+  background-color: #d4edda;
+}
+
+.filter-pill.active.in-progress {
+  color: #004085;
+  background-color: #cce5ff;
+}
+
+.filter-pill.active.finished {
+  color: #383d41;
+  background-color: #e2e3e5;
+}
+
+.table-hover tbody tr:hover {
+  cursor: pointer;
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Botones de acción minimalistas */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn i {
+  font-size: 0.85rem;
+}
+
+.view-btn {
+  background-color: #f0f7ff;
+  color: #0d6efd;
+}
+
+.view-btn:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #fff0f0;
+  color: #dc3545;
+}
+
+.cancel-btn:hover {
   background-color: #dc3545;
   color: white;
-  margin-left: 10px; /* Separación entre los botones */
-  transition: background-color 0.3s ease;
 }
 
-.cancel-button:hover {
-  background-color: #c82333;
-}
-
-.cancel-button:active {
-  background-color: #bd2130;
+@media (max-width: 768px) {
+  .filtros-container .btn-group {
+    width: 100%;
+  }
+  
+  .filtros-container .btn {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.375rem 0.5rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.875rem;
+  }
 }
