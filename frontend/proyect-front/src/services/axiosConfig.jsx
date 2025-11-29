@@ -1,5 +1,4 @@
 import axios from "axios";
-import { get } from "react-hook-form";
 
 const api = axios.create({
   baseURL: "http://127.0.0.1:8000/api",
@@ -58,45 +57,48 @@ api.interceptors.response.use(
 // Funciones centralizadas para manejar peticiones
 
 const apiService = {
-  getRequestsAdmin: () => api.get("/solicitud"),
-  getRequestById: (id) => api.get(`/solicitud/${id}`),
+  // Dashboard optimizado (1 sola llamada)
+  getDashboardStats: () => api.get("/dashboard/stats/"),
+  
+  getRequestsAdmin: () => api.get("/solicitud/"),
+  getRequestById: (id) => api.get(`/solicitud/${id}/`),
   
   // Perfiles
-  getProfiles: () => api.get("/perfiles"),
+  getProfiles: () => api.get("/perfiles/"),
   getUserProfile: (userId) => api.get(`/perfiles/${userId}/`),
   updateUserProfile: (userId, data) => api.put(`/perfiles/${userId}/`, data),
   deleteUserProfile: (userId) => api.delete(`/perfiles/${userId}/`),
   //Domicilio
-  updateDomicilio: (userId, data) => api.put(`/perfiles/${userId}/domicilio`, data),
-  deleteDomicilio: (userId) => api.delete(`/perfiles/${userId}/domicilio`),
+  updateDomicilio: (userId, data) => api.put(`/perfiles/${userId}/domicilio/`, data),
+  deleteDomicilio: (userId) => api.delete(`/perfiles/${userId}/domicilio/`),
 
   // Mantenimientos
-  getMaintenanceArray: () => api.get("/mantenimiento"),
+  getMaintenanceArray: () => api.get("/mantenimiento/"),
   createMaintenance: (data) => api.post("/mantenimiento/", data),
   updateMaintenance: (data) => api.put(`/mantenimiento/${data.id}/`, data),
   deleteMaintenance: (id) => api.delete(`/mantenimiento/${id}/`),
  
   //Categorias
-  getCategories: () => api.get("/categorias"),
+  getCategories: () => api.get("/categorias/"),
   createCategory: (data) => api.post("/categorias/", data),
   updateCategory: (data) => api.put(`/categorias/${data.id}/`, data),
   deleteCategory: (id) => api.delete(`/categorias/${id}/`),
 
   //Productos
-  getProducts: () => api.get("/productos"),
-  getProductByCatId: (id) => api.get(`/productos/categoria/${id}`),
+  getProducts: () => api.get("/productos/"),
+  getProductByCatId: (id) => api.get(`/productos/categoria/${id}/`),
   createProduct: (data) => api.post("/productos/", data),
   updateProduct: (data) => api.put(`/productos/${data.id}/`, data),
   deleteProduct: (id) => api.delete(`/productos/${id}/`),
 
   // Solicitudes
   createRequest: (data) => api.post("/solicitud/", data),
-  updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin`, data),
-  updateRequestReviewed: (id) => api.put(`/solicitud/${id}/iniciar`),
-  updateRequestBudgetAdmin: (data) => api.put(`/solicitud/${data.id}/presupuestar`, data),
-  updateRequestFinished: (data) => api.put(`/solicitud/${data.id}/finalizar`, data),
-  updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario`, data),
-  updateRequestSubcontractAdmin: (data) => api.put(`/solicitud/${data.id}/subcontratar`, data),
+  updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin/`, data),
+  updateRequestReviewed: (id) => api.put(`/solicitud/${id}/iniciar/`),
+  updateRequestBudgetAdmin: (data) => api.put(`/solicitud/${data.id}/presupuestar/`, data),
+  updateRequestFinished: (data) => api.put(`/solicitud/${data.id}/finalizar/`, data),
+  updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario/`, data),
+  updateRequestSubcontractAdmin: (data) => api.put(`/solicitud/${data.id}/subcontratar/`, data),
   
   // Solicitudes del usuario
   getUserRequests: () => api.get("/solicitud/mis-solicitudes/"),
@@ -105,7 +107,6 @@ const apiService = {
   // Provincia
   getStates: () => api.get("/provincias/"),
   // Localidades
-  // The backend expects a query param `provincia_id`, e.g. /localidades/?provincia_id=5
   getLocalityByStateId: (stateId) => api.get(`/localidades/`, { params: { provincia_id: stateId } }),
 };
 
