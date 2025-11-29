@@ -37,7 +37,8 @@ function RequestManagement() {
         setSolicitud(response.data);
         // ahora el backend devuelve 'estado_nombre' (texto) y 'id_solicitud_servicio_estado' (id numérico)
         setCurrentStep(response.data.estado_nombre || response.data.estado || response.data.id_solicitud_servicio_estado);
-        const fechaGeneracion = new Date(response.data.fecha_generacion);
+        const fechaGeneracion = new Date(response.data.fechaGeneracion);
+        console.log('Fecha de generación:', fechaGeneracion);
         const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
         setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
       } catch (error) {
@@ -245,7 +246,7 @@ function RequestManagement() {
           <div className='flex-grow-1 text-center'>
             <h2>Gestión de solicitud #{solicitudId}</h2>
             <p style={{ color: 'gray' }}>
-              Generada: {fechaFormateada} {new Date(solicitud.fecha_generacion).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+              Generada: {fechaFormateada}
             </p>
           </div>
           <div style={{ width: '80px' }}></div>
