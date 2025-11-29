@@ -97,6 +97,10 @@ const apiService = {
   updateRequestFinished: (data) => api.put(`/solicitud/${data.id}/finalizar`, data),
   updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario`, data),
   updateRequestSubcontractAdmin: (data) => api.put(`/solicitud/${data.id}/subcontratar`, data),
+  
+  // Solicitudes del usuario
+  getUserRequests: () => api.get("/solicitud/mis-solicitudes/"),
+  cancelRequest: (id) => api.put(`/solicitud/${id}/cancelar/`),
 
   // Provincia
   getStates: () => api.get("/provincias/"),
