@@ -13,7 +13,7 @@ const AddressCard = ({ street, number, province, locality, zipCode, floor, depar
       <Card.Body>
         <Card.Title className="fw-bold fs-4 address-card-title text-start">Domicilio</Card.Title>
         <Card.Text className="address-card-text text-start">
-          <strong>Direccion:</strong> {street} {"N° "}{number}
+          <strong>Dirección:</strong> {street} {"N° "}{number}
         </Card.Text>
         <Card.Text className="address-card-text text-start">
           <strong>Piso:</strong> {floor}
