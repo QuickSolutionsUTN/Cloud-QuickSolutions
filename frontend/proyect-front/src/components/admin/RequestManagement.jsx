@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
-import axios from 'axios';
-import { useBackendURL } from '../../contexts/BackendURLContext';
 import StepProgressBar from './RequestManagmentSteps/StepProgressBar.jsx';
 import StartedStep from './RequestManagmentSteps/StartedStep.jsx';
 import ReviewedStep from './RequestManagmentSteps/ReviewedStep.jsx';
@@ -13,7 +11,6 @@ import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTableCellsLarge, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
-import apiReparacionExterna from '../../services/apiBolsaTrabajoService.jsx';
 
 import { Button } from 'react-bootstrap';
 import './RequestManagement.css';
@@ -22,7 +19,6 @@ import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
-  const backendURL = useBackendURL();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const navigate = useNavigate();
   const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
@@ -33,7 +29,7 @@ function RequestManagement() {
     const fetchSolicitudDetails = async () => {
       try {
         console.log('Fetching solicitud details...');
-        const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
+        const response = await apiService.getRequestByIdAdmin(solicitudId);
         console.log('Solicitud details:', response.data);
         setSolicitud(response.data);
         setCurrentStep(response.data.estado);
@@ -45,7 +41,7 @@ function RequestManagement() {
       }
     }
     fetchSolicitudDetails();
-  }, [solicitudId, backendURL, apiService]);
+  }, [solicitudId]);
 
   const updateSolicitudEstado = async (newStep, stepIndex) => {
     try {

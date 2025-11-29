@@ -90,8 +90,9 @@ const apiService = {
   deleteProduct: (id) => api.delete(`/productos/${id}/`),
 
   // Solicitudes
-  createRequest: (data) => api.post("/solicitud/", data),
   getRequestsAdmin: () => api.get("/solicitudes/"),
+  createRequest: (data) => api.post("/solicitud/", data),
+  getRequestByIdAdmin: (id) => api.get(`/solicitud/${id}/`),
   updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin`, data),
   updateRequestReviewed: (id) => api.put(`/solicitud/${id}/iniciar`),
   updateRequestBudgetAdmin: (data) => api.put(`/solicitud/${data.id}/presupuestar`, data),
