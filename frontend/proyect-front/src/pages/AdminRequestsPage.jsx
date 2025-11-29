@@ -95,7 +95,7 @@ export default function AdminRequestsPage() {
       ) : (
         <>
           <div className="admin-requests title m-2 d-flex flex-row justify-content-between">
-            <h2>Solicitudes de Reparación</h2>
+            <h2>Solicitudes de servicios</h2>
             <Button variant="outline-secondary" onClick={() => handleDownload()}>
               <FontAwesomeIcon icon={faArrowDown} />
             </Button>
