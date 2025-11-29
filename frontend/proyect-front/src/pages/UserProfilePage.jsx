@@ -93,6 +93,7 @@ export default function UserProfile() {
                         <div className="d-flex justify-content-between align-items-start">
                             <AddressCard
                                 street={domicilio.calle || 'No especificado'}
+                                number={domicilio.numero || domicilio.numero_calle || 'No especificado'}
                                 province={domicilio.provincia || 'No especificado'}
                                 locality={domicilio.localidad_nombre || 'No especificado'}
                                 zipCode={domicilio.codigo_postal || 'No especificado'}
