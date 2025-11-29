@@ -1,9 +1,9 @@
 import React from "react";
 import { Accordion } from "react-bootstrap";
 import { useEffect, useState } from "react";
+import { useContext } from "react";
+import AuthContext from "../../../contexts/AuthContext.jsx";
 import apiService from "../../../services/axiosConfig";
-import envioService from "../../../services/apiEnviosService";
-import { set } from "react-hook-form";
 
 export default function FormSummary({ formData }) {
   const [services] = useState(
@@ -13,7 +13,9 @@ export default function FormSummary({ formData }) {
   const [productTypes, setProductTypes] = useState([]);
   const [localidades, setLocalidades] = useState([]);
   const [maintenanceArray, setMaintenanceArray] = useState(null);
-
+  const { user } = useContext(AuthContext);
+  const [userData, setUserData] = React.useState({});
+  const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
     loadCategories();
@@ -22,6 +24,23 @@ export default function FormSummary({ formData }) {
     if (formData.productData.serviceId === 2) loadMaintenances();
     console.log(formData);
   }, [formData]);
+
+  useEffect(() => {
+      const fetchUserData = async () => {
+        try {
+          console.log('Obteniendo datos del usuario...', user.id);
+          const response = await apiService.getUserProfile(user.id);
+          console.log('Datos recibidos:', response.data);
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchUserData();
+    }, [ user, ]);
 
   const loadCategories = async () => {
     try {
@@ -75,21 +94,6 @@ export default function FormSummary({ formData }) {
     return productType ? productType.descripcion : "Desconocido";
   };
 
-  const getCityNameById = (id) => {
-    const city = localidades.find(c => c.id === parseInt(id));
-    return city ? city.nombre : "Desconocido";
-  };
-
-  const getStateName = (ciyId) => {
-    const city = localidades.find(c => c.id === parseInt(ciyId));
-    return city ? city.provincia.nombre : "Desconocido";
-  };
-
-  const getZipCode = (ciyId) => {
-    const city = localidades.find(c => c.id === parseInt(ciyId));
-    return city ? city.codigoPostal : "Desconocido";
-  };
-
   const getMaintenanceDetails =  (id) => {
     if (maintenanceArray) {
       const maintenance = maintenanceArray.find(m => m.id === id);
@@ -98,7 +102,7 @@ export default function FormSummary({ formData }) {
     return "Desconocido";
   };
 
-
+  const domicilio = userData.domicilio ?? null;
 
   const summaryData = [
     {
@@ -127,16 +131,15 @@ export default function FormSummary({ formData }) {
       ],
       extraData: formData.logisticsData.conLogistica
         ? [
-          { label: "Calle", value: formData.logisticsData.street },
-          { label: "Número", value: formData.logisticsData.number },
-          { label: "Piso", value: formData.logisticsData.floor },
-          { label: "Departamento", value: formData.logisticsData.apartment },
-          { label: "Ciudad", value: getCityNameById(formData.logisticsData.cityId) },
-          { label: "Provincia", value: getStateName(formData.logisticsData.cityId) },
-          { label: "Código Postal", value: getZipCode(formData.logisticsData.cityId) }
+          { label: "Calle", value: domicilio?.calle },
+          { label: "Piso", value: domicilio?.piso },
+          { label: "Departamento", value: domicilio?.departamento },
+          { label: "Localidad", value: domicilio?.localidad_nombre },
+          { label: "Provincia", value: domicilio?.provincia },
+          { label: "Código Postal", value: domicilio?.codigo_postal }
         ]
         : []
-    }
+    } 
   ];
 
   return (
