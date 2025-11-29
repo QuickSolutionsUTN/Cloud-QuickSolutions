@@ -55,7 +55,7 @@ export const RequestForm = () => {
 
     const envioData = data.logisticsData;
     if (envioData.conLogistica) { data.logisticsData.conLogistica = true; }
-    if (envioData.conLogistica) {
+/*    if (envioData.conLogistica) {
       DataToSend.envio = {
         calle: envioData.street,
         numero: envioData.number,
@@ -65,7 +65,7 @@ export const RequestForm = () => {
       }
     } else {
       DataToSend.envio = null;
-    }
+    } */
     console.log("Formulario completado", DataToSend);
     createRequest(DataToSend);
   };
@@ -108,7 +108,8 @@ export const RequestForm = () => {
         (currentData.productData.problemDescription || currentData.productData.maintenanceTypeId);
     }
     else if (currentStep === 1) { return isAuthenticated; }
-    else if (currentStep === 2) {
+    else if (currentStep === 2) { return  true; }
+    /*else if (currentStep === 2) {
       if (currentData.logisticsData.conLogistica) {
         return currentData.logisticsData.street &&
           currentData.logisticsData.number &&
@@ -116,7 +117,7 @@ export const RequestForm = () => {
           currentData.logisticsData.zipCode &&
           currentData.logisticsData.stateId;
       } else { return true; }
-    }
+    }*/
     else if (currentStep === 3) { return true; }
   };
 
@@ -136,7 +137,7 @@ export const RequestForm = () => {
       <div className="form-data mt-4">
         {currentStep === 0 && <StepProductData formData={watch()} control={control} errors={errors} setValue={setValue} />}
         {currentStep === 1 && <StepPersonalData formData={watch()} control={control} errors={errors} setValue={setValue} />}
-        {currentStep === 2 && <StepLogistics formData={watch()} control={control} errors={errors} />}
+        {currentStep === 2 && <StepLogistics formData={watch()} control={control} errors={errors} setValue={setValue} />}
         {currentStep === 3 && <FormSummary formData={watch()} control={control} errors={errors} />}
       </div>
       <div className="mt-4 mb-3 container-buttons">

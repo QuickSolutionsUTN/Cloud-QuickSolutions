@@ -168,7 +168,7 @@ export default function UserRequestsList() {
                     <table className="table table-hover">
                         <thead className="table-dark">
                             <tr>
-                                <th>Número</th>
+                                <th>Código</th>
                                 <th>Tipo de Servicio</th>
                                 <th>Producto</th>
                                 <th>Fecha Solicitud</th>
