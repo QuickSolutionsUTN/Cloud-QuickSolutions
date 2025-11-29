@@ -12,6 +12,7 @@ from .serializers import (
     SolicitudServicioSerializer,
 #    EnvioSerializer,
     SolicitudDetailSerializer,
+    SolicitudServicioEstadoSerializer,
     TipoMantenimientoSerializer, 
     ProvinciaSerializer, 
     LocalidadSerializer, 
@@ -187,6 +188,13 @@ class TipoMantenimientoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TipoMantenimiento.objects.all()
     serializer_class = TipoMantenimientoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class SolicitudEstadoDetailView(generics.RetrieveAPIView):
+    """Devuelve detalle de un estado de solicitud por id"""
+    queryset = SolicitudServicioEstado.objects.all()
+    serializer_class = SolicitudServicioEstadoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class ProvinciaListView(generics.ListAPIView):

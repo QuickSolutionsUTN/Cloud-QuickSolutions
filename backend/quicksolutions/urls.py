@@ -28,5 +28,6 @@ urlpatterns = [
     path('provincias/', views.ProvinciaListView.as_view(), name='provincia-lista'),
     path('localidades/', views.LocalidadListView.as_view(), name='localidad-lista'),
     path('perfiles/<uuid:pk>/domicilio', views.PerfilesDomicilioView.as_view(), name='perfiles-direccion'),
+    path('solicitud-estado/<int:pk>/', views.SolicitudEstadoDetailView.as_view(), name='solicitud-estado-detalle'),
 
 ]

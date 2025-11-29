@@ -99,7 +99,7 @@ const apiService = {
   updateRequestFinished: (data) => api.put(`/solicitud/${data.id}/finalizar`, data),
   updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario`, data),
   updateRequestSubcontractAdmin: (data) => api.put(`/solicitud/${data.id}/subcontratar`, data),
-  
+
   // Solicitudes del usuario
   getUserRequests: () => api.get("/solicitud/mis-solicitudes/"),
   cancelRequest: (id) => api.put(`/solicitud/${id}/cancelar/`),
@@ -109,6 +109,8 @@ const apiService = {
   // Localidades
   // The backend expects a query param `provincia_id`, e.g. /localidades/?provincia_id=5
   getLocalityByStateId: (stateId) => api.get(`/localidades/`, { params: { provincia_id: stateId } }),
+  // Estados de solicitud
+  getDetailServiceState: (id) => api.get(`/solicitud-estado/${id}/`),
 };
 
 export default apiService;
