@@ -125,17 +125,17 @@ export default function FormSummary({ formData }) {
       ]
     },
     {
-      title: "Datos de envío",
+      title: "Datos de domicilio",
       data: [
-        { label: "Con logística", value: formData.logisticsData.conLogistica ? "Sí" : "No" }
+        { label: "A domicilio", value: formData.logisticsData.conLogistica ? "Sí" : "No" }
       ],
       extraData: formData.logisticsData.conLogistica
         ? [
           { label: "Calle", value: domicilio?.calle },
           { label: "Piso", value: domicilio?.piso },
           { label: "Departamento", value: domicilio?.departamento },
-          { label: "Localidad", value: domicilio?.localidad_nombre },
           { label: "Provincia", value: domicilio?.provincia },
+          { label: "Localidad", value: domicilio?.localidad_nombre },
           { label: "Código Postal", value: domicilio?.codigo_postal }
         ]
         : []
