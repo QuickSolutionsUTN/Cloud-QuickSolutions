@@ -153,5 +153,7 @@ if not SUPABASE_JWT_SECRET:
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
-if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, SNS_TOPIC_ARN]):
-    raise RuntimeError("One or more AWS SNS environment variables are not set. Please set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and SNS_TOPIC_ARN.")  
+AWS_REGION_NAME = os.getenv('AWS_REGION_NAME')
+
+if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, SNS_TOPIC_ARN, AWS_REGION_NAME]):
+    raise RuntimeError("One or more AWS SNS environment variables are not set. Please set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, SNS_TOPIC_ARN, and AWS_REGION_NAME.")  
