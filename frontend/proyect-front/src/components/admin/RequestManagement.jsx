@@ -16,14 +16,13 @@ import { Button } from 'react-bootstrap';
 import './RequestManagement.css';
 import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
 import { Toast, ToastContainer } from 'react-bootstrap'
-import { set } from 'react-hook-form';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
-  const [fechaFormateada, setFechaFormateada] = useState('');
+  //const [fechaFormateada, setFechaFormateada] = useState('');
   const navigate = useNavigate();
-  //const [currentStep, setCurrentStep] = useState("Iniciada");
+
   //UI States
   const [showCancelModalForm, setShowCancelModalForm] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -36,24 +35,26 @@ function RequestManagement() {
   const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
 
   useEffect(() => {
+    let isMounted = true; // Flag para saber si el componente sigue vivo
     const fetchSolicitudDetails = async () => {
       try {
         console.log('Fetching solicitud details...');
         const response = await apiService.getRequestByIdAdmin(solicitudId);
-        //console.log('Solicitud details:', response.data);
-        setSolicitud(response.data);
-        // ahora el backend devuelve 'estado_nombre' (texto) y 'id_solicitud_servicio_estado' (id numérico)
-        const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
-        //setCurrentStep(response.data.estado_nombre || response.data.estado || response.data.id_solicitud_servicio_estado);
-        const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        //console.log('Fecha de generación:', fechaGeneracion);
-        const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
+
+        if (isMounted) {
+
+          //console.log('Solicitud details:', response.data);
+          setSolicitud(response.data);
+        }
       } catch (error) {
-        console.error('Error fetching solicitud details:', error);
+
+        if (isMounted) console.error('Error fetching solicitud details:', error);
+
       }
     }
     fetchSolicitudDetails();
+
+    return () => { isMounted = false; };
   }, [solicitudId]);
 
   useEffect(() => {
@@ -61,7 +62,7 @@ function RequestManagement() {
       if (solicitud && solicitud.id_solicitud_servicio_estado) {
         try {
           const response = await apiService.getDetailServiceState(solicitud.id_solicitud_servicio_estado);
-          console.log('State detail:', response.data);
+          //console.log('State detail:', response.data);
           setServiceState(response.data);
         } catch (error) {
           console.error('Error fetching state detail:', error);
@@ -77,7 +78,6 @@ function RequestManagement() {
     setSolicitud(prev => ({ ...prev, ...updates }));
 
     try {
-      // 3. LLAMADA AL BACKEND
       await apiAction();
 
       console.log("Acción exitosa en servidor");
@@ -89,108 +89,25 @@ function RequestManagement() {
       // 4. ROLLBACK AUTOMÁTICO
       console.error("Falló la acción, revirtiendo...", error);
 
-      // Forzamos nueva referencia para asegurar re-render
       setSolicitud({ ...backupSolicitud });
+
+      const serverMessage = error.response?.data?.error || error.response?.data?.message || error.response?.data?.detail;
+      const finalMessage = serverMessage || errorMsg; //Si no usamos el generico
 
       setToastConfig({
         show: true,
-        message: `${errorMsg}. Se han revertido los cambios.`,
+        message: `${finalMessage}. Se han revertido los cambios.`,
         variant: 'danger'
       });
     }
   };
-
-  const updateSolicitudEstado = async (newStep, stepIndex) => {
-    try {
-      console.log('Updating request state...');
-      const requestData = { id: solicitudId, idSolicitudServicioEstado: stepIndex + 2 };
-      await apiService.updateRequestStateAdmin(requestData);
-      const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
-      //setCurrentStep(newStep);
-      setSolicitud(prevSolicitud => ({
-        ...prevSolicitud,
-        estado: newStep,
-        estado_nombre: newStep
-      }));
-      console.log('Updated solicitud:', {
-        ...solicitud,
-        estado: newStep
-      });
-    } catch (error) {
-      console.error('Error updating request state:', error);
-    }
-  };
-
-  const updateRequestBudgeted = async (dataSource = null) => {
-    try {
-      const stepIndex = steps.indexOf(currentStep);
-      const newStep = steps[stepIndex + 1];
-      console.log('Updating request state...', solicitud);
-      const source = dataSource || solicitud;
-      const requestData = {
-        id: solicitudId,
-        diagnosticoTecnico: source.diagnosticoTecnico ?? source.diagnostico_tecnico ?? '',
-        idSolicitudServicioEstado: stepIndex + 2,
-        monto: source.monto ?? solicitud.monto,
-        fechaEstimada: source.fechaEstimada ?? source.fecha_estimada ?? null
-      };
-      await apiService.updateRequestBudgetAdmin(requestData);
-      const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
-      //setCurrentStep(newStep);
-      setSolicitud(prevSolicitud => ({
-        ...prevSolicitud,
-        estado: newStep,
-        estado_nombre: newStep
-      }));
-      console.log('Updated solicitud:', {
-        ...solicitud,
-        estado: newStep
-      });
-    } catch (error) {
-      console.error('Error updating request state:', error);
-    }
-  };
-
-  const UpdateRequestFinished = async (dataSource = null) => {
-    try {
-      const stepIndex = steps.indexOf(currentStep);
-      const newStep = steps[stepIndex + 1];
-      const source = dataSource || solicitud;
-      console.log('Updating request state...', source);
-      const requestData = {
-        id: solicitudId,
-        resumen: source.resumen ?? source.Resumen ?? source.localResumen,
-        idSolicitudServicioEstado: stepIndex + 2,
-      };
-      await apiService.updateRequestFinished(requestData);
-      const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
-      //setCurrentStep(newStep);
-      setSolicitud(prevSolicitud => ({
-        ...prevSolicitud,
-        estado: newStep,
-        estado_nombre: newStep,
-        resumen: requestData.resumen,
-        Resumen: requestData.resumen
-      }));
-      console.log('Updated solicitud:', {
-        ...solicitud,
-        estado: newStep
-      });
-    } catch (error) {
-      console.error('Error updating request state:', error);
-    }
-  };
-
+  
   const handleNextStep = async (incomingData = null) => {
 
-    //const mergedSolicitud = incomingData ? { ...solicitud, ...incomingData } : solicitud;
     const stepIndex = steps.indexOf(currentStep);
-    if (stepIndex < steps.length - 1) return;
-    const nextStepName = steps[stepIndex + 1];
+    if (stepIndex >= steps.length - 1) return;
 
-    //console.log('step viejo:', newStep);
-    //await updateSolicitudEstado(newStep, stepIndex);
-    //console.log('Updated step nuevo:', newStep);
+    const nextStepName = steps[stepIndex + 1];
 
     const uiUpdates = {
       estado: nextStepName,
@@ -234,55 +151,12 @@ function RequestManagement() {
     await executeOptimisticAction(
       uiUpdates,
       apiWorker,
-      null, // No mostramos toast de éxito en cada paso para no spamear, pero podrías.
+      `Estado actualizado a: ${nextStepName}`,
       `Error al pasar a estado ${nextStepName}`
     );
   };
-  /*
-  setSolicitud(prevSolicitud => ({
-    ...prevSolicitud,
-    estado: newStep,
-    estado_nombre: newStep,
-    ...incomingData
-  }));
-  const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
-  //setCurrentStep(newStep);
-  try {
-    const idSolicitudEstado = stepIndex + 2;
-    const requestData = { id: solicitudId, idSolicitudServicioEstado: idSolicitudEstado };
 
-    await apiService.updateRequestStateAdmin(requestData);
-
-    // Si es "Revisada", tu código tenía una llamada extra:
-    if (newStep === 'Revisada') {
-      await apiService.updateRequestReviewed(solicitudId);
-    }
-
-    console.log("Guardado en BD exitoso");
-  } catch (error) {
-    console.error("Error al guardar, revirtiendo...", error);
-    // Aquí podrías hacer un rollback si falla, pero por ahora lo dejamos simple.
-    alert("Hubo un error al guardar los cambios en el servidor");
-  }
-}
-if (steps[stepIndex + 1] === 'Revisada') {
-  const newStep = steps[stepIndex + 1];
-  const id = solicitud.id;
-  await updateSolicitudEstado(newStep, stepIndex);
-  await apiService.updateRequestReviewed(id);
-}
-
-if (steps[stepIndex + 1] === 'Presupuestada') {
-  console.log('Solicitud: ', mergedSolicitud);
-  await updateRequestBudgeted(mergedSolicitud);
-}
-if (steps[stepIndex + 1] === 'Finalizada') {
-  console.log('Solicitud: ', mergedSolicitud);
-  await UpdateRequestFinished(mergedSolicitud);
-}
-};*/
-
-  const handleRollback = (previousState, errorMessage, errorObj = null) => {
+  /*const handleRollback = (previousState, errorMessage, errorObj = null) => {
     console.log("--- ROLLBACK EXECUTED ---");
     console.error(errorMessage, errorObj);
     setSolicitud(previousState);
@@ -294,7 +168,7 @@ if (steps[stepIndex + 1] === 'Finalizada') {
       variant: 'danger'
     });
 
-  };
+  };*/
 
   const handleConfirmCancel = async (motivoReason) => {
     const prevSolicitud = { ...solicitud };
@@ -308,10 +182,9 @@ if (steps[stepIndex + 1] === 'Finalizada') {
       ...prev,
       ...uiUpdates
     }));
-    
-    //const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
-    //setCurrentStep('Cancelada');
+
     const apiWorker = async () => {
+      console.log('Canceling request with reason:', motivoReason);
       await apiService.cancelRequest(solicitudId, { resumen: motivoReason });
     };
 
@@ -363,6 +236,10 @@ if (steps[stepIndex + 1] === 'Finalizada') {
         return <div>Error al obtener el estado</div>;
     }
   };
+
+  const fechaFormateada = solicitud?.fechaGeneracion
+    ? new Date(solicitud.fechaGeneracion).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    : '';
 
   return (
     <div className='requestManagement w-100'>

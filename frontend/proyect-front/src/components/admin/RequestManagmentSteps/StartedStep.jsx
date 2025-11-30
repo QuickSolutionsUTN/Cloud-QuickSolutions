@@ -13,17 +13,15 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import "./StartedStep.css";
 
-function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
+function StartedStep({ solicitud, nextStep, cancelStep }) {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [items, setItems] = useState([]);
-  const [profesiones, setProfesiones] = useState([]);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [trabajadoresFiltrados, setTrabajadoresFiltrados] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [postApiExito, setPostApiExito] = useState(false);
 
   if (!solicitud) {
     return <div>Cargando...</div>;
