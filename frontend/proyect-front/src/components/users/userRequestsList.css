@@ -39,28 +39,38 @@
 }
 
 .filter-pill.active.pending {
-  color: #856404;
-  background-color: #fff3cd;
+  color: #0d6efd;
+  background-color: #cfe2ff;
 }
 
 .filter-pill.active.quoted {
-  color: #0c5460;
-  background-color: #d1ecf1;
+  color: #055160;
+  background-color: #cff4fc;
 }
 
 .filter-pill.active.approved {
-  color: #155724;
-  background-color: #d4edda;
+  color: #0f5132;
+  background-color: #d1e7dd;
 }
 
-.filter-pill.active.in-progress {
-  color: #004085;
-  background-color: #cce5ff;
+.filter-pill.active.reviewed {
+  color: #383d41;
+  background-color: #e2e3e5;
 }
 
 .filter-pill.active.finished {
-  color: #383d41;
-  background-color: #e2e3e5;
+  color: #1a1d20;
+  background-color: #d3d6d8;
+}
+
+.filter-pill.active.cancelled {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+
+.filter-pill.active.rejected {
+  color: #721c24;
+  background-color: #f8d7da;
 }
 
 .table-hover tbody tr:hover {
@@ -107,6 +117,26 @@
 }
 
 .cancel-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.approve-btn {
+  background-color: #d1e7dd;
+  color: #198754;
+}
+
+.approve-btn:hover {
+  background-color: #198754;
+  color: white;
+}
+
+.reject-btn {
+  background-color: #fff0f0;
+  color: #dc3545;
+}
+
+.reject-btn:hover {
   background-color: #dc3545;
   color: white;
 }

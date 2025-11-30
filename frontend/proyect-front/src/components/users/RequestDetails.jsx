@@ -22,11 +22,10 @@ export default function RequestDetails() {
 
   const getBadgeVariant = (estado) => {
     const estados = {
-      "Pendiente": "warning",
+      "Iniciada": "primary",
       "Revisada": "secondary",
       "Presupuestada": "info",
       "Aprobada": "success",
-      "En Proceso": "primary",
       "Finalizada": "dark",
       "Cancelada": "danger",
       "Rechazada": "danger",
@@ -139,7 +138,7 @@ export default function RequestDetails() {
 
   const estadoActual = solicitud.estado;
   const puedeAprobarRechazar = estadoActual === "Presupuestada";
-  const puedeCancelar = ["Pendiente", "Presupuestada"].includes(estadoActual);
+  const puedeCancelar = estadoActual === "Iniciada";
 
   return (
     <div className="request-details-container">
