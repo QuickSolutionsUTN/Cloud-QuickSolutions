@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
@@ -66,6 +66,17 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
                   onInput={adjustTextareaHeight}
                 />
               </Form.Group>
+                  <Form.Group className="mt-3" controlId="checklist">
+                    <Form.Label className="fw-bold">Checklist de Mantenimiento Preventivo</Form.Label>
+                    <ListGroup>
+                      {solicitud.mantenimiento?.checklist?.map((item) => (
+                        <ListGroup.Item key={item.id}>
+                          {item.descripcion}
+                          {item.obligatorio && " (Obligatorio)"}
+                        </ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  </Form.Group>
             </div>}
           </div>
         </div>
