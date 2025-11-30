@@ -1,7 +1,7 @@
 .maintenance, .repair{
   background-position: center;
   background-size: contain;
-  background-repeat: no-repeat; 
+  background-repeat: no-repeat;
   width: 100%;
   padding-bottom: 33.34%; /* Mantiene la relación de aspecto de la imagen (2028:676) */
   margin: 0px;
@@ -15,47 +15,53 @@
   background-image: url('../../assets/images/repair.png');
 }
 
-.custom-carousel .card {
-  position: absolute; /* Posiciona la tarjeta de manera absoluta dentro del div */
+.custom-carousel .carousel-card-maintenance,
+.custom-carousel .carousel-card-repair {
+  position: absolute;
   background-color: transparent;
-  border: 0px;
+  border: 0;
+  box-shadow: none;
 }
 
 .custom-carousel .carousel-control-prev,
 .custom-carousel .carousel-control-next {
-  width: 160px; /* Ajusta este valor según tus necesidades */
+  width: 160px;
 }
 
-.maintenance .card {
-  top: 30%; /* Ajusta este valor para mover la tarjeta hacia arriba o abajo */
-  left: 57%; /* Ajusta este valor para mover la tarjeta hacia la derecha o izquierda */
+.custom-carousel .maintenance .carousel-card-maintenance {
+  top: 30%; 
+  left: 57%;
 }
-.maintenance .card .card-title {
+.custom-carousel .maintenance .carousel-card-maintenance .card-title {
   font-size: 1.5em;
   font-weight: bold;
 }
-.maintenance .card .card-subtitle {
+.custom-carousel .maintenance .carousel-card-maintenance .card-subtitle {
   font-size: 1.1em;
   font-weight: bold;
   color: rgb(169, 169, 169);
 }
 
-
-.repair .card {
-  top: 30%; /* Ajusta este valor para mover la tarjeta hacia arriba o abajo */
-  left: 10%; /* Ajusta este valor para mover la tarjeta hacia la derecha o izquierda */
+.custom-carousel .maintenance .carousel-card-maintenance .card-text {
+  font-size: 1.1em;
+  color: rgb(169, 169, 169);
 }
-.repair .card .card-title {
+
+.custom-carousel .repair .carousel-card-repair {
+  top: 30%;
+  left: 10%;
+}
+.custom-carousel .repair .carousel-card-repair .card-title {
   font-size: 1.5em;
   font-weight: bold;
   color: black;
 }
-.repair .card .card-subtitle {
+.custom-carousel .repair .carousel-card-repair .card-subtitle {
   font-size: 1.1em;
   font-weight: bold;
   color: rgb(44, 44, 44);
 }
-.repair .card-text {
+.custom-carousel .repair .carousel-card-repair .card-text {
   color: rgb(17, 17, 17);
 }
 
