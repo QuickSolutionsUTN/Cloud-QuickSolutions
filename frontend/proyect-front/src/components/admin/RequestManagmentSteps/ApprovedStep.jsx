@@ -9,7 +9,6 @@ import "./approvedStep.css";
 function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
   const [fechaFormateada, setFechaFormateada] = useState('');
   const [idCategoria, setIdCategoria] = useState(null);
-  const [Resumen, setResumen] = useState('');
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
     const [localResumen, setLocalResumen] = useState('');
