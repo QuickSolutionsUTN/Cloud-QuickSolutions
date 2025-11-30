@@ -156,20 +156,6 @@ function RequestManagement() {
     );
   };
 
-  /*const handleRollback = (previousState, errorMessage, errorObj = null) => {
-    console.log("--- ROLLBACK EXECUTED ---");
-    console.error(errorMessage, errorObj);
-    setSolicitud(previousState);
-    //setCurrentStep(previousState.estado_nombre || previousState.estado);
-    //const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
-    setToastConfig({
-      show: true,
-      message: errorMessage,
-      variant: 'danger'
-    });
-
-  };*/
-
   const handleConfirmCancel = async (motivoReason) => {
     const prevSolicitud = { ...solicitud };
     setShowCancelModalForm(false);
