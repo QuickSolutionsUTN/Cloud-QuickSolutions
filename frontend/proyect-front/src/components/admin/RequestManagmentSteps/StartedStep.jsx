@@ -225,7 +225,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
               </Form.Group>
               <Form.Group className="mt-3" controlId="checklist">
                 <Form.Label className="fw-bold">
-                  Checklist de Mantenimiento Preventivo
+                  Checklist
                 </Form.Label>
                 <ListGroup>
                   {solicitud.mantenimiento?.checklist?.map((item) => (
