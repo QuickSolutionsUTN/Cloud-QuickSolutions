@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Perfiles, Categoria, Producto, SolicitudServicio, ChecklistMantenimiento, TipoMantenimiento, Domicilio, Provincia, Localidad
+from .models import Perfiles, Categoria, Producto, SolicitudServicio, ChecklistMantenimiento, TipoMantenimiento, Domicilio, Provincia, Localidad, SolicitudServicioEstado
     
 class PerfilesSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source='id.email', read_only=True)
@@ -42,7 +42,8 @@ class CrearSolicitudSerializer(serializers.Serializer):
     conLogistica = serializers.BooleanField()
 #    envio = EnvioSerializer(required=False, allow_null=True)
 
-class SolicitudDetailSerializer(serializers.ModelSerializer):
+class SolicitudListAdminSerializer(serializers.ModelSerializer):
+    """Serializer para la lista de solicitudes en el dashboard admin"""
     emailSolicitante = serializers.CharField(source='id_solicitante.email', read_only=True)
     tipoServicio = serializers.CharField(source='id_tipo_servicio.descripcion', read_only=True)
     categoria = serializers.CharField(source='id_producto.id_categoria.descripcion', read_only=True)
@@ -51,7 +52,38 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
     fechaGeneracion = serializers.DateTimeField(source='fecha_generacion', read_only=True)
     fechaEstimada = serializers.DateTimeField(source='fecha_estimada', read_only=True)
     fechaFinalizada = serializers.DateTimeField(source='fecha_finalizada', read_only=True)
+    fechaAprobada = serializers.DateTimeField(source='fecha_aprobada', read_only=True)
+    fechaPresupuestada = serializers.DateTimeField(source='fecha_presupuestada', read_only=True)
+    fechaCancelada = serializers.DateTimeField(source='fecha_cancelada', read_only=True)
+    conLogistica = serializers.BooleanField(source='con_logistica', read_only=True)
+
+    class Meta:
+        model = SolicitudServicio
+        fields = [
+            'id', 'emailSolicitante', 'tipoServicio', 'categoria', 'producto', 
+            'estado', 'fechaGeneracion', 'monto', 'fechaEstimada', 
+            'fechaFinalizada', 'fechaAprobada', 'fechaPresupuestada', 
+            'fechaCancelada', 'conLogistica'
+        ]
+
+
+class SolicitudDetailSerializer(serializers.ModelSerializer):
+    emailSolicitante = serializers.CharField(source='id_solicitante.email', read_only=True)
+    tipoServicio = serializers.CharField(source='id_tipo_servicio.descripcion', read_only=True)
+    categoria = serializers.CharField(source='id_producto.id_categoria.descripcion', read_only=True)
+    producto = serializers.CharField(source='id_producto.descripcion', read_only=True)
+    # nombre legible del estado (ej: 'Iniciada', 'Presupuestada')
+    estado = serializers.CharField(source='id_solicitud_servicio_estado.descripcion', read_only=True)
+    # expone explícitamente el nombre del estado bajo la clave 'estado_nombre'
+    estado_nombre = serializers.CharField(source='id_solicitud_servicio_estado.descripcion', read_only=True)
+    # expone también el id numérico del estado si el cliente lo necesita
+    id_solicitud_servicio_estado = serializers.IntegerField(source='id_solicitud_servicio_estado.id', read_only=True)
+    fechaGeneracion = serializers.DateTimeField(source='fecha_generacion', read_only=True)
+    fechaEstimada = serializers.DateTimeField(source='fecha_estimada', read_only=True)
+    fechaFinalizada = serializers.DateTimeField(source='fecha_finalizada', read_only=True)
     diagnosticoTecnico = serializers.CharField(source='diagnostico_tecnico', read_only=True)
+    resumen = serializers.CharField(read_only=True)
+    Resumen = serializers.CharField(source='resumen', read_only=True)
     
 #    envio = serializers.SerializerMethodField()
     mantenimiento = serializers.SerializerMethodField()
@@ -60,8 +92,8 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
         model = SolicitudServicio
         fields = [
             'id', 'emailSolicitante', 'tipoServicio', 'categoria', 'producto', 
-            'descripcion', 'estado', 'fechaGeneracion', 'monto', 'fechaEstimada', 
-            'fechaFinalizada', 'diagnosticoTecnico', 'con_logistica', 'mantenimiento'
+            'descripcion', 'estado', 'estado_nombre', 'id_solicitud_servicio_estado', 'fechaGeneracion', 'monto', 'fechaEstimada', 
+            'fechaFinalizada', 'diagnosticoTecnico', 'resumen', 'Resumen', 'con_logistica', 'mantenimiento'
         ]
 
 #   def get_envio(self, obj):
@@ -76,17 +108,32 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
 
     def get_mantenimiento(self, obj):
         if obj.id_tipo_mantenimiento:
+            tipo = obj.id_tipo_mantenimiento
             checklist_items = ChecklistMantenimiento.objects.filter(
-                id_tipo_mantenimiento=obj.id_tipo_mantenimiento
+                id_tipo_mantenimiento=tipo
             )
             return {
+                'id': tipo.id,
+                'nombre': tipo.nombre,
+                'descripcion': tipo.descripcion,
                 'checklist': [
-                    {'id': item.id, 'descripcion': item.tarea} 
+                    {'id': item.id, 'descripcion': item.tarea, 'obligatorio': item.obligatorio} 
                     for item in checklist_items
                 ]
             }
         return None
 
+
+class PresupuestarSolicitudSerializer(serializers.Serializer):
+    """Serializer para los datos que se envían al presupuestar una solicitud."""
+    diagnosticoTecnico = serializers.CharField(required=True, allow_blank=False, max_length=1000)
+    monto = serializers.FloatField(required=True)
+    fechaEstimada = serializers.DateTimeField(required=True) 
+
+
+class FinalizarSolicitudSerializer(serializers.Serializer):
+    """Serializer para los datos que se envían al finalizar una solicitud."""
+    resumen = serializers.CharField(required=True, allow_blank=False, max_length=1000)
 
 class ChecklistMantenimientoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -155,3 +202,9 @@ class DomicilioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domicilio
         fields = ['calle', 'numero', 'departamento', 'codigo_postal', 'localidad','localidad_nombre', 'provincia', 'piso']
+
+
+class SolicitudServicioEstadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SolicitudServicioEstado
+        fields = ['id', 'descripcion']

@@ -34,21 +34,10 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
 
   const handleNextStep = async () => {
     console.log("Solicitud:", solicitud);
-    if (solicitud.conLogistica) {
-      const nroSeguimiento = await solicitarEnvio(solicitud.envio);
-      if (!nroSeguimiento) {
-        alert(
-          "Error al conectarse con el servicio de envios. Intente nuevamente mas tarde"
-        );
-        return;
-      }
-      solicitud.envio.nroSeguimiento = nroSeguimiento;
-    }
-    solicitud.tercearizado=false;
     nextStep();
   };
 
-  const solicitarEnvio = async (data) => {
+/*  const solicitarEnvio = async (data) => {
     const uuid_admin = "cda6ad47-e784-4b29-9b34-f680b21e1563";
     const envioData = {
       descripcion: "Envio de paquete",
@@ -84,7 +73,6 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       console.error("Error solicitando envio:", error);
     }
   };
-
   const getApiResponse = async () => {
     try {
       const [trabajadores, profesiones] = await Promise.all([
@@ -132,6 +120,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     setTrabajadoresFiltrados(updatedItems);
   };
 
+*/
   const handleSelectItem = (item) => {
     setSelectedItem(item);
   };
@@ -141,7 +130,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     setError(null);
     setShow(false);
   };
-
+/*
   const handleSubcrontractFinish = async () => {
     if (!selectedItem) {
       console.log("Debe seleccionar un trabajador");
@@ -182,6 +171,8 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     setShow(false);
   };
 
+*/
+/*
   const postSolicitudTrabajo = async (solicitudData) => {
     try {
       console.log("Solicitando trabajo...", solicitudData);
@@ -193,7 +184,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       console.error("Error solicitando trabajo:", error);
     }
   };
-
+*/
   const adjustTextareaHeight = (e) => {
     e.target.style.height = "auto";
     e.target.style.height = `${e.target.scrollHeight}px`;
@@ -203,7 +194,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     <>
       <Form className="data-container">
         <div className="row">
-          {solicitud.tipoServicio === "Reparacion" ? (
+          {solicitud.tipoServicio === "Reparación" ? (
             <div className="col-12">
               <Form.Group controlId="description">
                 <Form.Label className="fw-bold">Descripcion del problema</Form.Label>
@@ -234,7 +225,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
               </Form.Group>
               <Form.Group className="mt-3" controlId="checklist">
                 <Form.Label className="fw-bold">
-                  Checklist de Mantenimiento Preventivo
+                  Checklist
                 </Form.Label>
                 <ListGroup>
                   {solicitud.mantenimiento?.checklist?.map((item) => (
@@ -253,9 +244,6 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
       <div className="buttons-container">
         <Button className="cancel" variant="danger" onClick={cancelStep}>
           Cancelar
-        </Button>
-        <Button className="subcontract" variant="warning" onClick={handleShow}>
-          Subcontratar
         </Button>
         <Button variant="success" onClick={handleNextStep}>
           Aceptar servicio
@@ -328,9 +316,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-primary" onClick={handleSubcrontractFinish}>
-            Solicitar trabajador
-          </Button>
+          
           <Button variant="outline-danger" onClick={handleClose}>
             Cerrar
           </Button>

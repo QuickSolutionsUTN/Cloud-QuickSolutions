@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import logo from "../assets/logos/logo.png";
 import './adminLayout.css';
@@ -8,7 +8,7 @@ import UserMenu from '../components/UserMenu.jsx';
 import user from '../assets/logos/user-white.png';
 
 function AdminLayout() {
-  const { userName, userSurName, logout, isAuthenticated, userRole } = useContext(AuthContext);
+  const { userName, userSurName, logout, userRole } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const onLogoutClick = () => {
