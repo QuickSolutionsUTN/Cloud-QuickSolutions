@@ -42,6 +42,31 @@ class CrearSolicitudSerializer(serializers.Serializer):
     conLogistica = serializers.BooleanField()
 #    envio = EnvioSerializer(required=False, allow_null=True)
 
+class SolicitudListAdminSerializer(serializers.ModelSerializer):
+    """Serializer para la lista de solicitudes en el dashboard admin"""
+    emailSolicitante = serializers.CharField(source='id_solicitante.email', read_only=True)
+    tipoServicio = serializers.CharField(source='id_tipo_servicio.descripcion', read_only=True)
+    categoria = serializers.CharField(source='id_producto.id_categoria.descripcion', read_only=True)
+    producto = serializers.CharField(source='id_producto.descripcion', read_only=True)
+    estado = serializers.CharField(source='id_solicitud_servicio_estado.descripcion', read_only=True)
+    fechaGeneracion = serializers.DateTimeField(source='fecha_generacion', read_only=True)
+    fechaEstimada = serializers.DateTimeField(source='fecha_estimada', read_only=True)
+    fechaFinalizada = serializers.DateTimeField(source='fecha_finalizada', read_only=True)
+    fechaAprobada = serializers.DateTimeField(source='fecha_aprobada', read_only=True)
+    fechaPresupuestada = serializers.DateTimeField(source='fecha_presupuestada', read_only=True)
+    fechaCancelada = serializers.DateTimeField(source='fecha_cancelada', read_only=True)
+    conLogistica = serializers.BooleanField(source='con_logistica', read_only=True)
+
+    class Meta:
+        model = SolicitudServicio
+        fields = [
+            'id', 'emailSolicitante', 'tipoServicio', 'categoria', 'producto', 
+            'estado', 'fechaGeneracion', 'monto', 'fechaEstimada', 
+            'fechaFinalizada', 'fechaAprobada', 'fechaPresupuestada', 
+            'fechaCancelada', 'conLogistica'
+        ]
+
+
 class SolicitudDetailSerializer(serializers.ModelSerializer):
     emailSolicitante = serializers.CharField(source='id_solicitante.email', read_only=True)
     tipoServicio = serializers.CharField(source='id_tipo_servicio.descripcion', read_only=True)

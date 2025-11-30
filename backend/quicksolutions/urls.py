@@ -34,4 +34,6 @@ urlpatterns = [
     path('perfiles/<uuid:pk>/domicilio', views.PerfilesDomicilioView.as_view(), name='perfiles-direccion'),
     path('solicitud-estado/<int:pk>/', views.SolicitudEstadoDetailView.as_view(), name='solicitud-estado-detalle'),
 
+    path('dashboard/stats/', views.DashboardStatsView.as_view(), name='dashboard-stats'),
+
 ]
