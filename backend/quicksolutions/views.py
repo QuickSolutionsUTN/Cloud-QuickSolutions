@@ -269,13 +269,23 @@ class PerfilesDomicilioView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class DashboardStatsView(APIView):
-    """
-    Endpoint optimizado para el dashboard admin.
-    Devuelve todas las estadísticas en una sola llamada con queries optimizadas.
-    """
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
+        # Verificar que el usuario sea admin
+        try:
+            perfil = Perfiles.objects.get(id=request.user)
+            if perfil.rol != 'admin':
+                return Response(
+                    {"error": "No tienes permisos para acceder a esta información"}, 
+                    status=status.HTTP_403_FORBIDDEN
+                )
+        except Perfiles.DoesNotExist:
+            return Response(
+                {"error": "Perfil no encontrado"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
         # Query optimizada para solicitudes con todas las relaciones necesarias
         solicitudes = SolicitudServicio.objects.select_related(
             'id_solicitante',

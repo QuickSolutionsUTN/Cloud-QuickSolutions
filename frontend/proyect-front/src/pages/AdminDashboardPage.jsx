@@ -408,7 +408,7 @@ export default function AdminDashboardPage() {
                         <FontAwesomeIcon icon={faScrewdriverWrench} size="lg" className="custom-text-primary" />
                       </div>
                       <div className="numbers"><h3>{productosCount}</h3></div>
-                      <div className="title"><h6>Productos en el catalogo</h6></div>
+                      <div className="title"><h6>Productos en el catálogo</h6></div>
                       <hr />
                       <div className="icon-big d-flex justify-content-end">
                         <FontAwesomeIcon icon={faBolt} size="lg" className="custom-text-primary" />
