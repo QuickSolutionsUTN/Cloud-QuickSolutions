@@ -30,7 +30,7 @@ export default function AdminTable({
   }, [initialData]);
 
   const handleEdit = (item) => {
-    setSelectedItem(item);
+    setSelectedItem({ ...item });
     setEditErrors({});
     setShowEditModal(true);
   };
@@ -45,7 +45,6 @@ export default function AdminTable({
       [e.target.name]: e.target.value,
     };
     setSelectedItem(updatedItem);
-    setData(data.map(item => (item.id === updatedItem.id ? updatedItem : item)));
   };
 
   const handleSave = () => {
@@ -67,12 +66,18 @@ export default function AdminTable({
       onEditSave(selectedItem)
         .then((updatedItem) => {
           setData(data.map(item => (item.id === updatedItem.id ? updatedItem : item)));
-          setShowEditModal(false);
+          closeEditModal();
         })
         .catch((error) => {
           console.error("Error al guardar la edición:", error);
         });
     }
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setSelectedItem(null);
+    setEditErrors({});
   };
 
   // Confirma la eliminación (llama al callback externo)
@@ -162,7 +167,7 @@ export default function AdminTable({
       </table>
       {/* Modal de Edición */}
       {onEditSave && (
-        <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal show={showEditModal} onHide={closeEditModal}>
           <Modal.Header closeButton>
             <Modal.Title>{editModalTitle}</Modal.Title>
           </Modal.Header>
@@ -172,7 +177,7 @@ export default function AdminTable({
               : null}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            <Button variant="secondary" onClick={closeEditModal}>
               Cancelar
             </Button>
             <Button variant="primary" onClick={handleSave}>
