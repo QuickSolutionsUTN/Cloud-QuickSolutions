@@ -89,7 +89,7 @@ function RequestManagement() {
       // 4. ROLLBACK AUTOMÁTICO
       console.error("Falló la acción, revirtiendo...", error);
 
-      setSolicitud({ ...backupSolicitud });
+      setSolicitud(backupSolicitud);
 
       const serverMessage = error.response?.data?.error || error.response?.data?.message || error.response?.data?.detail;
       const finalMessage = serverMessage || errorMsg; //Si no usamos el generico
