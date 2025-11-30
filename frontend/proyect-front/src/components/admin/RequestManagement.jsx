@@ -71,7 +71,8 @@ function RequestManagement() {
       setCurrentStep(newStep);
       setSolicitud(prevSolicitud => ({
         ...prevSolicitud,
-        estado: newStep
+        estado: newStep,
+        estado_nombre: newStep
       }));
       console.log('Updated solicitud:', {
         ...solicitud,
@@ -108,7 +109,8 @@ function RequestManagement() {
       setCurrentStep(newStep);
       setSolicitud(prevSolicitud => ({
         ...prevSolicitud,
-        estado: newStep
+        estado: newStep,
+        estado_nombre: newStep
       }));
       console.log('Updated solicitud:', {
         ...solicitud,
@@ -135,6 +137,7 @@ function RequestManagement() {
       setSolicitud(prevSolicitud => ({
         ...prevSolicitud,
         estado: newStep,
+        estado_nombre: newStep,
         resumen: requestData.resumen,
         Resumen: requestData.resumen
       }));
