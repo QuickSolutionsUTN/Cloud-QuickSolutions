@@ -103,7 +103,8 @@ const apiService = {
 
   // Solicitudes del usuario
   getUserRequests: () => api.get("/solicitud/mis-solicitudes/"),
-  cancelRequest: (id) => api.put(`/solicitud/${id}/cancelar/`),
+  // Accept an optional body (e.g. { resumen }) so callers can send the cancellation reason.
+  cancelRequest: (id, data = {}) => api.put(`/solicitud/${id}/cancelar/`, data),
 
   // Provincia
   getStates: () => api.get("/provincias/"),
