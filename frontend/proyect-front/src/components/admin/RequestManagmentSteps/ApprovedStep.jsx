@@ -100,7 +100,7 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
             <>
               <div className='mb-3'>
                 <Form.Group controlId='mantenimiento-desc'>
-                  <Form.Label className="fw-bold">Descripcion del mantenimiento</Form.Label>
+                  <Form.Label className="fw-bold">Descripción del mantenimiento</Form.Label>
                   <Form.Control
                     as='textarea'
                     rows={3}
