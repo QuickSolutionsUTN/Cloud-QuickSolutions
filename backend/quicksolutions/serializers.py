@@ -109,9 +109,7 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
     def get_mantenimiento(self, obj):
         if obj.id_tipo_mantenimiento:
             tipo = obj.id_tipo_mantenimiento
-            checklist_items = ChecklistMantenimiento.objects.filter(
-                id_tipo_mantenimiento=tipo
-            )
+            checklist_items = tipo.checklistmantenimiento_set.all()
             return {
                 'id': tipo.id,
                 'nombre': tipo.nombre,

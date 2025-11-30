@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Form, Button, Modal, Badge, ListGroup } from "react-bootstrap";
+import { Form, Button, Modal, Badge, ListGroup, Alert } from "react-bootstrap";
 import { toast } from "react-toastify";
 import AuthContext from "../../contexts/AuthContext.jsx";
 import apiService from "../../services/axiosConfig.jsx";
@@ -22,11 +22,10 @@ export default function RequestDetails() {
 
   const getBadgeVariant = (estado) => {
     const estados = {
-      "Pendiente": "warning",
+      "Iniciada": "primary",
       "Revisada": "secondary",
       "Presupuestada": "info",
       "Aprobada": "success",
-      "En Proceso": "primary",
       "Finalizada": "dark",
       "Cancelada": "danger",
       "Rechazada": "danger",
@@ -119,6 +118,53 @@ export default function RequestDetails() {
     });
   };
 
+  const renderAdminMessages = () => {
+    if (!solicitud.resumen) return null;
+
+    const estadoActual = solicitud.estado;
+
+    if (estadoActual === "Cancelada" || estadoActual === "Rechazada") {
+      return (
+        <Alert variant="danger" className="mb-4">
+          <div className="d-flex align-items-start">
+            <i className="bi bi-exclamation-triangle-fill me-3 mt-1"></i>
+            <div className="flex-grow-1">
+              <Alert.Heading as="h6" className="mb-2">
+                {estadoActual === "Cancelada" ? "Motivo de cancelación" : "Motivo de rechazo"}
+              </Alert.Heading>
+              <p className="mb-2">{solicitud.resumen}</p>
+              {solicitud.fechaCancelada && (
+                <small className="text-muted">
+                  <i className="bi bi-calendar me-1"></i>
+                  {formatDate(solicitud.fechaCancelada)}
+                </small>
+              )}
+              </div>
+          </div>
+        </Alert>
+      );
+    }
+
+    // Mensaje de finalización
+    if (estadoActual === "Finalizada") {
+      return (
+        <Alert variant="success" className="mb-4">
+          <div className="d-flex align-items-start">
+            <i className="bi bi-check-circle-fill me-3 mt-1"></i>
+            <div className="flex-grow-1">
+              <Alert.Heading as="h6" className="mb-2">
+                Comentarios de finalización
+              </Alert.Heading>
+              <p className="mb-2">{solicitud.resumen}</p>
+            </div>
+          </div>
+        </Alert>
+      );
+    }
+
+    return null;
+  };
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center py-5">
@@ -139,7 +185,7 @@ export default function RequestDetails() {
 
   const estadoActual = solicitud.estado;
   const puedeAprobarRechazar = estadoActual === "Presupuestada";
-  const puedeCancelar = ["Pendiente", "Presupuestada"].includes(estadoActual);
+  const puedeCancelar = estadoActual === "Iniciada";
 
   return (
     <div className="request-details-container">
@@ -156,8 +202,11 @@ export default function RequestDetails() {
         </Button>
       </div>
 
+      {/* Mensajes del administrador */}
+      {renderAdminMessages()}
+
       {/* Información de presupuesto si aplica */}
-      {(["Presupuestada", "Aprobada", "Finalizada", "En Proceso"].includes(estadoActual)) && (
+      {(["Presupuestada", "Aprobada", "Finalizada"].includes(estadoActual)) && (
         <div className="card mb-4 border-success">
           <div className="card-body">
             <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
