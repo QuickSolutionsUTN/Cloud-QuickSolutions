@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { Form, Spinner } from 'react-bootstrap';
 import apiService from '../services/axiosConfig';
-import { useBackendURL } from '../contexts/BackendURLContext';
 import AuthContext from '../contexts/AuthContext';
 import AdminHeaderWithModal from '../components/admin/AdminHeaderWithModal';
 import AdminTable from '../components/admin/AdminTable';
@@ -13,10 +12,10 @@ function AdminProductsPage() {
     descripcion: '',
     id_categoria: '', 
   });
+  const [newProductErrors, setNewProductErrors] = useState({});
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const backendURL = useBackendURL();
   const { userToken } = useContext(AuthContext);
 
   useEffect(() => {
@@ -31,7 +30,7 @@ function AdminProductsPage() {
     };
 
     fetchCategories();
-  }, [backendURL]);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -47,7 +46,7 @@ function AdminProductsPage() {
     };
 
     fetchProducts();
-  }, [backendURL]);
+  }, []);
 
   const handleAdd = () => {
     setShowModal(true);
@@ -65,25 +64,37 @@ function AdminProductsPage() {
   };
 
   const handleSave = async () => {
+    // Client-side validation
+    const errors = {};
+    if (!newProduct.descripcion || newProduct.descripcion.trim() === '') {
+      errors.descripcion = 'El nombre es obligatorio';
+    }
+    if (!newProduct.id_categoria || String(newProduct.id_categoria).trim() === '') {
+      errors.id_categoria = 'La categoría es obligatoria';
+    }
+    if (Object.keys(errors).length > 0) {
+      setNewProductErrors(errors);
+      return;
+    }
+
     try {
       console.log("guardando producto... ", newProduct);
-      const response = await apiService.createProduct(newProduct, {
-        headers: {
-          Authorization: `Bearer ${userToken}`
-        }
-      });
+      const response = await apiService.createProduct(newProduct);
       if (response.status === 201) {
         console.log("Producto guardado correctamente");
         console.log("Respuesta del servidor", response.data);
-        window.location.reload();
+        // Append the created product to the table data instead of reloading
+        setProducts((prev) => [...prev, response.data]);
+        // Reset form
+        setNewProduct({ descripcion: '', id_categoria: '' });
+        setNewProductErrors({});
+        setShowModal(false);
       } else {
         console.log("Error al guardar el producto", response.data);
       }
     } catch (error) {
       console.error("Error al guardar el producto", error);
     }
-
-    setShowModal(false);
   };
 
   const columnsProducts = [
@@ -137,7 +148,11 @@ function AdminProductsPage() {
               value={newProduct.descripcion} 
               onChange={handleChange}
               placeholder="Nombre del producto"
+                isInvalid={!!newProductErrors.descripcion}
             />
+              <Form.Control.Feedback type="invalid">
+                {newProductErrors.descripcion}
+              </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group>
@@ -147,6 +162,7 @@ function AdminProductsPage() {
               name="id_categoria"
               value={newProduct.id_categoria}
               onChange={handleChange}
+                isInvalid={!!newProductErrors.id_categoria}
             >
               <option value="">Selecciona una categoría</option>
               {categories.map((category, index) => (
@@ -155,6 +171,9 @@ function AdminProductsPage() {
                 </option>
               ))}
             </Form.Control>
+              <Form.Control.Feedback type="invalid">
+                {newProductErrors.id_categoria}
+              </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </AdminHeaderWithModal>
@@ -167,14 +186,21 @@ function AdminProductsPage() {
               initialData={products}
               columns={columnsProducts}
               onEditSave={onEditSave}
+                validateEdit={(item) => {
+                  const errors = {};
+                  if (!item.descripcion || String(item.descripcion).trim() === '') errors.descripcion = 'El nombre es obligatorio';
+                  if (!item.id_categoria || String(item.id_categoria).trim() === '') errors.id_categoria = 'La categoría es obligatoria';
+                  return errors;
+                }}
               onDeleteConfirm={onDeleteConfirm}
-              renderEditForm={(selectedItem, handleEditChange) => (
-                <RenderEditProductForm
-                  selectedItem={selectedItem}
-                  handleEditChange={handleEditChange}
-                  categories={categories}
-                />
-              )}
+                renderEditForm={(selectedItem, handleEditChange, editErrors) => (
+                  <RenderEditProductForm
+                    selectedItem={selectedItem}
+                    handleEditChange={handleEditChange}
+                    categories={categories}
+                    errors={editErrors}
+                  />
+                )}
               editModalTitle="Editar Producto"
               deleteModalTitle="Confirmar Eliminación"
               deleteModalMessage="¿Estás seguro de que quieres eliminar este producto?" />

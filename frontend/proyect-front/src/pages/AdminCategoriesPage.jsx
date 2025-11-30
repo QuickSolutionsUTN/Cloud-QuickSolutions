@@ -13,6 +13,7 @@ function AdminCategoriesPage() {
     descripcion: '',
     id_categoria: '',
   });
+  const [newCategoryErrors, setNewCategoryErrors] = useState({});
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const backendURL = useBackendURL();
@@ -50,6 +51,15 @@ function AdminCategoriesPage() {
   };
 
   const handleSave = async () => {
+    const errors = {};
+    if (!newCategory.descripcion || newCategory.descripcion.trim() === '') {
+      errors.descripcion = 'El nombre es obligatorio';
+    }
+    if (Object.keys(errors).length > 0) {
+      setNewCategoryErrors(errors);
+      return;
+    }
+
     try {
       console.log("guardando categoria... ", newCategory);
       const response = await apiService.createCategory(newCategory, {
@@ -60,15 +70,18 @@ function AdminCategoriesPage() {
       if (response.status === 201) {
         console.log("Categoria guardado correctamente");
         console.log("Respuesta del servidor", response.data);
-        window.location.reload();
+        // Add the created category to the table data instead of reloading the page
+        setCategories((prev) => [...prev, response.data]);
+        // Reset form
+        setnewCategory({ descripcion: '', id_categoria: '' });
+        setNewCategoryErrors({});
+        setShowModal(false);
       } else {
         console.log("Error al guardar la categoria", response.data);
       }
     } catch (error) {
       console.error("Error al guardar la categoria", error);
     }
-
-    setShowModal(false);
   };
 
   const columnsProducts = [
@@ -114,7 +127,11 @@ function AdminCategoriesPage() {
               value={newCategory.descripcion}
               onChange={handleChange}
               placeholder="Nombre del categoria"
+              isInvalid={!!newCategoryErrors.descripcion}
             />
+            <Form.Control.Feedback type="invalid">
+              {newCategoryErrors.descripcion}
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </AdminHeaderWithModal>
@@ -126,12 +143,18 @@ function AdminCategoriesPage() {
             <AdminTable
               initialData={categories}
               columns={columnsProducts}
+              validateEdit={(item) => {
+                const errors = {};
+                if (!item.descripcion || String(item.descripcion).trim() === '') errors.descripcion = 'El nombre es obligatorio';
+                return errors;
+              }}
               onEditSave={onEditSave}
               onDeleteConfirm={onDeleteConfirm}
-              renderEditForm={(selectedItem, handleEditChange) => (
+              renderEditForm={(selectedItem, handleEditChange, editErrors) => (
                 <RenderEditCategoryForm
                   selectedItem={selectedItem}
                   handleEditChange={handleEditChange}
+                  errors={editErrors}
                 />
               )}
               editModalTitle="Editar Categoria"
