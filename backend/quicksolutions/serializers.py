@@ -82,6 +82,8 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
     fechaEstimada = serializers.DateTimeField(source='fecha_estimada', read_only=True)
     fechaFinalizada = serializers.DateTimeField(source='fecha_finalizada', read_only=True)
     diagnosticoTecnico = serializers.CharField(source='diagnostico_tecnico', read_only=True)
+    resumen = serializers.CharField(read_only=True)
+    Resumen = serializers.CharField(source='resumen', read_only=True)
     
 #    envio = serializers.SerializerMethodField()
     mantenimiento = serializers.SerializerMethodField()
@@ -91,7 +93,7 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'emailSolicitante', 'tipoServicio', 'categoria', 'producto', 
             'descripcion', 'estado', 'estado_nombre', 'id_solicitud_servicio_estado', 'fechaGeneracion', 'monto', 'fechaEstimada', 
-            'fechaFinalizada', 'diagnosticoTecnico', 'con_logistica', 'mantenimiento'
+            'fechaFinalizada', 'diagnosticoTecnico', 'resumen', 'Resumen', 'con_logistica', 'mantenimiento'
         ]
 
 #   def get_envio(self, obj):
