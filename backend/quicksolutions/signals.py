@@ -51,9 +51,6 @@ def notificar_cambios(sender, instance, created, **kwargs):
         else "A confirmar",
         "con_logistica": instance.con_logistica,
     }
-
-    # Debug en consola para que veas qué sale
-    print(f"🚀 Enviando a SNS: {json.dumps(payload, indent=2, default=str)}")
     
     try:
         publicar_evento_sns(payload)
