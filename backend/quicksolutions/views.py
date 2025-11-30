@@ -176,17 +176,22 @@ class solicitudesAdminListView(generics.ListAPIView):
         return SolicitudServicio.objects.all().order_by('-fecha_generacion')
 
 class CancelarSolicitudView(APIView):
-    """Permite al usuario cancelar su propia solicitud si está pendiente"""
+    """Permite al usuario o administrador cancelar una solicitud"""
     permission_classes = [IsAuthenticated]
-
     def put(self, request, pk):
         try:
             solicitud = SolicitudServicio.objects.get(pk=pk)
         except SolicitudServicio.DoesNotExist:
             return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
         
-        # Verificar que la solicitud pertenece al usuario
-        if solicitud.id_solicitante != request.user:
+        # Determinar si el usuario que hace la petición es admin
+        try:
+            perfil_usuario = Perfiles.objects.get(id=request.user)
+            is_admin = (perfil_usuario.rol == 'admin')
+        except Perfiles.DoesNotExist:
+            is_admin = False
+
+        if solicitud.id_solicitante != request.user and not is_admin:
             return Response({"error": "No tienes permiso para cancelar esta solicitud"}, status=status.HTTP_403_FORBIDDEN)
         
         # Verificar que la solicitud esté en estado que permita cancelación
@@ -202,9 +207,12 @@ class CancelarSolicitudView(APIView):
             estado_cancelada = SolicitudServicioEstado.objects.get(descripcion__iexact='Cancelada')
         except SolicitudServicioEstado.DoesNotExist:
             return Response({"error": "Estado 'Cancelada' no encontrado en el sistema"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+        # Guardar motivo (si viene) en el campo resumen y marcar fecha_cancelada
+        motivo = request.data.get('resumen') or request.data.get('motivo') or ''
         solicitud.id_solicitud_servicio_estado = estado_cancelada
-        solicitud.save()
+        solicitud.resumen = motivo
+        solicitud.fecha_cancelada = timezone.now()
+        solicitud.save(update_fields=['id_solicitud_servicio_estado', 'resumen', 'fecha_cancelada'])
         
         serializer = SolicitudDetailSerializer(solicitud)
         return Response(serializer.data, status=status.HTTP_200_OK)

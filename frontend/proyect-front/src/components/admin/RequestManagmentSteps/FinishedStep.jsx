@@ -80,7 +80,7 @@ function FinishedStep({ solicitud }) {
               <Form.Control
                 as='textarea'
                 type='text'
-                value={solicitud.resumen}
+                value={solicitud.Resumen}
                 readOnly
                 style={{ resize: 'none', overflow: 'hidden' }}
                 onInput={adjustTextareaHeight}
