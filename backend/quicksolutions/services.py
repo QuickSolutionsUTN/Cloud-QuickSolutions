@@ -21,13 +21,13 @@ def publicar_evento_sns(datos):
         # Convertimos el dict de Python a String JSON
         mensaje_json = json.dumps(datos)
 
-        reponse = client.publish(
+        response = client.publish(
             TopicArn=settings.SNS_TOPIC_ARN,
             Message=mensaje_json,
             Subject="Actualizacion Solicitud",  # Este subject es interno para AWS
         )
-        print(f"✅ Notificación SNS enviada. MessageId: {reponse['MessageId']}")
-        return reponse
+        print(f"✅ Notificación SNS enviada. MessageId: {response['MessageId']}")
+        return response
       
     except Exception as e:
         print(f"❌ Error al enviar notificación SNS: {e}")
