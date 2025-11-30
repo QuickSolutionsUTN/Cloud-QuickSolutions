@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import { Form, Button, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -17,10 +17,20 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
 
 
   useEffect(() => {
-    // initialize local resumen and selected tasks if present
-    setLocalResumen(solicitud?.Resumen ?? solicitud?.resumen ?? '');
-    setSelectedTasks(new Set());
+    // Initialize local resumen and checklist selection only when the
+    // solicitud changes (different id). Avoid resetting `selectedTasks`
+    // on every parent re-render (for example when typing into the resumen
+    // which updates parent state) because that would clear the user's
+    // checklist selections.
+    const currentId = solicitud?.id ?? null;
+    if (prevSolicitudId.current !== currentId) {
+      setLocalResumen(solicitud?.Resumen ?? solicitud?.resumen ?? '');
+      setSelectedTasks(new Set());
+      prevSolicitudId.current = currentId;
+    }
   }, [solicitud]);
+
+  const prevSolicitudId = useRef(null);
 
   useEffect(() => {
     const checklist = solicitud.mantenimiento?.checklist || [];
@@ -102,7 +112,7 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
                 </Form.Group>
               </div>
               <Form.Group className="mt-2" controlId="checklist">
-                <Form.Label className="fw-bold">Checklist de Mantenimiento Preventivo</Form.Label>
+                <Form.Label className="fw-bold">Checklist </Form.Label>
                 <ListGroup>
                   {solicitud.mantenimiento.checklist.map(item => (
                     <ListGroup.Item key={item.id}>
