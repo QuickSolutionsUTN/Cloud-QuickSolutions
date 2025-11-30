@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Form, Button, Modal, Badge, ListGroup } from "react-bootstrap";
+import { Form, Button, Modal, Badge, ListGroup, Alert } from "react-bootstrap";
 import { toast } from "react-toastify";
 import AuthContext from "../../contexts/AuthContext.jsx";
 import apiService from "../../services/axiosConfig.jsx";
@@ -118,6 +118,53 @@ export default function RequestDetails() {
     });
   };
 
+  const renderAdminMessages = () => {
+    if (!solicitud.resumen) return null;
+
+    const estadoActual = solicitud.estado;
+
+    if (estadoActual === "Cancelada" || estadoActual === "Rechazada") {
+      return (
+        <Alert variant="danger" className="mb-4">
+          <div className="d-flex align-items-start">
+            <i className="bi bi-exclamation-triangle-fill me-3 mt-1"></i>
+            <div className="flex-grow-1">
+              <Alert.Heading as="h6" className="mb-2">
+                {estadoActual === "Cancelada" ? "Motivo de cancelación" : "Motivo de rechazo"}
+              </Alert.Heading>
+              <p className="mb-2">{solicitud.resumen}</p>
+              {solicitud.fechaCancelada && (
+                <small className="text-muted">
+                  <i className="bi bi-calendar me-1"></i>
+                  {formatDate(solicitud.fechaCancelada)}
+                </small>
+              )}
+              </div>
+          </div>
+        </Alert>
+      );
+    }
+
+    // Mensaje de finalización
+    if (estadoActual === "Finalizada") {
+      return (
+        <Alert variant="success" className="mb-4">
+          <div className="d-flex align-items-start">
+            <i className="bi bi-check-circle-fill me-3 mt-1"></i>
+            <div className="flex-grow-1">
+              <Alert.Heading as="h6" className="mb-2">
+                Comentarios de finalización
+              </Alert.Heading>
+              <p className="mb-2">{solicitud.resumen}</p>
+            </div>
+          </div>
+        </Alert>
+      );
+    }
+
+    return null;
+  };
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center py-5">
@@ -154,6 +201,9 @@ export default function RequestDetails() {
           <i className="bi bi-arrow-left me-2"></i>Volver
         </Button>
       </div>
+
+      {/* Mensajes del administrador */}
+      {renderAdminMessages()}
 
       {/* Información de presupuesto si aplica */}
       {(["Presupuestada", "Aprobada", "Finalizada", "En Proceso"].includes(estadoActual)) && (
