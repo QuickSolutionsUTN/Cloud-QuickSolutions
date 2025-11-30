@@ -81,17 +81,32 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
 
     def get_mantenimiento(self, obj):
         if obj.id_tipo_mantenimiento:
+            tipo = obj.id_tipo_mantenimiento
             checklist_items = ChecklistMantenimiento.objects.filter(
-                id_tipo_mantenimiento=obj.id_tipo_mantenimiento
+                id_tipo_mantenimiento=tipo
             )
             return {
+                'id': tipo.id,
+                'nombre': tipo.nombre,
+                'descripcion': tipo.descripcion,
                 'checklist': [
-                    {'id': item.id, 'descripcion': item.tarea} 
+                    {'id': item.id, 'descripcion': item.tarea, 'obligatorio': item.obligatorio} 
                     for item in checklist_items
                 ]
             }
         return None
 
+
+class PresupuestarSolicitudSerializer(serializers.Serializer):
+    """Serializer para los datos que se envían al presupuestar una solicitud."""
+    diagnosticoTecnico = serializers.CharField(required=True, allow_blank=False, max_length=1000)
+    monto = serializers.FloatField(required=True)
+    fechaEstimada = serializers.DateTimeField(required=True) 
+
+
+class FinalizarSolicitudSerializer(serializers.Serializer):
+    """Serializer para los datos que se envían al finalizar una solicitud."""
+    resumen = serializers.CharField(required=True, allow_blank=False, max_length=1000)
 
 class ChecklistMantenimientoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -91,17 +91,18 @@ function RequestManagement() {
     }
   };*/
 
-  const updateRequestBudgeted = async () => {
+  const updateRequestBudgeted = async (dataSource = null) => {
     try {
       const stepIndex = steps.indexOf(currentStep);
       const newStep = steps[stepIndex + 1];
       console.log('Updating request state...', solicitud);
+      const source = dataSource || solicitud;
       const requestData = {
         id: solicitudId,
-        diagnosticoTecnico: solicitud.diagnostico_tecnico,
+        diagnosticoTecnico: source.diagnosticoTecnico ?? source.diagnostico_tecnico ?? '',
         idSolicitudServicioEstado: stepIndex + 2,
-        monto: solicitud.monto,
-        fechaEstimada: solicitud.fecha_estimada
+        monto: source.monto ?? solicitud.monto,
+        fechaEstimada: source.fechaEstimada ?? source.fecha_estimada ?? null
       };
       await apiService.updateRequestBudgetAdmin(requestData);
       setCurrentStep(newStep);
@@ -143,8 +144,9 @@ function RequestManagement() {
     }
   };
 
-  const nextStep = async () => {
+  const nextStep = async (incomingData = null) => {
     console.log('Next step');
+    const mergedSolicitud = incomingData ? { ...solicitud, ...incomingData } : solicitud;
     const stepIndex = steps.indexOf(currentStep);
     console.log('stepIndex:', stepIndex);
     if (stepIndex < steps.length - 1 && steps[stepIndex + 1] !== 'Presupuestada' && steps[stepIndex + 1] !== 'Revisada' && steps[stepIndex + 1] !== 'Finalizada') {
@@ -161,8 +163,8 @@ function RequestManagement() {
     }
 
     if (steps[stepIndex + 1] === 'Presupuestada') {
-      console.log('Solicitud: ', solicitud);
-      await updateRequestBudgeted();
+      console.log('Solicitud: ', mergedSolicitud);
+      await updateRequestBudgeted(mergedSolicitud);
     }
     if (steps[stepIndex + 1] === 'Finalizada') {
       console.log('Solicitud: ', solicitud);

@@ -16,9 +16,15 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
   const [fechaEstimada, setFechaEstimada] = useState('');
   const [monto, setMonto] = useState('');
 
+  useEffect(() => {
+    setDiagnostico(solicitud?.diagnosticoTecnico ?? solicitud?.diagnostico_tecnico ?? '');
+    setFechaEstimada(solicitud?.fechaEstimada ?? solicitud?.fecha_estimada ?? '');
+    setMonto(solicitud?.monto ?? '');
+  }, [solicitud]);
+
   const handleNextStep = (event) => {
     event.preventDefault();
-    nextStep();
+    nextStep({ diagnosticoTecnico: diagnostico, fechaEstimada: fechaEstimada, monto: monto });
   };
   const adjustTextareaHeight = (e) => {
     e.target.style.height = 'auto';
@@ -34,7 +40,7 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
       <Form className='data-container'>
         <div className='row'>
           <div className='col-12'>
-            {solicitud.tipoServicio === "Reparacion" ? (
+            {solicitud.tipoServicio === "Reparación" ? (
               <div className="col-12">
                 <Form.Group controlId="description">
                   <Form.Label className="fw-bold">Descripcion del problema</Form.Label>
@@ -76,8 +82,8 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
                 type='text'
                 placeholder='Ingrese el diagnostico'
                 name='diagnosticoTecnico'
-                value={solicitud.diagnosticoTecnico}
-                onChange={handleChange}
+                value={diagnostico}
+                onChange={(e) => { setDiagnostico(e.target.value); handleChange?.(e); }}
               />
             </Form.Group>
           </div>
@@ -87,8 +93,8 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
               <Form.Control
                 type='date'
                 name="fechaEstimada"
-                value={solicitud.fechaEstimada}
-                onChange={handleChange}
+                value={fechaEstimada}
+                onChange={(e) => { setFechaEstimada(e.target.value); handleChange?.(e); }}
               />
             </Form.Group>
             <Form.Group className='amount-form-label' controlId='amount'>
@@ -97,8 +103,8 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
                 type='number'
                 placeholder='Ingrese el monto'
                 name='monto'
-                value={solicitud.monto}
-                onChange={handleChange}
+                value={monto}
+                onChange={(e) => { setMonto(e.target.value); handleChange?.(e); }}
               />
             </Form.Group>
           </div>
