@@ -206,7 +206,7 @@ export default function RequestDetails() {
       {renderAdminMessages()}
 
       {/* Información de presupuesto si aplica */}
-      {(["Presupuestada", "Aprobada", "Finalizada", "En Proceso"].includes(estadoActual)) && (
+      {(["Presupuestada", "Aprobada", "Finalizada"].includes(estadoActual)) && (
         <div className="card mb-4 border-success">
           <div className="card-body">
             <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
