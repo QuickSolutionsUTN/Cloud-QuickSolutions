@@ -202,9 +202,8 @@ class CancelarSolicitudView(APIView):
         if solicitud.id_solicitante != request.user and not is_admin:
             return Response({"error": "No tienes permiso para cancelar esta solicitud"}, status=status.HTTP_403_FORBIDDEN)
         
-        # Verificar que la solicitud esté en estado que permita cancelación
         estado_actual = solicitud.id_solicitud_servicio_estado.descripcion.lower()
-        if estado_actual not in ['iniciada', 'presupuestada']:
+        if not is_admin and estado_actual not in ['iniciada', 'presupuestada']:
             return Response(
                 {"error": f"No se puede cancelar una solicitud en estado '{estado_actual}'"}, 
                 status=status.HTTP_400_BAD_REQUEST
