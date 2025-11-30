@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faDollarSign } from "@fortawesome/free-solid-svg-icons";
@@ -67,6 +67,21 @@ function BudgetedStep({ solicitud, nextStep, cancelStep, handleChange }) {
                 />
               </Form.Group>
             </div>
+            {solicitud.mantenimiento?.checklist && (
+              <div className='col-12 mt-3'>
+                <Form.Group controlId="checklist">
+                  <Form.Label className="fw-bold">Checklist de Mantenimiento Preventivo</Form.Label>
+                  <ListGroup>
+                    {solicitud.mantenimiento.checklist.map(item => (
+                      <ListGroup.Item key={item.id}>
+                        {item.descripcion}
+                        {item.obligatorio && ' (Obligatorio)'}
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </Form.Group>
+              </div>
+            )}
           </div>
         </Form >
       </div >

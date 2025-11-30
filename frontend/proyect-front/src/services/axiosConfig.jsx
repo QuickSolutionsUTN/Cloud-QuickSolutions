@@ -92,14 +92,15 @@ const apiService = {
   deleteProduct: (id) => api.delete(`/productos/${id}/`),
 
   // Solicitudes
+  getRequestsAdmin: () => api.get("/solicitudes/"),
   createRequest: (data) => api.post("/solicitud/", data),
-  updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin/`, data),
-  updateRequestReviewed: (id) => api.put(`/solicitud/${id}/iniciar/`),
-  updateRequestBudgetAdmin: (data) => api.put(`/solicitud/${data.id}/presupuestar/`, data),
-  updateRequestFinished: (data) => api.put(`/solicitud/${data.id}/finalizar/`, data),
-  updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario/`, data),
-  updateRequestSubcontractAdmin: (data) => api.put(`/solicitud/${data.id}/subcontratar/`, data),
-  
+  getRequestByIdAdmin: (id) => api.get(`/solicitud/${id}/`),
+  updateRequestStateAdmin: (data) => api.put(`/solicitud/estado-admin`, data),
+  updateRequestReviewed: (id) => api.put(`/solicitud/${id}/iniciar`),
+  updateRequestBudgetAdmin: (data) => api.put(`/solicitud/${data.id}/presupuestar`, data),
+  updateRequestFinished: (data) => api.put(`/solicitud/${data.id}/finalizar`, data),
+  updateRequestUser: (data) => api.put(`/solicitud/${data.id}/estado-usuario`, data),
+
   // Solicitudes del usuario
   getUserRequests: () => api.get("/solicitud/mis-solicitudes/"),
   cancelRequest: (id) => api.put(`/solicitud/${id}/cancelar/`),
@@ -108,6 +109,8 @@ const apiService = {
   getStates: () => api.get("/provincias/"),
   // Localidades
   getLocalityByStateId: (stateId) => api.get(`/localidades/`, { params: { provincia_id: stateId } }),
+  // Estados de solicitud
+  getDetailServiceState: (id) => api.get(`/solicitud-estado/${id}/`),
 };
 
 export default apiService;

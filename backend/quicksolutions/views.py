@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly 
@@ -13,10 +14,13 @@ from .serializers import (
     SolicitudListAdminSerializer,
 #    EnvioSerializer,
     SolicitudDetailSerializer,
+    SolicitudServicioEstadoSerializer,
     TipoMantenimientoSerializer, 
     ProvinciaSerializer, 
     LocalidadSerializer, 
-    DomicilioSerializer
+    DomicilioSerializer,
+    PresupuestarSolicitudSerializer,
+    FinalizarSolicitudSerializer,
 )
 
 class PerfilesListCreateView(generics.ListCreateAPIView):
@@ -163,6 +167,13 @@ class MisSolicitudesView(generics.ListAPIView):
             id_solicitante=self.request.user
         ).order_by('-fecha_generacion')
 
+class solicitudesAdminListView(generics.ListAPIView):
+    """Obtiene todas las solicitudes (para admin)"""
+    permission_classes = [IsAuthenticated]
+    serializer_class = SolicitudDetailSerializer
+
+    def get_queryset(self):
+        return SolicitudServicio.objects.all().order_by('-fecha_generacion')
 
 class CancelarSolicitudView(APIView):
     """Permite al usuario cancelar su propia solicitud si está pendiente"""
@@ -199,6 +210,114 @@ class CancelarSolicitudView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class IniciarSolicitudView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        try:
+            solicitud = SolicitudServicio.objects.get(pk=pk)
+        except SolicitudServicio.DoesNotExist:
+            return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+        if solicitud.fecha_iniciada is None:
+            solicitud.fecha_iniciada = timezone.now()
+            solicitud.save(update_fields=['fecha_iniciada'])
+        
+        serializer = SolicitudDetailSerializer(solicitud)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PresupuestarSolicitudView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        try:
+            solicitud = SolicitudServicio.objects.get(pk=pk)
+        except SolicitudServicio.DoesNotExist:
+            return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = PresupuestarSolicitudSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        data = serializer.validated_data
+        
+        try:
+            estado_presupuestada = SolicitudServicioEstado.objects.get(descripcion__iexact='Presupuestada')
+        except SolicitudServicioEstado.DoesNotExist:
+            return Response({"error": "Estado 'Presupuestada' no encontrado en el sistema"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        now = timezone.now()
+        solicitud.diagnostico_tecnico = data.get('diagnosticoTecnico')
+        solicitud.monto = data.get('monto')
+        solicitud.fecha_estimada = data.get('fechaEstimada')
+        solicitud.id_solicitud_servicio_estado = estado_presupuestada
+        solicitud.fecha_revisada = now 
+        solicitud.fecha_presupuestada = now
+        
+        solicitud.save()
+        
+        response_serializer = SolicitudDetailSerializer(solicitud)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+
+class FinalizarSolicitudView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        try:
+            solicitud = SolicitudServicio.objects.get(pk=pk)
+        except SolicitudServicio.DoesNotExist:
+            return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = FinalizarSolicitudSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        data = serializer.validated_data
+
+        try:
+            estado_finalizada = SolicitudServicioEstado.objects.get(descripcion__iexact='Finalizada')
+        except SolicitudServicioEstado.DoesNotExist:
+            return Response({"error": "Estado 'Finalizada' no encontrado en el sistema"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        now = timezone.now()
+        solicitud.resumen = data.get('resumen')
+        solicitud.fecha_finalizada = now
+        solicitud.id_solicitud_servicio_estado = estado_finalizada
+        
+        solicitud.save()
+        
+        response_serializer = SolicitudDetailSerializer(solicitud)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+
+class AdminChangeStateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        solicitud_id = request.data.get('id')
+        estado_id = request.data.get('idSolicitudServicioEstado')
+
+        if not solicitud_id or not estado_id:
+            return Response({"error": "Faltan 'id' o 'idSolicitudServicioEstado' en el cuerpo"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            solicitud = SolicitudServicio.objects.get(pk=solicitud_id)
+        except SolicitudServicio.DoesNotExist:
+            return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            nuevo_estado = SolicitudServicioEstado.objects.get(pk=estado_id)
+        except SolicitudServicioEstado.DoesNotExist:
+            return Response({"error": "Estado de solicitud no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+        solicitud.id_solicitud_servicio_estado = nuevo_estado
+        solicitud.save()
+
+        serializer = SolicitudDetailSerializer(solicitud)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class TipoMantenimientoListCreateView(generics.ListCreateAPIView):
     queryset = TipoMantenimiento.objects.all()
     serializer_class = TipoMantenimientoSerializer
@@ -208,6 +327,13 @@ class TipoMantenimientoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TipoMantenimiento.objects.all()
     serializer_class = TipoMantenimientoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class SolicitudEstadoDetailView(generics.RetrieveAPIView):
+    """Devuelve detalle de un estado de solicitud por id"""
+    queryset = SolicitudServicioEstado.objects.all()
+    serializer_class = SolicitudServicioEstadoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class ProvinciaListView(generics.ListAPIView):

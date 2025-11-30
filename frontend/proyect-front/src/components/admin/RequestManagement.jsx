@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Form } from 'react-bootstrap';
-import axios from 'axios';
-import { useBackendURL } from '../../contexts/BackendURLContext';
+import { Form, Modal } from 'react-bootstrap';
 import StepProgressBar from './RequestManagmentSteps/StepProgressBar.jsx';
 import StartedStep from './RequestManagmentSteps/StartedStep.jsx';
 import ReviewedStep from './RequestManagmentSteps/ReviewedStep.jsx';
@@ -13,8 +11,7 @@ import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTableCellsLarge, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
-import apiReparacionExterna from '../../services/apiBolsaTrabajoService.jsx';
-
+import AddressCard from '../users/UserAddressCard.jsx';
 import { Button } from 'react-bootstrap';
 import './RequestManagement.css';
 import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
@@ -22,22 +19,26 @@ import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
-  const backendURL = useBackendURL();
   const [fechaFormateada, setFechaFormateada] = useState('');
   const navigate = useNavigate();
   const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
   const [currentStep, setCurrentStep] = useState("Iniciada");
   const [showCancelModalForm, setShowCancelModalForm] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [domicilioModalData, setDomicilioModalData] = useState(null);
+  const [ServiceState, setServiceState] = useState(null);
 
   useEffect(() => {
     const fetchSolicitudDetails = async () => {
       try {
         console.log('Fetching solicitud details...');
-        const response = await axios.get(`${backendURL}/api/solicitud/${solicitudId}`);
+        const response = await apiService.getRequestByIdAdmin(solicitudId);
         console.log('Solicitud details:', response.data);
         setSolicitud(response.data);
-        setCurrentStep(response.data.estado);
+        // ahora el backend devuelve 'estado_nombre' (texto) y 'id_solicitud_servicio_estado' (id numérico)
+        setCurrentStep(response.data.estado_nombre || response.data.estado || response.data.id_solicitud_servicio_estado);
         const fechaGeneracion = new Date(response.data.fechaGeneracion);
+        console.log('Fecha de generación:', fechaGeneracion);
         const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
         setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
       } catch (error) {
@@ -45,7 +46,22 @@ function RequestManagement() {
       }
     }
     fetchSolicitudDetails();
-  }, [solicitudId, backendURL, apiService]);
+  }, [solicitudId]);
+
+  useEffect(() => {
+    const fetchStateDetail = async () => {
+      if (solicitud && solicitud.id_solicitud_servicio_estado) {
+        try {
+          const response = await apiService.getDetailServiceState(solicitud.id_solicitud_servicio_estado);
+          console.log('State detail:', response.data);
+          setServiceState(response.data);
+        } catch (error) {
+          console.error('Error fetching state detail:', error);
+        }
+      }
+    };
+    fetchStateDetail();
+  }, [solicitud]);
 
   const updateSolicitudEstado = async (newStep, stepIndex) => {
     try {
@@ -65,7 +81,7 @@ function RequestManagement() {
       console.error('Error updating request state:', error);
     }
   };
-  const updateSolicitudEnvio = async (solicitud) => {
+  /*const updateSolicitudEnvio = async (solicitud) => {
     try {
       console.log('Updating request deliver...');
       await apiService.updateRequestDeliverAdmin(solicitud.id, solicitud.envio);
@@ -73,19 +89,20 @@ function RequestManagement() {
     } catch (error) {
       console.error('Error updating request state:', error);
     }
-  };
+  };*/
 
-  const updateRequestBudgeted = async () => {
+  const updateRequestBudgeted = async (dataSource = null) => {
     try {
       const stepIndex = steps.indexOf(currentStep);
       const newStep = steps[stepIndex + 1];
       console.log('Updating request state...', solicitud);
+      const source = dataSource || solicitud;
       const requestData = {
         id: solicitudId,
-        diagnosticoTecnico: solicitud.diagnosticoTecnico,
+        diagnosticoTecnico: source.diagnosticoTecnico ?? source.diagnostico_tecnico ?? '',
         idSolicitudServicioEstado: stepIndex + 2,
-        monto: solicitud.monto,
-        fechaEstimada: solicitud.fechaEstimada
+        monto: source.monto ?? solicitud.monto,
+        fechaEstimada: source.fechaEstimada ?? source.fecha_estimada ?? null
       };
       await apiService.updateRequestBudgetAdmin(requestData);
       setCurrentStep(newStep);
@@ -109,7 +126,7 @@ function RequestManagement() {
       console.log('Updating request state...', solicitud);
       const requestData = {
         id: solicitudId,
-        resumen: solicitud.Resumen,
+        resumen: solicitud.resumen,
         idSolicitudServicioEstado: stepIndex + 2,
       };
       await apiService.updateRequestFinished(requestData);
@@ -127,8 +144,9 @@ function RequestManagement() {
     }
   };
 
-  const nextStep = async () => {
+  const nextStep = async (incomingData = null) => {
     console.log('Next step');
+    const mergedSolicitud = incomingData ? { ...solicitud, ...incomingData } : solicitud;
     const stepIndex = steps.indexOf(currentStep);
     console.log('stepIndex:', stepIndex);
     if (stepIndex < steps.length - 1 && steps[stepIndex + 1] !== 'Presupuestada' && steps[stepIndex + 1] !== 'Revisada' && steps[stepIndex + 1] !== 'Finalizada') {
@@ -140,21 +158,20 @@ function RequestManagement() {
     if (steps[stepIndex + 1] === 'Revisada') {
       const newStep = steps[stepIndex + 1];
       const id = solicitud.id;
-      if (solicitud.conLogistica) await updateSolicitudEnvio(solicitud);
       await updateSolicitudEstado(newStep, stepIndex);
       await apiService.updateRequestReviewed(id);
     }
 
     if (steps[stepIndex + 1] === 'Presupuestada') {
-      console.log('Solicitud: ', solicitud);
-      await updateRequestBudgeted();
+      console.log('Solicitud: ', mergedSolicitud);
+      await updateRequestBudgeted(mergedSolicitud);
     }
     if (steps[stepIndex + 1] === 'Finalizada') {
       console.log('Solicitud: ', solicitud);
       await UpdateRequestFinished();
     }
   };
-  const handleSubcontractStep = async () => {
+  /*const handleSubcontractStep = async () => {
     const stepIndex = steps.indexOf(currentStep);
     const newStep = steps[stepIndex + 1];
     const requestData = {
@@ -167,7 +184,7 @@ function RequestManagement() {
 
     console.log('data to send:', requestData);
 
-    if (solicitud.conLogistica) await updateSolicitudEnvio(solicitud);
+    if (solicitud.con_logistica) await updateSolicitudEnvio(solicitud);
     await apiService.updateRequestSubcontractAdmin(requestData);
     setCurrentStep(newStep);
     setSolicitud(prevSolicitud => ({
@@ -180,6 +197,7 @@ function RequestManagement() {
     });
 
   };
+  */
   const handleCancelButton = () => {
     setShowCancelModalForm(true);
   };
@@ -201,9 +219,10 @@ function RequestManagement() {
   }
 
   const renderContent = () => {
-    switch (solicitud.estado) {
+    const estadoNombre = solicitud.estado_nombre || solicitud.estado || solicitud.id_solicitud_servicio_estado;
+    switch (estadoNombre) {
       case 'Iniciada':
-        return <StartedStep solicitud={solicitud} nextStep={nextStep} subcontractStep={handleSubcontractStep} cancelStep={handleCancelButton} />;
+        return <StartedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} />;
       case 'Revisada':
         return <ReviewedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Presupuestada':
@@ -229,14 +248,14 @@ function RequestManagement() {
           <div className='flex-grow-1 text-center'>
             <h2>Gestión de solicitud #{solicitudId}</h2>
             <p style={{ color: 'gray' }}>
-              Generada: {fechaFormateada} {new Date(solicitud.fechaGeneracion).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+              Generada: {fechaFormateada}
             </p>
           </div>
           <div style={{ width: '80px' }}></div>
         </div>
       </div>
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
-      {(solicitud.estado === 'Cancelada' && !solicitud.fechaIniciada) && (
+      {((solicitud.estado_nombre || solicitud.estado || solicitud.id_solicitud_servicio_estado) === 'Cancelada' && !solicitud.fecha_iniciada) && (
       <div className="alert alert-danger alert-dismissible fade show" role="alert">
         <strong>¡Atención!</strong> La solicitud ha sido <strong>cancelada</strong>.
       </div>
@@ -257,29 +276,33 @@ function RequestManagement() {
         </div>
         <div className="logistics-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
           <div className="d-flex flex-column">
-            <span className="mb-2 "><b>Logistica:</b>
-              <span className='ms-2'></span>{solicitud.conLogistica ? 'Si' : 'No'}
+            <span className="mb-2 "><b>A domicilio:</b>
+              <span className='ms-2'></span>{solicitud.con_logistica ? 'Si' : 'No'}
             </span>
-            <span className="mb-2">Nro seguimiento:<span className='ms-2'></span>{solicitud.envio ? solicitud.envio.nroSeguimiento : '-'}</span>
-          </div>
-        </div>
-        <div className="subContract-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
-          <div className="d-flex flex-column">
-            <span className="mb-2 "><b>SubContratada:</b>
-              {solicitud.tercearizado ? (
-                <span className='ms-2'>Si</span>
-              ) : (
-                <span className='ms-2'>No</span>
-              )}
-            </span>
-            {solicitud.tercearizado && (
-              <>
-                <span className='mb-2'>Empresa Externa: {solicitud.reparacionExterna?.empresa.nombre}</span>
-                <span className='mb-2'>ID Solicitud Externa: {solicitud.reparacionExterna?.idSolicitudExterna}</span>
-              </>
+            {solicitud.con_logistica && (
+              <div className="mt-2">
+                <button className="btn btn-link p-0" onClick={async () => {
+                  try {
+                    const resp = await apiService.getProfiles();
+                    const profiles = resp.data || [];
+                    const profile = profiles.find(p => p.email === solicitud.emailSolicitante || (p.id && p.id.email === solicitud.emailSolicitante));
+                    const domicilio = profile?.domicilio ?? null;
+                    setDomicilioModalData(domicilio);
+                    setShowAddressModal(true);
+                  } catch (err) {
+                    console.error('Error fetching profiles for address modal:', err);
+                    setDomicilioModalData(null);
+                    setShowAddressModal(true);
+                  }
+                }}>
+                  Ver domicilio
+                </button>
+              </div>
             )}
+            
           </div>
         </div>
+        
       </div>
       <div className='row d-flex request-basics p-3'>
         <div className='col-4'>
@@ -301,7 +324,7 @@ function RequestManagement() {
           </Form.Label>
           <Form.Control
             type='text'
-            value={solicitud.tipoDeProducto}
+            value={solicitud.producto}
             readOnly
           >
           </Form.Control>
@@ -314,6 +337,30 @@ function RequestManagement() {
       </div>
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
       <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm} />
+
+      <Modal show={showAddressModal} onHide={() => setShowAddressModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Domicilio del solicitante</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {domicilioModalData ? (
+            <AddressCard
+              street={domicilioModalData.calle || 'No especificado'}
+              province={domicilioModalData.provincia || 'No especificado'}
+              locality={domicilioModalData.localidad_nombre || 'No especificado'}
+              zipCode={domicilioModalData.codigo_postal || 'No especificado'}
+              floor={domicilioModalData.piso || ''}
+              department={domicilioModalData.departamento || ''}
+              noHover={true}
+            />
+          ) : (
+            <div className="text-center">No se encontró un domicilio para este usuario.</div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAddressModal(false)}>Cerrar</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
