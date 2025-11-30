@@ -28,10 +28,10 @@ def notificar_cambios(sender, instance, created, **kwargs):
     else:
         titulo_trabajo = f"Servicio - {instance.id_tipo_servicio.descripcion}"
 
-    if instance.diagnostico_tecnico:
-        novedades = f"Diagnóstico: {instance.diagnostico_tecnico}"
-    elif instance.resumen:
+    if instance.resumen:
         novedades = f"Resumen: {instance.resumen}"
+    elif instance.diagnostico_tecnico:
+        novedades = f"Diagnóstico: {instance.diagnostico_tecnico}"
     else:
         novedades = instance.descripcion or "Sin detalles adicionales."
 
