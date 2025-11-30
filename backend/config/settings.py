@@ -13,12 +13,12 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv()
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / 'config' / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -149,3 +149,21 @@ REST_FRAMEWORK = {
 SUPABASE_JWT_SECRET = os.getenv('SUPABASE_JWT_SECRET')
 if not SUPABASE_JWT_SECRET:
     raise RuntimeError("The SUPABASE_JWT_SECRET environment variable is not set. Please set it to enable authentication.")
+  
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
+AWS_REGION_NAME = os.getenv('AWS_REGION_NAME')
+ENABLE_NOTIFICATIONS = os.getenv('ENABLE_NOTIFICATIONS', 'False') == 'True'
+
+if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, SNS_TOPIC_ARN, AWS_REGION_NAME]):
+    raise RuntimeError(
+        "One or more AWS SNS environment variables are not set.\n"
+        "Required variables:\n"
+        "  - AWS_ACCESS_KEY_ID\n"
+        "  - AWS_SECRET_ACCESS_KEY\n"
+        "  - SNS_TOPIC_ARN\n"
+        "  - AWS_REGION_NAME\n"
+        "  - ENABLE_NOTIFICATIONS\n"
+        "These are required for production use. Please set them in your environment."
+    )
