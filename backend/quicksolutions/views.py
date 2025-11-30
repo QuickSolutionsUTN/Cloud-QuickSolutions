@@ -146,6 +146,8 @@ class SolicitudDetailView(generics.RetrieveAPIView):
         'id_producto__id_categoria',
         'id_solicitud_servicio_estado',
         'id_tipo_mantenimiento'
+    ).prefetch_related(
+        'id_tipo_mantenimiento__checklistmantenimiento_set'
     )
     serializer_class = SolicitudDetailSerializer  
 
@@ -173,7 +175,13 @@ class solicitudesAdminListView(generics.ListAPIView):
     serializer_class = SolicitudDetailSerializer
 
     def get_queryset(self):
-        return SolicitudServicio.objects.all().order_by('-fecha_generacion')
+        return SolicitudServicio.objects.select_related(
+            'id_solicitante',
+            'id_tipo_servicio',
+            'id_producto',
+            'id_producto__id_categoria',
+            'id_solicitud_servicio_estado'
+        ).order_by('-fecha_generacion')
 
 class CancelarSolicitudView(APIView):
     """Permite al usuario o administrador cancelar una solicitud"""
