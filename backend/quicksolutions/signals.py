@@ -11,7 +11,7 @@ def notificar_cambios(sender, instance, created, **kwargs):
     Publica un evento en SNS cuando una solicitud es creada o actualizada.
     Ajustar la lógica para publicar sólo en cambios de 'estado' si hace falta.
     """
-    if settings.ENABLE_NOTIFICATIONS != 'True':
+    if not settings.ENABLE_NOTIFICATIONS:
         print("🔕 Notificaciones desactivadas en .env")
         return
       
