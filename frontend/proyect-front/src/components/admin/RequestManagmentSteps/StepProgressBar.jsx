@@ -5,14 +5,17 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons'
 
 const StepProgressBar = ({ currentStep, solicitud }) => {
   const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
+  const isCancelled = currentStep === "Cancelada";
   const stepIndex = steps.indexOf(currentStep);
   
   const formatDate = (dateTime) => {
+    if (!dateTime) return "";
     const date = new Date(dateTime);
     return date.toLocaleDateString();
   };
 
   const formatTime = (dateTime) => {
+    if (!dateTime) return "";
     const date = new Date(dateTime);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
@@ -25,18 +28,18 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
     } else if (solicitud.fechaIniciada !== null) {
       return steps.indexOf("Iniciada");
     } else {
-      return -1;
+      return 0;
     }
   };
 
-  const [isCancelled, setIsCancelled] = useState(false);
+  //const [isCancelled, setIsCancelled] = useState(false);
   const lastCompletedStepIndex = getLastCompletedStepIndex();
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (currentStep === "Cancelada") {
       setIsCancelled(true);
     }
-  }, [currentStep]);
+  }, [currentStep]);*/
 
 
   return (

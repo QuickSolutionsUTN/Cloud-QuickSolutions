@@ -1,29 +1,30 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import React from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import apiService from '../../../services/axiosConfig.jsx';
+import { useParams } from 'react-router-dom';
 import "./cancelModalForm.css";
 
-function CancelModalForm({ show, onClose }) {
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+function CancelModalForm({ show, onClose, onConfirm }) {
+  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm();
   const { id: solicitudId } = useParams();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const reason = watch('reason', '');
 
   const onSubmit = async (data) => {
-    try {
+    onConfirm(data.reason);
+    reset();
+    /*try {
       // Use central apiService so the auth interceptor attaches the token
       await apiService.cancelRequest(solicitudId, { resumen: data.reason });
       window.location.reload();
     } catch (error) {
       console.error('Error cancelling request:', error);
     }
-    onClose();
+    onClose();*/
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
+    <Modal show={show} onHide={onClose} >
       <Modal.Header closeButton>
         <Modal.Title>Estas seguro de que desea cancelar la solicitud?</Modal.Title>
       </Modal.Header>
