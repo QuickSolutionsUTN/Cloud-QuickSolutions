@@ -119,14 +119,15 @@ function RequestManagement() {
     }
   };
 
-  const UpdateRequestFinished = async () => {
+  const UpdateRequestFinished = async (dataSource = null) => {
     try {
       const stepIndex = steps.indexOf(currentStep);
       const newStep = steps[stepIndex + 1];
-      console.log('Updating request state...', solicitud);
+      const source = dataSource || solicitud;
+      console.log('Updating request state...', source);
       const requestData = {
         id: solicitudId,
-        resumen: solicitud.resumen,
+        resumen: source.resumen ?? source.Resumen ?? source.localResumen,
         idSolicitudServicioEstado: stepIndex + 2,
       };
       await apiService.updateRequestFinished(requestData);
@@ -167,8 +168,8 @@ function RequestManagement() {
       await updateRequestBudgeted(mergedSolicitud);
     }
     if (steps[stepIndex + 1] === 'Finalizada') {
-      console.log('Solicitud: ', solicitud);
-      await UpdateRequestFinished();
+      console.log('Solicitud: ', mergedSolicitud);
+      await UpdateRequestFinished(mergedSolicitud);
     }
   };
   /*const handleSubcontractStep = async () => {
