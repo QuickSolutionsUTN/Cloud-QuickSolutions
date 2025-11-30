@@ -32,7 +32,7 @@ export const RequestForm = () => {
     defaultValues: {
       productData: { serviceId: 0, categoryId: 0, productTypeId: 0, maintenanceTypeId: 0, problemDescription: '' },
       personalData: { email: '', firstName: '', lastName: '' },
-      logisticsData: { conLogistica: false, street: '', number: '', floor: '', apartment: '', cityId: '', stateId: '', zipCode: '' },
+      logisticsData: { conLogistica: false, addressSelected: false, street: '', number: '', floor: '', apartment: '', cityId: '', stateId: '', zipCode: '' },
     }
   });
 
@@ -108,7 +108,12 @@ export const RequestForm = () => {
         (currentData.productData.problemDescription || currentData.productData.maintenanceTypeId);
     }
     else if (currentStep === 1) { return isAuthenticated; }
-    else if (currentStep === 2) { return  true; }
+    else if (currentStep === 2) {
+      const currentData = watch();
+      if (currentData.logisticsData?.conLogistica) {
+        return !!currentData.logisticsData?.addressSelected;
+      } else { return true; }
+    }
     /*else if (currentStep === 2) {
       if (currentData.logisticsData.conLogistica) {
         return currentData.logisticsData.street &&
