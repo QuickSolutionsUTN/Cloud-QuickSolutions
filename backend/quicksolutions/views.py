@@ -353,7 +353,7 @@ class UserChangeStateView(APIView):
             return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
         # Verificar que el usuario autenticado es el dueño de la solicitud
-        if str(solicitud.id_solicitante_id) != str(request.user.id):
+        if solicitud.id_solicitante_id != request.user.id:
             return Response(
                 {"error": "No tienes permiso para modificar esta solicitud"},
                 status=status.HTTP_403_FORBIDDEN
