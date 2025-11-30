@@ -154,6 +154,7 @@ AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
 AWS_REGION_NAME = os.getenv('AWS_REGION_NAME')
+ENABLE_NOTIFICATIONS = os.getenv('ENABLE_NOTIFICATIONS', 'False') == 'True'
 
 if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, SNS_TOPIC_ARN, AWS_REGION_NAME]):
     raise RuntimeError(
@@ -163,5 +164,6 @@ if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, SNS_TOPIC_ARN, AWS_REGION_
         "  - AWS_SECRET_ACCESS_KEY\n"
         "  - SNS_TOPIC_ARN\n"
         "  - AWS_REGION_NAME\n"
+        "  - ENABLE_NOTIFICATIONS\n"
         "These are required for production use. Please set them in your environment."
     )
