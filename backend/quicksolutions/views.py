@@ -189,9 +189,9 @@ class CancelarSolicitudView(APIView):
         if solicitud.id_solicitante != request.user:
             return Response({"error": "No tienes permiso para cancelar esta solicitud"}, status=status.HTTP_403_FORBIDDEN)
         
-        # Verificar que la solicitud esté en estado pendiente (id=1 generalmente)
+        # Verificar que la solicitud esté en estado que permita cancelación
         estado_actual = solicitud.id_solicitud_servicio_estado.descripcion.lower()
-        if estado_actual not in ['pendiente', 'presupuestada']:
+        if estado_actual not in ['iniciada', 'presupuestada']:
             return Response(
                 {"error": f"No se puede cancelar una solicitud en estado '{estado_actual}'"}, 
                 status=status.HTTP_400_BAD_REQUEST
@@ -317,6 +317,68 @@ class AdminChangeStateView(APIView):
 
         serializer = SolicitudDetailSerializer(solicitud)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserChangeStateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        accion = request.data.get('accion')
+
+        if accion not in ['aprobar', 'rechazar']:
+            return Response(
+                {"error": "La acción debe ser 'aprobar' o 'rechazar'"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            solicitud = SolicitudServicio.objects.get(pk=pk)
+        except SolicitudServicio.DoesNotExist:
+            return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Verificar que el usuario autenticado es el dueño de la solicitud
+        if str(solicitud.id_solicitante_id) != str(request.user.id):
+            return Response(
+                {"error": "No tienes permiso para modificar esta solicitud"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Verificar que la solicitud está en estado "Presupuestada"
+        if solicitud.id_solicitud_servicio_estado.descripcion.lower() != 'presupuestada':
+            return Response(
+                {"error": "La solicitud no está en estado 'Presupuestada'"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        now = timezone.now()
+
+        if accion == 'aprobar':
+            try:
+                estado_aprobada = SolicitudServicioEstado.objects.get(descripcion__iexact='Aprobada')
+            except SolicitudServicioEstado.DoesNotExist:
+                return Response(
+                    {"error": "Estado 'Aprobada' no encontrado en el sistema"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            solicitud.fecha_aprobada = now
+            solicitud.id_solicitud_servicio_estado = estado_aprobada
+
+        else:  # rechazar
+            try:
+                estado_cancelada = SolicitudServicioEstado.objects.get(descripcion__iexact='Cancelada')
+            except SolicitudServicioEstado.DoesNotExist:
+                return Response(
+                    {"error": "Estado 'Cancelada' no encontrado en el sistema"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            solicitud.fecha_cancelada = now
+            solicitud.id_solicitud_servicio_estado = estado_cancelada
+
+        solicitud.save()
+
+        serializer = SolicitudDetailSerializer(solicitud)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class TipoMantenimientoListCreateView(generics.ListCreateAPIView):
     queryset = TipoMantenimiento.objects.all()

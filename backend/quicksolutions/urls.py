@@ -22,6 +22,7 @@ urlpatterns = [
     path('solicitud/<int:pk>/iniciar', views.IniciarSolicitudView.as_view(), name='iniciar-solicitud'),
     path('solicitud/<int:pk>/presupuestar', views.PresupuestarSolicitudView.as_view(), name='presupuestar-solicitud'),
     path('solicitud/<int:pk>/finalizar', views.FinalizarSolicitudView.as_view(), name='finalizar-solicitud'),
+    path('solicitud/<int:pk>/estado-usuario', views.UserChangeStateView.as_view(), name='estado-usuario'),
     path('solicitud/estado-admin', views.AdminChangeStateView.as_view(), name='estado-admin'),
 
     path('solicitudes/', views.solicitudesAdminListView.as_view(), name='solicitud-lista'),
