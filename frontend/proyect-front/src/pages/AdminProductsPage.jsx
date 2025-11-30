@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { Form, Spinner } from 'react-bootstrap';
 import apiService from '../services/axiosConfig';
-import { useBackendURL } from '../contexts/BackendURLContext';
 import AuthContext from '../contexts/AuthContext';
 import AdminHeaderWithModal from '../components/admin/AdminHeaderWithModal';
 import AdminTable from '../components/admin/AdminTable';
@@ -16,7 +15,6 @@ function AdminProductsPage() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const backendURL = useBackendURL();
   const { userToken } = useContext(AuthContext);
 
   useEffect(() => {
@@ -31,7 +29,7 @@ function AdminProductsPage() {
     };
 
     fetchCategories();
-  }, [backendURL]);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -47,7 +45,7 @@ function AdminProductsPage() {
     };
 
     fetchProducts();
-  }, [backendURL]);
+  }, []);
 
   const handleAdd = () => {
     setShowModal(true);
@@ -67,15 +65,14 @@ function AdminProductsPage() {
   const handleSave = async () => {
     try {
       console.log("guardando producto... ", newProduct);
-      const response = await apiService.createProduct(newProduct, {
-        headers: {
-          Authorization: `Bearer ${userToken}`
-        }
-      });
+      const response = await apiService.createProduct(newProduct);
       if (response.status === 201) {
         console.log("Producto guardado correctamente");
         console.log("Respuesta del servidor", response.data);
-        window.location.reload();
+        // Append the created product to the table data instead of reloading
+        setProducts((prev) => [...prev, response.data]);
+        // Reset form
+        setNewProduct({ descripcion: '', id_categoria: '' });
       } else {
         console.log("Error al guardar el producto", response.data);
       }

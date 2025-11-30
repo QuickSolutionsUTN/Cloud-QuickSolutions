@@ -60,7 +60,10 @@ function AdminCategoriesPage() {
       if (response.status === 201) {
         console.log("Categoria guardado correctamente");
         console.log("Respuesta del servidor", response.data);
-        window.location.reload();
+        // Add the created category to the table data instead of reloading the page
+        setCategories((prev) => [...prev, response.data]);
+        // Reset form
+        setnewCategory({ descripcion: '', id_categoria: '' });
       } else {
         console.log("Error al guardar la categoria", response.data);
       }
@@ -68,6 +71,7 @@ function AdminCategoriesPage() {
       console.error("Error al guardar la categoria", error);
     }
 
+    // Close modal in any case (keeps previous behavior)
     setShowModal(false);
   };
 
