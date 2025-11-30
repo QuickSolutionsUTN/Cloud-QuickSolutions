@@ -30,11 +30,11 @@ export default function UserRequestsList() {
 
     const getEstadoBadge = (estado) => {
         const estados = {
-            'pendiente': 'bg-warning text-dark',
-            'presupuestada': 'bg-info text-dark',
+            'iniciada': 'bg-primary',
+            'revisada': 'bg-secondary',
+            'presupuestada': 'bg-info',
             'aprobada': 'bg-success',
             'rechazada': 'bg-danger',
-            'en proceso': 'bg-primary',
             'finalizada': 'bg-dark',
             'cancelada': 'bg-danger'
         };
@@ -90,6 +90,86 @@ export default function UserRequestsList() {
         }
     };
 
+    const handleAprobarSolicitud = (solicitudId) => {
+        toast.info(
+            <div className="toast-confirm">
+                <p className="mb-2">¿Aprobar el presupuesto de esta solicitud?</p>
+                <div className="d-flex gap-2 justify-content-end">
+                    <button 
+                        className="btn btn-sm btn-outline-secondary"
+                        onClick={() => toast.dismiss()}
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        className="btn btn-sm btn-success"
+                        onClick={() => confirmarAprobacion(solicitudId)}
+                    >
+                        Sí, aprobar
+                    </button>
+                </div>
+            </div>,
+            {
+                autoClose: false,
+                closeOnClick: false,
+                draggable: false,
+                closeButton: false,
+            }
+        );
+    };
+
+    const confirmarAprobacion = async (solicitudId) => {
+        toast.dismiss();
+        try {
+            await apiService.updateRequestUser({ id: solicitudId, accion: 'aprobar' });
+            toast.success('Presupuesto aprobado exitosamente');
+            fetchSolicitudes();
+        } catch (err) {
+            console.error('Error al aprobar solicitud:', err);
+            toast.error(err.response?.data?.error || 'Error al aprobar la solicitud');
+        }
+    };
+
+    const handleRechazarSolicitud = (solicitudId) => {
+        toast.warn(
+            <div className="toast-confirm">
+                <p className="mb-2">¿Rechazar el presupuesto de esta solicitud?</p>
+                <div className="d-flex gap-2 justify-content-end">
+                    <button 
+                        className="btn btn-sm btn-outline-secondary"
+                        onClick={() => toast.dismiss()}
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        className="btn btn-sm btn-danger"
+                        onClick={() => confirmarRechazo(solicitudId)}
+                    >
+                        Sí, rechazar
+                    </button>
+                </div>
+            </div>,
+            {
+                autoClose: false,
+                closeOnClick: false,
+                draggable: false,
+                closeButton: false,
+            }
+        );
+    };
+
+    const confirmarRechazo = async (solicitudId) => {
+        toast.dismiss();
+        try {
+            await apiService.updateRequestUser({ id: solicitudId, accion: 'rechazar' });
+            toast.success('Presupuesto rechazado');
+            fetchSolicitudes();
+        } catch (err) {
+            console.error('Error al rechazar solicitud:', err);
+            toast.error(err.response?.data?.error || 'Error al rechazar la solicitud');
+        }
+    };
+
     const solicitudesFiltradas = solicitudes.filter(sol => {
         if (filtroEstado === 'todos') return true;
         return sol.estado?.toLowerCase() === filtroEstado.toLowerCase();
@@ -125,10 +205,16 @@ export default function UserRequestsList() {
                         Todas
                     </button>
                     <button 
-                        className={`filter-pill ${filtroEstado === 'pendiente' ? 'active pending' : ''}`}
-                        onClick={() => setFiltroEstado('pendiente')}
+                        className={`filter-pill ${filtroEstado === 'iniciada' ? 'active pending' : ''}`}
+                        onClick={() => setFiltroEstado('iniciada')}
                     >
-                        Pendientes
+                        Iniciadas
+                    </button>
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'revisada' ? 'active reviewed' : ''}`}
+                        onClick={() => setFiltroEstado('revisada')}
+                    >
+                        Revisadas
                     </button>
                     <button 
                         className={`filter-pill ${filtroEstado === 'presupuestada' ? 'active quoted' : ''}`}
@@ -143,16 +229,22 @@ export default function UserRequestsList() {
                         Aprobadas
                     </button>
                     <button 
-                        className={`filter-pill ${filtroEstado === 'en proceso' ? 'active in-progress' : ''}`}
-                        onClick={() => setFiltroEstado('en proceso')}
-                    >
-                        En Proceso
-                    </button>
-                    <button 
                         className={`filter-pill ${filtroEstado === 'finalizada' ? 'active finished' : ''}`}
                         onClick={() => setFiltroEstado('finalizada')}
                     >
                         Finalizadas
+                    </button>
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'cancelada' ? 'active cancelled' : ''}`}
+                        onClick={() => setFiltroEstado('cancelada')}
+                    >
+                        Canceladas
+                    </button>
+                    <button 
+                        className={`filter-pill ${filtroEstado === 'rechazada' ? 'active rejected' : ''}`}
+                        onClick={() => setFiltroEstado('rechazada')}
+                    >
+                        Rechazadas
                     </button>
                 </div>
             </div>
@@ -200,7 +292,33 @@ export default function UserRequestsList() {
                                                 <i className="bi bi-eye"></i>
                                                 <span>Ver</span>
                                             </button>
-                                            {['pendiente', 'presupuestada'].includes(solicitud.estado?.toLowerCase()) && (
+                                            {solicitud.estado?.toLowerCase() === 'presupuestada' && (
+                                                <>
+                                                    <button 
+                                                        className="action-btn approve-btn"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleAprobarSolicitud(solicitud.id);
+                                                        }}
+                                                        title="Aprobar presupuesto"
+                                                    >
+                                                        <i className="bi bi-check-circle"></i>
+                                                        <span>Aprobar</span>
+                                                    </button>
+                                                    <button 
+                                                        className="action-btn reject-btn"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleRechazarSolicitud(solicitud.id);
+                                                        }}
+                                                        title="Rechazar presupuesto"
+                                                    >
+                                                        <i className="bi bi-x-circle"></i>
+                                                        <span>Rechazar</span>
+                                                    </button>
+                                                </>
+                                            )}
+                                            {solicitud.estado?.toLowerCase() === 'iniciada' && (
                                                 <button 
                                                     className="action-btn cancel-btn"
                                                     onClick={(e) => {
