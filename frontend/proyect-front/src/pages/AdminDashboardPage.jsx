@@ -60,11 +60,11 @@ export default function AdminDashboardPage() {
     if (solicitudes.length === 0) return;
 
     // Conteo por estado
-    const count = [0, 0, 0, 0, 0, 0]; // Pendiente, Revisada, Presupuestada, Aprobada, Finalizada, Cancelada
+    const count = [0, 0, 0, 0, 0, 0]; // Iniciada, Revisada, Presupuestada, Aprobada, Finalizada, Cancelada
     solicitudes.forEach((solicitud) => {
       const estado = solicitud.estado;
       switch (estado) {
-        case "Pendiente":
+        case "Iniciada":
           count[0]++;
           break;
         case "Revisada":
@@ -153,7 +153,7 @@ export default function AdminDashboardPage() {
 
 
   const dataBar1 = {
-    labels: ["Pendiente", "Revisada", "Presupuestada", "Aprobada", "Finalizada", "Cancelada"],
+    labels: ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada", "Cancelada"],
     datasets: [
       {
         data: [stateCount[0], stateCount[1], stateCount[2], stateCount[3], stateCount[4], stateCount[5]],
