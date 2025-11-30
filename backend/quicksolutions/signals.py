@@ -1,4 +1,3 @@
-import os
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .services import publicar_evento_sns
