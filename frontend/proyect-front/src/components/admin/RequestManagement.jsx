@@ -15,37 +15,46 @@ import AddressCard from '../users/UserAddressCard.jsx';
 import { Button } from 'react-bootstrap';
 import './RequestManagement.css';
 import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
+import { Toast, ToastContainer } from 'react-bootstrap'
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
-  const [fechaFormateada, setFechaFormateada] = useState('');
+  //const [fechaFormateada, setFechaFormateada] = useState('');
   const navigate = useNavigate();
-  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
-  const [currentStep, setCurrentStep] = useState("Iniciada");
+
+  //UI States
   const [showCancelModalForm, setShowCancelModalForm] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [domicilioModalData, setDomicilioModalData] = useState(null);
   const [ServiceState, setServiceState] = useState(null);
+  const [toastConfig, setToastConfig] = useState({ show: false, message: '', variant: 'danger' });
+
+  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
+
+  const currentStep = solicitud?.estado_nombre || solicitud?.estado || "Iniciada";
 
   useEffect(() => {
+    let isMounted = true; // Flag para saber si el componente sigue vivo
     const fetchSolicitudDetails = async () => {
       try {
         console.log('Fetching solicitud details...');
         const response = await apiService.getRequestByIdAdmin(solicitudId);
-        console.log('Solicitud details:', response.data);
-        setSolicitud(response.data);
-        // ahora el backend devuelve 'estado_nombre' (texto) y 'id_solicitud_servicio_estado' (id numérico)
-        setCurrentStep(response.data.estado_nombre || response.data.estado || response.data.id_solicitud_servicio_estado);
-        const fechaGeneracion = new Date(response.data.fechaGeneracion);
-        console.log('Fecha de generación:', fechaGeneracion);
-        const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        setFechaFormateada(fechaGeneracion.toLocaleDateString('es-ES', opciones));
+
+        if (isMounted) {
+
+          //console.log('Solicitud details:', response.data);
+          setSolicitud(response.data);
+        }
       } catch (error) {
-        console.error('Error fetching solicitud details:', error);
+
+        if (isMounted) console.error('Error fetching solicitud details:', error);
+
       }
     }
     fetchSolicitudDetails();
+
+    return () => { isMounted = false; };
   }, [solicitudId]);
 
   useEffect(() => {
@@ -53,7 +62,7 @@ function RequestManagement() {
       if (solicitud && solicitud.id_solicitud_servicio_estado) {
         try {
           const response = await apiService.getDetailServiceState(solicitud.id_solicitud_servicio_estado);
-          console.log('State detail:', response.data);
+          //console.log('State detail:', response.data);
           setServiceState(response.data);
         } catch (error) {
           console.error('Error fetching state detail:', error);
@@ -61,149 +70,118 @@ function RequestManagement() {
       }
     };
     fetchStateDetail();
-  }, [solicitud]);
+  }, [solicitud?.id_solicitud_servicio_estado]);
 
-  const updateSolicitudEstado = async (newStep, stepIndex) => {
+  const executeOptimisticAction = async (updates, apiAction, successMsg = null, errorMsg = "Error al guardar cambios") => {
+    const backupSolicitud = JSON.parse(JSON.stringify(solicitud));
+
+    setSolicitud(prev => ({ ...prev, ...updates }));
+
     try {
-      console.log('Updating request state...');
-      const requestData = { id: solicitudId, idSolicitudServicioEstado: stepIndex + 2 };
-      await apiService.updateRequestStateAdmin(requestData);
-      setCurrentStep(newStep);
-      setSolicitud(prevSolicitud => ({
-        ...prevSolicitud,
-        estado: newStep,
-        estado_nombre: newStep
-      }));
-      console.log('Updated solicitud:', {
-        ...solicitud,
-        estado: newStep
-      });
+      await apiAction();
+
+      console.log("Acción exitosa en servidor");
+      if (successMsg) {
+        setToastConfig({ show: true, message: successMsg, variant: 'success' });
+      }
+
     } catch (error) {
-      console.error('Error updating request state:', error);
+      // 4. ROLLBACK AUTOMÁTICO
+      console.error("Falló la acción, revirtiendo...", error);
+
+      setSolicitud(backupSolicitud);
+
+      const serverMessage = error.response?.data?.error || error.response?.data?.message || error.response?.data?.detail;
+      const finalMessage = serverMessage || errorMsg; //Si no usamos el generico
+
+      setToastConfig({
+        show: true,
+        message: `${finalMessage}. Se han revertido los cambios.`,
+        variant: 'danger'
+      });
     }
   };
-  /*const updateSolicitudEnvio = async (solicitud) => {
-    try {
-      console.log('Updating request deliver...');
-      await apiService.updateRequestDeliverAdmin(solicitud.id, solicitud.envio);
-      console.log('Updated request deliver');
-    } catch (error) {
-      console.error('Error updating request state:', error);
-    }
-  };*/
+  
+  const handleNextStep = async (incomingData = null) => {
 
-  const updateRequestBudgeted = async (dataSource = null) => {
-    try {
-      const stepIndex = steps.indexOf(currentStep);
-      const newStep = steps[stepIndex + 1];
-      console.log('Updating request state...', solicitud);
-      const source = dataSource || solicitud;
-      const requestData = {
-        id: solicitudId,
-        diagnosticoTecnico: source.diagnosticoTecnico ?? source.diagnostico_tecnico ?? '',
-        idSolicitudServicioEstado: stepIndex + 2,
-        monto: source.monto ?? solicitud.monto,
-        fechaEstimada: source.fechaEstimada ?? source.fecha_estimada ?? null
-      };
-      await apiService.updateRequestBudgetAdmin(requestData);
-      setCurrentStep(newStep);
-      setSolicitud(prevSolicitud => ({
-        ...prevSolicitud,
-        estado: newStep,
-        estado_nombre: newStep
-      }));
-      console.log('Updated solicitud:', {
-        ...solicitud,
-        estado: newStep
-      });
-    } catch (error) {
-      console.error('Error updating request state:', error);
-    }
-  };
-
-  const UpdateRequestFinished = async (dataSource = null) => {
-    try {
-      const stepIndex = steps.indexOf(currentStep);
-      const newStep = steps[stepIndex + 1];
-      const source = dataSource || solicitud;
-      console.log('Updating request state...', source);
-      const requestData = {
-        id: solicitudId,
-        resumen: source.resumen ?? source.Resumen ?? source.localResumen,
-        idSolicitudServicioEstado: stepIndex + 2,
-      };
-      await apiService.updateRequestFinished(requestData);
-      setCurrentStep(newStep);
-      setSolicitud(prevSolicitud => ({
-        ...prevSolicitud,
-        estado: newStep,
-        estado_nombre: newStep,
-        resumen: requestData.resumen,
-        Resumen: requestData.resumen
-      }));
-      console.log('Updated solicitud:', {
-        ...solicitud,
-        estado: newStep
-      });
-    } catch (error) {
-      console.error('Error updating request state:', error);
-    }
-  };
-
-  const nextStep = async (incomingData = null) => {
-    console.log('Next step');
-    const mergedSolicitud = incomingData ? { ...solicitud, ...incomingData } : solicitud;
     const stepIndex = steps.indexOf(currentStep);
-    console.log('stepIndex:', stepIndex);
-    if (stepIndex < steps.length - 1 && steps[stepIndex + 1] !== 'Presupuestada' && steps[stepIndex + 1] !== 'Revisada' && steps[stepIndex + 1] !== 'Finalizada') {
-      const newStep = steps[stepIndex + 1];
-      console.log('step viejo:', newStep);
-      await updateSolicitudEstado(newStep, stepIndex);
-      console.log('Updated step nuevo:', newStep);
-    }
-    if (steps[stepIndex + 1] === 'Revisada') {
-      const newStep = steps[stepIndex + 1];
-      const id = solicitud.id;
-      await updateSolicitudEstado(newStep, stepIndex);
-      await apiService.updateRequestReviewed(id);
-    }
+    if (stepIndex >= steps.length - 1) return;
 
-    if (steps[stepIndex + 1] === 'Presupuestada') {
-      console.log('Solicitud: ', mergedSolicitud);
-      await updateRequestBudgeted(mergedSolicitud);
-    }
-    if (steps[stepIndex + 1] === 'Finalizada') {
-      console.log('Solicitud: ', mergedSolicitud);
-      await UpdateRequestFinished(mergedSolicitud);
-    }
-  };
-  /*const handleSubcontractStep = async () => {
-    const stepIndex = steps.indexOf(currentStep);
-    const newStep = steps[stepIndex + 1];
-    const requestData = {
-      id: solicitud.id,
-      idSolicitudServicioEstado: 2,
-      tercearizado: true,
-      idEmpresa: 1,
-      IdSolicitudExterna: solicitud.IdSolicitudExterna,
+    const nextStepName = steps[stepIndex + 1];
+
+    const uiUpdates = {
+      estado: nextStepName,
+      estado_nombre: nextStepName,
+      ...incomingData
     };
 
-    console.log('data to send:', requestData);
+    const apiWorker = async () => {
+      const idEstado = stepIndex + 2;
+      if (nextStepName === 'Revisada') {
+        await apiService.updateRequestStateAdmin({ id: solicitudId, idSolicitudServicioEstado: idEstado });
+        await apiService.updateRequestReviewed(solicitudId);
+      }
+      else if (nextStepName === 'Presupuestada') {
+        // Combinamos datos actuales con los nuevos para enviar todo completo
+        const source = { ...solicitud, ...incomingData };
+        const requestData = {
+          id: solicitudId,
+          idSolicitudServicioEstado: idEstado,
+          diagnosticoTecnico: source.diagnosticoTecnico ?? source.diagnostico_tecnico ?? '',
+          monto: source.monto,
+          fechaEstimada: source.fechaEstimada ?? source.fecha_estimada ?? null
+        };
+        await apiService.updateRequestBudgetAdmin(requestData);
+      }
+      else if (nextStepName === 'Finalizada') {
+        const source = { ...solicitud, ...incomingData };
+        const requestData = {
+          id: solicitudId,
+          idSolicitudServicioEstado: idEstado,
+          resumen: source.resumen ?? source.Resumen ?? source.localResumen
+        };
+        await apiService.updateRequestFinished(requestData);
+      }
+      else {
+        // Caso genérico (ej: Aprobada)
+        await apiService.updateRequestStateAdmin({ id: solicitudId, idSolicitudServicioEstado: idEstado });
+      }
+    };
 
-    if (solicitud.con_logistica) await updateSolicitudEnvio(solicitud);
-    await apiService.updateRequestSubcontractAdmin(requestData);
-    setCurrentStep(newStep);
-    setSolicitud(prevSolicitud => ({
-      ...prevSolicitud,
-      estado: newStep
-    }));
-    console.log('Updated solicitud:', {
-      ...solicitud,
-      estado: newStep
-    });
-
+    await executeOptimisticAction(
+      uiUpdates,
+      apiWorker,
+      `Estado actualizado a: ${nextStepName}`,
+      `Error al pasar a estado ${nextStepName}`
+    );
   };
-  */
+
+  const handleConfirmCancel = async (motivoReason) => {
+    const prevSolicitud = { ...solicitud };
+    setShowCancelModalForm(false);
+    const uiUpdates = {
+      estado: 'Cancelada',
+      estado_nombre: 'Cancelada',
+      resumen: motivoReason
+    };
+    setSolicitud(prev => ({
+      ...prev,
+      ...uiUpdates
+    }));
+
+    const apiWorker = async () => {
+      console.log('Canceling request with reason:', motivoReason);
+      await apiService.cancelRequest(solicitudId, { resumen: motivoReason });
+    };
+
+    await executeOptimisticAction(
+      uiUpdates,
+      apiWorker,
+      'Solicitud cancelada correctamente',
+      'No se pudo cancelar la solicitud'
+    );
+  };
+
   const handleCancelButton = () => {
     setShowCancelModalForm(true);
   };
@@ -225,24 +203,29 @@ function RequestManagement() {
   }
 
   const renderContent = () => {
-    const estadoNombre = solicitud.estado_nombre || solicitud.estado || solicitud.id_solicitud_servicio_estado;
+    const estadoNombre = currentStep;
     switch (estadoNombre) {
       case 'Iniciada':
-        return <StartedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} />;
+        return <StartedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} />;
       case 'Revisada':
-        return <ReviewedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
+        return <ReviewedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Presupuestada':
-        return <BudgetedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
+        return <BudgetedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Aprobada':
-        return <ApprovedStep solicitud={solicitud} nextStep={nextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
+        return <ApprovedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Finalizada':
         return <FinishedStep solicitud={solicitud} />;
       case 'Cancelada':
         return <CancelStep solicitud={solicitud} />;
       default:
+        if (solicitud.id_solicitud_servicio_estado === 1) return <StartedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} />;
         return <div>Error al obtener el estado</div>;
     }
   };
+
+  const fechaFormateada = solicitud?.fechaGeneracion
+    ? new Date(solicitud.fechaGeneracion).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    : '';
 
   return (
     <div className='requestManagement w-100'>
@@ -262,9 +245,9 @@ function RequestManagement() {
       </div>
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
       {((solicitud.estado_nombre || solicitud.estado || solicitud.id_solicitud_servicio_estado) === 'Cancelada' && !solicitud.fecha_iniciada) && (
-      <div className="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>¡Atención!</strong> La solicitud ha sido <strong>cancelada</strong>.
-      </div>
+        <div className="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>¡Atención!</strong> La solicitud ha sido <strong>cancelada</strong>.
+        </div>
       )}
       <hr style={{ borderTop: '1px solid lightgray', margin: '1%' }} />
       <div className='details d-flex flex-row justify-content' >
@@ -305,10 +288,10 @@ function RequestManagement() {
                 </button>
               </div>
             )}
-            
+
           </div>
         </div>
-        
+
       </div>
       <div className='row d-flex request-basics p-3'>
         <div className='col-4'>
@@ -342,7 +325,28 @@ function RequestManagement() {
         </div>
       </div>
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
-      <CancelModalForm show={showCancelModalForm} onClose={handleCloseCancelModalForm} />
+
+      <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+        <Toast
+          onClose={() => setToastConfig(prev => ({ ...prev, show: false }))}
+          show={toastConfig.show}
+          delay={5000}
+          autohide
+          bg={toastConfig.variant}
+        >
+          <Toast.Header>
+            <strong className="me-auto">Sistema</strong>
+          </Toast.Header>
+          <Toast.Body className={toastConfig.variant === 'danger' ? 'text-white' : ''}>
+            {toastConfig.message}
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
+
+      <CancelModalForm
+        show={showCancelModalForm}
+        onClose={handleCloseCancelModalForm}
+        onConfirm={handleConfirmCancel} />
 
       <Modal show={showAddressModal} onHide={() => setShowAddressModal(false)} centered>
         <Modal.Header closeButton>

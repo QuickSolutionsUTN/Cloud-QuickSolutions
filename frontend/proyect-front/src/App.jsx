@@ -16,26 +16,26 @@ import AdminUsersPage from './pages/AdminUsersPage.jsx';
 import AdminMaintenancePage from './pages/AdminMaintenancePage.jsx';
 import AdminDashboardPage from './pages/AdminDashboardPage.jsx';
 
-function App() {
+const ProtectedRoute = ({ children, roleRequired }) => {
   const { loading, isAuthenticated, userRole } = useContext(AuthContext);
 
-  const ProtectedRoute = ({ children, roleRequired }) => {
+  if (loading || (isAuthenticated && userRole === undefined)) {
+    return null;
+  }
 
-    if (loading || (isAuthenticated && userRole === undefined)) {
-        return null; 
-    }
+  if (!isAuthenticated) {
+    console.log("No validado");
+    return <Navigate to="/" />;
+  }
+  if (roleRequired && userRole !== roleRequired) {
+    console.log("No rol");
+    return <Navigate to="/" />;
+  }
+  return children;
 
-    if (!isAuthenticated) {
-      console.log("No validado");
-      return <Navigate to="/" />;
-    }
-    if (userRole !== roleRequired) {
-      console.log("No rol");
-      return <Navigate to="/" />;
-    }
-    return children;
+};
 
-  };
+function App() {
 
   return (
     <Router>

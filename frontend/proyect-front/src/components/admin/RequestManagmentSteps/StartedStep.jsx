@@ -8,119 +8,30 @@ import {
   Col,
   Alert,
 } from "react-bootstrap";
-import DatePicker from "react-datepicker";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
-import envioService from "../../../services/apiEnviosService.jsx";
-import apiReparacionExterna from "../../../services/apiBolsaTrabajoService.jsx";
 
 import "./StartedStep.css";
 
-function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
+function StartedStep({ solicitud, nextStep, cancelStep }) {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [items, setItems] = useState([]);
-  const [profesiones, setProfesiones] = useState([]);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [trabajadoresFiltrados, setTrabajadoresFiltrados] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [postApiExito, setPostApiExito] = useState(false);
 
   if (!solicitud) {
     return <div>Cargando...</div>;
   }
 
-  const handleNextStep = async () => {
-    console.log("Solicitud:", solicitud);
+  const handleNextStep = (e) =>{
+    if (e) e.preventDefault();
     nextStep();
   };
 
-/*  const solicitarEnvio = async (data) => {
-    const uuid_admin = "cda6ad47-e784-4b29-9b34-f680b21e1563";
-    const envioData = {
-      descripcion: "Envio de paquete",
-      hora: "12:00",
-      pesoGramos: 1000,
-      reserva: true,
-      origen: {
-        calle: data.calle,
-        numero: data.numero,
-        piso: data?.piso || 0,
-        depto: data?.departamento || null,
-        descripcion: "Casa",
-        localidadID: data.idLocalidad,
-      },
-      destino: {
-        calle: "Av del petroleo",
-        numero: 417,
-        piso: 0,
-        depto: null,
-        descripcion: "UTN la mas grande",
-        localidadID: 68,
-      },
-      cliente: uuid_admin,
-    };
-
-    try {
-      console.log("Solicitando envio...", envioData);
-      const response = await envioService.postEnvio(envioData);
-      console.log("Envio solicitado:", response);
-      const nroSeguimiento = response.nroSeguimiento;
-      return nroSeguimiento;
-    } catch (error) {
-      console.error("Error solicitando envio:", error);
-    }
-  };
-  const getApiResponse = async () => {
-    try {
-      const [trabajadores, profesiones] = await Promise.all([
-        apiReparacionExterna.getTrabajadores(),
-        apiReparacionExterna.getProfesiones(),
-      ]);
-
-      console.log("Trabajadores obtenidos:", trabajadores);
-      console.log("Profesiones obtenidas:", profesiones);
-
-      setItems(trabajadores);
-      setProfesiones(profesiones);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (items.length > 0 && profesiones.length > 0) {
-      mapProfessionsToItems();
-    }
-  }, [items, profesiones]);
-
-  const handleShow = () => {
-    if (items.length === 0) {
-      getApiResponse();
-    }
-    setShow(true);
-  };
-
-  const mapProfessionsToItems = () => {
-    console.log("Mapeando profesiones a items...");
-    const updatedItems = items.map((item) => {
-      const profession = profesiones.find(
-        (prof) => prof.idprofesion === item.idprofesion
-      );
-      console.log("Profesion encontrada:", profession);
-      return {
-        ...item,
-        profesionNombre: profession ? profession.nombre : "Desconocido",
-      };
-    });
-
-    console.log("Items actualizados:", updatedItems);
-    setTrabajadoresFiltrados(updatedItems);
-  };
-
-*/
   const handleSelectItem = (item) => {
     setSelectedItem(item);
   };
@@ -130,61 +41,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
     setError(null);
     setShow(false);
   };
-/*
-  const handleSubcrontractFinish = async () => {
-    if (!selectedItem) {
-      console.log("Debe seleccionar un trabajador");
-      setError("Debe seleccionar un trabajador");
-      return;
-    }
 
-    if (!startDate || !endDate) {
-      setError("Debe seleccionar un rango de fechas");
-      return;
-    }
-    setError(null);
-
-    if (solicitud.conLogistica) {
-      const nroSeguimiento = await solicitarEnvio(solicitud.envio);
-      if (!nroSeguimiento) {
-        alert(
-          "Error al conectarse con el servicio de envios. Intente nuevamente mas tarde"
-        );
-        return;
-      }
-      solicitud.envio.nroSeguimiento = nroSeguimiento;
-    }
-
-    const solicitudData = {
-      empresa: "QuickSolutions",
-      fecha_inicio: startDate,
-      fecha_fin: endDate,
-      idtrabajadores: [selectedItem.idtrabajador],
-    };
-    const success = await postSolicitudTrabajo(solicitudData);
-    if (!success) {
-      console.log("Error al solicitar trabajo");
-      alert("Error al solicitar trabajo");
-      return;
-    }
-    subcontractStep();
-    setShow(false);
-  };
-
-*/
-/*
-  const postSolicitudTrabajo = async (solicitudData) => {
-    try {
-      console.log("Solicitando trabajo...", solicitudData);
-      const response = await apiReparacionExterna.postSolicitud(solicitudData);
-      console.log("Trabajo solicitado:", response);
-      solicitud.IdSolicitudExterna = response.solicitud.idsolicitud;
-      return true;
-    } catch (error) {
-      console.error("Error solicitando trabajo:", error);
-    }
-  };
-*/
   const adjustTextareaHeight = (e) => {
     e.target.style.height = "auto";
     e.target.style.height = `${e.target.scrollHeight}px`;
@@ -245,7 +102,9 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
         <Button className="cancel" variant="danger" onClick={cancelStep}>
           Cancelar
         </Button>
-        <Button variant="success" onClick={handleNextStep}>
+        <Button variant="success"
+          type="button"
+          onClick={handleNextStep}>
           Aceptar servicio
         </Button>
       </div>
@@ -316,7 +175,7 @@ function StartedStep({ solicitud, nextStep, subcontractStep, cancelStep }) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          
+
           <Button variant="outline-danger" onClick={handleClose}>
             Cerrar
           </Button>
