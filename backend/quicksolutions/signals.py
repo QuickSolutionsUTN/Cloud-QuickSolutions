@@ -1,8 +1,9 @@
+import os
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .services import publicar_evento_sns
 from .models import SolicitudServicio
-import json
+from django.conf import settings
 
 @receiver(post_save, sender=SolicitudServicio)
 def notificar_cambios(sender, instance, created, **kwargs):
@@ -10,6 +11,10 @@ def notificar_cambios(sender, instance, created, **kwargs):
     Publica un evento en SNS cuando una solicitud existente cambia (omitimos created).
     Ajustar la lógica para publicar sólo en cambios de 'estado' si hace falta.
     """
+    if settings.ENABLE_NOTIFICATIONS != 'True':
+        print("🔕 Notificaciones desactivadas en .env")
+        return
+      
     if created:
         tipo_evento = "CREATED"
     else:
