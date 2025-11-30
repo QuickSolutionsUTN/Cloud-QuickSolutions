@@ -13,11 +13,6 @@ def notificar_cambios(sender, instance, created, **kwargs):
     if not settings.ENABLE_NOTIFICATIONS:
         print("🔕 Notificaciones desactivadas en .env")
         return
-      
-    if created:
-        tipo_evento = "CREATED"
-    else:
-        tipo_evento = "UPDATED"
 
     cliente = instance.id_solicitante
     cliente_email = getattr(cliente, "email", None)
@@ -28,18 +23,13 @@ def notificar_cambios(sender, instance, created, **kwargs):
     else:
         titulo_trabajo = f"Servicio - {instance.id_tipo_servicio.descripcion}"
 
-    if instance.resumen:
-        novedades = f"Resumen: {instance.resumen}"
-    elif instance.diagnostico_tecnico:
-        novedades = f"Diagnóstico: {instance.diagnostico_tecnico}"
-    else:
-        novedades = instance.descripcion or "Sin detalles adicionales."
-
     estado_texto = (
         str(instance.id_solicitud_servicio_estado.descripcion)
         if instance.id_solicitud_servicio_estado
         else "Desconocido"
     )
+    
+    es_mantenimiento = True if instance.id_tipo_mantenimiento else False
 
     payload = {
         "id_reparacion": instance.id,
@@ -49,11 +39,14 @@ def notificar_cambios(sender, instance, created, **kwargs):
         "estado": estado_texto,
         "producto": str(instance.id_producto),  
         "titulo_trabajo": titulo_trabajo,  
-        "pasos": novedades,
         "fecha_estimada": str(instance.fecha_estimada)
         if instance.fecha_estimada
         else "A confirmar",
         "con_logistica": instance.con_logistica,
+        "problema_reportado": instance.descripcion,         
+        "diagnostico_tecnico": instance.diagnostico_tecnico,
+        "resumen_final": instance.resumen,
+        "es_mantenimiento": es_mantenimiento,
     }
     
     try:
