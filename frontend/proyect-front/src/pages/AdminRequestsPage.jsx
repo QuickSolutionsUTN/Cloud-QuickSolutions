@@ -39,8 +39,8 @@ export default function AdminRequestsPage() {
       item.id,
       item.tipoServicio,
       item.fechaGeneracion,
-      item.estado,
       item.tipoDeProducto || "N/A",
+      item.estado,
     ]);
     autoTable(doc, {
       startY: 20, // Posición inicial
