@@ -19,10 +19,11 @@ def notificar_cambios(sender, instance, created, **kwargs):
     nombre_cliente = getattr(cliente, "first_name", "Desconocido")
 
     if instance.id_tipo_mantenimiento:
-        titulo_trabajo = f"Mantenimiento - {instance.id_tipo_mantenimiento.descripcion}"
-    else:
-        titulo_trabajo = f"Servicio - {instance.id_tipo_servicio.descripcion}"
-
+        titulo_trabajo = instance.id_tipo_mantenimiento.descripcion
+        descripcion_catalogo=instance.id_tipo_mantenimiento.descripcion
+    elif instance.id_tipo_servicio:
+        titulo_trabajo = instance.id_tipo_servicio.descripcion
+        
     estado_texto = (
         str(instance.id_solicitud_servicio_estado.descripcion)
         if instance.id_solicitud_servicio_estado
@@ -38,7 +39,8 @@ def notificar_cambios(sender, instance, created, **kwargs):
         "cliente_nombre": nombre_cliente,
         "estado": estado_texto,
         "producto": str(instance.id_producto),  
-        "titulo_trabajo": titulo_trabajo,  
+        "titulo_trabajo": titulo_trabajo, 
+        "descripcion_catalogo": descripcion_catalogo if instance.id_tipo_mantenimiento else "",
         "fecha_estimada": str(instance.fecha_estimada)
         if instance.fecha_estimada
         else "A confirmar",
