@@ -17,13 +17,11 @@ import AdminMaintenancePage from './pages/AdminMaintenancePage.jsx';
 import AdminDashboardPage from './pages/AdminDashboardPage.jsx';
 
 const ProtectedRoute = ({ children, roleRequired }) => {
-  const {loading, isAuthenticated, userRole} = useContext(AuthContext);
-  if (loading) {
-    return <div>Cargando sesión...</div>;
+  const { loading, isAuthenticated, userRole } = useContext(AuthContext);
+
+  if (loading || (isAuthenticated && userRole === undefined)) {
+    return null;
   }
-    if (loading || (isAuthenticated && userRole === undefined)) {
-        return null; 
-    }
 
   if (!isAuthenticated) {
     console.log("No validado");
