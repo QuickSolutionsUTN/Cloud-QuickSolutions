@@ -21,6 +21,10 @@ function App() {
 
   const ProtectedRoute = ({ children, roleRequired }) => {
 
+    if (loading || (isAuthenticated && userRole === undefined)) {
+        return null; 
+    }
+
     if (!isAuthenticated) {
       console.log("No validado");
       return <Navigate to="/" />;
