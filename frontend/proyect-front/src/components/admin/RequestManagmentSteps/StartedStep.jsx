@@ -14,7 +14,8 @@ import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquare } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
-import "./StartedStep.css";
+
+import "./startedStep.css";
 
 function StartedStep({ solicitud, nextStep, cancelStep }) {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import './AdminHeaderWithModal.css';
+import './adminHeaderWithModal.css';
 
 const AdminHeaderWithModal = ({ title, buttonText, showModal, handleClose, handleAdd, handleSave, children }) => {
   return (

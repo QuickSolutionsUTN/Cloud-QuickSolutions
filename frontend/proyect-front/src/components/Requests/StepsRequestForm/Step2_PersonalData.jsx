@@ -38,8 +38,9 @@ export default function StepPersonalData({ formData, control, errors, setValue }
               <Form.Control
                 {...field}
                 type='text'
-                value={formData?.personalData?.email || ''}
-                onChange={(e) => field.onChange(e.target.value)}
+                    value={formData?.personalData?.email || ''}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    readOnly
                 aria-label='Email'
               />
             )}
@@ -59,6 +60,7 @@ export default function StepPersonalData({ formData, control, errors, setValue }
                     type='text'
                     value={formData?.personalData?.firstName || ''}
                     onChange={(e) => field.onChange(e.target.value)}
+                    readOnly
                     aria-label='Nombre'
                   />
                 )}
@@ -76,6 +78,7 @@ export default function StepPersonalData({ formData, control, errors, setValue }
                     type='text'
                     value={formData?.personalData?.lastName || ''}
                     onChange={(e) => field.onChange(e.target.value)}
+                    readOnly
                     aria-label='Apellido'
                   />
                 )}

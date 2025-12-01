@@ -154,9 +154,17 @@ export default function StepProductData({ formData, control, errors, setValue })
           <div className='row mb-3'>
             <Controller name="productData.problemDescription" control={control} defaultValue={formData?.productData.problemDescription || ''} render={({ field }) => (
               <InputGroup>
-                <InputGroup.Text>Descripcion del problema</InputGroup.Text>
+                <InputGroup.Text className='d-flex flex-column justify-content-center align-items-center'>
+                  <div>
+                    Descripción del problema 
+                  </div>
+                  <div>
+                    (ingrese modelo del producto)
+                  </div>
+                </InputGroup.Text>
                 <Form.Control
                   as="textarea"
+                  rows={3}
                   aria-label="With textarea"
                   value={formData?.productData.problemDescription || ''}
                   onChange={(e) => { field.onChange(e.target.value); }}
