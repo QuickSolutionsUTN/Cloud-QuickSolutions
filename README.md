@@ -34,6 +34,7 @@ npm run dev
 - **Cloud Services:**
   - **Supabase:** autenticación, base de datos y API REST
   - **AWS SNS:** envío de notificaciones a usuarios
+  - **AWS Amplify Hosting:** deployar el frontend
 
 ## ⚙️ Arquitectura
 
@@ -43,12 +44,10 @@ npm run dev
 
 ## 🛠️ Estado del Proyecto
 
-Actualmente solo está disponible el código base del proyecto anterior.  
-El equipo irá trabajando progresivamente en:
-- Migración del backend a Django
-- Conexión con Supabase (BD y autenticación)
-- Implementación de notificaciones en la nube
-- Frontend completo con React + Vite
+El proyecto ya se encuentra listo.
+El backend está deployado con Render y el frontend con aws amplify
+
+Link a la pagina web: https://main.d2pw1l29dsqfgg.amplifyapp.com/
 
 ## 👨‍💻 Equipo de Trabajo
 
