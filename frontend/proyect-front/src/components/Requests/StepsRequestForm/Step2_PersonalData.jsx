@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Form, InputGroup, Card } from 'react-bootstrap';
 import { Controller } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import apiService from '../../../services/axiosConfig.jsx';
 import AuthContext from '../../../contexts/AuthContext.jsx'
 
@@ -85,6 +85,10 @@ export default function StepPersonalData({ formData, control, errors, setValue }
               />
             </div>
           </div>
+          <p className="text-muted mt-2">
+            Si deseas modificar tus datos de usuario, dirígete a{' '}
+            <Link to="/users/profile" className="fw-bold">Perfil</Link>.
+          </p>
         </>
       ) : (
         <div className='error'>No has iniciado sesión. Por favor, inicia sesión para continuar</div>
