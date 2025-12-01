@@ -58,6 +58,10 @@ export default function UserProfile() {
     if (!userData) {
         return <div className="alert alert-warning m-3">No se pudo cargar el perfil.</div>;
     }
+    const displayData = { 
+        ...userData, 
+        email: user.email
+    }
 
     const domicilio = userData.domicilio ?? null;
     const calleCompleta = domicilio?.calle
@@ -93,7 +97,7 @@ export default function UserProfile() {
                         <Card.Title className="fw-bold profile-card-title">Información del perfil</Card.Title>
                         <div className='profile-details'>
                             <div className='card-text'>
-                                <strong>Email:&nbsp;</strong>{userData.email}
+                                <strong>Email:&nbsp;</strong>{displayData.email}
                             </div>
                             <div className='card-text'>
                                 <strong>Nombre:&nbsp;</strong>{userData.nombre}

@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState } from 'react';
 import { useReactTable, getCoreRowModel, flexRender, getSortedRowModel } from "@tanstack/react-table";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSortUp, faSortDown, faArrowDown, faSquare } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
-import apiService from '../../services/axiosConfig.jsx';
 import './adminRequests.css'
 
 function AdminRequestsTable({ initialData , handleDownload}) {
@@ -35,7 +34,6 @@ function AdminRequestsTable({ initialData , handleDownload}) {
     },
     { accessorKey: "emailSolicitante", header: "Cliente" },
     { accessorKey: "fechaGeneracion", header: "Fecha" },
-    { accessorKey: "tipoDeProducto", header: "Producto" },
     {
       accessorKey: "estado",
       header: "Estado",

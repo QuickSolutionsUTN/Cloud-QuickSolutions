@@ -277,7 +277,7 @@ function RequestManagement() {
 
       <div className='info-card'>
         <div className="row mx-0 w-100 align-items-center py-1">
-          <div className="col-md-2 mb-2 ribbon-item">
+          <div className="col-md-3 mb-2 ribbon-item">
             <div className="section-label">Usuario</div>
             <div className="data-value">
               <FontAwesomeIcon icon={faUser} className="me-2 text-primary" />
@@ -287,7 +287,7 @@ function RequestManagement() {
             </div>
           </div>
 
-          <div className="col-md-3 mb-2 ribbon-item">
+          <div className="col-md-2 mb-2 ribbon-item">
             <div className="section-label">Servicio</div>
             <div className="data-value">
               {solicitud.tipoServicio}
@@ -318,22 +318,24 @@ function RequestManagement() {
                 </span>
               )}
             </div>
-            <button className="btn btn-link btn-sm p-0 text-decoration-none" onClick={async () => {
-              try {
-                const resp = await apiService.getProfiles();
-                const profiles = resp.data || [];
-                const profile = profiles.find(p => p.email === solicitud.emailSolicitante || (p.id && p.id.email === solicitud.emailSolicitante));
-                const domicilio = profile?.domicilio ?? null;
-                setDomicilioModalData(domicilio);
-                setShowAddressModal(true);
-              } catch (err) {
-                console.error('Error fetching profiles for address modal:', err);
-                setDomicilioModalData(null);
-                setShowAddressModal(true);
-              }
-            }}>
-              Ver domicilio
-            </button>
+            {solicitud.con_logistica ? (
+              <button className="btn btn-link btn-sm p-0 text-decoration-none" onClick={async () => {
+                try {
+                  const resp = await apiService.getProfiles();
+                  const profiles = resp.data || [];
+                  const profile = profiles.find(p => p.email === solicitud.emailSolicitante || (p.id && p.id.email === solicitud.emailSolicitante));
+                  const domicilio = profile?.domicilio ?? null;
+                  setDomicilioModalData(domicilio);
+                  setShowAddressModal(true);
+                } catch (err) {
+                  console.error('Error fetching profiles for address modal:', err);
+                  setDomicilioModalData(null);
+                  setShowAddressModal(true);
+                }
+              }}>
+                Ver domicilio
+              </button>
+            ) : null}
           </div>
         </div>
       </div>
