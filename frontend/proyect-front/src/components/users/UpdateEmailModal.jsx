@@ -8,10 +8,9 @@ export default function UpdateEmailModal({ show, handleClose }) {
     const { session } = useContext(AuthContext); 
     const currentEmail = session?.user?.email;
     
-    // Inicializamos el formulario con el email actual del usuario
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
-            newEmail: currentEmail || ''
+            newEmail: ''
         }
     });
 
@@ -19,10 +18,9 @@ export default function UpdateEmailModal({ show, handleClose }) {
     const [message, setMessage] = useState('');
     const [messageVariant, setMessageVariant] = useState('info');
 
-    // Resetear el estado y el formulario al abrir/cerrar el modal
     React.useEffect(() => {
         if (show) {
-            reset({ newEmail: currentEmail || '' });
+            reset({ newEmail: '' });
             setMessage('');
             setLoading(false);
         }
@@ -42,8 +40,6 @@ export default function UpdateEmailModal({ show, handleClose }) {
         }
 
         try {
-            // Llama a la API de Supabase para actualizar el email
-            // Supabase enviará un enlace de verificación al nuevo email.
             const { error } = await supabase.auth.updateUser({ 
                 email: newEmail 
             });
@@ -55,8 +51,7 @@ export default function UpdateEmailModal({ show, handleClose }) {
                 return;
             }
 
-            // Mensaje de éxito informando sobre la necesidad de verificación.
-            setMessage('✅ Solicitud enviada. Se ha enviado un **enlace de confirmación** al nuevo email (' + newEmail + '). Por favor, revísalo para completar el cambio.');
+            setMessage('✅ Solicitud enviada. Se ha enviado un enlace de confirmación al nuevo email (' + newEmail + '). Por favor, revísalo para completar el cambio.');
             setMessageVariant('success');
 
         } catch (err) {
@@ -110,7 +105,6 @@ export default function UpdateEmailModal({ show, handleClose }) {
                         className={`full-width-button ${messageVariant === 'danger' ? 'button-error' : ''} mt-3`} 
                         variant="primary" 
                         type="submit" 
-                        // Deshabilitar después del éxito para evitar múltiples envíos
                         disabled={loading || messageVariant === 'success'}
                     >
                         {loading ? (
