@@ -58,27 +58,21 @@
 }
 
 .description-card {
-  background-color: #f8f9fa; 
-  border: 1px solid #e9ecef; 
-  border-radius: 12px;      
-  padding: 1.25rem;         
-  color: #344767;            
-  font-size: 0.95rem;
-  line-height: 1.6;          
-  position: relative;
+  background-color: #ffffff;
+  border: 1px solid #f0f2f5;
+  border-left: 4px solid #0d6efd;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  
+  padding: 1.5rem;       
+  color: #495057;        
+  font-size: 1rem;        
+  line-height: 1.7;        
+  
+  height: 100%;           
 }
-
-/* Opcional: Una barrita de color a la izquierda para darle estilo */
-.description-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 15%;
-  bottom: 15%;
-  width: 4px;
-  background-color: #0d6efd; /* Color primario (azul bootstrap) */
-  border-radius: 0 4px 4px 0;
-  opacity: 0.5;
+.description-technical-section {
+  margin-bottom: 1.5rem;    
 }
 
 /* Para la checklist */

@@ -18,6 +18,9 @@ import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import './RequestManagement.css';
+import DescriptionCard from './RequestManagmentSteps/DescriptionCard.jsx';
+import BudgetCard from './RequestManagmentSteps/BudgetCard.jsx';
+import DiagnosisCard from './RequestManagmentSteps/DiagnosisCard.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -340,6 +343,31 @@ function RequestManagement() {
           </div>
         </div>
       </div>
+      <div className="description-technical-section">
+        <div className="row mx-0 w-100">
+          <div className="col-md-6 mb-4 d-flex flex-column" >
+            <div className="section-label mb-2">Descripción del problema / mantenimiento</div>
+            <DescriptionCard text={solicitud.descripcion || solicitud.mantenimiento?.descripcion} />
+          </div>
+          <div className="col-md-6 mb-4 d-flex flex-column">
+            <div className="section-label mb-2">Detalles del Presupuesto</div>
+            <BudgetCard
+              fecha={currentStep !== "Revisada" ? solicitud.fechaEstimada : ''}
+              monto={currentStep !== "Revisada" ? solicitud.monto : ''}
+            />
+          </div>
+        </div>
+      </div>
+      {solicitud.diagnosticoTecnico && currentStep !== "Revisada" ? (
+        <div className="diagnosis-section">
+          <div className="row mx-0 w-100">
+            <div className="col-md-12 mb-4 d-flex flex-column" >
+              <div className="section-label mb-2">Diagnostico Tecnico</div>
+              <DiagnosisCard text={solicitud.diagnosticoTecnico} />
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className='d-flex request-details mb-4'>
         <div className='flex-grow-1'>
           <AnimatePresence mode="wait">
@@ -357,7 +385,6 @@ function RequestManagement() {
         </div>
       </div>
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
-
       <CancelModalForm
         show={showCancelModalForm}
         onClose={handleCloseCancelModalForm}

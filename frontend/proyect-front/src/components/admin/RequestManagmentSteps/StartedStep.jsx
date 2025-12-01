@@ -71,62 +71,6 @@ function StartedStep({ solicitud, nextStep, cancelStep }) {
       initial="hidden"
       animate="show"
     >
-      <Form className="started-step-container">
-        <motion.div variants={item} className="row">
-          <div className="row">
-            {solicitud.tipoServicio === "Reparación" ? (
-              <div className="col-12">
-                <Form.Group controlId="description">
-                  <Form.Label className="fw-bold">Descripcion del problema</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    type="text"
-                    value={solicitud.descripcion}
-                    readOnly
-                    style={{ resize: "vertical" }}
-                  />
-                </Form.Group>
-              </div>
-            ) : (
-              <div className="col-12">
-                <div className="col-12 mb-3">
-                  <div className="section-label mb-2">Descripción del mantenimiento</div>
-
-                  <div className="description-card">
-                    {solicitud.mantenimiento?.descripcion || "Sin descripción proporcionada."}
-                  </div>
-                </div>
-                <div className="mt-2">
-                  <h6 className="section-label mb-2">Checklist de Mantenimiento Preventivo</h6>
-
-                  <div className="bg-white rounded border" style={{ overflow: 'hidden' }}>
-                    {solicitud.mantenimiento?.checklist?.map((item) => (
-
-                      <div key={item.id} className="checklist-item">
-
-                        <FontAwesomeIcon icon={faSquare} className="check-icon" />
-
-                        <div className="d-flex flex-column flex-grow-1">
-                          <span className="text-dark fw-medium">{item.descripcion}</span>
-                        </div>
-
-                        {item.obligatorio && (
-                          <span className="badge bg-light text-secondary border ms-2">
-                            Obligatorio
-                          </span>
-                        )}
-                      </div>
-
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="my-4"></div>
-        </motion.div>
-      </Form>
       <motion.div variants={item} className="buttons-container">
         <div className="buttons-container">
           <AnimatedButton className="cancel" variant="danger" onClick={cancelStep}>
