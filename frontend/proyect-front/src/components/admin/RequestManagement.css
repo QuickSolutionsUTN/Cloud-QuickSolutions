@@ -1,3 +1,21 @@
+.skeleton {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 5px;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.skeleton-text { height: 20px; margin-bottom: 10px; width: 100%; }
+.skeleton-title { height: 40px; margin-bottom: 20px; width: 60%; }
+.skeleton-box { height: 100px; width: 100%; }
+
 .buttons-container {
     display: flex;
     width: 100%;

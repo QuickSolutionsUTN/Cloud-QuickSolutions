@@ -200,7 +200,25 @@ function RequestManagement() {
   };
 
   if (!solicitud) {
-    return <div>Cargando...</div>;
+    return (
+      <div className='requestManagement w-100 p-4'>
+        <div className="d-flex justify-content-between mb-4">
+          <div className="skeleton skeleton-title" style={{ width: '80px' }}></div>
+          <div className="skeleton skeleton-title"></div>
+          <div style={{ width: '80px' }}></div>
+        </div>
+
+        <div className="skeleton skeleton-box mb-5" style={{ height: '60px', borderRadius: '30px' }}></div>
+
+        <div className="d-flex gap-3 mb-4">
+          <div className="skeleton skeleton-box flex-fill"></div>
+          <div className="skeleton skeleton-box flex-fill"></div>
+          <div className="skeleton skeleton-box flex-fill"></div>
+        </div>
+
+        <div className="skeleton skeleton-box" style={{ height: '300px' }}></div>
+      </div>
+    );
   }
 
   const renderContent = () => {
@@ -229,9 +247,9 @@ function RequestManagement() {
     : '';
 
   const pageVariants = {
-    initial: { opacity: 0, x: 20 }, 
-    in: { opacity: 1, x: 0 },       
-    out: { opacity: 0, x: -20 }  
+    initial: { opacity: 0, x: 20 },
+    in: { opacity: 1, x: 0 },
+    out: { opacity: 0, x: -20 }
   };
 
   const pageTransition = {
