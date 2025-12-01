@@ -34,3 +34,9 @@ transition: transform 0.5s ease, box-shadow 0.3s ease; /* Transición más lenta
   transform: translateY(-5px); /* Menos elevación */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra más suave */
 }
+
+
+.profile-details .card-text {
+    /* Permite que el texto y el botón se alineen */
+    display: flex;
+}

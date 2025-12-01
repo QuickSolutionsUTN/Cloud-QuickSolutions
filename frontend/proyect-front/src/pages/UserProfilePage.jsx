@@ -5,7 +5,8 @@ import UserCard from '../components/users/UserProfileCard.jsx';
 import UserAddressModal from '../components/users/UserAddressModal.jsx';
 import AuthContext from '../contexts/AuthContext.jsx';
 import apiService from '../services/axiosConfig.jsx';
-import { Modal, Button, ToastContainer, Toast } from 'react-bootstrap';
+import UpdateEmailModal from '../components/users/UpdateEmailModal.jsx';
+import { Modal, Button, ToastContainer, Toast, Card } from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './userProfilePage.css';
@@ -23,6 +24,9 @@ export default function UserProfile() {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastBg, setToastBg] = useState('success');
+    const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false);
+    const handleOpenUpdateEmailModal = () => setShowUpdateEmailModal(true);
+    const handleCloseUpdateEmailModal = () => setShowUpdateEmailModal(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -40,6 +44,12 @@ export default function UserProfile() {
 
         fetchUserData();
     }, [backendURL, user, userToken]);
+
+    const handleEmailUpdateConfirmation = () => {
+        setToastMessage('Solicitud de cambio de email enviada. Confirme en su nuevo email para finalizar.');
+        setToastBg('info');
+        setShowToast(true);
+    };
 
     if (loading) {
         return <div className="text-center mt-5"><div className="spinner-border text-primary" role="status"></div></div>;
@@ -78,7 +88,31 @@ export default function UserProfile() {
     return (
         <div className='d-flex flex-column '>
             <div className='container-fluid p-userprofile card-container w-75'>
-                <UserCard user={userData} />
+                <Card className='text-left profile-card'>
+                    <Card.Body>
+                        <Card.Title className="fw-bold profile-card-title">Información del perfil</Card.Title>
+                        <div className='profile-details'>
+                            <div className='card-text'>
+                                <strong>Email:&nbsp;</strong>{userData.email}
+                            </div>
+                            <div className='card-text'>
+                                <strong>Nombre:&nbsp;</strong>{userData.nombre}
+                            </div>
+                            <div className='card-text'>
+                                <strong>Apellido:&nbsp;</strong>{userData.apellido}
+                            </div>
+                        </div>
+                    </Card.Body>
+                </Card>
+
+                <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    className="w-100"
+                    onClick={handleOpenUpdateEmailModal}
+                >
+                    Modificar Email
+                </Button>
                 {domicilio == null ? (
                     <div className="alert alert-info mt-3 w-100 text-center">
                         <div>El usuario aun no tiene un domicilio registrado.</div>
@@ -102,13 +136,13 @@ export default function UserProfile() {
                             />
                         </div>
                         <div className=" d-flex flex-column">
-                                <button className="btn btn-outline-secondary btn-sm mb-2" onClick={() => { setModalInitialData(domicilio); setEditingAddress(true); setShowAddressModal(true); }}>
-                                    Modificar domicilio
-                                </button>
-                                <button className="btn btn-outline-danger btn-sm" onClick={handleDeleteDomicilio}>
-                                    Eliminar domicilio
-                                </button>
-                            </div>
+                            <button className="btn btn-outline-secondary btn-sm mb-2" onClick={() => { setModalInitialData(domicilio); setEditingAddress(true); setShowAddressModal(true); }}>
+                                Modificar domicilio
+                            </button>
+                            <button className="btn btn-outline-danger btn-sm" onClick={handleDeleteDomicilio}>
+                                Eliminar domicilio
+                            </button>
+                        </div>
                     </div>
                 )}
 
@@ -123,7 +157,7 @@ export default function UserProfile() {
                                 payload.localidad = payload.id_localidad;
                                 delete payload.id_localidad;
                             }
-                            delete payload.provincia; 
+                            delete payload.provincia;
                             if (payload.departamento === "") payload.departamento = null;
                             if (payload.piso === "") payload.piso = null;
                             console.log('Guardando domicilio con payload:', payload);
@@ -143,15 +177,20 @@ export default function UserProfile() {
                         }
                     }}
                 />
-                
+
                 <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
                     <Modal.Header closeButton>
                         <Modal.Title>Confirmar eliminación</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>¿Confirma que desea eliminar su domicilio?</Modal.Body>
-                        <Button variant="secondary" className='mb-1 p-1' onClick={() => setShowDeleteConfirm(false)}>Cancelar</Button>
-                        <Button variant="danger" className='mb-1 p-1' onClick={confirmDeleteDomicilio}>Eliminar</Button>
+                    <Button variant="secondary" className='mb-1 p-1' onClick={() => setShowDeleteConfirm(false)}>Cancelar</Button>
+                    <Button variant="danger" className='mb-1 p-1' onClick={confirmDeleteDomicilio}>Eliminar</Button>
                 </Modal>
+                <UpdateEmailModal
+                    show={showUpdateEmailModal}
+                    handleClose={handleCloseUpdateEmailModal}
+                    onEmailUpdated={handleEmailUpdateConfirmation}
+                />
 
                 <ToastContainer position="bottom-center" className="p-3">
                     <Toast bg={toastBg} onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide>

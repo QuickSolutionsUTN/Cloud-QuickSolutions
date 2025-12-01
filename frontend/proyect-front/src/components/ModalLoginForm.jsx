@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
 import './modalLoginForm.css';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -7,16 +7,48 @@ import AuthContext from '../contexts/AuthContext';
 
 
 function LoginForm({ show, onClose, onJoinClick }) {
-  const {signInWithEmail}= useContext(AuthContext);
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { signInWithEmail, resetPasswordForEmail } = useContext(AuthContext);
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isResetMode, setIsResetMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const handleForgotPasswordClick = () => {
+    setIsResetMode(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+    reset();
+  };
+  const handleBackToLoginClick = () => {
+    setIsResetMode(false);
+    setErrorMessage('');
+    setSuccessMessage('');
+    reset();
+  };
+  const handleResetPasswordSubmit = async (data) => {
+    setLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
 
-
+    try {
+      await resetPasswordForEmail(data.email);
+      setSuccessMessage('✅ ¡Listo! Se ha enviado un correo electrónico con el enlace para restablecer su contraseña. Por favor, revise su bandeja de entrada (y la carpeta de Spam).');
+      setTimeout(() => {
+        handleBackToLoginClick();
+        onClose();
+      }, 5000);
+    } catch (error) {
+      console.error('Error al solicitar restablecimiento de contraseña:', error);
+      setErrorMessage('Si el correo electrónico existe en nuestro sistema, recibirá un enlace para restablecer su contraseña.');
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleFormSubmit = async (formValues) => {
     setErrorMessage('');
     try {
-      const {role} = await signInWithEmail(formValues.email, formValues.password);
+      const { role } = await signInWithEmail(formValues.email, formValues.password);
 
       if (role === 'admin') {
         navigate('/admin/dashboard');
@@ -26,61 +58,94 @@ function LoginForm({ show, onClose, onJoinClick }) {
       onClose();
     } catch (error) {
       console.error('Error al hacer login con Supabase:', error);
-      setErrorMessage(error.message || 'Error de conexión. Intente más tarde.');
+      let customErrorMessage = error.message || 'Error de conexión. Intente más tarde.';
+
+      if (customErrorMessage.includes('Email not confirmed')) {
+        customErrorMessage = 'Su correo electrónico aún no ha sido verificado. Por favor, revise su bandeja de entrada.';
+      } else if (customErrorMessage.includes('Invalid login credentials')) {
+        customErrorMessage = 'Credenciales inválidas.';
+      }
+
+      setErrorMessage(customErrorMessage);
     }
   };
-  
+
   return (
-    <Modal show={show} onHide={onClose} >
+    <Modal show={show} onHide={isResetMode ? handleBackToLoginClick : onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Iniciar Sesión</Modal.Title>
+        <Modal.Title>{isResetMode ? 'Restablecer Contraseña' : 'Iniciar Sesión'}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit(handleFormSubmit)}>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label className={errors.email ? 'error-label' : ''}>Correo electronico</Form.Label>
+        {/* Muestras el mensaje de error o éxito */}
+        {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+        {successMessage && <Alert variant="success">{successMessage}</Alert>}
+
+        <form onSubmit={handleSubmit(isResetMode ? handleResetPasswordSubmit : handleFormSubmit)}>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
-              placeholder="Ingrese correo electronico"
-              className={errors.email || errorMessage ? 'error-input' : ''}
-              {...register('email', {
-                required: '*Campo obligatorio',
+              placeholder="Ingrese su email"
+              {...register("email", {
+                required: "El email es obligatorio",
                 pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                  message: '*Correo electronico invalido'
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Dirección de correo no válida"
                 }
               })}
             />
-            {errors.email && <p className="error-message">{errors.email.message}</p>}
+            {errors.email && <p className="text-danger small">{errors.email.message}</p>}
           </Form.Group>
 
-          <Form.Group controlId="formBasicPassword" className='login-form-control'>
-            <Form.Label className={errors.password ? 'error-label' : ''}>Contraseña</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Ingrese contraseña"
-              className={errors.password || errorMessage ? 'error-input' : ''}
-              {...register('password', { required: '*Campo obligatorio' })}
-            />
-            {errors.password && <p className="error-message">{errors.password.message}</p>}
-          </Form.Group>
-          {errorMessage && (
-            <Alert variant="danger" className="mt-3">
-              {errorMessage}
-            </Alert>
+          {!isResetMode && (
+            <Form.Group className="mb-3">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Contraseña"
+                {...register("password", { required: "La contraseña es obligatoria" })}
+              />
+              {errors.password && <p className="text-danger small">{errors.password.message}</p>}
+            </Form.Group>
           )}
-          <Button className={`full-width-button ${errorMessage ? 'button-error' : ''}`} variant="primary" type="submit">
-            Iniciar sesión
+
+          <Button
+            className={`full-width-button ${errorMessage ? 'button-error' : ''}`}
+            variant="primary"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? (
+              <Spinner animation="border" size="sm" />
+            ) : isResetMode ? 'Enviar Enlace de Restablecimiento' : 'Iniciar Sesión'}
           </Button>
-          <div className="button-group">
-            <Button className="full-width-button" variant="secondary" onClick={() => console.log("Olvido")}>
-              Olvido su contraseña?
-            </Button>
-            <Button className="full-width-button" variant="secondary" onClick={onJoinClick}>
-              Registrarse
-            </Button>
-          </div>
-        </Form>
+
+          <p className="text-center mt-3">
+            {isResetMode ? (
+              <span
+                className="text-primary"
+                style={{ cursor: 'pointer' }}
+                onClick={handleBackToLoginClick}
+              >
+                Volver a Iniciar Sesión
+              </span>
+            ) : (
+              <span
+                className="text-primary"
+                style={{ cursor: 'pointer' }}
+                onClick={handleForgotPasswordClick}
+              >
+                ¿Olvidaste tu contraseña?
+              </span>
+            )}
+          </p>
+
+          <p className="text-center mt-3">
+            ¿No tienes cuenta? <span className="text-primary" style={{ cursor: 'pointer' }} onClick={onJoinClick}>Regístrate aquí</span>
+          </p>
+
+        </form>
       </Modal.Body>
     </Modal>
   );

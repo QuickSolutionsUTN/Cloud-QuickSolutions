@@ -8,6 +8,7 @@ import AuthContext from './contexts/AuthContext.jsx';
 import AdminRequestsPage from './pages/AdminRequestsPage.jsx';
 import RequestDetailsPage from './pages/RequestDetailsPage.jsx';
 import UserRequestsPage from './pages/UserRequestsPage.jsx';
+import UpdatePasswordPage from './pages/UpdatePasswordPage.jsx';
 import UserProfilePage from './pages/UserProfilePage.jsx';
 import RequestManagement from '../src/components/admin/RequestManagement.jsx';
 import AdminProductsPage from './pages/AdminProductsPage.jsx';
@@ -43,6 +44,7 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
           <Route path="requests" element={<RepairsRequest />} />
+          <Route path="update-password" element={<UpdatePasswordPage />} />
           <Route path="users">
             <Route path="profile" element={<UserProfilePage />} />
             <Route path="requests" element={<UserRequestsPage />} />
