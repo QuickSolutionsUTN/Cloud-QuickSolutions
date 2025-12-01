@@ -26,3 +26,23 @@
 .admin-dashboard .progress-bar{
   background-color: #28A745;
 }
+
+.admin-dashboard .card-stats .numbers h3 {
+  font-size: clamp(1.2rem, 2.5vw, 1.75rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  margin-bottom: 1rem;
+}
+
+.admin-dashboard .card-stats {
+  min-height: 130px;
+}
+
+.admin-dashboard .card-stats .subtitle h6,
+.admin-dashboard .card-stats .title h6 {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
