@@ -46,7 +46,7 @@ function AdminRequestsTable({ initialData , handleDownload}) {
           "Iniciada": "primary",
           "Finalizada": "dark",
           "Cancelada": "danger",
-          "Presupuestada": "info",
+          "Presupuestada": "warning",
           "Aprobada": "success",
         };
 

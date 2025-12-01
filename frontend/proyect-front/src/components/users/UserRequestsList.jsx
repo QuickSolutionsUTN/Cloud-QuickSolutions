@@ -32,7 +32,7 @@ export default function UserRequestsList() {
         const estados = {
             'iniciada': 'bg-primary',
             'revisada': 'bg-secondary',
-            'presupuestada': 'bg-info',
+            'presupuestada': 'bg-warning',
             'aprobada': 'bg-success',
             'rechazada': 'bg-danger',
             'finalizada': 'bg-dark',

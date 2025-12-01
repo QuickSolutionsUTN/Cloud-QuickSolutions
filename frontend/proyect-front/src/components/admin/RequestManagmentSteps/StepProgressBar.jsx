@@ -57,8 +57,10 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
           const isCancelledStep = isCancelled && isLastStep;
           const isCompleted = isCancelledStep 
             ? true 
-            : isStepCompleted(step);
-          
+            : isCancelled 
+                ? isStepCompleted(step)
+                : index <= stepIndex;
+                
           return (
             <div key={index} className={`step ${isCompleted ? "active" : ""} ${isCancelledStep ? "cancelled" : ""}`}>
               <div className={`circle${isCancelledStep ? "-cancelled" : ""}`}>

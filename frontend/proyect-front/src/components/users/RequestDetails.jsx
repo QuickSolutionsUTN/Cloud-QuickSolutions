@@ -24,7 +24,7 @@ export default function RequestDetails() {
     const estados = {
       "Iniciada": "primary",
       "Revisada": "secondary",
-      "Presupuestada": "info",
+      "Presupuestada": "warning",
       "Aprobada": "success",
       "Finalizada": "dark",
       "Cancelada": "danger",
