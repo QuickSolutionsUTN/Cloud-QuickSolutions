@@ -136,10 +136,28 @@ export const AuthProvider = ({ children }) => {
     userSurName: profile?.apellido,
     signInWithEmail,
     signUpWithEmail,
+    resetPasswordForEmail,
     logout,
     loading,
     profileLoading
   };
+
+  const resetPasswordForEmail = async (email) => {
+    const redirectToUrl = `${window.location.origin}/update-password`;
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectToUrl,
+    });
+    
+    if (error) {
+        if (error.status === 404) {
+            throw new Error("Si el correo electrónico existe, recibirá un enlace para restablecer su contraseña.");
+        }
+        throw error;
+    }
+    
+    return { message: 'Password reset email sent' };
+};
 
   return (
     <AuthContext.Provider value={value}>
