@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
 import AnimatedButton from "../../common/AnimatedButton.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSquare } from "@fortawesome/free-solid-svg-icons";
 import "./reviewedStep.css"
 
 function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
@@ -38,7 +40,7 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
 
   return (
     <>
-      <Form className='data-container'>
+      <Form className='reviewed-step-container'>
         <div className='row'>
           <div className='col-12'>
             {solicitud.tipoServicio === "Reparación" ? (
@@ -56,28 +58,37 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
                 </Form.Group>
               </div>
             ) : <div className="col-12">
-              <Form.Group controlId="description">
-                <Form.Label className="mb-2 mt-2 fw-bold">Descripcion del mantenimiento</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  type="text"
-                  value={solicitud.mantenimiento?.descripcion}
-                  readOnly
-                  style={{ resize: 'none', overflow: 'hidden' }}
-                  onInput={adjustTextareaHeight}
-                />
-              </Form.Group>
-                  <Form.Group className="mt-3" controlId="checklist">
-                    <Form.Label className="fw-bold">Checklist de Mantenimiento Preventivo</Form.Label>
-                    <ListGroup>
-                      {solicitud.mantenimiento?.checklist?.map((item) => (
-                        <ListGroup.Item key={item.id}>
-                          {item.descripcion}
-                          {item.obligatorio && " (Obligatorio)"}
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
-                  </Form.Group>
+              <div className="col-12 mb-3">
+                <div className="section-label mb-2">Descripción del mantenimiento</div>
+
+                <div className="description-card">
+                  {solicitud.mantenimiento?.descripcion || "Sin descripción proporcionada."}
+                </div>
+              </div>
+              <div className="mt-2">
+                <h6 className="section-label mb-2">Checklist de Mantenimiento Preventivo</h6>
+
+                <div className="bg-white rounded border" style={{ overflow: 'hidden' }}>
+                  {solicitud.mantenimiento?.checklist?.map((item) => (
+
+                    <div key={item.id} className="checklist-item">
+
+                      <FontAwesomeIcon icon={faSquare} className="check-icon" />
+
+                      <div className="d-flex flex-column flex-grow-1">
+                        <span className="text-dark fw-medium">{item.descripcion}</span>
+                      </div>
+
+                      {item.obligatorio && (
+                        <span className="badge bg-light text-secondary border ms-2">
+                          Obligatorio
+                        </span>
+                      )}
+                    </div>
+
+                  ))}
+                </div>
+              </div>
             </div>}
           </div>
         </div>

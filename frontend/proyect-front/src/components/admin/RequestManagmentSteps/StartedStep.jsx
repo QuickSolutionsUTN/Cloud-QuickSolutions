@@ -11,6 +11,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import AnimatedButton from "../../common/AnimatedButton";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSquare } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
 import "./StartedStep.css";
 
@@ -69,7 +71,7 @@ function StartedStep({ solicitud, nextStep, cancelStep }) {
       initial="hidden"
       animate="show"
     >
-      <Form className="data-container">
+      <Form className="started-step-container">
         <motion.div variants={item} className="row">
           <div className="row">
             {solicitud.tipoServicio === "Reparación" ? (
@@ -88,32 +90,37 @@ function StartedStep({ solicitud, nextStep, cancelStep }) {
               </div>
             ) : (
               <div className="col-12">
-                <Form.Group controlId="description">
-                  <Form.Label className="fw-bold">
-                    Descripcion del mantenimiento
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    type="text"
-                    value={solicitud.mantenimiento?.descripcion}
-                    readOnly
-                    style={{ resize: "none", overflow: "hidden" }}
-                    onInput={adjustTextareaHeight}
-                  />
-                </Form.Group>
-                <Form.Group className="mt-3" controlId="checklist">
-                  <Form.Label className="fw-bold">
-                    Checklist
-                  </Form.Label>
-                  <ListGroup>
+                <div className="col-12 mb-3">
+                  <div className="section-label mb-2">Descripción del mantenimiento</div>
+
+                  <div className="description-card">
+                    {solicitud.mantenimiento?.descripcion || "Sin descripción proporcionada."}
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <h6 className="section-label mb-2">Checklist de Mantenimiento Preventivo</h6>
+
+                  <div className="bg-white rounded border" style={{ overflow: 'hidden' }}>
                     {solicitud.mantenimiento?.checklist?.map((item) => (
-                      <ListGroup.Item key={item.id}>
-                        {item.descripcion}
-                        {item.obligatorio && " (Obligatorio)"}
-                      </ListGroup.Item>
+
+                      <div key={item.id} className="checklist-item">
+
+                        <FontAwesomeIcon icon={faSquare} className="check-icon" />
+
+                        <div className="d-flex flex-column flex-grow-1">
+                          <span className="text-dark fw-medium">{item.descripcion}</span>
+                        </div>
+
+                        {item.obligatorio && (
+                          <span className="badge bg-light text-secondary border ms-2">
+                            Obligatorio
+                          </span>
+                        )}
+                      </div>
+
                     ))}
-                  </ListGroup>
-                </Form.Group>
+                  </div>
+                </div>
               </div>
             )}
           </div>

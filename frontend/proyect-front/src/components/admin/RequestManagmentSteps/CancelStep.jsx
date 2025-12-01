@@ -6,7 +6,7 @@ import { Form } from "react-bootstrap";
 function CancelStep({ solicitud }) {
 
   return (
-    <Form className="data-container">
+    <Form className="cancel-step-container">
       <div className="row">
         {solicitud.tipoServicio === "Reparacion" ? (
           <>

@@ -12,6 +12,92 @@
   }
 }
 
+.info-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05); /* Sombra suave y moderna */
+  border: none;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+
+.section-label {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #8898aa;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+
+.data-value {
+  font-size: 1rem;
+  color: #32325d;
+  font-weight: 500;
+}
+
+.ribbon-item {
+    position: relative;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 768px) { 
+
+    .ribbon-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: 0; 
+        top: 15%;
+        height: 70%;
+        width: 1px;  
+        background-color: #e9ecef; 
+    }
+}
+
+.description-card {
+  background-color: #f8f9fa; 
+  border: 1px solid #e9ecef; 
+  border-radius: 12px;      
+  padding: 1.25rem;         
+  color: #344767;            
+  font-size: 0.95rem;
+  line-height: 1.6;          
+  position: relative;
+}
+
+/* Opcional: Una barrita de color a la izquierda para darle estilo */
+.description-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 4px;
+  background-color: #0d6efd; /* Color primario (azul bootstrap) */
+  border-radius: 0 4px 4px 0;
+  opacity: 0.5;
+}
+
+/* Para la checklist */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item:hover { background-color: #f9f9f9; }
+
+.check-icon {
+  color: white;
+  border: 1px solid #8898aa;
+  margin-right: 12px;
+}
+
 .skeleton-text { height: 20px; margin-bottom: 10px; width: 100%; }
 .skeleton-title { height: 40px; margin-bottom: 20px; width: 60%; }
 .skeleton-box { height: 100px; width: 100%; }

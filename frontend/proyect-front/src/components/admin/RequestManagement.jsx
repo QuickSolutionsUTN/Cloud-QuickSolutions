@@ -13,10 +13,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTableCellsLarge, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
 import AddressCard from '../users/UserAddressCard.jsx';
 import { Button } from 'react-bootstrap';
-import './RequestManagement.css';
 import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
 import { Toast, ToastContainer } from 'react-bootstrap'
 import { motion, AnimatePresence } from 'framer-motion';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+import './RequestManagement.css';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -259,7 +260,7 @@ function RequestManagement() {
   };
 
   return (
-    <div className='requestManagement w-100'>
+    <div className='requestManagement w-100 p-3'>
       <div className='requestManagement-header'>
         <div className='d-flex align-items-start justify-content-between'>
           <Button style={{ width: '80px' }} variant="outline-dark" onClick={() => navigate('/admin/requests')}>
@@ -281,76 +282,70 @@ function RequestManagement() {
         </div>
       )}
       <hr style={{ borderTop: '1px solid lightgray', margin: '1%' }} />
-      <div className='details d-flex flex-row justify-content' >
-        <div className="user-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
-          <div className="d-flex flex-column">
-            <span className="mb-2 fw-bold">Usuario</span>
-            <span>{solicitud.emailSolicitante}</span>
-          </div>
-        </div>
-        <div className="service-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
-          <div className="d-flex flex-column">
-            <span className="mb-2"><b>Servicio:</b><span className='ms-2'>{solicitud.tipoServicio}</span></span>
-            {solicitud.tipoServicio === 'mantenimiento' && (<span><b>Tipo: </b>{solicitud.mantenimiento?.nombre}</span>)}
-          </div>
-        </div>
-        <div className="logistics-details ms-3 p-3 border rounded shadow-sm bg-light mb-2">
-          <div className="d-flex flex-column">
-            <span className="mb-2 "><b>A domicilio:</b>
-              <span className='ms-2'></span>{solicitud.con_logistica ? 'Si' : 'No'}
-            </span>
-            {solicitud.con_logistica && (
-              <div className="mt-2">
-                <button className="btn btn-link p-0" onClick={async () => {
-                  try {
-                    const resp = await apiService.getProfiles();
-                    const profiles = resp.data || [];
-                    const profile = profiles.find(p => p.email === solicitud.emailSolicitante || (p.id && p.id.email === solicitud.emailSolicitante));
-                    const domicilio = profile?.domicilio ?? null;
-                    setDomicilioModalData(domicilio);
-                    setShowAddressModal(true);
-                  } catch (err) {
-                    console.error('Error fetching profiles for address modal:', err);
-                    setDomicilioModalData(null);
-                    setShowAddressModal(true);
-                  }
-                }}>
-                  Ver domicilio
-                </button>
-              </div>
-            )}
 
+      <div className='info-card'>
+        <div className="row mx-0 w-100">
+          <div className="col-md-2 mb-2 ribbon-item">
+            <div className="section-label">Usuario</div>
+            <div className="data-value">
+              <FontAwesomeIcon icon={faUser} className="me-2 text-primary" />
+              <span className="text-truncate" title={solicitud.emailSolicitante}>
+                {solicitud.emailSolicitante}
+              </span>
+            </div>
           </div>
-        </div>
 
-      </div>
-      <div className='row d-flex request-basics p-3'>
-        <div className='col-4'>
-          <Form.Label className="fw-bold">
-            <FontAwesomeIcon icon={faTableCellsLarge} className="me-2" />
-            Categoria
-          </Form.Label>
-          <Form.Control
-            type='text'
-            value={solicitud.categoria || ""}
-            readOnly
-          >
-          </Form.Control>
-        </div>
-        <div className='col-4'>
-          <Form.Label className="fw-bold">
-            <FontAwesomeIcon icon={faScrewdriverWrench} className="me-2" />
-            Producto
-          </Form.Label>
-          <Form.Control
-            type='text'
-            value={solicitud.producto}
-            readOnly
-          >
-          </Form.Control>
+          <div className="col-md-3 mb-2 ribbon-item">
+            <div className="section-label">Servicio</div>
+            <div className="data-value">
+              {solicitud.tipoServicio}
+              {solicitud.mantenimiento && <span className="text-muted"> ({solicitud.mantenimiento.nombre})</span>}
+            </div>
+          </div>
+
+          <div className='col-md-2 mb-2 ribbon-item'>
+            <div className="section-label">Categoría</div>
+            <div className="data-value fs-6">{solicitud.categoria}</div>
+          </div>
+
+          <div className='col-md-2 mb-2 ribbon-item'>
+            <div className="section-label">Producto</div>
+            <div className="data-value fs-6">{solicitud.producto}</div>
+          </div>
+
+          <div className="col-md-3 mb-2 ribbon-item">
+            <div className="section-label">Logistica</div>
+            <div className="data-value">
+              {solicitud.con_logistica ? (
+                <span className="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+                  A domicilio
+                </span>
+              ) : (
+                <span className="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-10 rounded-pill px-3">
+                  En taller
+                </span>
+              )}
+            </div>
+            <button className="btn btn-link btn-sm p-0 text-decoration-none" onClick={async () => {
+              try {
+                const resp = await apiService.getProfiles();
+                const profiles = resp.data || [];
+                const profile = profiles.find(p => p.email === solicitud.emailSolicitante || (p.id && p.id.email === solicitud.emailSolicitante));
+                const domicilio = profile?.domicilio ?? null;
+                setDomicilioModalData(domicilio);
+                setShowAddressModal(true);
+              } catch (err) {
+                console.error('Error fetching profiles for address modal:', err);
+                setDomicilioModalData(null);
+                setShowAddressModal(true);
+              }
+            }}>
+              Ver domicilio
+            </button>
+          </div>
         </div>
       </div>
-      <div className='d-flex request-details p-3 mb-4'>
+      <div className='d-flex request-details mb-4'>
         <div className='flex-grow-1'>
           <AnimatePresence mode="wait">
             <motion.div
@@ -367,7 +362,6 @@ function RequestManagement() {
         </div>
       </div>
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
-
       <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
         <Toast
           onClose={() => setToastConfig(prev => ({ ...prev, show: false }))}
@@ -413,7 +407,7 @@ function RequestManagement() {
           <Button variant="secondary" onClick={() => setShowAddressModal(false)}>Cerrar</Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </div >
   );
 }
 

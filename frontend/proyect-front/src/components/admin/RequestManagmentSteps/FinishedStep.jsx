@@ -30,7 +30,7 @@ function FinishedStep({ solicitud }) {
   }
 
   return (
-    <div className="data-container finished-step-container">
+    <div className="finished-step-container">
       <Form>
         <div className='row my-3'>
           <div className='col-6 diagnostic-column '>

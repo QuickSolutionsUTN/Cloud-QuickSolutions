@@ -91,7 +91,7 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
 
   return (
     <>
-      <div className="data-container budgeted-step-container">
+      <div className="approved-step-container">
         <Form className='reviewed-step-form'>
           {solicitud.tipoServicio !== 'Reparación' && solicitud.mantenimiento && (
             <>
