@@ -1,0 +1,23 @@
+.buttons-container {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.buttons-container > div {
+  flex: 1;           
+  display: flex;      
+}
+
+.buttons-container button.btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+  font-weight: 400;
+  font-size: 1rem;
+  margin:0 0.5rem;
+}

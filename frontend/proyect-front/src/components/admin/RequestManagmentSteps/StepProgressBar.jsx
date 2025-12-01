@@ -32,15 +32,7 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
     }
   };
 
-  //const [isCancelled, setIsCancelled] = useState(false);
   const lastCompletedStepIndex = getLastCompletedStepIndex();
-
-  /*useEffect(() => {
-    if (currentStep === "Cancelada") {
-      setIsCancelled(true);
-    }
-  }, [currentStep]);*/
-
 
   return (
     <div className="admin-progress-bar container text-center mt-4">

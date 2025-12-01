@@ -1,9 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import axios from 'axios';
 import { Form, Button, ListGroup } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
-import { useParams } from 'react-router-dom';
+import AnimatedButton from "../../common/AnimatedButton.jsx";
 import "./approvedStep.css";
 
 function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
@@ -185,13 +182,13 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
               {errors.Resumen && <p className="error-text" style={{ color: 'red', fontSize: 'small' }}>{errors.Resumen}</p>}
             </Form.Group>
           </div>
-          <div className='button-group approvedStep'>
-            <Button variant='danger' className='button' onClick={cancelStep}>
+          <div className='buttons-container approvedStep'>
+            <AnimatedButton variant='danger' className='button' onClick={cancelStep}>
               Cancelar
-            </Button>
-            <Button variant='success' type='submit' className='button' disabled={!isFormValid}>
+            </AnimatedButton>
+            <AnimatedButton variant='success' type='submit' className='button' disabled={!isFormValid}>
               Enviar resumen
-            </Button>
+            </AnimatedButton>
           </div>
         </div>
       </Form>

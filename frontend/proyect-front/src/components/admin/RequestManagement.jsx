@@ -229,9 +229,9 @@ function RequestManagement() {
     : '';
 
   const pageVariants = {
-    initial: { opacity: 0, x: 20 }, // Entra desde la derecha, invisible
-    in: { opacity: 1, x: 0 },       // Se pone en su sitio, visible
-    out: { opacity: 0, x: -20 }     // Sale hacia la izquierda, invisible
+    initial: { opacity: 0, x: 20 }, 
+    in: { opacity: 1, x: 0 },       
+    out: { opacity: 0, x: -20 }  
   };
 
   const pageTransition = {

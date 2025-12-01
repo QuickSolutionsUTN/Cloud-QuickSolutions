@@ -4,6 +4,7 @@ import { Form, Button, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useBackendURL } from '../../../contexts/BackendURLContext.jsx';
 import { useParams } from 'react-router-dom';
+import AnimatedButton from "../../common/AnimatedButton.jsx";
 import "./reviewedStep.css"
 
 function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
@@ -120,13 +121,13 @@ function ReviewedStep({ solicitud, nextStep, cancelStep, handleChange }) {
             </Form.Group>
           </div>
         </div>
-        <div className='button-group'>
-          <Button variant='danger' className='button' onClick={cancelStep}>
+        <div className="buttons-container">
+          <AnimatedButton variant='danger' className='button' onClick={cancelStep}>
             Cancelar
-          </Button>
-          <Button variant='success' type='submit' className='button' onClick={handleNextStep}>
+          </AnimatedButton>
+          <AnimatedButton variant='success' type='submit' className='button' onClick={handleNextStep}>
             Enviar Diagnostico
-          </Button>
+          </AnimatedButton>
         </div>
       </Form>
     </>

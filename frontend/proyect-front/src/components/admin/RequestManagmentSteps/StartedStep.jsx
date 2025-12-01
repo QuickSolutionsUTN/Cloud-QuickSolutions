@@ -9,8 +9,8 @@ import {
   Alert,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import AnimatedButton from "../../common/AnimatedButton";
 import "react-datepicker/dist/react-datepicker.css";
-
 import "./StartedStep.css";
 
 function StartedStep({ solicitud, nextStep, cancelStep }) {
@@ -99,14 +99,14 @@ function StartedStep({ solicitud, nextStep, cancelStep }) {
         <div className="my-4"></div>
       </Form>
       <div className="buttons-container">
-        <Button className="cancel" variant="danger" onClick={cancelStep}>
+        <AnimatedButton className="cancel" variant="danger" onClick={cancelStep}>
           Cancelar
-        </Button>
-        <Button variant="success"
+        </AnimatedButton>
+        <AnimatedButton variant="success"
           type="button"
           onClick={handleNextStep}>
           Aceptar servicio
-        </Button>
+        </AnimatedButton>
       </div>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
