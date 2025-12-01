@@ -111,9 +111,9 @@ function LoginForm({ show, onClose, onJoinClick }) {
           )}
 
           <Button
+            className={`full-width-button ${errorMessage ? 'button-error' : ''}`}
             variant="primary"
             type="submit"
-            className="w-100 mt-3"
             disabled={loading}
           >
             {loading ? (

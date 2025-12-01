@@ -153,9 +153,9 @@ export default function UpdatePasswordPage() {
                         </Form.Group>
 
                         <Button 
+                            className={`full-width-button ${messageVariant === 'danger' ? 'button-error' : ''}`}
                             variant="primary" 
                             type="submit" 
-                            className="w-100" 
                             // Deshabilitar el botón hasta que la sesión esté lista
                             disabled={!isSessionReady || loading}
                         >
