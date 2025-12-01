@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
 import './modalLoginForm.css';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -7,11 +7,13 @@ import AuthContext from '../contexts/AuthContext';
 
 
 function LoginForm({ show, onClose, onJoinClick }) {
-  const { signInWithEmail } = useContext(AuthContext);
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { signInWithEmail, resetPasswordForEmail } = useContext(AuthContext);
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isResetMode, setIsResetMode] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleForgotPasswordClick = () => {
     setIsResetMode(true);
     setErrorMessage('');
