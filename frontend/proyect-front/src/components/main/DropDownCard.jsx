@@ -1,5 +1,5 @@
 import React from 'react';
-import './DropDownCard.css';
+import './dropDownCard.css';
 
 const DropDownCard = ({title, content}) => {
   return (
