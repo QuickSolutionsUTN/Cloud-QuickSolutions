@@ -20,7 +20,7 @@ export default function CustomCarousel() {
     <Carousel data-bs-theme="dark" className='custom-carousel'>
       <Carousel.Item >
         <div className='maintenance'>
-          <Card>
+          <Card className="carousel-card-maintenance">
             <CardBody>
               <Card.Title>MANTENIMIENTO</Card.Title>
               <Card.Subtitle>Por qué hacerlo?</Card.Subtitle>
@@ -37,7 +37,7 @@ export default function CustomCarousel() {
 
       <Carousel.Item>
         <div className='repair'>
-          <Card>
+          <Card className="carousel-card-repair">
             <CardBody>
               <Card.Title>REPARACIÓN</Card.Title>
               <Card.Subtitle>Por qué elegirnos?</Card.Subtitle>
