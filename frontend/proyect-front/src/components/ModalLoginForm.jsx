@@ -26,7 +26,15 @@ function LoginForm({ show, onClose, onJoinClick }) {
       onClose();
     } catch (error) {
       console.error('Error al hacer login con Supabase:', error);
-      setErrorMessage(error.message || 'Error de conexión. Intente más tarde.');
+      let customErrorMessage = error.message || 'Error de conexión. Intente más tarde.';
+      
+      if (customErrorMessage.includes('Email not confirmed')) {
+          customErrorMessage = 'Su correo electrónico aún no ha sido verificado. Por favor, revise su bandeja de entrada.';
+      } else if (customErrorMessage.includes('Invalid login credentials')) {
+          customErrorMessage = 'Credenciales inválidas.';
+      }
+      
+      setErrorMessage(customErrorMessage);
     }
   };
   
