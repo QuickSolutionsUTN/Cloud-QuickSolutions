@@ -125,6 +125,22 @@ export const AuthProvider = ({ children }) => {
     token: session.access_token,
     ...profile
   } : null;
+  const resetPasswordForEmail = async (email) => {
+    const redirectToUrl = `${window.location.origin}/update-password`;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectToUrl,
+    });
+
+    if (error) {
+      if (error.status === 404) {
+        throw new Error("Si el correo electrónico existe, recibirá un enlace para restablecer su contraseña.");
+      }
+      throw error;
+    }
+
+    return { message: 'Password reset email sent' };
+  };
 
   const value = {
     session,
@@ -141,23 +157,6 @@ export const AuthProvider = ({ children }) => {
     loading,
     profileLoading
   };
-
-  const resetPasswordForEmail = async (email) => {
-    const redirectToUrl = `${window.location.origin}/update-password`;
-    
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectToUrl,
-    });
-    
-    if (error) {
-        if (error.status === 404) {
-            throw new Error("Si el correo electrónico existe, recibirá un enlace para restablecer su contraseña.");
-        }
-        throw error;
-    }
-    
-    return { message: 'Password reset email sent' };
-};
 
   return (
     <AuthContext.Provider value={value}>
