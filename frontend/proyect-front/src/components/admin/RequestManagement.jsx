@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Modal } from 'react-bootstrap';
 import StepProgressBar from './RequestManagmentSteps/StepProgressBar.jsx';
@@ -14,7 +14,7 @@ import { faTableCellsLarge, faScrewdriverWrench } from "@fortawesome/free-solid-
 import AddressCard from '../users/UserAddressCard.jsx';
 import { Button } from 'react-bootstrap';
 import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
-import { Toast, ToastContainer } from 'react-bootstrap'
+import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import './RequestManagement.css';
@@ -30,7 +30,6 @@ function RequestManagement() {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [domicilioModalData, setDomicilioModalData] = useState(null);
   const [ServiceState, setServiceState] = useState(null);
-  const [toastConfig, setToastConfig] = useState({ show: false, message: '', variant: 'danger' });
 
   const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
 
@@ -84,7 +83,7 @@ function RequestManagement() {
 
       console.log("Acción exitosa en servidor");
       if (successMsg) {
-        setToastConfig({ show: true, message: successMsg, variant: 'success' });
+        toast.success(successMsg);
       }
 
     } catch (error) {
@@ -96,11 +95,7 @@ function RequestManagement() {
       const serverMessage = error.response?.data?.error || error.response?.data?.message || error.response?.data?.detail;
       const finalMessage = serverMessage || errorMsg; //Si no usamos el generico
 
-      setToastConfig({
-        show: true,
-        message: `${finalMessage}. Se han revertido los cambios.`,
-        variant: 'danger'
-      });
+      toast.error(`${finalMessage}. Se han revertido los cambios.`);
     }
   };
 
@@ -362,22 +357,6 @@ function RequestManagement() {
         </div>
       </div>
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
-      <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
-        <Toast
-          onClose={() => setToastConfig(prev => ({ ...prev, show: false }))}
-          show={toastConfig.show}
-          delay={5000}
-          autohide
-          bg={toastConfig.variant}
-        >
-          <Toast.Header>
-            <strong className="me-auto">Sistema</strong>
-          </Toast.Header>
-          <Toast.Body className={toastConfig.variant === 'danger' ? 'text-white' : ''}>
-            {toastConfig.message}
-          </Toast.Body>
-        </Toast>
-      </ToastContainer>
 
       <CancelModalForm
         show={showCancelModalForm}

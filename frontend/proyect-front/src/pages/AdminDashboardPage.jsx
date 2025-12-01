@@ -32,6 +32,17 @@ export default function AdminDashboardPage() {
   const [mantenimientosCount, setMantenimientosCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
+
+  const formatCurrency = (num) => {
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(1)}M`;
+    }
+    if (num >= 100000) {
+      return `${(num / 1000).toFixed(0)}K`;
+    }
+    return num.toLocaleString('es-AR');
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -244,7 +255,7 @@ export default function AdminDashboardPage() {
                     <FontAwesomeIcon icon={faFile} size="lg" className="custom-text-primary" />
                   </div>
                   <div className="numbers"><h3>{solicitudes.length}</h3></div>
-                  <div className="title"><h6>Solicitudes</h6></div>
+                  <div className="subtitle"><h6>Solicitudes</h6></div>
                 </div>
               </Card.Body>
             </Card>
@@ -256,8 +267,10 @@ export default function AdminDashboardPage() {
                   <div className="icon-big d-flex justify-content-end">
                     <FontAwesomeIcon icon={faDollarSign} size="lg" className="text-success" />
                   </div>
-                  <div className="numbers"><h3>$ {monthlyEarnings}</h3></div>
-                  <div className="title"><h6>Ganancias Mensuales</h6></div>
+                  <div className="numbers" title={`$${monthlyEarnings.toLocaleString('es-AR')}`}>
+                    <h3>$ {formatCurrency(monthlyEarnings)}</h3>
+                  </div>
+                  <div className="subtitle"><h6>Ganancias Mensuales</h6></div>
                 </div>
               </Card.Body>
             </Card>
@@ -276,7 +289,7 @@ export default function AdminDashboardPage() {
             </Card>
           </Col>
           <Col lg="2" sm="6">
-            <Card className="p-2 card-stats">
+            <Card className="p-2 card-stats h-100">
               <Card.Body className="text-center">
                 <div className="d-flex flex-column">
                   <div className="icon-big d-flex justify-content-end">

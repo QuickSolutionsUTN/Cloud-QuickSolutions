@@ -44,10 +44,10 @@ function AdminRequestsTable({ initialData , handleDownload}) {
 
         const estadoColors = {
           "Iniciada": "primary",
-          "Finalizada": "success",
+          "Finalizada": "dark",
           "Cancelada": "danger",
           "Presupuestada": "warning",
-          "Aprobada": "info"
+          "Aprobada": "success",
         };
 
         return (

@@ -44,8 +44,8 @@
 }
 
 .filter-pill.active.quoted {
-  color: #055160;
-  background-color: #cff4fc;
+  color: #664d03;
+  background-color: #fff3cd;
 }
 
 .filter-pill.active.approved {
@@ -68,17 +68,12 @@
   background-color: #f8d7da;
 }
 
-.filter-pill.active.rejected {
-  color: #721c24;
-  background-color: #f8d7da;
-}
-
 .table-hover tbody tr:hover {
   cursor: pointer;
   background-color: rgba(0, 123, 255, 0.05);
 }
 
-/* Botones de acción minimalistas */
+
 .action-buttons {
   display: flex;
   gap: 8px;

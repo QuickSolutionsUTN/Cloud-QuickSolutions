@@ -32,7 +32,7 @@ export default function UserRequestsList() {
         const estados = {
             'iniciada': 'bg-primary',
             'revisada': 'bg-secondary',
-            'presupuestada': 'bg-info',
+            'presupuestada': 'bg-warning',
             'aprobada': 'bg-success',
             'rechazada': 'bg-danger',
             'finalizada': 'bg-dark',
@@ -239,12 +239,6 @@ export default function UserRequestsList() {
                         onClick={() => setFiltroEstado('cancelada')}
                     >
                         Canceladas
-                    </button>
-                    <button 
-                        className={`filter-pill ${filtroEstado === 'rechazada' ? 'active rejected' : ''}`}
-                        onClick={() => setFiltroEstado('rechazada')}
-                    >
-                        Rechazadas
                     </button>
                 </div>
             </div>

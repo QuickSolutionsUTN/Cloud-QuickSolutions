@@ -24,7 +24,7 @@ export default function RequestDetails() {
     const estados = {
       "Iniciada": "primary",
       "Revisada": "secondary",
-      "Presupuestada": "info",
+      "Presupuestada": "warning",
       "Aprobada": "success",
       "Finalizada": "dark",
       "Cancelada": "danger",
@@ -123,6 +123,29 @@ export default function RequestDetails() {
 
     const estadoActual = solicitud.estado;
 
+    // Función para parsear el resumen con tareas
+    const parseResumen = (resumenText) => {
+      const tareasRealizadasMatch = resumenText.match(/Tareas realizadas:([\s\S]*?)(?=Tareas no realizadas:|$)/i);
+      const tareasNoRealizadasMatch = resumenText.match(/Tareas no realizadas:([\s\S]*?)$/i);
+      
+      const comentarioMatch = resumenText.split(/Tareas realizadas:/i);
+      const comentario = comentarioMatch[0]?.trim() || '';
+      
+      const parseTareas = (text) => {
+        if (!text) return [];
+        return text
+          .split('\n')
+          .map(line => line.replace(/^-\s*/, '').trim())
+          .filter(line => line && line.toLowerCase() !== 'ninguna');
+      };
+
+      return {
+        comentario,
+        tareasRealizadas: parseTareas(tareasRealizadasMatch?.[1]),
+        tareasNoRealizadas: parseTareas(tareasNoRealizadasMatch?.[1])
+      };
+    };
+
     if (estadoActual === "Cancelada" || estadoActual === "Rechazada") {
       return (
         <Alert variant="danger" className="mb-4">
@@ -133,13 +156,7 @@ export default function RequestDetails() {
                 {estadoActual === "Cancelada" ? "Motivo de cancelación" : "Motivo de rechazo"}
               </Alert.Heading>
               <p className="mb-2">{solicitud.resumen}</p>
-              {solicitud.fechaCancelada && (
-                <small className="text-muted">
-                  <i className="bi bi-calendar me-1"></i>
-                  {formatDate(solicitud.fechaCancelada)}
-                </small>
-              )}
-              </div>
+            </div>
           </div>
         </Alert>
       );
@@ -147,15 +164,49 @@ export default function RequestDetails() {
 
     // Mensaje de finalización
     if (estadoActual === "Finalizada") {
+      const { comentario, tareasRealizadas, tareasNoRealizadas } = parseResumen(solicitud.resumen);
+
       return (
         <Alert variant="success" className="mb-4">
           <div className="d-flex align-items-start">
             <i className="bi bi-check-circle-fill me-3 mt-1"></i>
             <div className="flex-grow-1">
               <Alert.Heading as="h6" className="mb-2">
-                Comentarios de finalización
+                Resumen del trabajo
               </Alert.Heading>
-              <p className="mb-2">{solicitud.resumen}</p>
+              
+              {/* Comentario del técnico */}
+              {comentario && (
+                <p className="mb-3">{comentario}</p>
+              )}
+
+              {/* Tareas realizadas */}
+              {tareasRealizadas.length > 0 && (
+                <div className="mb-2">
+                  <strong className="text-success">
+                    <i className="bi bi-check-lg me-1"></i>Tareas realizadas:
+                  </strong>
+                  <ul className="mb-0 mt-1">
+                    {tareasRealizadas.map((tarea, index) => (
+                      <li key={index}>{tarea}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Tareas no realizadas */}
+              {tareasNoRealizadas.length > 0 && (
+                <div className="mb-0">
+                  <strong className="text-danger">
+                    <i className="bi bi-x-lg me-1"></i>Tareas no realizadas:
+                  </strong>
+                  <ul className="mb-0 mt-1">
+                    {tareasNoRealizadas.map((tarea, index) => (
+                      <li key={index}>{tarea}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </Alert>
