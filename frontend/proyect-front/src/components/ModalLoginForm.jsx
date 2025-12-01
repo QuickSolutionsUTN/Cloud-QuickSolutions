@@ -80,10 +80,8 @@ function LoginForm({ show, onClose, onJoinClick }) {
         {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
         {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
-        {/* El formulario llama a la función correcta */}
         <form onSubmit={handleSubmit(isResetMode ? handleResetPasswordSubmit : handleFormSubmit)}>
 
-          {/* Campo Email (Siempre visible) */}
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -100,7 +98,6 @@ function LoginForm({ show, onClose, onJoinClick }) {
             {errors.email && <p className="text-danger small">{errors.email.message}</p>}
           </Form.Group>
 
-          {/* Campo Contraseña (Solo visible en modo Login) */}
           {!isResetMode && (
             <Form.Group className="mb-3">
               <Form.Label>Contraseña</Form.Label>
@@ -113,7 +110,6 @@ function LoginForm({ show, onClose, onJoinClick }) {
             </Form.Group>
           )}
 
-          {/* Botón Principal (Cambia de texto) */}
           <Button
             variant="primary"
             type="submit"
@@ -125,7 +121,6 @@ function LoginForm({ show, onClose, onJoinClick }) {
             ) : isResetMode ? 'Enviar Enlace de Restablecimiento' : 'Iniciar Sesión'}
           </Button>
 
-          {/* Enlace para cambiar de modo */}
           <p className="text-center mt-3">
             {isResetMode ? (
               <span
@@ -146,7 +141,6 @@ function LoginForm({ show, onClose, onJoinClick }) {
             )}
           </p>
 
-          {/* Enlace de Registro (Mantener visible si aplica) */}
           <p className="text-center mt-3">
             ¿No tienes cuenta? <span className="text-primary" style={{ cursor: 'pointer' }} onClick={onJoinClick}>Regístrate aquí</span>
           </p>
