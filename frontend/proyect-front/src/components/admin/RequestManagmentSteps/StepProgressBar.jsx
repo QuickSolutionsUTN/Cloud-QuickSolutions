@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
 import "./StepProgressBar.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'  
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'  
 
 const StepProgressBar = ({ currentStep, solicitud }) => {
-  const steps = ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
   const isCancelled = currentStep === "Cancelada";
-  const stepIndex = steps.indexOf(currentStep);
+  
+  // Si está cancelada, el último paso se llama "Cancelada" en vez de "Finalizada"
+  const steps = isCancelled 
+    ? ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Cancelada"]
+    : ["Iniciada", "Revisada", "Presupuestada", "Aprobada", "Finalizada"];
+  
+  const stepIndex = isCancelled ? steps.length - 1 : steps.indexOf(currentStep);
   
   const formatDate = (dateTime) => {
     if (!dateTime) return "";
@@ -20,56 +24,72 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const getLastCompletedStepIndex = () => {
-    if (solicitud.fechaPresupuestada !== null) {
-      return steps.indexOf("Presupuestada");
-    } else if (solicitud.fechaRevisada !== null) {
-      return steps.indexOf("Revisada");
-    } else if (solicitud.fechaIniciada !== null) {
-      return steps.indexOf("Iniciada");
-    } else {
-      return 0;
+  // Determinar si un paso está completado basándose en las fechas
+  const isStepCompleted = (step) => {
+    switch (step) {
+      case "Iniciada":
+        return !!solicitud.fechaIniciada;
+      case "Revisada":
+        return !!solicitud.fechaRevisada;
+      case "Presupuestada":
+        return !!solicitud.fechaPresupuestada;
+      case "Aprobada":
+        return !!solicitud.fechaAprobada;
+      case "Finalizada":
+        return !!solicitud.fechaFinalizada;
+      case "Cancelada":
+        return !!solicitud.fechaCancelada;
+      default:
+        return false;
     }
   };
 
-  //const [isCancelled, setIsCancelled] = useState(false);
-  const lastCompletedStepIndex = getLastCompletedStepIndex();
-
-  /*useEffect(() => {
-    if (currentStep === "Cancelada") {
-      setIsCancelled(true);
-    }
-  }, [currentStep]);*/
-
-
   return (
     <div className="admin-progress-bar container text-center mt-4">
-     {/*  <h4>Progreso: {currentStep === "Cancelada" ? "Cancelada" : steps[stepIndex]}</h4>*/}
       <div className="progress-container">
         <div className="progress-line-background"></div>
-        <div className={`progress-line${isCancelled ? "-cancelled" : ""}`} style={{ width: `${((isCancelled ? lastCompletedStepIndex : stepIndex) / (steps.length - 1)) * 80}%` }}></div>
-        {steps.map((step, index) => (
-          <div key={index} className={`step ${index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "active" : ""}`}>
-            <div className={`circle${isCancelled ? "-cancelled" : ""}`}>
-              {isCancelled && index === lastCompletedStepIndex ? "X" : (index === 4 ? <FontAwesomeIcon icon={faCheck} /> : index + 1)}
+        <div 
+          className={`progress-line${isCancelled ? "-cancelled" : ""}`} 
+          style={{ width: `${(stepIndex / (steps.length - 1)) * 80}%` }}
+        ></div>
+        {steps.map((step, index) => {
+          const isCompleted = isCancelledStep 
+            ? true 
+            : isStepCompleted(step);
+          const isLastStep = index === steps.length - 1;
+          const isCancelledStep = isCancelled && isLastStep;
+          
+          return (
+            <div key={index} className={`step ${isCompleted ? "active" : ""} ${isCancelledStep ? "cancelled" : ""}`}>
+              <div className={`circle${isCancelledStep ? "-cancelled" : ""}`}>
+                {isCancelledStep ? (
+                  <FontAwesomeIcon icon={faTimes} />
+                ) : isLastStep && isCompleted && !isCancelled ? (
+                  <FontAwesomeIcon icon={faCheck} />
+                ) : (
+                  index + 1
+                )}
+              </div>
+              <p className={`step-name${isCancelledStep ? "-cancelled" : ""}`}>{step}</p>
+              <p className={`date ${isCompleted ? "visible" : ""}`}>
+                {step === "Iniciada" && solicitud.fechaIniciada && formatDate(solicitud.fechaIniciada)}
+                {step === "Revisada" && solicitud.fechaRevisada && formatDate(solicitud.fechaRevisada)}
+                {step === "Presupuestada" && solicitud.fechaPresupuestada && formatDate(solicitud.fechaPresupuestada)}
+                {step === "Aprobada" && solicitud.fechaAprobada && formatDate(solicitud.fechaAprobada)}
+                {step === "Finalizada" && solicitud.fechaFinalizada && formatDate(solicitud.fechaFinalizada)}
+                {step === "Cancelada" && solicitud.fechaCancelada && formatDate(solicitud.fechaCancelada)}
+              </p>
+              <p className={`time ${isCompleted ? "visible" : ""}`}>
+                {step === "Iniciada" && solicitud.fechaIniciada && formatTime(solicitud.fechaIniciada)}
+                {step === "Revisada" && solicitud.fechaRevisada && formatTime(solicitud.fechaRevisada)}
+                {step === "Presupuestada" && solicitud.fechaPresupuestada && formatTime(solicitud.fechaPresupuestada)}
+                {step === "Aprobada" && solicitud.fechaAprobada && formatTime(solicitud.fechaAprobada)}
+                {step === "Finalizada" && solicitud.fechaFinalizada && formatTime(solicitud.fechaFinalizada)}
+                {step === "Cancelada" && solicitud.fechaCancelada && formatTime(solicitud.fechaCancelada)}
+              </p>
             </div>
-            <p className={`step-name${isCancelled ? "-cancelled" : ""}`}>{step}</p>
-            <p className={`date ${index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "visible" : ""}`}>
-              {step === "Iniciada" && solicitud.fechaIniciada && formatDate(solicitud.fechaIniciada)}
-              {step === "Revisada" && solicitud.fechaRevisada && formatDate(solicitud.fechaRevisada)}
-              {step === "Presupuestada" && solicitud.fechaPresupuestada && formatDate(solicitud.fechaPresupuestada)}
-              {step === "Aprobada" && solicitud.fechaAprobada && formatDate(solicitud.fechaAprobada)}
-              {step === "Finalizada" && solicitud.fechaFinalizada && formatDate(solicitud.fechaFinalizada)}
-            </p>
-            <p className={`time ${index <= (isCancelled ? lastCompletedStepIndex : stepIndex) ? "visible" : ""}`}>
-              {step === "Iniciada" && solicitud.fechaIniciada && formatTime(solicitud.fechaIniciada)}
-              {step === "Revisada" && solicitud.fechaRevisada && formatTime(solicitud.fechaRevisada)}
-              {step === "Presupuestada" && solicitud.fechaPresupuestada && formatTime(solicitud.fechaPresupuestada)}
-              {step === "Aprobada" && solicitud.fechaAprobada && formatTime(solicitud.fechaAprobada)}
-              {step === "Finalizada" && solicitud.fechaFinalizada && formatTime(solicitud.fechaFinalizada)}
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

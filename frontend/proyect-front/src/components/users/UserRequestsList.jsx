@@ -240,12 +240,6 @@ export default function UserRequestsList() {
                     >
                         Canceladas
                     </button>
-                    <button 
-                        className={`filter-pill ${filtroEstado === 'rechazada' ? 'active rejected' : ''}`}
-                        onClick={() => setFiltroEstado('rechazada')}
-                    >
-                        Rechazadas
-                    </button>
                 </div>
             </div>
 
