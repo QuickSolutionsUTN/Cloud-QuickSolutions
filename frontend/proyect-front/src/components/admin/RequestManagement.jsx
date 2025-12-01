@@ -6,7 +6,6 @@ import StartedStep from './RequestManagmentSteps/StartedStep.jsx';
 import ReviewedStep from './RequestManagmentSteps/ReviewedStep.jsx';
 import BudgetedStep from './RequestManagmentSteps/BudgetedStep.jsx';
 import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
-import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
 import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,11 +20,11 @@ import './RequestManagement.css';
 import DescriptionCard from './RequestManagmentSteps/DescriptionCard.jsx';
 import BudgetCard from './RequestManagmentSteps/BudgetCard.jsx';
 import DiagnosisCard from './RequestManagmentSteps/DiagnosisCard.jsx';
+import SummaryCard from './RequestManagmentSteps/SummaryCard.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
   const { id: solicitudId } = useParams();
-  //const [fechaFormateada, setFechaFormateada] = useState('');
   const navigate = useNavigate();
 
   //UI States
@@ -232,7 +231,7 @@ function RequestManagement() {
       case 'Aprobada':
         return <ApprovedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Finalizada':
-        return <FinishedStep solicitud={solicitud} />;
+        return null;
       case 'Cancelada':
         return <CancelStep solicitud={solicitud} />;
       default:
@@ -384,6 +383,15 @@ function RequestManagement() {
           </AnimatePresence>
         </div>
       </div>
+      {currentStep == "Finalizada" ? (
+      <div className="finished-step-container mb-4">
+        <div className="row mx-0 w-100">
+          <div className="col-12">
+            <SummaryCard text={solicitud.Resumen || solicitud.resumen} />
+          </div>
+        </div>
+      </div>
+      ) : null}
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
       <CancelModalForm
         show={showCancelModalForm}
