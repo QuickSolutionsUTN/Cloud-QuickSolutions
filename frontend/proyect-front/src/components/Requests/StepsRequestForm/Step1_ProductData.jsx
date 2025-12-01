@@ -156,7 +156,7 @@ export default function StepProductData({ formData, control, errors, setValue })
               <InputGroup>
                 <InputGroup.Text className='d-flex flex-column justify-content-center align-items-center'>
                   <div>
-                    Descripcion del problema 
+                    Descripción del problema 
                   </div>
                   <div>
                     (ingrese modelo del producto)

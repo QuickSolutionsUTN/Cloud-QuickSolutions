@@ -79,7 +79,7 @@ export default function StepLogistics({ formData, control, setValue }) {
   return (
     <div>
       <div className="row mb-3">
-        <h6>Seleccione el tipo de logistica</h6>
+        <h6>Seleccione el tipo de logística</h6>
         <Controller
           name="logisticsData.conLogistica"
           control={control}
