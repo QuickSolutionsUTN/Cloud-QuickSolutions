@@ -11,8 +11,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import AnimatedButton from "../../common/AnimatedButton";
 import { motion } from "framer-motion";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquare } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
 
 import "./startedStep.css";

@@ -230,9 +230,9 @@ function RequestManagement() {
       case 'Aprobada':
         return <ApprovedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Finalizada':
-        return < FinishedStep solicitud={solicitud} />;
+        return <FinishedStep solicitud={solicitud} />;
       case 'Cancelada':
-        return < CancelStep solicitud={solicitud} />;
+        return <CancelStep solicitud={solicitud} />;
       default:
         if (solicitud.id_solicitud_servicio_estado === 1) return <StartedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} />;
         return <div>Error al obtener el estado</div>;
@@ -306,7 +306,7 @@ function RequestManagement() {
           </div>
 
           <div className="col-md-3 mb-2 ribbon-item">
-            <div className="section-label">Logistica</div>
+            <div className="section-label">Logística</div>
             <div className="data-value">
               {solicitud.con_logistica ? (
                 <span className="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
@@ -357,7 +357,7 @@ function RequestManagement() {
         <div className="d-flex diagnosis-section mb-4">
           <div className="flex-grow-1">
             <div className="col-12" >
-              <div className="section-label mb-2">Diagnostico Tecnico</div>
+              <div className="section-label mb-2">Diagnóstico Técnico</div>
               <DiagnosisCard text={solicitud.diagnosticoTecnico} />
             </div>
           </div>
@@ -408,7 +408,7 @@ function RequestManagement() {
           <Button variant="secondary" onClick={() => setShowAddressModal(false)}>Cerrar</Button>
         </Modal.Footer>
       </Modal>
-    </div >
+    </div>
   );
 }
 

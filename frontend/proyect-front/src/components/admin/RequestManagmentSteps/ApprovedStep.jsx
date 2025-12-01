@@ -137,7 +137,7 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
                   placeholder='Describa detalladamente la solución aplicada, repuestos utilizados y pruebas de funcionamiento...'
                   name='Resumen'
                   value={localResumen}
-                  onChange={(e) => { setLocalResumen(e.target.value); handleChange?.(e); }} F
+                  onChange={(e) => { setLocalResumen(e.target.value); handleChange?.(e); }}
                   className="border-0 bg-light p-3 shadow-sm"
                   style={{ resize: 'none', borderRadius: '12px', fontSize: '0.95rem' }}
                   required
