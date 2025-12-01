@@ -6,6 +6,8 @@ import StartedStep from './RequestManagmentSteps/StartedStep.jsx';
 import ReviewedStep from './RequestManagmentSteps/ReviewedStep.jsx';
 import BudgetedStep from './RequestManagmentSteps/BudgetedStep.jsx';
 import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
+import FinishedStep from './RequestManagmentSteps/FinishedStep.jsx';
+import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
 import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,8 +20,6 @@ import './RequestManagement.css';
 import DescriptionCard from './RequestManagmentSteps/DescriptionCard.jsx';
 import BudgetCard from './RequestManagmentSteps/BudgetCard.jsx';
 import DiagnosisCard from './RequestManagmentSteps/DiagnosisCard.jsx';
-import SummaryCard from './RequestManagmentSteps/SummaryCard.jsx';
-import CancellationCard from './RequestManagmentSteps/CancellationCard.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -230,9 +230,9 @@ function RequestManagement() {
       case 'Aprobada':
         return <ApprovedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} handleChange={handleChange} />;
       case 'Finalizada':
-        return null;
+        return < FinishedStep solicitud={solicitud} />;
       case 'Cancelada':
-        return null;
+        return < CancelStep solicitud={solicitud} />;
       default:
         if (solicitud.id_solicitud_servicio_estado === 1) return <StartedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} />;
         return <div>Error al obtener el estado</div>;
@@ -338,23 +338,13 @@ function RequestManagement() {
         </div>
       </div>
 
-      {currentStep === 'Cancelada' && (
-        <div className="finished-step-container mb-4">
-          <div className="row mx-0 w-100">
-            <div className="col-12">
-              <CancellationCard reason={solicitud.resumen || solicitud.Resumen} />
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="description-technical-section">
-        <div className="row mx-0 w-100">
-          <div className="col-md-6 mb-4 d-flex flex-column" >
+      <div className="d-flex description-technical-section mb-4">
+        <div className="row w-100 gx-3">
+          <div className="col-6 d-flex flex-column" >
             <div className="section-label mb-2">Descripción del problema / mantenimiento</div>
             <DescriptionCard text={solicitud.descripcion || solicitud.mantenimiento?.descripcion} />
           </div>
-          <div className="col-md-6 mb-4 d-flex flex-column">
+          <div className="col-6 d-flex flex-column">
             <div className="section-label mb-2">Detalles del Presupuesto</div>
             <BudgetCard
               fecha={currentStep !== "Revisada" ? solicitud.fechaEstimada : ''}
@@ -363,16 +353,16 @@ function RequestManagement() {
           </div>
         </div>
       </div>
-      {solicitud.diagnosticoTecnico && currentStep !== "Revisada" ? (
-        <div className="diagnosis-section">
-          <div className="row mx-0 w-100">
-            <div className="col-md-12 mb-4 d-flex flex-column" >
+      {solicitud.diagnosticoTecnico && currentStep !== "Revisada" && (
+        <div className="d-flex diagnosis-section mb-4">
+          <div className="flex-grow-1">
+            <div className="col-12" >
               <div className="section-label mb-2">Diagnostico Tecnico</div>
               <DiagnosisCard text={solicitud.diagnosticoTecnico} />
             </div>
           </div>
         </div>
-      ) : null}
+      )}
       <div className='d-flex request-details mb-4'>
         <div className='flex-grow-1'>
           <AnimatePresence mode="wait">
@@ -389,15 +379,6 @@ function RequestManagement() {
           </AnimatePresence>
         </div>
       </div>
-      {currentStep == "Finalizada" && (
-        <div className="finished-step-container mb-4">
-          <div className="row mx-0 w-100">
-            <div className="col-12">
-              <SummaryCard text={solicitud.Resumen || solicitud.resumen} />
-            </div>
-          </div>
-        </div>
-      )}
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
       <CancelModalForm
         show={showCancelModalForm}

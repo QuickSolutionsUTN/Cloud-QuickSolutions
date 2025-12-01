@@ -2,10 +2,10 @@ import { useEffect, useState, useRef } from "react";
 import { Form, Button, ListGroup } from 'react-bootstrap';
 import AnimatedButton from "../../common/AnimatedButton.jsx";
 import "./approvedStep.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClipboardCheck, faInfoCircle, faTasks } from '@fortawesome/free-solid-svg-icons';
 
 function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
-  const [fechaFormateada, setFechaFormateada] = useState('');
-  const [idCategoria, setIdCategoria] = useState(null);
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [localResumen, setLocalResumen] = useState('');
@@ -86,63 +86,89 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
 
   return (
     <>
-      <div className="approved-step-container">
-        <Form className='reviewed-step-form'>
-          {solicitud.tipoServicio !== 'Reparación' && solicitud.mantenimiento && (
-            <>
-              <Form.Group className="mt-2" controlId="checklist">
-                <Form.Label className="fw-bold">Checklist </Form.Label>
-                <ListGroup>
-                  {solicitud.mantenimiento.checklist.map(item => (
-                    <ListGroup.Item key={item.id}>
-                      <Form.Check
-                        type="checkbox"
-                        id={`task-${item.id}`}
-                        label={
-                          <span>
-                            {item.descripcion}
-                            {item.obligatorio && <strong style={{ color: '#c00' }}> (Obligatorio)</strong>}
-                          </span>
-                        }
-                        checked={selectedTasks.has(item.id)}
-                        onChange={() => toggleTask(item.id)}
-                      />
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
+      <div className="approved-step-container fade-in-animation">
+        {solicitud.tipoServicio !== 'Reparación' && solicitud.mantenimiento && (
+          <div className="info-card p-4 mb-4">
+            <h6 className="section-label mb-3">
+              <FontAwesomeIcon icon={faTasks} className="me-2 text-primary" />
+              Checklist de Verificación
+            </h6>
+            <div className="d-flex flex-column gap-2">
+              {solicitud.mantenimiento.checklist.map(item => {
+                const isChecked = selectedTasks.has(item.id);
+                return (
+                  <div key={item.id}
+                    onClick={() => toggleTask(item.id)}
+                    className={`d-flex align-items-center p-2 rounded border transition-all ${isChecked ? 'bg-primary-subtle border-primary' : 'bg-white border-light-subtle'
+                      }`}
+                    style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+                  >
+                    <div className="flex-grow-1 d-flex justify-content-between align-items-center">
+                      <span className={`fw-small ${isChecked ? 'text-primary' : 'text-dark'}`}>
+                        {item.descripcion}
+                      </span>
+                      {item.obligatorio && (
+                        <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-10 rounded-pill ms-2">
+                          Obligatorio
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+      </div >
+      <div className="info card p-4">
+        <Form className='reviewed-step-form' onSubmit={handleSubmit}>
+          <div className='row'>
+            <div className='col-12'>
+              <Form.Group controlId='diagnostic'>
+                <Form.Label className="section-label mb-2" style={{ color: '#6f42c1' }}>
+                  <FontAwesomeIcon icon={faClipboardCheck} className="me-2" />
+                  Resumen de trabajo Realizado
+                </Form.Label>
+                <Form.Control
+                  as='textarea'
+                  rows={4}
+                  type='text'
+                  placeholder='Describa detalladamente la solución aplicada, repuestos utilizados y pruebas de funcionamiento...'
+                  name='Resumen'
+                  value={localResumen}
+                  onChange={(e) => { setLocalResumen(e.target.value); handleChange?.(e); }} F
+                  className="border-0 bg-light p-3 shadow-sm"
+                  style={{ resize: 'none', borderRadius: '12px', fontSize: '0.95rem' }}
+                  required
+                />
+                <div className="d-flex justify-content-between mt-2">
+                  <Form.Text className="text-muted d-flex align-items-center">
+                    <FontAwesomeIcon icon={faInfoCircle} className="me-1 small" />
+                    Este resumen será enviado al cliente por email.
+                  </Form.Text>
+
+                  {errors?.Resumen && (
+                    <span className="text-danger small fw-bold">
+                      {errors.Resumen}
+                    </span>
+                  )}
+                </div>
               </Form.Group>
-            </>
-          )}
+            </div>
+            <div className="row mt-4 pt-3 border-top">
+              <div className='buttons-container w-100'>
+                <AnimatedButton variant='danger' className='button' onClick={cancelStep}>
+                  Cancelar
+                </AnimatedButton>
+                <AnimatedButton variant='success' type='submit' className='button' disabled={!isFormValid}>
+                  Enviar resumen
+                </AnimatedButton>
+              </div>
+            </div>
+          </div>
         </Form>
       </div>
-      <Form className='reviewed-step-form' onSubmit={handleSubmit}>
-        <div className='row'>
-          <div className='col-diagnostic'>
-            <Form.Group controlId='diagnostic'>
-              <Form.Label className="fw-bold">Resumen del trabajo</Form.Label>
-              <Form.Control
-                as='textarea'
-                rows={3}
-                type='text'
-                placeholder='Ingrese el resumen'
-                name='Resumen'
-                value={localResumen}
-                onChange={(e) => { setLocalResumen(e.target.value); handleChange?.(e); }}
-                required
-              />
-              {errors.Resumen && <p className="error-text" style={{ color: 'red', fontSize: 'small' }}>{errors.Resumen}</p>}
-            </Form.Group>
-          </div>
-          <div className='buttons-container approvedStep'>
-            <AnimatedButton variant='danger' className='button' onClick={cancelStep}>
-              Cancelar
-            </AnimatedButton>
-            <AnimatedButton variant='success' type='submit' className='button' disabled={!isFormValid}>
-              Enviar resumen
-            </AnimatedButton>
-          </div>
-        </div>
-      </Form>
     </>
   );
 }
