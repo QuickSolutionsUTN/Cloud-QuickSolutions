@@ -1,0 +1,123 @@
+.skeleton {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 5px;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.info-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  border: 1px solid #f0f2f5;
+  
+
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+
+.section-label {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #8898aa;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+
+.data-value {
+  font-size: 1rem;
+  color: #32325d;
+  font-weight: 500;
+}
+
+.ribbon-item {
+    position: relative;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 768px) { 
+
+    .ribbon-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: 0; 
+        top: 15%;
+        height: 70%;
+        width: 1px;  
+        background-color: #e9ecef; 
+    }
+}
+
+.description-card {
+  background-color: #ffffff;
+  border: 1px solid #f0f2f5;
+  border-left: 4px solid #0d6efd;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  
+  padding: 1.5rem;       
+  color: #495057;        
+  font-size: 1rem;        
+  line-height: 1.7;        
+  
+  height: 100%;           
+}
+.description-technical-section {
+  margin-bottom: 1.5rem;    
+}
+
+/* Para la checklist */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item:hover { background-color: #f9f9f9; }
+
+.check-icon {
+  color: white;
+  border: 1px solid #8898aa;
+  margin-right: 12px;
+}
+
+.skeleton-text { height: 20px; margin-bottom: 10px; width: 100%; }
+.skeleton-title { height: 40px; margin-bottom: 20px; width: 60%; }
+.skeleton-box { height: 100px; width: 100%; }
+
+.buttons-container {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.buttons-container > div {
+  flex: 1;           
+  display: flex;      
+}
+
+.buttons-container button.btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+  font-weight: 400;
+  font-size: 1rem;
+  margin:0 0.5rem;
+}

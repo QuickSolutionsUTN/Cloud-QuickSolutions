@@ -1,11 +1,7 @@
 .buttons-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    margin: 20px auto;
-    height: 10%;
-}
-.buttons-container button {
-    width: 33%;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-bottom: 1rem;
 }

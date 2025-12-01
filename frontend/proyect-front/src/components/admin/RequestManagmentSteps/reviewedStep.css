@@ -24,18 +24,6 @@
     margin-bottom: 1rem; /* Add space between fields */
 }
 
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-    gap: 1rem; /* Add gap to separate buttons */
-}
-
-.button-group button {
-    flex: 1;
-    margin-bottom: 1%;
-}
-
 .amount {
     width: 100%;
 }
