@@ -55,18 +55,20 @@ function ApprovedStep({ solicitud, nextStep, cancelStep, handleChange }) {
       return;
     }
 
-    // Build concatenated resumen
     const performed = checklist.filter(i => selectedTasks.has(i.id)).map(i => i.descripcion);
     const notPerformed = checklist.filter(i => !selectedTasks.has(i.id)).map(i => i.descripcion);
 
     let finalResumen = localResumen.trim();
-    finalResumen += '\n\nTareas realizadas:';
-    if (performed.length === 0) finalResumen += '\n- Ninguna';
-    else performed.forEach(t => { finalResumen += `\n- ${t}` });
 
-    finalResumen += '\n\nTareas no realizadas:';
-    if (notPerformed.length === 0) finalResumen += '\n- Ninguna';
-    else notPerformed.forEach(t => { finalResumen += `\n- ${t}` });
+    if (solicitud.mantenimiento) {
+      finalResumen += '\n\nTareas realizadas:';
+      if (performed.length === 0) finalResumen += '\n- Ninguna';
+      else performed.forEach(t => { finalResumen += `\n- ${t}` });
+
+      finalResumen += '\n\nTareas no realizadas:';
+      if (notPerformed.length === 0) finalResumen += '\n- Ninguna';
+      else notPerformed.forEach(t => { finalResumen += `\n- ${t}` });
+    }
 
     setErrors({});
     console.log('Solicitud para finalizar:', solicitud);
