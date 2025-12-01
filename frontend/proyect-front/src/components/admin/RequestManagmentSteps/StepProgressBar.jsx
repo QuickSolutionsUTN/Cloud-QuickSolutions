@@ -53,11 +53,11 @@ const StepProgressBar = ({ currentStep, solicitud }) => {
           style={{ width: `${(stepIndex / (steps.length - 1)) * 80}%` }}
         ></div>
         {steps.map((step, index) => {
+          const isLastStep = index === steps.length - 1;
+          const isCancelledStep = isCancelled && isLastStep;
           const isCompleted = isCancelledStep 
             ? true 
             : isStepCompleted(step);
-          const isLastStep = index === steps.length - 1;
-          const isCancelledStep = isCancelled && isLastStep;
           
           return (
             <div key={index} className={`step ${isCompleted ? "active" : ""} ${isCancelledStep ? "cancelled" : ""}`}>
