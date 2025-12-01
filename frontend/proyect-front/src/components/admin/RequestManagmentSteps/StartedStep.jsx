@@ -11,7 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 
-import "./StartedStep.css";
+import "./startedStep.css";
 
 function StartedStep({ solicitud, nextStep, cancelStep }) {
   const navigate = useNavigate();
