@@ -21,6 +21,7 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.8",
+    "framer-motion": "^12.23.24",
     "jspdf": "^3.0.0",
     "jspdf-autotable": "^4.0.0",
     "jwt-decode": "^4.0.0",

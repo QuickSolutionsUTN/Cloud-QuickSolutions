@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import { Form, Button, ListGroup } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { faSquare } from "@fortawesome/free-solid-svg-icons";
 
 import "./budgetedStep.css";
 
@@ -25,61 +24,35 @@ function BudgetedStep({ solicitud, nextStep, cancelStep, handleChange }) {
 
   return (
     <>
-      <div className="data-container budgeted-step-container">
+      <div className="budgeted-step-container">
         <Form className='reviewed-step-form' onSubmit={handleNextStep}>
-          <div className="row my-3">
-            <div className="col-4 d-flex flex-column">
-              <Form.Group controlId="estimated-date">
-                <Form.Label className="fw-bold">
-                  <FontAwesomeIcon icon={faCalendar} className="me-2" />
-                  Fecha estimada</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={solicitud.fechaEstimada ? new Date(solicitud.fechaEstimada).toISOString().split("T")[0] : ""}
-                  readOnly
-                />
-              </Form.Group>
-            </div>
-            <div className="col-4 d-flex flex-column">
-              <Form.Group controlId="amount">
-                <Form.Label className="fw-bold">
-                  <FontAwesomeIcon icon={faDollarSign} className="me-2" />
-                  Monto</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={solicitud.monto || ""}
-                  readOnly
-                />
-              </Form.Group>
-            </div>
-          </div>
           <div className='row reviewed-show'>
-            <div className='col-diagnostic'>
-              <Form.Group controlId='diagnostic'>
-                <Form.Label className="fw-bold">Diagnostico</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  type="text"
-                  value={solicitud.diagnosticoTecnico}
-                  readOnly
-                  style={{ resize: 'none', overflow: 'hidden' }}
-                  onInput={adjustTextareaHeight}
-                />
-              </Form.Group>
-            </div>
             {solicitud.mantenimiento?.checklist && (
-              <div className='col-12 mt-3'>
-                <Form.Group controlId="checklist">
-                  <Form.Label className="fw-bold">Checklist de Mantenimiento Preventivo</Form.Label>
-                  <ListGroup>
-                    {solicitud.mantenimiento.checklist.map(item => (
-                      <ListGroup.Item key={item.id}>
-                        {item.descripcion}
-                        {item.obligatorio && ' (Obligatorio)'}
-                      </ListGroup.Item>
+              <div className='col-12'>
+                <div className="mt-2">
+                  <h6 className="section-label mb-2">Checklist de Mantenimiento Preventivo</h6>
+
+                  <div className="bg-white rounded border" style={{ overflow: 'hidden' }}>
+                    {solicitud.mantenimiento?.checklist?.map((item) => (
+
+                      <div key={item.id} className="checklist-item">
+
+                        <FontAwesomeIcon icon={faSquare} className="check-icon" />
+
+                        <div className="d-flex flex-column flex-grow-1">
+                          <span className="text-dark fw-medium">{item.descripcion}</span>
+                        </div>
+
+                        {item.obligatorio && (
+                          <span className="badge bg-light text-secondary border ms-2">
+                            Obligatorio
+                          </span>
+                        )}
+                      </div>
+
                     ))}
-                  </ListGroup>
-                </Form.Group>
+                  </div>
+                </div>
               </div>
             )}
           </div>
