@@ -79,6 +79,11 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
     # expone también el id numérico del estado si el cliente lo necesita
     id_solicitud_servicio_estado = serializers.IntegerField(source='id_solicitud_servicio_estado.id', read_only=True)
     fechaGeneracion = serializers.DateTimeField(source='fecha_generacion', read_only=True)
+    fechaIniciada = serializers.DateTimeField(source='fecha_iniciada', read_only=True)
+    fechaRevisada = serializers.DateTimeField(source='fecha_revisada', read_only=True)
+    fechaAprobada = serializers.DateTimeField(source='fecha_aprobada', read_only=True)
+    fechaPresupuestada = serializers.DateTimeField(source='fecha_presupuestada', read_only=True)
+    fechaCancelada = serializers.DateTimeField(source='fecha_cancelada', read_only=True)
     fechaEstimada = serializers.DateTimeField(source='fecha_estimada', read_only=True)
     fechaFinalizada = serializers.DateTimeField(source='fecha_finalizada', read_only=True)
     diagnosticoTecnico = serializers.CharField(source='diagnostico_tecnico', read_only=True)
@@ -92,8 +97,10 @@ class SolicitudDetailSerializer(serializers.ModelSerializer):
         model = SolicitudServicio
         fields = [
             'id', 'emailSolicitante', 'tipoServicio', 'categoria', 'producto', 
-            'descripcion', 'estado', 'estado_nombre', 'id_solicitud_servicio_estado', 'fechaGeneracion', 'monto', 'fechaEstimada', 
-            'fechaFinalizada', 'diagnosticoTecnico', 'resumen', 'Resumen', 'con_logistica', 'mantenimiento'
+            'descripcion', 'estado', 'estado_nombre', 'id_solicitud_servicio_estado', 
+            'fechaGeneracion','fechaIniciada', 'fechaRevisada', 'fechaAprobada', 'fechaPresupuestada', 
+            'fechaCancelada', 'monto', 'fechaEstimada', 'fechaFinalizada', 
+            'diagnosticoTecnico', 'resumen', 'Resumen', 'con_logistica', 'mantenimiento'
         ]
 
 #   def get_envio(self, obj):
