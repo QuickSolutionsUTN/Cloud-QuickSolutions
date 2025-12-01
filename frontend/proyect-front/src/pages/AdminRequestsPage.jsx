@@ -39,7 +39,7 @@ export default function AdminRequestsPage() {
       item.id,
       item.tipoServicio,
       item.fechaGeneracion,
-      item.tipoDeProducto || "N/A",
+      item.producto || "N/A",
       item.estado,
     ]);
     autoTable(doc, {
@@ -70,7 +70,7 @@ export default function AdminRequestsPage() {
       { label: "Fecha Generación", value: solicitud.fechaGeneracion },
       { label: "Estado", value: solicitud.estado },
       { label: "Categoría", value: solicitud.categoria || "N/A" },
-      { label: "Tipo de Producto", value: solicitud.tipoDeProducto },
+      { label: "Producto", value: solicitud.producto },
       { label: "Email Solicitante", value: solicitud.emailSolicitante },
       { label: "Tipo de Servicio", value: solicitud.tipoServicio },
       { label: "Diagnóstico Técnico", value: solicitud.diagnosticoTecnico || "N/A" },
