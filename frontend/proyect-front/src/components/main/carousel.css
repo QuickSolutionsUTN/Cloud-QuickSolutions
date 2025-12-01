@@ -9,10 +9,10 @@
   position: relative;
 }
 .maintenance{
-  background-image: url('../../public/images/maintenance.png');
+  background-image: url('/images/maintenance.PNG');
 }
 .repair{
-  background-image: url('../../public/images/repair.png');
+  background-image: url('/images/repair.PNG');
 }
 
 .custom-carousel .carousel-card-maintenance,
