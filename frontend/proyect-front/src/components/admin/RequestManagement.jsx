@@ -16,6 +16,7 @@ import { Button } from 'react-bootstrap';
 import './RequestManagement.css';
 import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
 import { Toast, ToastContainer } from 'react-bootstrap'
+import { motion, AnimatePresence } from 'framer-motion';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -101,7 +102,7 @@ function RequestManagement() {
       });
     }
   };
-  
+
   const handleNextStep = async (incomingData = null) => {
 
     const stepIndex = steps.indexOf(currentStep);
@@ -227,6 +228,18 @@ function RequestManagement() {
     ? new Date(solicitud.fechaGeneracion).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
     : '';
 
+  const pageVariants = {
+    initial: { opacity: 0, x: 20 }, // Entra desde la derecha, invisible
+    in: { opacity: 1, x: 0 },       // Se pone en su sitio, visible
+    out: { opacity: 0, x: -20 }     // Sale hacia la izquierda, invisible
+  };
+
+  const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.4
+  };
+
   return (
     <div className='requestManagement w-100'>
       <div className='requestManagement-header'>
@@ -321,7 +334,18 @@ function RequestManagement() {
       </div>
       <div className='d-flex request-details p-3 mb-4'>
         <div className='flex-grow-1'>
-          {renderContent()}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
