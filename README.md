@@ -45,7 +45,7 @@ npm run dev
 ## 🛠️ Estado del Proyecto
 
 El proyecto ya se encuentra listo.
-El backend esta deployado con Render y el frontend con aws amplify
+El backend está deployado con Render y el frontend con aws amplify
 
 Link a la pagina web: https://main.d2pw1l29dsqfgg.amplifyapp.com/
 
