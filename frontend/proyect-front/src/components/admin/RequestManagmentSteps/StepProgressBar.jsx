@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./StepProgressBar.css";
+import "./stepProgressBar.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'  
 
