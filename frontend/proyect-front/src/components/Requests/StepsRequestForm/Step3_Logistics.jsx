@@ -79,7 +79,7 @@ export default function StepLogistics({ formData, control, setValue }) {
   return (
     <div>
       <div className="row mb-3">
-        <h6>Seleccione el tipo de envío</h6>
+        <h6>Seleccione el tipo de logistica</h6>
         <Controller
           name="logisticsData.conLogistica"
           control={control}
@@ -93,7 +93,7 @@ export default function StepLogistics({ formData, control, setValue }) {
             >
               <ToggleButton id="particular" value="particular" variant="outline-primary">
                 <FontAwesomeIcon icon={faPerson} className="me-2" />
-                Envío Particular
+                Servicio en local
               </ToggleButton>
               <ToggleButton id="logistica" value="logistica" variant="outline-primary">
                 <FontAwesomeIcon icon={faTruck} className="me-2" />

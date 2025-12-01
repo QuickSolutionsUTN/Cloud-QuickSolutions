@@ -15,7 +15,7 @@ import './requestForm.css';
 const steps = [
   { id: 1, name: 'Datos del Producto', section: 'productData' },
   { id: 2, name: 'Datos Personales', section: 'personalData' },
-  { id: 3, name: 'Envio', section: 'logisticsData' },
+  { id: 3, name: 'Logística', section: 'logisticsData' },
   { id: 4, name: 'Confirmacion', section: 'confirmation' },
 ];
 
