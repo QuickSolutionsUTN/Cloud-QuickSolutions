@@ -9,10 +9,8 @@ import ApprovedStep from './RequestManagmentSteps/ApprovedStep.jsx';
 import CancelModalForm from './RequestManagmentSteps/CancelModalForm.jsx';
 import apiService from '../../services/axiosConfig.jsx';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTableCellsLarge, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
 import AddressCard from '../users/UserAddressCard.jsx';
 import { Button } from 'react-bootstrap';
-import CancelStep from './RequestManagmentSteps/CancelStep.jsx';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +19,7 @@ import DescriptionCard from './RequestManagmentSteps/DescriptionCard.jsx';
 import BudgetCard from './RequestManagmentSteps/BudgetCard.jsx';
 import DiagnosisCard from './RequestManagmentSteps/DiagnosisCard.jsx';
 import SummaryCard from './RequestManagmentSteps/SummaryCard.jsx';
+import CancellationCard from './RequestManagmentSteps/CancellationCard.jsx';
 
 function RequestManagement() {
   const [solicitud, setSolicitud] = useState(null);
@@ -233,7 +232,7 @@ function RequestManagement() {
       case 'Finalizada':
         return null;
       case 'Cancelada':
-        return <CancelStep solicitud={solicitud} />;
+        return null;
       default:
         if (solicitud.id_solicitud_servicio_estado === 1) return <StartedStep solicitud={solicitud} nextStep={handleNextStep} cancelStep={handleCancelButton} />;
         return <div>Error al obtener el estado</div>;
@@ -273,15 +272,11 @@ function RequestManagement() {
         </div>
       </div>
       <StepProgressBar solicitud={solicitud} currentStep={currentStep} />
-      {((solicitud.estado_nombre || solicitud.estado || solicitud.id_solicitud_servicio_estado) === 'Cancelada' && !solicitud.fecha_iniciada) && (
-        <div className="alert alert-danger alert-dismissible fade show" role="alert">
-          <strong>¡Atención!</strong> La solicitud ha sido <strong>cancelada</strong>.
-        </div>
-      )}
+
       <hr style={{ borderTop: '1px solid lightgray', margin: '1%' }} />
 
       <div className='info-card'>
-        <div className="row mx-0 w-100">
+        <div className="row mx-0 w-100 align-items-center py-1">
           <div className="col-md-2 mb-2 ribbon-item">
             <div className="section-label">Usuario</div>
             <div className="data-value">
@@ -342,6 +337,17 @@ function RequestManagement() {
           </div>
         </div>
       </div>
+
+      {currentStep === 'Cancelada' && (
+        <div className="finished-step-container mb-4">
+          <div className="row mx-0 w-100">
+            <div className="col-12">
+              <CancellationCard reason={solicitud.resumen || solicitud.Resumen} />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="description-technical-section">
         <div className="row mx-0 w-100">
           <div className="col-md-6 mb-4 d-flex flex-column" >
@@ -383,15 +389,15 @@ function RequestManagement() {
           </AnimatePresence>
         </div>
       </div>
-      {currentStep == "Finalizada" ? (
-      <div className="finished-step-container mb-4">
-        <div className="row mx-0 w-100">
-          <div className="col-12">
-            <SummaryCard text={solicitud.Resumen || solicitud.resumen} />
+      {currentStep == "Finalizada" && (
+        <div className="finished-step-container mb-4">
+          <div className="row mx-0 w-100">
+            <div className="col-12">
+              <SummaryCard text={solicitud.Resumen || solicitud.resumen} />
+            </div>
           </div>
         </div>
-      </div>
-      ) : null}
+      )}
       <div className="d-flex justify-content-center" style={{ height: '50px' }}></div>
       <CancelModalForm
         show={showCancelModalForm}
