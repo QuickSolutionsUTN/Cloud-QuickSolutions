@@ -1,46 +1,73 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; // Eliminamos useContext y {session} ya que gestionaremos el estado aquí
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert, Container, Card, Spinner } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { supabase } from '../services/supabaseClient'; // Asegúrate de que esta ruta sea correcta
-import AuthContext from '../contexts/AuthContext'; 
+import { supabase } from '../services/supabaseClient'; 
 
 export default function UpdatePasswordPage() {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }, watch } = useForm();
+    
+    // Nuevo estado: Indica si la sesión de recuperación está lista para el update.
+    const [isSessionReady, setIsSessionReady] = useState(false); 
+    
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [messageVariant, setMessageVariant] = useState('info');
-    const { session } = useContext(AuthContext); // Usamos el contexto para verificar si hay una sesión activa
 
     const newPassword = watch('newPassword');
 
+    // 1. ESCUCHAR EL CAMBIO DE ESTADO DE AUTENTICACIÓN
     useEffect(() => {
-        // Supabase maneja el token de restablecimiento a través de los parámetros de la URL
-        // y lo convierte en una sesión temporal cuando la página se carga.
-        // Si ya hay una sesión (lo que indica que el enlace de Supabase funcionó),
-        // pero no es la sesión principal (ya que no deberían estar logueados normalmente),
-        // permitimos que el usuario cambie la contraseña.
-        // Si no hay sesión o hay un error de autenticación, SupabaseAuthClient te ayuda.
-        
-        // Simplemente nos aseguramos de que el usuario vea el formulario.
-        // La lógica de Supabase maneja la autenticación temporal del token en la URL.
+        // En el momento de la carga de la página, Supabase lee los tokens de la URL
+        // y establece la sesión. Esto dispara un evento 'SIGNED_IN' o 'RECOVERY'.
+        const { data: authListener } = supabase.auth.onAuthStateChange(
+            (event, session) => {
+                // Si la sesión existe y el evento es de inicio de sesión o recuperación,
+                // marcamos la sesión como lista para la actualización.
+                if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+                    console.log("Supabase event:", event, "Session is ready.");
+                    setIsSessionReady(true);
+                }
+            }
+        );
+
+        // Intenta obtener la sesión inmediatamente por si la página ya cargó sin el listener
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                setIsSessionReady(true);
+            }
+        });
+
+        // Limpiar el listener al desmontar el componente
+        return () => {
+            authListener.subscription.unsubscribe();
+        };
     }, []);
+
 
     const onSubmit = async (data) => {
         setMessage('');
         setLoading(true);
 
+        // Verificación final antes de intentar la actualización
+        if (!isSessionReady) {
+            setLoading(false);
+            setMessage('Aún no se ha cargado la sesión de restablecimiento. Por favor, espere un momento o recargue la página.');
+            setMessageVariant('warning');
+            return;
+        }
+
         try {
-            // Llama a la API de Supabase para actualizar la contraseña
-            // Supabase usa la sesión temporal que se estableció al redirigir desde el email
+            // La llamada a updateUser ahora es segura porque hemos esperado el evento
             const { error } = await supabase.auth.updateUser({
                 password: data.newPassword
             });
 
             if (error) {
                 console.error("Error al actualizar la contraseña:", error);
-                setMessage('❌ Error al actualizar la contraseña. Inténtelo de nuevo.');
+                // Si la sesión expiró entre la carga y el envío del formulario:
+                setMessage('❌ Error al actualizar la contraseña. Por favor, vuelva a solicitar el restablecimiento (la sesión de recuperación puede haber expirado).');
                 setMessageVariant('danger');
                 return;
             }
@@ -48,9 +75,12 @@ export default function UpdatePasswordPage() {
             setMessage('✅ Contraseña actualizada exitosamente. Redirigiendo al inicio de sesión...');
             setMessageVariant('success');
 
-            // Redirigir al usuario al login después de un breve retraso
+            // 2. Redirigir al usuario (y forzar la invalidación de la sesión temporal)
             setTimeout(() => {
-                navigate('/'); 
+                // Opcionalmente puedes forzar un signOut de la sesión temporal antes de redirigir
+                supabase.auth.signOut().then(() => {
+                    navigate('/'); 
+                });
             }, 3000);
 
         } catch (err) {
@@ -58,7 +88,10 @@ export default function UpdatePasswordPage() {
             setMessage('❌ Error inesperado. Por favor, revise la consola.');
             setMessageVariant('danger');
         } finally {
-            setLoading(false);
+            // El setLoading(false) se ejecutará si no hay una redirección inmediata
+            if (!message.includes('Redirigiendo')) {
+                setLoading(false);
+            }
         }
     };
 
@@ -67,8 +100,17 @@ export default function UpdatePasswordPage() {
             <Card style={{ width: '400px' }} className="shadow-lg">
                 <Card.Body>
                     <Card.Title className="text-center mb-4">Restablecer Contraseña</Card.Title>
+                    
                     {message && <Alert variant={messageVariant}>{message}</Alert>}
                     
+                    {/* Mostrar mensaje de carga si no está listo */}
+                    {!isSessionReady && !message && (
+                        <div className="text-center mb-3">
+                            <Spinner animation="border" size="sm" className="me-2" />
+                            Cargando sesión de seguridad...
+                        </div>
+                    )}
+
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <Form.Group className="mb-3" controlId="newPassword">
                             <Form.Label>Nueva Contraseña</Form.Label>
@@ -83,6 +125,8 @@ export default function UpdatePasswordPage() {
                                     }
                                 })}
                                 isInvalid={!!errors.newPassword}
+                                // Deshabilitar si no está listo
+                                disabled={!isSessionReady || loading} 
                             />
                             <Form.Control.Feedback type="invalid">
                                 {errors.newPassword?.message}
@@ -100,6 +144,8 @@ export default function UpdatePasswordPage() {
                                         value === newPassword || 'Las contraseñas no coinciden'
                                 })}
                                 isInvalid={!!errors.confirmPassword}
+                                // Deshabilitar si no está listo
+                                disabled={!isSessionReady || loading}
                             />
                             <Form.Control.Feedback type="invalid">
                                 {errors.confirmPassword?.message}
@@ -110,7 +156,8 @@ export default function UpdatePasswordPage() {
                             variant="primary" 
                             type="submit" 
                             className="w-100" 
-                            disabled={loading}
+                            // Deshabilitar el botón hasta que la sesión esté lista
+                            disabled={!isSessionReady || loading}
                         >
                             {loading ? (
                                 <>
